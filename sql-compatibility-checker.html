@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SQL Command Compatibility Checker</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f7fa;
+        }
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .search-container {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            justify-content: center;
+        }
+        input {
+            padding: 10px 15px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+            flex-grow: 1;
+            max-width: 500px;
+        }
+        button {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.2s;
+        }
+        button:hover {
+            background-color: #2980b9;
+        }
+        .filters {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 20px;
+            justify-content: center;
+        }
+        .filter-group {
+            background-color: white;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .filter-group h3 {
+            margin-top: 0;
+            margin-bottom: 10px;
+            font-size: 18px;
+            color: #2c3e50;
+        }
+        .checkboxes {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .result-container {
+            margin-top: 30px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background-color: white;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        th, td {
+            text-align: left;
+            padding: 12px 15px;
+            border-bottom: 1px solid #ddd;
+        }
+        th {
+            background-color: #3498db;
+            color: white;
+        }
+        tr:hover {
+            background-color: #f5f5f5;
+        }
+        .supported {
+            color: #27ae60;
+            font-weight: bold;
+        }
+        .not-supported {
+            color: #e74c3c;
+        }
+        .partial {
+            color: #f39c12;
+        }
+        .notes {
+            font-size: 14px;
+            color: #7f8c8d;
+        }
+        .result-message {
+            text-align: center;
+            margin: 20px 0;
+        }
+        .examples {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+        .examples h2 {
+            margin-top: 0;
+            color: #2c3e50;
+        }
+        .example {
+            margin-bottom: 10px;
+            cursor: pointer;
+            color: #3498db;
+        }
+        .example:hover {
+            text-decoration: underline;
+        }
+        .detail-view {
+            margin-top: 20px;
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .detail-view h2 {
+            margin-top: 0;
+            color: #2c3e50;
+        }
+        .syntax {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 4px;
+            border-left: 4px solid #3498db;
+            font-family: monospace;
+            white-space: pre-wrap;
+            margin: 15px 0;
+        }
+        .version-badge {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 14px;
+            margin-right: 5px;
+            margin-bottom: 5px;
+        }
+        .version-supported {
+            background-color: #e6f7ee;
+            color: #27ae60;
+            border: 1px solid #27ae60;
+        }
+        .version-not-supported {
+            background-color: #fde8e8;
+            color: #e74c3c;
+            border: 1px solid #e74c3c;
+        }
+    </style>
+</head>
+<body>
+    <h1>SQL Command Compatibility Checker</h1>
+    
+    <div class="examples">
+        <h2>Popular SQL Commands</h2>
+        <div class="example" onclick="searchCommand('WITH (Common Table Expressions)')">WITH (Common Table Expressions)</div>
+        <div class="example" onclick="searchCommand('MERGE')">MERGE</div>
+        <div class="example" onclick="searchCommand('JSON_TABLE')">JSON_TABLE</div>
+        <div class="example" onclick="searchCommand('WINDOW Functions')">WINDOW Functions</div>
+        <div class="example" onclick="searchCommand('PIVOT')">PIVOT</div>
+    </div>
+    
+    <div class="search-container">
+        <input type="text" id="commandSearch" placeholder="Enter SQL command (e.g., MERGE, WITH, JSON_TABLE)">
+        <button onclick="searchCommand()">Search</button>
+    </div>
+    
+    <div class="filters">
+        <div class="filter-group">
+            <h3>Database Systems</h3>
+            <div class="checkboxes">
+                <div class="checkbox-item">
+                    <input type="checkbox" id="mysql" checked>
+                    <label for="mysql">MySQL</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="postgresql" checked>
+                    <label for="postgresql">PostgreSQL</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="sqlserver" checked>
+                    <label for="sqlserver">SQL Server</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="oracle" checked>
+                    <label for="oracle">Oracle</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="sqlite" checked>
+                    <label for="sqlite">SQLite</label>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="result-container" id="resultContainer">
+        <div class="result-message">
+            Search for a SQL command to see compatibility across different database systems.
+        </div>
+    </div>
+
+    <div id="detailView" style="display: none;" class="detail-view">
+    </div>
+
+    <script>
+        // Database of SQL commands and their compatibility
+        const sqlDatabase = {
+            "with (common table expressions)": {
+                description: "Common Table Expressions (CTEs) provide a way to write auxiliary statements for use in a larger query.",
+                syntax: "WITH cte_name AS (\n    SELECT column1, column2\n    FROM table_name\n    WHERE condition\n)\nSELECT * FROM cte_name;",
+                compatibility: {
+                    mysql: { supported: true, since: "8.0", notes: "Added in MySQL 8.0" },
+                    postgresql: { supported: true, since: "8.4", notes: "Well supported since PostgreSQL 8.4" },
+                    sqlserver: { supported: true, since: "2005", notes: "Available since SQL Server 2005" },
+                    oracle: { supported: true, since: "9i Release 2", notes: "Available since Oracle 9i Release 2" },
+                    sqlite: { supported: true, since: "3.8.3", notes: "Added in SQLite 3.8.3" }
+                },
+                details: "Common Table Expressions (CTEs) are named temporary result sets that exist within the scope of a single statement. They can be self-referencing (recursive) and can be referenced multiple times in the same query."
+            },
+            "merge": {
+                description: "Performs insert, update, or delete operations on a target table based on the results of a join with a source table.",
+                syntax: "MERGE INTO target_table\nUSING source_table\nON (join_condition)\nWHEN MATCHED THEN\n    UPDATE SET column1 = value1, column2 = value2\nWHEN NOT MATCHED THEN\n    INSERT (column1, column2) VALUES (value1, value2);",
+                compatibility: {
+                    mysql: { supported: false, notes: "Not supported in MySQL. Can use INSERT ... ON DUPLICATE KEY UPDATE as alternative" },
+                    postgresql: { supported: false, notes: "Not directly supported. Can emulate with CTEs and INSERT/UPDATE" },
+                    sqlserver: { supported: true, since: "2008", notes: "Available since SQL Server 2008" },
+                    oracle: { supported: true, since: "9i", notes: "Available since Oracle 9i" },
+                    sqlite: { supported: false, notes: "Not supported in SQLite" }
+                },
+                details: "The MERGE statement is useful for combining INSERT, UPDATE, and DELETE operations in a single statement. It's particularly helpful for data warehouse ETL operations and for implementing slowly changing dimensions."
+            },
+            "json_table": {
+                description: "Extracts JSON data and returns it as a relational table.",
+                syntax: "SELECT jt.*\nFROM json_data,\nJSON_TABLE(json_column, '$' COLUMNS (\n    name VARCHAR(100) PATH '$.name',\n    age NUMBER PATH '$.age'\n)) AS jt;",
+                compatibility: {
+                    mysql: { supported: true, since: "8.0.4", notes: "Added in MySQL 8.0.4" },
+                    postgresql: { supported: true, since: "9.3", notes: "Uses different syntax with jsonb_path_query family of functions" },
+                    sqlserver: { supported: true, since: "2016", notes: "Uses OPENJSON function instead" },
+                    oracle: { supported: true, since: "12c", notes: "Available since Oracle 12c" },
+                    sqlite: { supported: false, notes: "Limited JSON support, no JSON_TABLE equivalent" }
+                },
+                details: "JSON_TABLE allows you to parse JSON data and present it in a relational format that can be used in regular SQL operations. The implementation and syntax varies between database systems."
+            },
+            "window functions": {
+                description: "Functions that perform calculations across a set of rows related to the current row.",
+                syntax: "SELECT column1, column2,\n       AVG(column3) OVER (PARTITION BY column1 ORDER BY column2) as avg_value\nFROM table_name;",
+                compatibility: {
+                    mysql: { supported: true, since: "8.0", notes: "Added in MySQL 8.0" },
+                    postgresql: { supported: true, since: "8.4", notes: "Excellent support since PostgreSQL 8.4" },
+                    sqlserver: { supported: true, since: "2005", notes: "Available since SQL Server 2005, expanded in later versions" },
+                    oracle: { supported: true, since: "8i", notes: "Early adopter, available since Oracle 8i" },
+                    sqlite: { supported: true, since: "3.25.0", notes: "Added in SQLite 3.25.0 (2018)" }
+                },
+                details: "Window functions perform calculations on a set of rows that are somehow related to the current row. They include ranking functions (ROW_NUMBER, RANK, DENSE_RANK), aggregate functions (SUM, AVG, COUNT), and value functions (FIRST_VALUE, LAST_VALUE, LEAD, LAG)."
+            },
+            "pivot": {
+                description: "Rotates rows into columns, creating a cross-tabulation of data.",
+                syntax: "SELECT *\nFROM (\n    SELECT category, month, value\n    FROM sales\n) AS source\nPIVOT (\n    SUM(value)\n    FOR month IN (Jan, Feb, Mar, Apr)\n) AS pivot_table;",
+                compatibility: {
+                    mysql: { supported: false, notes: "Not directly supported. Can be emulated with CASE expressions" },
+                    postgresql: { supported: false, notes: "Not directly supported. Can use crosstab function from tablefunc extension" },
+                    sqlserver: { supported: true, since: "2005", notes: "Available since SQL Server 2005" },
+                    oracle: { supported: true, since: "11g", notes: "Available since Oracle 11g" },
+                    sqlite: { supported: false, notes: "Not supported in SQLite" }
+                },
+                details: "PIVOT transforms data from rows into columns, making it easier to create summary reports. While not all databases support the PIVOT keyword, similar results can be achieved using CASE expressions or conditional aggregation in most systems."
+            },
+            "full text search": {
+                description: "Specialized indexing and querying for efficient text searching.",
+                syntax: "-- Varies significantly by database system\n-- Example for MySQL:\nSELECT * FROM articles \nWHERE MATCH(title, body) AGAINST('search terms' IN BOOLEAN MODE);",
+                compatibility: {
+                    mysql: { supported: true, since: "3.23.23", notes: "Full-text search capabilities vary by storage engine" },
+                    postgresql: { supported: true, since: "8.3", notes: "Uses sophisticated tsvector and tsquery types" },
+                    sqlserver: { supported: true, since: "2008", notes: "Full-Text Search service must be installed" },
+                    oracle: { supported: true, since: "8i", notes: "Oracle Text (formerly interMedia) provides advanced text search" },
+                    sqlite: { supported: true, since: "3.9.0", notes: "FTS3, FTS4, and FTS5 modules for full-text search" }
+                },
+                details: "Full-text search functionality varies widely between database systems, with each implementing their own syntax and capabilities. Most systems offer basic word matching, proximity searches, and relevance ranking."
+            },
+            "recursive cte": {
+                description: "A common table expression that references itself to solve hierarchical or graph problems.",
+                syntax: "WITH RECURSIVE cte_name AS (\n    -- Base case (anchor member)\n    SELECT columns FROM table WHERE condition\n    UNION ALL\n    -- Recursive part\n    SELECT columns FROM table\n    JOIN cte_name ON cte_name.column = table.column\n    WHERE condition\n)\nSELECT * FROM cte_name;",
+                compatibility: {
+                    mysql: { supported: true, since: "8.0", notes: "Added in MySQL 8.0" },
+                    postgresql: { supported: true, since: "8.4", notes: "Well supported since PostgreSQL 8.4" },
+                    sqlserver: { supported: true, since: "2005", notes: "Available as 'WITH RECURSIVE' since SQL Server 2005" },
+                    oracle: { supported: true, since: "11g R2", notes: "Uses CONNECT BY for hierarchical queries prior to 11g R2" },
+                    sqlite: { supported: true, since: "3.8.3", notes: "Added in SQLite 3.8.3" }
+                },
+                details: "Recursive CTEs are particularly useful for working with hierarchical data (like organization charts or file systems) and graph traversal problems. They require at least one anchor member (non-recursive term) and at least one recursive member."
+            },
+            "lateral join": {
+                description: "Allows subqueries in the FROM clause to reference columns from preceding tables.",
+                syntax: "SELECT *\nFROM table1,\nLATERAL (SELECT * FROM table2 WHERE table2.id = table1.id) AS subquery;",
+                compatibility: {
+                    mysql: { supported: true, since: "8.0.14", notes: "Added in MySQL 8.0.14" },
+                    postgresql: { supported: true, since: "9.3", notes: "Available since PostgreSQL 9.3" },
+                    sqlserver: { supported: true, since: "2005", notes: "Uses CROSS/OUTER APPLY instead of LATERAL" },
+                    oracle: { supported: true, since: "12c", notes: "Available since Oracle 12c" },
+                    sqlite: { supported: false, notes: "Not supported in SQLite" }
+                },
+                details: "LATERAL joins allow you to reference columns from tables that appear earlier in the FROM clause within subqueries. This is particularly useful for creating correlated subqueries in the FROM clause and for working with functions that return tables."
+            },
+            "generated columns": {
+                description: "Columns whose values are computed from expressions or other columns.",
+                syntax: "CREATE TABLE example (\n    id INT,\n    width DECIMAL(10,2),\n    height DECIMAL(10,2),\n    area DECIMAL(10,2) GENERATED ALWAYS AS (width * height) STORED\n);",
+                compatibility: {
+                    mysql: { supported: true, since: "5.7", notes: "Added in MySQL 5.7 with VIRTUAL and STORED options" },
+                    postgresql: { supported: true, since: "12", notes: "Added in PostgreSQL 12 as GENERATED ALWAYS AS" },
+                    sqlserver: { supported: true, since: "2012", notes: "Uses COMPUTED columns since SQL Server 2012" },
+                    oracle: { supported: true, since: "11g", notes: "Has VIRTUAL columns since Oracle 11g" },
+                    sqlite: { supported: true, since: "3.31.0", notes: "Added in SQLite 3.31.0" }
+                },
+                details: "Generated or computed columns are based on expressions using other columns in the same table. They can be either stored physically (materialized) or calculated on the fly when accessed (virtual), depending on the database system and configuration."
+            },
+            "upsert": {
+                description: "Insert rows that don't exist and update rows that do exist in a single operation.",
+                syntax: "-- PostgreSQL syntax:\nINSERT INTO table_name (column1, column2)\nVALUES (value1, value2)\nON CONFLICT (key_column) DO UPDATE\nSET column1 = EXCLUDED.column1, column2 = EXCLUDED.column2;",
+                compatibility: {
+                    mysql: { supported: true, since: "5.1", notes: "Uses INSERT ... ON DUPLICATE KEY UPDATE syntax" },
+                    postgresql: { supported: true, since: "9.5", notes: "Uses INSERT ... ON CONFLICT DO UPDATE syntax" },
+                    sqlserver: { supported: true, since: "2008", notes: "Uses MERGE statement" },
+                    oracle: { supported: true, since: "9i", notes: "Uses MERGE statement" },
+                    sqlite: { supported: true, since: "3.24.0", notes: "Uses INSERT ... ON CONFLICT syntax (similar to PostgreSQL)" }
+                },
+                details: "UPSERT operations (a combination of 'update' and 'insert') allow you to insert a row if it doesn't exist or update it if it does, all in a single atomic operation. The syntax varies significantly between database systems."
+            }
+        };
+
+        // Search for a command
+        function searchCommand(command) {
+            // Use the passed command or get from input
+            const searchInput = command || document.getElementById('commandSearch').value.trim().toLowerCase();
+            if (!searchInput) return;
+            
+            // If command is passed, update the search box
+            if (command) {
+                document.getElementById('commandSearch').value = command;
+            }
+            
+            // Get selected database systems
+            const selectedDatabases = {
+                mysql: document.getElementById('mysql').checked,
+                postgresql: document.getElementById('postgresql').checked,
+                sqlserver: document.getElementById('sqlserver').checked,
+                oracle: document.getElementById('oracle').checked,
+                sqlite: document.getElementById('sqlite').checked
+            };
+            
+            // Find the command
+            const foundCommand = Object.keys(sqlDatabase).find(cmd => cmd.toLowerCase() === searchInput.toLowerCase());
+            const resultContainer = document.getElementById('resultContainer');
+            
+            if (foundCommand) {
+                const commandData = sqlDatabase[foundCommand];
+                
+                // Build result table
+                let resultHTML = `
+                    <h2>Compatibility for "${foundCommand.toUpperCase()}"</h2>
+                    <p>${commandData.description}</p>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Database System</th>
+                                <th>Support Status</th>
+                                <th>Since Version</th>
+                                <th>Notes</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                `;
+                
+                for (const [db, checked] of Object.entries(selectedDatabases)) {
+                    if (!checked) continue;
+                    
+                    const dbInfo = commandData.compatibility[db];
+                    const supportClass = dbInfo.supported ? 'supported' : 'not-supported';
+                    const supportText = dbInfo.supported ? 'Supported' : 'Not Supported';
+                    const versionText = dbInfo.since || '-';
+                    
+                    resultHTML += `
+                        <tr>
+                            <td>${db.charAt(0).toUpperCase() + db.slice(1)}</td>
+                            <td class="${supportClass}">${supportText}</td>
+                            <td>${versionText}</td>
+                            <td class="notes">${dbInfo.notes}</td>
+                        </tr>
+                    `;
+                }
+                
+                resultHTML += `
+                        </tbody>
+                    </table>
+                    <button onclick="showDetails('${foundCommand}')" style="margin-top: 20px;">View Details</button>
+                `;
+                
+                resultContainer.innerHTML = resultHTML;
+            } else {
+                // Search for similar commands
+                const similarCommands = Object.keys(sqlDatabase).filter(cmd => 
+                    cmd.toLowerCase().includes(searchInput.toLowerCase()) || 
+                    searchInput.toLowerCase().includes(cmd.toLowerCase())
+                );
+                
+                if (similarCommands.length > 0) {
+                    let resultHTML = `
+                        <div class="result-message">
+                            <p>No exact match found for "${searchInput}". Did you mean:</p>
+                            <ul>
+                    `;
+                    
+                    similarCommands.forEach(cmd => {
+                        resultHTML += `<li><a href="#" onclick="searchCommand('${cmd}'); return false;">${cmd.toUpperCase()}</a></li>`;
+                    });
+                    
+                    resultHTML += `
+                            </ul>
+                        </div>
+                    `;
+                    
+                    resultContainer.innerHTML = resultHTML;
+                } else {
+                    resultContainer.innerHTML = `
+                        <div class="result-message">
+                            <p>No results found for "${searchInput}".</p>
+                            <p>Try searching for a different SQL command or check our examples above.</p>
+                        </div>
+                    `;
+                }
+            }
+        }
+        
+        // Show detailed view for a command
+        function showDetails(command) {
+            const commandData = sqlDatabase[command];
+            const detailView = document.getElementById('detailView');
+            
+            if (!commandData) return;
+            
+            let detailHTML = `
+                <h2>${command.toUpperCase()} - Detailed Information</h2>
+                <p>${commandData.details}</p>
+                
+                <h3>Standard Syntax</h3>
+                <div class="syntax">${commandData.syntax}</div>
+                
+                <h3>Version Support</h3>
+                <div>
+            `;
+            
+            for (const [db, info] of Object.entries(commandData.compatibility)) {
+                const badgeClass = info.supported ? 'version-supported' : 'version-not-supported';
+                const versionText = info.supported ? 
+                    `${db.charAt(0).toUpperCase() + db.slice(1)}: Since version ${info.since}` : 
+                    `${db.charAt(0).toUpperCase() + db.slice(1)}: Not supported`;
+                
+                detailHTML += `<span class="version-badge ${badgeClass}">${versionText}</span>`;
+            }
+            
+            detailHTML += `
+                </div>
+                
+                <h3>Implementation Notes</h3>
+                <ul>
+            `;
+            
+            for (const [db, info] of Object.entries(commandData.compatibility)) {
+                detailHTML += `<li><strong>${db.charAt(0).toUpperCase() + db.slice(1)}:</strong> ${info.notes}</li>`;
+            }
+            
+            detailHTML += `
+                </ul>
+            `;
+            
+            detailView.innerHTML = detailHTML;
+            detailView.style.display = 'block';
+        }
+        
+        // Event listener for search box to enable search on Enter key
+        document.getElementById('commandSearch').addEventListener('keypress', function(event) {
+            if (event.key === 'Enter') {
+                searchCommand();
+            }
+        });
+    </script>
+</body>
+</html>
