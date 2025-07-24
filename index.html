@@ -351,6 +351,18 @@
                     sqlite: { supported: true, since: "3.24.0", notes: "Uses INSERT ... ON CONFLICT syntax (similar to PostgreSQL)" }
                 },
                 details: "UPSERT operations (a combination of 'update' and 'insert') allow you to insert a row if it doesn't exist or update it if it does, all in a single atomic operation. The syntax varies significantly between database systems."
+            },
+            "string_agg": {
+                description: "Concatenates strings separated by a specified separator.",
+                syntax: "-- PostgreSQL syntax:\nSTRING_AGG ( expression, separator [order_by_clause] );",
+                compatibility: {
+                    mysql: { supported: true, since: "1.0", notes: "NOTE: Implemented through equivalent GROUP_CONCAT function; default separator is comma" },
+                    postgresql: { supported: true, since: "9.0", notes: "Supports ORDER BY inside aggregation" },
+                    sqlserver: { supported: true, since: "2017 (v14.x)", notes: "Native support; clean syntax" },
+                    oracle: { supported: true, since: "11g Release 2 (11.2)", notes: "NOTE: Implemented through equivalent LISTAGG function; supports ordering" },
+                    sqlite: { supported: true, since: "3.44.0 (released Nov 2023)", notes: "Alias added for compatibility with other databases; implemented as alias for GROUP_CONCAT" }
+                },
+                details: "The PostgreSQL STRING_AGG() function is an aggregate function that concatenates a list of strings and places a separator between them. It does not add the separator at the end of the string."
             }
         };
 
