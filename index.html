@@ -180,11 +180,10 @@
     
     <div class="examples">
         <h2>Popular SQL Commands</h2>
-        <div class="example" onclick="searchCommand('WITH (Common Table Expressions)')">WITH (Common Table Expressions)</div>
+        <div class="example" onclick="searchCommand('SELECT')">SELECT</div>
         <div class="example" onclick="searchCommand('MERGE')">MERGE</div>
-        <div class="example" onclick="searchCommand('JSON_TABLE')">JSON_TABLE</div>
-        <div class="example" onclick="searchCommand('WINDOW Functions')">WINDOW Functions</div>
         <div class="example" onclick="searchCommand('PIVOT')">PIVOT</div>
+        <div class="example" onclick="searchCommand('STRING AGG')">STRING AGG</div>
     </div>
     
     <div class="search-container">
@@ -491,7 +490,7 @@
             },
             "details": "Ensure atomic, consistent, isolated, durable operations."
           },
-          
+
           "string agg": {
               "description": "Concatenates strings separated by a specified separator. In PostgreSQL, this is STRING_AGG; in MySQL and SQLite, use GROUP_CONCAT; in Oracle, use LISTAGG; and in SQL Server, use STRING_AGG (since 2017). Syntax and features may differ between databases.",
               "syntax": "-- PostgreSQL syntax:\nSTRING_AGG ( expression, separator [order_by_clause] );",
