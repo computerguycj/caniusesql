@@ -232,266 +232,279 @@
     <script>
         // Database of SQL commands and their compatibility
         const sqlDatabase = {
-  "with (common table expressions)": {
-    "description": "Common Table Expressions (CTEs) provide a way to write auxiliary statements for use in a larger query.",
-    "syntax": "WITH cte_name AS (\n    SELECT column1, column2\n    FROM table_name\n    WHERE condition\n)\nSELECT * FROM cte_name;",
-    "compatibility": {
-      "mysql": { "supported": true,  "since": "8.0",            "notes": "Added in MySQL 8.0",            "syntax": "WITH cte_name AS (\n  SELECT col1, col2\n  FROM tbl\n  WHERE …\n)\nSELECT *\nFROM cte_name;" },
-      "postgresql": { "supported": true,  "since": "8.4",            "notes": "Well supported since PostgreSQL 8.4",            "syntax": "WITH cte_name AS (\n  SELECT col1, col2\n  FROM tbl\n  WHERE …\n)\nSELECT *\nFROM cte_name;" },
-      "sqlserver": { "supported": true,  "since": "2005",           "notes": "Available since SQL Server 2005",           "syntax": "WITH cte_name AS (\n  SELECT col1, col2\n  FROM tbl\n  WHERE …\n)\nSELECT *\nFROM cte_name;" },
-      "oracle": { "supported": true,  "since": "9i Release 2",    "notes": "Available since Oracle 9i R2",      "syntax": "WITH cte_name AS (\n  SELECT col1, col2\n  FROM tbl\n  WHERE …\n)\nSELECT *\nFROM cte_name;" },
-      "sqlite": { "supported": true,  "since": "3.8.3",          "notes": "Added in SQLite 3.8.3",          "syntax": "WITH cte_name AS (\n  SELECT col1, col2\n  FROM tbl\n  WHERE …\n)\nSELECT *\nFROM cte_name;" }
-    },
-    "details": "Common Table Expressions (CTEs) are named temporary result sets that exist within the scope of a single statement."
-  },
+          "with (common table expressions)": {
+            "description": "Common Table Expressions (CTEs) provide a way to write auxiliary statements for use in a larger query.",
+            "syntax": "WITH cte_name AS (\n    SELECT column1, column2\n    FROM table_name\n    WHERE condition\n)\nSELECT * FROM cte_name;",
+            "compatibility": {
+              "mysql": { "supported": true,  "since": "8.0",            "notes": "Added in MySQL 8.0",            "syntax": "WITH cte_name AS (\n  SELECT col1, col2\n  FROM tbl\n  WHERE …\n)\nSELECT *\nFROM cte_name;" },
+              "postgresql": { "supported": true,  "since": "8.4",            "notes": "Well supported since PostgreSQL 8.4",            "syntax": "WITH cte_name AS (\n  SELECT col1, col2\n  FROM tbl\n  WHERE …\n)\nSELECT *\nFROM cte_name;" },
+              "sqlserver": { "supported": true,  "since": "2005",           "notes": "Available since SQL Server 2005",           "syntax": "WITH cte_name AS (\n  SELECT col1, col2\n  FROM tbl\n  WHERE …\n)\nSELECT *\nFROM cte_name;" },
+              "oracle": { "supported": true,  "since": "9i Release 2",    "notes": "Available since Oracle 9i R2",      "syntax": "WITH cte_name AS (\n  SELECT col1, col2\n  FROM tbl\n  WHERE …\n)\nSELECT *\nFROM cte_name;" },
+              "sqlite": { "supported": true,  "since": "3.8.3",          "notes": "Added in SQLite 3.8.3",          "syntax": "WITH cte_name AS (\n  SELECT col1, col2\n  FROM tbl\n  WHERE …\n)\nSELECT *\nFROM cte_name;" }
+            },
+            "details": "Common Table Expressions (CTEs) are named temporary result sets that exist within the scope of a single statement."
+          },
 
-  "merge": {
-    "description": "Performs insert, update, or delete operations on a target table based on a join to a source table.",
-    "syntax": "MERGE INTO target_table\nUSING source_table\n  ON (target.pk = source.pk)\nWHEN MATCHED THEN\n  UPDATE SET …\nWHEN NOT MATCHED THEN\n  INSERT (…) VALUES (…);",
-    "compatibility": {
-      "mysql": { "supported": false, "notes": "No MERGE—use INSERT…ON DUPLICATE KEY UPDATE",     "syntax": "INSERT INTO t (…) VALUES (…) ON DUPLICATE KEY UPDATE …;" },
-      "postgresql": { "supported": false, "notes": "No MERGE—emulate via CTE + INSERT/UPDATE",     "syntax": "WITH upsert AS (\n  UPDATE t SET … WHERE … RETURNING *\n)\nINSERT INTO t (…) SELECT … WHERE NOT EXISTS (SELECT 1 FROM upsert);" },
-      "sqlserver": { "supported": true,  "since": "2008", "notes": "Available since SQL Server 2008",      "syntax": "MERGE INTO target AS T\nUSING source AS S\n  ON T.pk = S.pk\nWHEN MATCHED THEN UPDATE SET …\nWHEN NOT MATCHED THEN INSERT (… ) VALUES (… );" },
-      "oracle": { "supported": true,  "since": "9i",   "notes": "Available since Oracle 9i",         "syntax": "MERGE INTO target T\nUSING source S\n  ON (T.pk = S.pk)\nWHEN MATCHED THEN UPDATE SET …\nWHEN NOT MATCHED THEN INSERT (…) VALUES (…);" },
-      "sqlite": { "supported": false, "notes": "No MERGE—use INSERT…ON CONFLICT",        "syntax": "INSERT INTO t (…) VALUES (…) ON CONFLICT(pk) DO UPDATE SET …;" }
-    },
-    "details": "Useful for ETL and slowly changing dimensions."
-  },
+          "merge": {
+            "description": "Performs insert, update, or delete operations on a target table based on a join to a source table.",
+            "syntax": "MERGE INTO target_table\nUSING source_table\n  ON (target.pk = source.pk)\nWHEN MATCHED THEN\n  UPDATE SET …\nWHEN NOT MATCHED THEN\n  INSERT (…) VALUES (…);",
+            "compatibility": {
+              "mysql": { "supported": false, "notes": "No MERGE—use INSERT…ON DUPLICATE KEY UPDATE",     "syntax": "INSERT INTO t (…) VALUES (…) ON DUPLICATE KEY UPDATE …;" },
+              "postgresql": { "supported": false, "notes": "No MERGE—emulate via CTE + INSERT/UPDATE",     "syntax": "WITH upsert AS (\n  UPDATE t SET … WHERE … RETURNING *\n)\nINSERT INTO t (…) SELECT … WHERE NOT EXISTS (SELECT 1 FROM upsert);" },
+              "sqlserver": { "supported": true,  "since": "2008", "notes": "Available since SQL Server 2008",      "syntax": "MERGE INTO target AS T\nUSING source AS S\n  ON T.pk = S.pk\nWHEN MATCHED THEN UPDATE SET …\nWHEN NOT MATCHED THEN INSERT (… ) VALUES (… );" },
+              "oracle": { "supported": true,  "since": "9i",   "notes": "Available since Oracle 9i",         "syntax": "MERGE INTO target T\nUSING source S\n  ON (T.pk = S.pk)\nWHEN MATCHED THEN UPDATE SET …\nWHEN NOT MATCHED THEN INSERT (…) VALUES (…);" },
+              "sqlite": { "supported": false, "notes": "No MERGE—use INSERT…ON CONFLICT",        "syntax": "INSERT INTO t (…) VALUES (…) ON CONFLICT(pk) DO UPDATE SET …;" }
+            },
+            "details": "Useful for ETL and slowly changing dimensions."
+          },
 
-  "json_table": {
-    "description": "Extracts JSON data and returns it as a relational table.",
-    "syntax": "SELECT jt.*\nFROM my_table,\nJSON_TABLE(json_col, '$' COLUMNS (\n    name VARCHAR(100) PATH '$.name',\n    age  INT           PATH '$.age'\n)) AS jt;",
-    "compatibility": {
-      "mysql": { "supported": true,  "since": "8.0.4", "notes": "Added in MySQL 8.0.4",     "syntax": "SELECT jt.*\nFROM tbl,\nJSON_TABLE(json_col, '$' COLUMNS (\n  name VARCHAR(50) PATH '$.name',\n  age  INT           PATH '$.age'\n)) AS jt;" },
-      "postgresql": { "supported": true,  "since": "9.3",   "notes": "Use jsonb_path_query", "syntax": "SELECT \n  j->>'name' AS name,\n  (j->>'age')::int AS age\nFROM tbl,\nLATERAL jsonb_array_elements(json_col->'people') AS arr(j);" },
-      "sqlserver": { "supported": true,  "since": "2016",  "notes": "Use OPENJSON",       "syntax": "SELECT *\nFROM tbl\nCROSS APPLY OPENJSON(json_col)\nWITH (name NVARCHAR(50) '$.name', age INT '$.age') AS jt;" },
-      "oracle": { "supported": true,  "since": "12c",   "notes": "Native JSON_TABLE",   "syntax": "SELECT jt.name, jt.age\nFROM tbl,\nJSON_TABLE(json_col, '$'\n  COLUMNS (name VARCHAR2(50) PATH '$.name', age NUMBER PATH '$.age')\n) jt;" },
-      "sqlite": { "supported": false, "notes": "No JSON_TABLE—use json_each/json_extract", "syntax": "SELECT\n  json_extract(value, '$.name') AS name,\n  json_extract(value, '$.age')  AS age\nFROM tbl, json_each(json_col);" }
-    },
-    "details": "Turn JSON docs into relational rows/columns for easy querying."
-  },
+          "json_table": {
+            "description": "Extracts JSON data and returns it as a relational table.",
+            "syntax": "SELECT jt.*\nFROM my_table,\nJSON_TABLE(json_col, '$' COLUMNS (\n    name VARCHAR(100) PATH '$.name',\n    age  INT           PATH '$.age'\n)) AS jt;",
+            "compatibility": {
+              "mysql": { "supported": true,  "since": "8.0.4", "notes": "Added in MySQL 8.0.4",     "syntax": "SELECT jt.*\nFROM tbl,\nJSON_TABLE(json_col, '$' COLUMNS (\n  name VARCHAR(50) PATH '$.name',\n  age  INT           PATH '$.age'\n)) AS jt;" },
+              "postgresql": { "supported": true,  "since": "9.3",   "notes": "Use jsonb_path_query", "syntax": "SELECT \n  j->>'name' AS name,\n  (j->>'age')::int AS age\nFROM tbl,\nLATERAL jsonb_array_elements(json_col->'people') AS arr(j);" },
+              "sqlserver": { "supported": true,  "since": "2016",  "notes": "Use OPENJSON",       "syntax": "SELECT *\nFROM tbl\nCROSS APPLY OPENJSON(json_col)\nWITH (name NVARCHAR(50) '$.name', age INT '$.age') AS jt;" },
+              "oracle": { "supported": true,  "since": "12c",   "notes": "Native JSON_TABLE",   "syntax": "SELECT jt.name, jt.age\nFROM tbl,\nJSON_TABLE(json_col, '$'\n  COLUMNS (name VARCHAR2(50) PATH '$.name', age NUMBER PATH '$.age')\n) jt;" },
+              "sqlite": { "supported": false, "notes": "No JSON_TABLE—use json_each/json_extract", "syntax": "SELECT\n  json_extract(value, '$.name') AS name,\n  json_extract(value, '$.age')  AS age\nFROM tbl, json_each(json_col);" }
+            },
+            "details": "Turn JSON docs into relational rows/columns for easy querying."
+          },
 
-  "window functions": {
-    "description": "Perform calculations across a set of rows related to the current row.",
-    "syntax": "SELECT column1,\n       AVG(column3) OVER (PARTITION BY column1 ORDER BY column2) AS avg_val\nFROM table_name;",
-    "compatibility": {
-      "mysql": { "supported": true,  "since": "8.0",  "notes": "Added in MySQL 8.0",           "syntax": "SELECT col1,\n       ROW_NUMBER() OVER (PARTITION BY col1 ORDER BY col2) AS rn\nFROM tbl;" },
-      "postgresql": { "supported": true,  "since": "8.4",  "notes": "Supported since PG 8.4",      "syntax": "SELECT col1,\n       RANK()      OVER (PARTITION BY col1 ORDER BY col2) AS rnk\nFROM tbl;" },
-      "sqlserver": { "supported": true,  "since": "2005", "notes": "Since SQL Server 2005",         "syntax": "SELECT col1,\n       LAG(col2)   OVER (PARTITION BY col1 ORDER BY col2) AS prev_val\nFROM tbl;" },
-      "oracle": { "supported": true,  "since": "8i",   "notes": "Since Oracle 8i",             "syntax": "SELECT col1,\n       FIRST_VALUE(col2) OVER (PARTITION BY col1 ORDER BY col2) AS first_val\nFROM tbl;" },
-      "sqlite": { "supported": true,  "since": "3.25.0","notes": "Added in SQLite 3.25.0",     "syntax": "SELECT col1,\n       SUM(col2)  OVER (PARTITION BY col1) AS total\nFROM tbl;" }
-    },
-    "details": "Includes ranking, aggregate, and value functions like LEAD and LAG."
-  },
+          "window functions": {
+            "description": "Perform calculations across a set of rows related to the current row.",
+            "syntax": "SELECT column1,\n       AVG(column3) OVER (PARTITION BY column1 ORDER BY column2) AS avg_val\nFROM table_name;",
+            "compatibility": {
+              "mysql": { "supported": true,  "since": "8.0",  "notes": "Added in MySQL 8.0",           "syntax": "SELECT col1,\n       ROW_NUMBER() OVER (PARTITION BY col1 ORDER BY col2) AS rn\nFROM tbl;" },
+              "postgresql": { "supported": true,  "since": "8.4",  "notes": "Supported since PG 8.4",      "syntax": "SELECT col1,\n       RANK()      OVER (PARTITION BY col1 ORDER BY col2) AS rnk\nFROM tbl;" },
+              "sqlserver": { "supported": true,  "since": "2005", "notes": "Since SQL Server 2005",         "syntax": "SELECT col1,\n       LAG(col2)   OVER (PARTITION BY col1 ORDER BY col2) AS prev_val\nFROM tbl;" },
+              "oracle": { "supported": true,  "since": "8i",   "notes": "Since Oracle 8i",             "syntax": "SELECT col1,\n       FIRST_VALUE(col2) OVER (PARTITION BY col1 ORDER BY col2) AS first_val\nFROM tbl;" },
+              "sqlite": { "supported": true,  "since": "3.25.0","notes": "Added in SQLite 3.25.0",     "syntax": "SELECT col1,\n       SUM(col2)  OVER (PARTITION BY col1) AS total\nFROM tbl;" }
+            },
+            "details": "Includes ranking, aggregate, and value functions like LEAD and LAG."
+          },
 
-  "pivot": {
-    "description": "Rotates rows into columns, creating cross-tab reports.",
-    "syntax": "SELECT *\nFROM (\n  SELECT category, month, value\n  FROM sales\n) AS src\nPIVOT (\n  SUM(value) FOR month IN ([Jan],[Feb],[Mar])\n) AS p;",
-    "compatibility": {
-      "mysql": { "supported": false, "notes": "No PIVOT—use conditional aggregation", "syntax": "SELECT\n  category,\n  SUM(CASE WHEN month='Jan' THEN value END) AS Jan,\n  …\nFROM sales\nGROUP BY category;" },
-      "postgresql": { "supported": false, "notes": "Use tablefunc crosstab()",        "syntax": "SELECT *\nFROM crosstab(\n  'SELECT category,month,value FROM sales ORDER BY 1,2',\n  'VALUES (''Jan''),( ''Feb''),( ''Mar'')'\n) AS ct(category text, Jan int, Feb int, Mar int);" },
-      "sqlserver": { "supported": true,  "since": "2005", "notes": "Since SQL Server 2005",         "syntax": "SELECT *\nFROM (\n  SELECT category, month, value FROM sales\n) AS src\nPIVOT(\n  SUM(value) FOR month IN ([Jan],[Feb],[Mar])\n) AS p;" },
-      "oracle": { "supported": true,  "since": "11g",  "notes": "Since Oracle 11g",            "syntax": "SELECT *\nFROM (\n  SELECT category, month, value FROM sales\n)\nPIVOT(\n  SUM(value) FOR month IN ('Jan' AS Jan,'Feb' AS Feb,'Mar' AS Mar)\n);" },
-      "sqlite": { "supported": false, "notes": "No PIVOT—use CASE/ GROUP BY",   "syntax": "SELECT\n  category,\n  SUM(CASE WHEN month='Jan' THEN value END) AS Jan,\n  …\nFROM sales\nGROUP BY category;" }
-    },
-    "details": "Shorthand for conditional aggregation—transform rows into columns."
-  },
+          "pivot": {
+            "description": "Rotates rows into columns, creating cross-tab reports.",
+            "syntax": "SELECT *\nFROM (\n  SELECT category, month, value\n  FROM sales\n) AS src\nPIVOT (\n  SUM(value) FOR month IN ([Jan],[Feb],[Mar])\n) AS p;",
+            "compatibility": {
+              "mysql": { "supported": false, "notes": "No PIVOT—use conditional aggregation", "syntax": "SELECT\n  category,\n  SUM(CASE WHEN month='Jan' THEN value END) AS Jan,\n  …\nFROM sales\nGROUP BY category;" },
+              "postgresql": { "supported": false, "notes": "Use tablefunc crosstab()",        "syntax": "SELECT *\nFROM crosstab(\n  'SELECT category,month,value FROM sales ORDER BY 1,2',\n  'VALUES (''Jan''),( ''Feb''),( ''Mar'')'\n) AS ct(category text, Jan int, Feb int, Mar int);" },
+              "sqlserver": { "supported": true,  "since": "2005", "notes": "Since SQL Server 2005",         "syntax": "SELECT *\nFROM (\n  SELECT category, month, value FROM sales\n) AS src\nPIVOT(\n  SUM(value) FOR month IN ([Jan],[Feb],[Mar])\n) AS p;" },
+              "oracle": { "supported": true,  "since": "11g",  "notes": "Since Oracle 11g",            "syntax": "SELECT *\nFROM (\n  SELECT category, month, value FROM sales\n)\nPIVOT(\n  SUM(value) FOR month IN ('Jan' AS Jan,'Feb' AS Feb,'Mar' AS Mar)\n);" },
+              "sqlite": { "supported": false, "notes": "No PIVOT—use CASE/ GROUP BY",   "syntax": "SELECT\n  category,\n  SUM(CASE WHEN month='Jan' THEN value END) AS Jan,\n  …\nFROM sales\nGROUP BY category;" }
+            },
+            "details": "Shorthand for conditional aggregation—transform rows into columns."
+          },
 
-  "full text search": {
-    "description": "Specialized indexing and querying for efficient text searches.",
-    "syntax": "-- varies by engine\nSELECT *\nFROM articles\nWHERE MATCH(title, body) AGAINST('terms' IN BOOLEAN MODE);",
-    "compatibility": {
-      "mysql": { "supported": true,  "since": "3.23.23", "notes": "Engine-dependent",        "syntax": "SELECT *\nFROM articles\nWHERE MATCH(title,body) AGAINST('terms' IN BOOLEAN MODE);" },
-      "postgresql": { "supported": true,  "since": "8.3",     "notes": "tsvector/tsquery",        "syntax": "SELECT *\nFROM articles\nWHERE to_tsvector('english',title||' '||body)\n  @@ plainto_tsquery('terms');" },
-      "sqlserver": { "supported": true,  "since": "2008",    "notes": "Full-Text Service needed", "syntax": "SELECT *\nFROM articles\nWHERE CONTAINS((title,body),'\"terms\"');" },
-      "oracle": { "supported": true,  "since": "8i",     "notes": "Oracle Text",              "syntax": "SELECT *\nFROM articles\nWHERE CONTAINS(title||body,'terms')>0;" },
-      "sqlite": { "supported": true,  "since": "3.9.0",   "notes": "FTS3/4/5 modules",          "syntax": "SELECT rowid, *\nFROM articles_fts\nWHERE articles_fts MATCH 'terms';" }
-    },
-    "details": "Syntax and capabilities vary widely by system."
-  },
+          "full text search": {
+            "description": "Specialized indexing and querying for efficient text searches.",
+            "syntax": "-- varies by engine\nSELECT *\nFROM articles\nWHERE MATCH(title, body) AGAINST('terms' IN BOOLEAN MODE);",
+            "compatibility": {
+              "mysql": { "supported": true,  "since": "3.23.23", "notes": "Engine-dependent",        "syntax": "SELECT *\nFROM articles\nWHERE MATCH(title,body) AGAINST('terms' IN BOOLEAN MODE);" },
+              "postgresql": { "supported": true,  "since": "8.3",     "notes": "tsvector/tsquery",        "syntax": "SELECT *\nFROM articles\nWHERE to_tsvector('english',title||' '||body)\n  @@ plainto_tsquery('terms');" },
+              "sqlserver": { "supported": true,  "since": "2008",    "notes": "Full-Text Service needed", "syntax": "SELECT *\nFROM articles\nWHERE CONTAINS((title,body),'\"terms\"');" },
+              "oracle": { "supported": true,  "since": "8i",     "notes": "Oracle Text",              "syntax": "SELECT *\nFROM articles\nWHERE CONTAINS(title||body,'terms')>0;" },
+              "sqlite": { "supported": true,  "since": "3.9.0",   "notes": "FTS3/4/5 modules",          "syntax": "SELECT rowid, *\nFROM articles_fts\nWHERE articles_fts MATCH 'terms';" }
+            },
+            "details": "Syntax and capabilities vary widely by system."
+          },
 
-  "recursive cte": {
-    "description": "A CTE that references itself for hierarchies or graph traversals.",
-    "syntax": "WITH RECURSIVE cte AS (\n  SELECT id, parent_id FROM tbl WHERE parent_id IS NULL\n  UNION ALL\n  SELECT t.id, t.parent_id\n  FROM tbl t\n  JOIN cte ON cte.id = t.parent_id\n)\nSELECT * FROM cte;",
-    "compatibility": {
-      "mysql": { "supported": true,  "since": "8.0",      "notes": "RECURSIVE keyword required",      "syntax": "WITH RECURSIVE cte AS (…)\nSELECT * FROM cte;" },
-      "postgresql": { "supported": true,  "since": "8.4",      "notes": "Standard RECURSIVE CTE",          "syntax": "WITH RECURSIVE cte AS (…)\nSELECT * FROM cte;" },
-      "sqlserver": { "supported": true,  "since": "2005",     "notes": "Standard CTE recursion",         "syntax": "WITH cte AS (…)\nSELECT * FROM cte;" },
-      "oracle": { "supported": true,  "since": "11g R2",   "notes": "Pre-11gR2 use CONNECT BY",      "syntax": "WITH cte AS (…)\nSELECT * FROM cte;" },
-      "sqlite": { "supported": true,  "since": "3.8.3",    "notes": "Supports RECURSIVE CTEs",        "syntax": "WITH RECURSIVE cte AS (…)\nSELECT * FROM cte;" }
-    },
-    "details": "Great for org charts, file trees, and any hierarchical data."
-  },
+          "recursive cte": {
+            "description": "A CTE that references itself for hierarchies or graph traversals.",
+            "syntax": "WITH RECURSIVE cte AS (\n  SELECT id, parent_id FROM tbl WHERE parent_id IS NULL\n  UNION ALL\n  SELECT t.id, t.parent_id\n  FROM tbl t\n  JOIN cte ON cte.id = t.parent_id\n)\nSELECT * FROM cte;",
+            "compatibility": {
+              "mysql": { "supported": true,  "since": "8.0",      "notes": "RECURSIVE keyword required",      "syntax": "WITH RECURSIVE cte AS (…)\nSELECT * FROM cte;" },
+              "postgresql": { "supported": true,  "since": "8.4",      "notes": "Standard RECURSIVE CTE",          "syntax": "WITH RECURSIVE cte AS (…)\nSELECT * FROM cte;" },
+              "sqlserver": { "supported": true,  "since": "2005",     "notes": "Standard CTE recursion",         "syntax": "WITH cte AS (…)\nSELECT * FROM cte;" },
+              "oracle": { "supported": true,  "since": "11g R2",   "notes": "Pre-11gR2 use CONNECT BY",      "syntax": "WITH cte AS (…)\nSELECT * FROM cte;" },
+              "sqlite": { "supported": true,  "since": "3.8.3",    "notes": "Supports RECURSIVE CTEs",        "syntax": "WITH RECURSIVE cte AS (…)\nSELECT * FROM cte;" }
+            },
+            "details": "Great for org charts, file trees, and any hierarchical data."
+          },
 
-  "upsert": {
-    "description": "Insert rows that don't exist and update those that do in one statement.",
-    "syntax": "INSERT INTO tbl (col1,col2)\nVALUES (v1,v2)\nON CONFLICT (pk) DO UPDATE\nSET col1 = EXCLUDED.col1;",
-    "compatibility": {
-      "mysql": { "supported": true,  "since": "5.1",    "notes": "ON DUPLICATE KEY UPDATE",   "syntax": "INSERT INTO tbl (…) VALUES (…) ON DUPLICATE KEY UPDATE …;" },
-      "postgresql": { "supported": true,  "since": "9.5",    "notes": "ON CONFLICT DO UPDATE",      "syntax": "INSERT INTO tbl (…) VALUES (…) ON CONFLICT(pk) DO UPDATE SET …;" },
-      "sqlserver": { "supported": true,  "since": "2008",   "notes": "Via MERGE",                  "syntax": "MERGE … WHEN MATCHED THEN UPDATE WHEN NOT MATCHED THEN INSERT;" },
-      "oracle": { "supported": true,  "since": "9i",     "notes": "Via MERGE",                  "syntax": "MERGE … WHEN MATCHED THEN UPDATE WHEN NOT MATCHED THEN INSERT;" },
-      "sqlite": { "supported": true,  "since": "3.24.0", "notes": "INSERT…ON CONFLICT",         "syntax": "INSERT INTO tbl (…) VALUES (…) ON CONFLICT(pk) DO UPDATE SET …;" }
-    },
-    "details": "Atomic insert-or-update in one shot."
-  },
+          "upsert": {
+            "description": "Insert rows that don't exist and update those that do in one statement.",
+            "syntax": "INSERT INTO tbl (col1,col2)\nVALUES (v1,v2)\nON CONFLICT (pk) DO UPDATE\nSET col1 = EXCLUDED.col1;",
+            "compatibility": {
+              "mysql": { "supported": true,  "since": "5.1",    "notes": "ON DUPLICATE KEY UPDATE",   "syntax": "INSERT INTO tbl (…) VALUES (…) ON DUPLICATE KEY UPDATE …;" },
+              "postgresql": { "supported": true,  "since": "9.5",    "notes": "ON CONFLICT DO UPDATE",      "syntax": "INSERT INTO tbl (…) VALUES (…) ON CONFLICT(pk) DO UPDATE SET …;" },
+              "sqlserver": { "supported": true,  "since": "2008",   "notes": "Via MERGE",                  "syntax": "MERGE … WHEN MATCHED THEN UPDATE WHEN NOT MATCHED THEN INSERT;" },
+              "oracle": { "supported": true,  "since": "9i",     "notes": "Via MERGE",                  "syntax": "MERGE … WHEN MATCHED THEN UPDATE WHEN NOT MATCHED THEN INSERT;" },
+              "sqlite": { "supported": true,  "since": "3.24.0", "notes": "INSERT…ON CONFLICT",         "syntax": "INSERT INTO tbl (…) VALUES (…) ON CONFLICT(pk) DO UPDATE SET …;" }
+            },
+            "details": "Atomic insert-or-update in one shot."
+          },
 
-  "select": {
-    "description": "Retrieve rows from one or more tables.",
-    "syntax": "SELECT *\nFROM table_name\nWHERE condition\nORDER BY column\nLIMIT 10;",
-    "compatibility": {
-      "mysql": { "supported": true,  "since": "all",   "notes": "Use LIMIT at end",     "syntax": "SELECT * FROM tbl WHERE … ORDER BY col LIMIT 10 OFFSET 5;" },
-      "postgresql": { "supported": true,  "since": "all",   "notes": "LIMIT/OFFSET",         "syntax": "SELECT * FROM tbl WHERE … ORDER BY col LIMIT 10 OFFSET 5;" },
-      "sqlserver": { "supported": true,  "since": "2005",  "notes": "Use TOP or OFFSET FETCH", "syntax": "SELECT TOP 10 * FROM tbl WHERE … ORDER BY col;\n-- or with OFFSET FETCH:\nSELECT * FROM tbl WHERE … ORDER BY col\nOFFSET 5 ROWS FETCH NEXT 10 ROWS ONLY;" },
-      "oracle": { "supported": true,  "since": "12c",  "notes": "OFFSET/FETCH",          "syntax": "SELECT * FROM tbl WHERE … ORDER BY col\nOFFSET 5 ROWS FETCH NEXT 10 ROWS ONLY;" },
-      "sqlite": { "supported": true,  "since": "all",   "notes": "Uses LIMIT/OFFSET",      "syntax": "SELECT * FROM tbl WHERE … ORDER BY col LIMIT 10 OFFSET 5;" }
-    },
-    "details": "Core retrieval statement, with dialect-specific paging syntax."
-  },
+          "select": {
+            "description": "Retrieve rows from one or more tables.",
+            "syntax": "SELECT *\nFROM table_name\nWHERE condition\nORDER BY column\nLIMIT 10;",
+            "compatibility": {
+              "mysql": { "supported": true,  "since": "all",   "notes": "Use LIMIT at end",     "syntax": "SELECT * FROM tbl WHERE … ORDER BY col LIMIT 10 OFFSET 5;" },
+              "postgresql": { "supported": true,  "since": "all",   "notes": "LIMIT/OFFSET",         "syntax": "SELECT * FROM tbl WHERE … ORDER BY col LIMIT 10 OFFSET 5;" },
+              "sqlserver": { "supported": true,  "since": "2005",  "notes": "Use TOP or OFFSET FETCH", "syntax": "SELECT TOP 10 * FROM tbl WHERE … ORDER BY col;\n-- or with OFFSET FETCH:\nSELECT * FROM tbl WHERE … ORDER BY col\nOFFSET 5 ROWS FETCH NEXT 10 ROWS ONLY;" },
+              "oracle": { "supported": true,  "since": "12c",  "notes": "OFFSET/FETCH",          "syntax": "SELECT * FROM tbl WHERE … ORDER BY col\nOFFSET 5 ROWS FETCH NEXT 10 ROWS ONLY;" },
+              "sqlite": { "supported": true,  "since": "all",   "notes": "Uses LIMIT/OFFSET",      "syntax": "SELECT * FROM tbl WHERE … ORDER BY col LIMIT 10 OFFSET 5;" }
+            },
+            "details": "Core retrieval statement, with dialect-specific paging syntax."
+          },
 
-  "insert": {
-    "description": "Add new rows to a table.",
-    "syntax": "INSERT INTO table_name (col1, col2)\nVALUES (v1, v2);",
-    "compatibility": {
-      "mysql": { "supported": true, "since": "all", "notes": "Standard",          "syntax": "INSERT INTO tbl (c1,c2) VALUES (v1,v2);" },
-      "postgresql": { "supported": true, "since": "all", "notes": "Standard",          "syntax": "INSERT INTO tbl (c1,c2) VALUES (v1,v2) RETURNING id;" },
-      "sqlserver": { "supported": true, "since": "all", "notes": "Standard + OUTPUT",   "syntax": "INSERT INTO tbl (c1,c2)\nOUTPUT inserted.id\nVALUES (v1,v2);" },
-      "oracle": { "supported": true, "since": "all", "notes": "Standard + RETURNING", "syntax": "INSERT INTO tbl (c1,c2)\nVALUES (v1,v2)\nRETURNING id INTO :new_id;" },
-      "sqlite": { "supported": true, "since": "all", "notes": "Standard",          "syntax": "INSERT INTO tbl (c1,c2) VALUES (v1,v2);" }
-    },
-    "details": "Basic DML for creating rows."
-  },
+          "insert": {
+            "description": "Add new rows to a table.",
+            "syntax": "INSERT INTO table_name (col1, col2)\nVALUES (v1, v2);",
+            "compatibility": {
+              "mysql": { "supported": true, "since": "all", "notes": "Standard",          "syntax": "INSERT INTO tbl (c1,c2) VALUES (v1,v2);" },
+              "postgresql": { "supported": true, "since": "all", "notes": "Standard",          "syntax": "INSERT INTO tbl (c1,c2) VALUES (v1,v2) RETURNING id;" },
+              "sqlserver": { "supported": true, "since": "all", "notes": "Standard + OUTPUT",   "syntax": "INSERT INTO tbl (c1,c2)\nOUTPUT inserted.id\nVALUES (v1,v2);" },
+              "oracle": { "supported": true, "since": "all", "notes": "Standard + RETURNING", "syntax": "INSERT INTO tbl (c1,c2)\nVALUES (v1,v2)\nRETURNING id INTO :new_id;" },
+              "sqlite": { "supported": true, "since": "all", "notes": "Standard",          "syntax": "INSERT INTO tbl (c1,c2) VALUES (v1,v2);" }
+            },
+            "details": "Basic DML for creating rows."
+          },
 
-  "update": {
-    "description": "Modify existing rows in a table.",
-    "syntax": "UPDATE table_name\nSET col1 = v1, col2 = v2\nWHERE condition;",
-    "compatibility": {
-      "mysql": { "supported": true, "since": "all", "notes": "Standard",      "syntax": "UPDATE tbl SET c1=v1 WHERE …;" },
-      "postgresql": { "supported": true, "since": "all", "notes": "Standard",      "syntax": "UPDATE tbl SET c1=v1 WHERE … RETURNING *;" },
-      "sqlserver": { "supported": true, "since": "all", "notes": "Standard + OUTPUT", "syntax": "UPDATE tbl\nSET c1=v1\nOUTPUT inserted.*\nWHERE …;" },
-      "oracle": { "supported": true, "since": "all", "notes": "Standard + RETURNING", "syntax": "UPDATE tbl SET c1=v1 WHERE … RETURNING * INTO …;" },
-      "sqlite": { "supported": true, "since": "all", "notes": "Standard",      "syntax": "UPDATE tbl SET c1=v1 WHERE …;" }
-    },
-    "details": "Basic DML for modifying rows."
-  },
+          "update": {
+            "description": "Modify existing rows in a table.",
+            "syntax": "UPDATE table_name\nSET col1 = v1, col2 = v2\nWHERE condition;",
+            "compatibility": {
+              "mysql": { "supported": true, "since": "all", "notes": "Standard",      "syntax": "UPDATE tbl SET c1=v1 WHERE …;" },
+              "postgresql": { "supported": true, "since": "all", "notes": "Standard",      "syntax": "UPDATE tbl SET c1=v1 WHERE … RETURNING *;" },
+              "sqlserver": { "supported": true, "since": "all", "notes": "Standard + OUTPUT", "syntax": "UPDATE tbl\nSET c1=v1\nOUTPUT inserted.*\nWHERE …;" },
+              "oracle": { "supported": true, "since": "all", "notes": "Standard + RETURNING", "syntax": "UPDATE tbl SET c1=v1 WHERE … RETURNING * INTO …;" },
+              "sqlite": { "supported": true, "since": "all", "notes": "Standard",      "syntax": "UPDATE tbl SET c1=v1 WHERE …;" }
+            },
+            "details": "Basic DML for modifying rows."
+          },
 
-  "delete": {
-    "description": "Remove rows from a table.",
-    "syntax": "DELETE FROM table_name\nWHERE condition;",
-    "compatibility": {
-      "mysql": { "supported": true, "since": "all", "notes": "Standard",      "syntax": "DELETE FROM tbl WHERE …;" },
-      "postgresql": { "supported": true, "since": "all", "notes": "Standard",      "syntax": "DELETE FROM tbl WHERE … RETURNING *;" },
-      "sqlserver": { "supported": true, "since": "all", "notes": "Standard + OUTPUT", "syntax": "DELETE FROM tbl\nOUTPUT deleted.*\nWHERE …;" },
-      "oracle": { "supported": true, "since": "all", "notes": "Standard + RETURNING", "syntax": "DELETE FROM tbl WHERE … RETURNING * INTO …;" },
-      "sqlite": { "supported": true, "since": "all", "notes": "Standard",      "syntax": "DELETE FROM tbl WHERE …;" }
-    },
-    "details": "Basic DML for removing rows."
-  },
+          "delete": {
+            "description": "Remove rows from a table.",
+            "syntax": "DELETE FROM table_name\nWHERE condition;",
+            "compatibility": {
+              "mysql": { "supported": true, "since": "all", "notes": "Standard",      "syntax": "DELETE FROM tbl WHERE …;" },
+              "postgresql": { "supported": true, "since": "all", "notes": "Standard",      "syntax": "DELETE FROM tbl WHERE … RETURNING *;" },
+              "sqlserver": { "supported": true, "since": "all", "notes": "Standard + OUTPUT", "syntax": "DELETE FROM tbl\nOUTPUT deleted.*\nWHERE …;" },
+              "oracle": { "supported": true, "since": "all", "notes": "Standard + RETURNING", "syntax": "DELETE FROM tbl WHERE … RETURNING * INTO …;" },
+              "sqlite": { "supported": true, "since": "all", "notes": "Standard",      "syntax": "DELETE FROM tbl WHERE …;" }
+            },
+            "details": "Basic DML for removing rows."
+          },
 
-  "create table": {
-    "description": "Define a new table and its columns.",
-    "syntax": "CREATE TABLE table_name (\n  id   INT PRIMARY KEY,\n  name VARCHAR(100) NOT NULL\n);",
-    "compatibility": {
-      "mysql": { "supported": true, "since": "all", "notes": "Engine options available", "syntax": "CREATE TABLE tbl (\n  id   INT AUTO_INCREMENT PRIMARY KEY,\n  name VARCHAR(100) NOT NULL\n) ENGINE=InnoDB;" },
-      "postgresql": { "supported": true, "since": "all", "notes": "Standard + SERIAL",      "syntax": "CREATE TABLE tbl (\n  id   SERIAL PRIMARY KEY,\n  name TEXT NOT NULL\n);" },
-      "sqlserver": { "supported": true, "since": "all", "notes": "Standard + IDENTITY",    "syntax": "CREATE TABLE tbl (\n  id   INT IDENTITY(1,1) PRIMARY KEY,\n  name NVARCHAR(100) NOT NULL\n);" },
-      "oracle": { "supported": true, "since": "all", "notes": "Standard + SEQUENCES",    "syntax": "CREATE TABLE tbl (\n  id   NUMBER GENERATED BY DEFAULT AS IDENTITY PRIMARY KEY,\n  name VARCHAR2(100) NOT NULL\n);" },
-      "sqlite": { "supported": true, "since": "all", "notes": "Standard + AUTOINCREMENT", "syntax": "CREATE TABLE tbl (\n  id   INTEGER PRIMARY KEY AUTOINCREMENT,\n  name TEXT NOT NULL\n);" }
-    },
-    "details": "DDL to create a new relational table."
-  },
+          "create table": {
+            "description": "Define a new table and its columns.",
+            "syntax": "CREATE TABLE table_name (\n  id   INT PRIMARY KEY,\n  name VARCHAR(100) NOT NULL\n);",
+            "compatibility": {
+              "mysql": { "supported": true, "since": "all", "notes": "Engine options available", "syntax": "CREATE TABLE tbl (\n  id   INT AUTO_INCREMENT PRIMARY KEY,\n  name VARCHAR(100) NOT NULL\n) ENGINE=InnoDB;" },
+              "postgresql": { "supported": true, "since": "all", "notes": "Standard + SERIAL",      "syntax": "CREATE TABLE tbl (\n  id   SERIAL PRIMARY KEY,\n  name TEXT NOT NULL\n);" },
+              "sqlserver": { "supported": true, "since": "all", "notes": "Standard + IDENTITY",    "syntax": "CREATE TABLE tbl (\n  id   INT IDENTITY(1,1) PRIMARY KEY,\n  name NVARCHAR(100) NOT NULL\n);" },
+              "oracle": { "supported": true, "since": "all", "notes": "Standard + SEQUENCES",    "syntax": "CREATE TABLE tbl (\n  id   NUMBER GENERATED BY DEFAULT AS IDENTITY PRIMARY KEY,\n  name VARCHAR2(100) NOT NULL\n);" },
+              "sqlite": { "supported": true, "since": "all", "notes": "Standard + AUTOINCREMENT", "syntax": "CREATE TABLE tbl (\n  id   INTEGER PRIMARY KEY AUTOINCREMENT,\n  name TEXT NOT NULL\n);" }
+            },
+            "details": "DDL to create a new relational table."
+          },
 
-  "alter table": {
-    "description": "Modify an existing table’s structure.",
-    "syntax": "ALTER TABLE table_name\nADD COLUMN new_col VARCHAR(50);",
-    "compatibility": {
-      "mysql": { "supported": true, "since": "all", "notes": "Multiple ALTER per stmt", "syntax": "ALTER TABLE tbl\nADD COLUMN nick VARCHAR(50),\nDROP COLUMN old_col;" },
-      "postgresql": { "supported": true, "since": "all", "notes": "Standard",                "syntax": "ALTER TABLE tbl\nADD COLUMN nick TEXT;\nALTER TABLE tbl\nDROP COLUMN old_col;" },
-      "sqlserver": { "supported": true, "since": "all", "notes": "Standard",                "syntax": "ALTER TABLE tbl\nADD nick NVARCHAR(50);\nALTER TABLE tbl\nDROP COLUMN old_col;" },
-      "oracle": { "supported": true, "since": "all", "notes": "Standard",                "syntax": "ALTER TABLE tbl\nADD nick VARCHAR2(50);\nALTER TABLE tbl\nDROP COLUMN old_col;" },
-      "sqlite": { "supported": true, "since": "all", "notes": "Limited: only ADD",       "syntax": "ALTER TABLE tbl\nADD COLUMN nick TEXT;" }
-    },
-    "details": "DDL for evolving schemas."
-  },
+          "alter table": {
+            "description": "Modify an existing table’s structure.",
+            "syntax": "ALTER TABLE table_name\nADD COLUMN new_col VARCHAR(50);",
+            "compatibility": {
+              "mysql": { "supported": true, "since": "all", "notes": "Multiple ALTER per stmt", "syntax": "ALTER TABLE tbl\nADD COLUMN nick VARCHAR(50),\nDROP COLUMN old_col;" },
+              "postgresql": { "supported": true, "since": "all", "notes": "Standard",                "syntax": "ALTER TABLE tbl\nADD COLUMN nick TEXT;\nALTER TABLE tbl\nDROP COLUMN old_col;" },
+              "sqlserver": { "supported": true, "since": "all", "notes": "Standard",                "syntax": "ALTER TABLE tbl\nADD nick NVARCHAR(50);\nALTER TABLE tbl\nDROP COLUMN old_col;" },
+              "oracle": { "supported": true, "since": "all", "notes": "Standard",                "syntax": "ALTER TABLE tbl\nADD nick VARCHAR2(50);\nALTER TABLE tbl\nDROP COLUMN old_col;" },
+              "sqlite": { "supported": true, "since": "all", "notes": "Limited: only ADD",       "syntax": "ALTER TABLE tbl\nADD COLUMN nick TEXT;" }
+            },
+            "details": "DDL for evolving schemas."
+          },
 
-  "drop table": {
-    "description": "Remove a table and all its data.",
-    "syntax": "DROP TABLE table_name;",
-    "compatibility": {
-      "mysql": { "supported": true, "since": "all", "notes": "CASCADE available",     "syntax": "DROP TABLE IF EXISTS tbl;" },
-      "postgresql": { "supported": true, "since": "all", "notes": "CASCADE / RESTRICT",    "syntax": "DROP TABLE IF EXISTS tbl CASCADE;" },
-      "sqlserver": { "supported": true, "since": "all", "notes": "IF EXISTS in 2016+",     "syntax": "DROP TABLE IF EXISTS tbl;" },
-      "oracle": { "supported": true, "since": "all", "notes": "PURGE option",          "syntax": "DROP TABLE tbl PURGE;" },
-      "sqlite": { "supported": true, "since": "all", "notes": "IF EXISTS",            "syntax": "DROP TABLE IF EXISTS tbl;" }
-    },
-    "details": "DDL to remove a table."
-  },
+          "drop table": {
+            "description": "Remove a table and all its data.",
+            "syntax": "DROP TABLE table_name;",
+            "compatibility": {
+              "mysql": { "supported": true, "since": "all", "notes": "CASCADE available",     "syntax": "DROP TABLE IF EXISTS tbl;" },
+              "postgresql": { "supported": true, "since": "all", "notes": "CASCADE / RESTRICT",    "syntax": "DROP TABLE IF EXISTS tbl CASCADE;" },
+              "sqlserver": { "supported": true, "since": "all", "notes": "IF EXISTS in 2016+",     "syntax": "DROP TABLE IF EXISTS tbl;" },
+              "oracle": { "supported": true, "since": "all", "notes": "PURGE option",          "syntax": "DROP TABLE tbl PURGE;" },
+              "sqlite": { "supported": true, "since": "all", "notes": "IF EXISTS",            "syntax": "DROP TABLE IF EXISTS tbl;" }
+            },
+            "details": "DDL to remove a table."
+          },
 
-  "set operations": {
-    "description": "Combine rows from multiple queries: UNION, INTERSECT, EXCEPT/MINUS.",
-    "syntax": "SELECT …\nUNION ALL\nSELECT …;",
-    "compatibility": {
-      "mysql": { "supported": true,  "since": "all", "notes": "No INTERSECT/EXCEPT (emulate)",  "syntax": "SELECT col FROM A\nUNION ALL\nSELECT col FROM B;" },
-      "postgresql": { "supported": true,  "since": "all", "notes": "Full SET support",               "syntax": "SELECT …\nINTERSECT\nSELECT …\nEXCEPT\nSELECT …;" },
-      "sqlserver": { "supported": true,  "since": "2005",  "notes": "EXCEPT supported",               "syntax": "SELECT …\nINTERSECT\nSELECT …\nEXCEPT\nSELECT …;" },
-      "oracle": { "supported": true,  "since": "all", "notes": "MINUS instead of EXCEPT",       "syntax": "SELECT …\nINTERSECT\nSELECT …\nMINUS\nSELECT …;" },
-      "sqlite": { "supported": true,  "since": "all", "notes": "INTERSECT/EXCEPT since 3.15",     "syntax": "SELECT …\nINTERSECT\nSELECT …\nEXCEPT\nSELECT …;" }
-    },
-    "details": "Combine result-sets by set logic."
-  },
+          "set operations": {
+            "description": "Combine rows from multiple queries: UNION, INTERSECT, EXCEPT/MINUS.",
+            "syntax": "SELECT …\nUNION ALL\nSELECT …;",
+            "compatibility": {
+              "mysql": { "supported": true,  "since": "all", "notes": "No INTERSECT/EXCEPT (emulate)",  "syntax": "SELECT col FROM A\nUNION ALL\nSELECT col FROM B;" },
+              "postgresql": { "supported": true,  "since": "all", "notes": "Full SET support",               "syntax": "SELECT …\nINTERSECT\nSELECT …\nEXCEPT\nSELECT …;" },
+              "sqlserver": { "supported": true,  "since": "2005",  "notes": "EXCEPT supported",               "syntax": "SELECT …\nINTERSECT\nSELECT …\nEXCEPT\nSELECT …;" },
+              "oracle": { "supported": true,  "since": "all", "notes": "MINUS instead of EXCEPT",       "syntax": "SELECT …\nINTERSECT\nSELECT …\nMINUS\nSELECT …;" },
+              "sqlite": { "supported": true,  "since": "all", "notes": "INTERSECT/EXCEPT since 3.15",     "syntax": "SELECT …\nINTERSECT\nSELECT …\nEXCEPT\nSELECT …;" }
+            },
+            "details": "Combine result-sets by set logic."
+          },
 
-  "group by": {
-    "description": "Aggregate rows sharing common values.",
-    "syntax": "SELECT col, COUNT(*)\nFROM tbl\nGROUP BY col\nHAVING COUNT(*) > 1;",
-    "compatibility": {
-      "mysql": { "supported": true, "since": "all", "notes": "ROLLUP extension",       "syntax": "SELECT col, COUNT(*)\nFROM tbl\nGROUP BY col WITH ROLLUP;" },
-      "postgresql": { "supported": true, "since": "all", "notes": "Standard + CUBE/ROLLUP",   "syntax": "SELECT col, COUNT(*)\nFROM tbl\nGROUP BY CUBE(col1,col2);" },
-      "sqlserver": { "supported": true, "since": "2005", "notes": "Grouping sets",           "syntax": "SELECT col, COUNT(*)\nFROM tbl\nGROUP BY GROUPING SETS((col),(col2));" },
-      "oracle": { "supported": true, "since": "all", "notes": "Grouping sets/CUBE",      "syntax": "SELECT col, COUNT(*)\nFROM tbl\nGROUP BY ROLLUP(col1,col2);" },
-      "sqlite": { "supported": true, "since": "all", "notes": "Basic only",             "syntax": "SELECT col, COUNT(*)\nFROM tbl\nGROUP BY col\nHAVING COUNT(*)>1;" }
-    },
-    "details": "Combine rows with same keys for aggregation."
-  },
+          "group by": {
+            "description": "Aggregate rows sharing common values.",
+            "syntax": "SELECT col, COUNT(*)\nFROM tbl\nGROUP BY col\nHAVING COUNT(*) > 1;",
+            "compatibility": {
+              "mysql": { "supported": true, "since": "all", "notes": "ROLLUP extension",       "syntax": "SELECT col, COUNT(*)\nFROM tbl\nGROUP BY col WITH ROLLUP;" },
+              "postgresql": { "supported": true, "since": "all", "notes": "Standard + CUBE/ROLLUP",   "syntax": "SELECT col, COUNT(*)\nFROM tbl\nGROUP BY CUBE(col1,col2);" },
+              "sqlserver": { "supported": true, "since": "2005", "notes": "Grouping sets",           "syntax": "SELECT col, COUNT(*)\nFROM tbl\nGROUP BY GROUPING SETS((col),(col2));" },
+              "oracle": { "supported": true, "since": "all", "notes": "Grouping sets/CUBE",      "syntax": "SELECT col, COUNT(*)\nFROM tbl\nGROUP BY ROLLUP(col1,col2);" },
+              "sqlite": { "supported": true, "since": "all", "notes": "Basic only",             "syntax": "SELECT col, COUNT(*)\nFROM tbl\nGROUP BY col\nHAVING COUNT(*)>1;" }
+            },
+            "details": "Combine rows with same keys for aggregation."
+          },
 
-  "order by": {
-    "description": "Sort the result set by one or more columns.",
-    "syntax": "SELECT *\nFROM tbl\nORDER BY col1 DESC, col2 ASC;",
-    "compatibility": {
-      "mysql": { "supported": true, "since": "all", "notes": "NULLS LAST via ISNULL()", "syntax": "… ORDER BY col IS NULL, col DESC;" },
-      "postgresql": { "supported": true, "since": "all", "notes": "NULLS FIRST/LAST",      "syntax": "… ORDER BY col DESC NULLS LAST;" },
-      "sqlserver": { "supported": true, "since": "all", "notes": "No NULLS FIRST/LAST",   "syntax": "… ORDER BY col DESC;" },
-      "oracle": { "supported": true, "since": "all", "notes": "NULLS FIRST/LAST",      "syntax": "… ORDER BY col DESC NULLS LAST;" },
-      "sqlite": { "supported": true, "since": "all", "notes": "No NULLS FIRST/LAST",   "syntax": "… ORDER BY col DESC;" }
-    },
-    "details": "Defines row sort order."
-  },
+          "order by": {
+            "description": "Sort the result set by one or more columns.",
+            "syntax": "SELECT *\nFROM tbl\nORDER BY col1 DESC, col2 ASC;",
+            "compatibility": {
+              "mysql": { "supported": true, "since": "all", "notes": "NULLS LAST via ISNULL()", "syntax": "… ORDER BY col IS NULL, col DESC;" },
+              "postgresql": { "supported": true, "since": "all", "notes": "NULLS FIRST/LAST",      "syntax": "… ORDER BY col DESC NULLS LAST;" },
+              "sqlserver": { "supported": true, "since": "all", "notes": "No NULLS FIRST/LAST",   "syntax": "… ORDER BY col DESC;" },
+              "oracle": { "supported": true, "since": "all", "notes": "NULLS FIRST/LAST",      "syntax": "… ORDER BY col DESC NULLS LAST;" },
+              "sqlite": { "supported": true, "since": "all", "notes": "No NULLS FIRST/LAST",   "syntax": "… ORDER BY col DESC;" }
+            },
+            "details": "Defines row sort order."
+          },
 
-  "distinct": {
-    "description": "Eliminate duplicate rows in a result set.",
-    "syntax": "SELECT DISTINCT column\nFROM tbl;",
-    "compatibility": {
-      "mysql": { "supported": true, "since": "all", "notes": "DISTINCT ON not supported", "syntax": "SELECT DISTINCT col FROM tbl;" },
-      "postgresql": { "supported": true, "since": "all", "notes": "Supports DISTINCT ON",    "syntax": "SELECT DISTINCT ON (col1) col1, col2 FROM tbl;" },
-      "sqlserver": { "supported": true, "since": "all", "notes": "Standard only",         "syntax": "SELECT DISTINCT col FROM tbl;" },
-      "oracle": { "supported": true, "since": "all", "notes": "Standard only",         "syntax": "SELECT DISTINCT col FROM tbl;" },
-      "sqlite": { "supported": true, "since": "all", "notes": "Standard only",         "syntax": "SELECT DISTINCT col FROM tbl;" }
-    },
-    "details": "Remove duplicate rows."
-  },
+          "distinct": {
+            "description": "Eliminate duplicate rows in a result set.",
+            "syntax": "SELECT DISTINCT column\nFROM tbl;",
+            "compatibility": {
+              "mysql": { "supported": true, "since": "all", "notes": "DISTINCT ON not supported", "syntax": "SELECT DISTINCT col FROM tbl;" },
+              "postgresql": { "supported": true, "since": "all", "notes": "Supports DISTINCT ON",    "syntax": "SELECT DISTINCT ON (col1) col1, col2 FROM tbl;" },
+              "sqlserver": { "supported": true, "since": "all", "notes": "Standard only",         "syntax": "SELECT DISTINCT col FROM tbl;" },
+              "oracle": { "supported": true, "since": "all", "notes": "Standard only",         "syntax": "SELECT DISTINCT col FROM tbl;" },
+              "sqlite": { "supported": true, "since": "all", "notes": "Standard only",         "syntax": "SELECT DISTINCT col FROM tbl;" }
+            },
+            "details": "Remove duplicate rows."
+          },
 
-  "transactions": {
-    "description": "Control units of work with atomicity.",
-    "syntax": "BEGIN;\nUPDATE tbl SET …;\nINSERT INTO …;\nCOMMIT;",
-    "compatibility": {
-      "mysql": { "supported": true, "since": "all", "notes": "AUTOCOMMIT=ON by default", "syntax": "START TRANSACTION;\n…\nCOMMIT;\n-- or ROLLBACK;" },
-      "postgresql": { "supported": true, "since": "all", "notes": "Standard",               "syntax": "BEGIN;\n…\nCOMMIT;\n-- or ROLLBACK;" },
-      "sqlserver": { "supported": true, "since": "all", "notes": "BEGIN TRAN / COMMIT",     "syntax": "BEGIN TRANSACTION;\n…\nCOMMIT TRANSACTION;\n-- or ROLLBACK TRANSACTION;" },
-      "oracle": { "supported": true, "since": "all", "notes": "AUTOCOMMIT=OFF by default", "syntax": "SAVEPOINT sp1;\n…\nCOMMIT;\n-- or ROLLBACK TO sp1;" },
-      "sqlite": { "supported": true, "since": "all", "notes": "AUTOCOMMIT=ON by default", "syntax": "BEGIN;\n…\nCOMMIT;\n-- or ROLLBACK;" }
-    },
-    "details": "Ensure atomic, consistent, isolated, durable operations."
-  }
-};
+          "transactions": {
+            "description": "Control units of work with atomicity.",
+            "syntax": "BEGIN;\nUPDATE tbl SET …;\nINSERT INTO …;\nCOMMIT;",
+            "compatibility": {
+              "mysql": { "supported": true, "since": "all", "notes": "AUTOCOMMIT=ON by default", "syntax": "START TRANSACTION;\n…\nCOMMIT;\n-- or ROLLBACK;" },
+              "postgresql": { "supported": true, "since": "all", "notes": "Standard",               "syntax": "BEGIN;\n…\nCOMMIT;\n-- or ROLLBACK;" },
+              "sqlserver": { "supported": true, "since": "all", "notes": "BEGIN TRAN / COMMIT",     "syntax": "BEGIN TRANSACTION;\n…\nCOMMIT TRANSACTION;\n-- or ROLLBACK TRANSACTION;" },
+              "oracle": { "supported": true, "since": "all", "notes": "AUTOCOMMIT=OFF by default", "syntax": "SAVEPOINT sp1;\n…\nCOMMIT;\n-- or ROLLBACK TO sp1;" },
+              "sqlite": { "supported": true, "since": "all", "notes": "AUTOCOMMIT=ON by default", "syntax": "BEGIN;\n…\nCOMMIT;\n-- or ROLLBACK;" }
+            },
+            "details": "Ensure atomic, consistent, isolated, durable operations."
+          },
+          
+          "string agg": {
+              "description": "Concatenates strings separated by a specified separator. In PostgreSQL, this is STRING_AGG; in MySQL and SQLite, use GROUP_CONCAT; in Oracle, use LISTAGG; and in SQL Server, use STRING_AGG (since 2017). Syntax and features may differ between databases.",
+              "syntax": "-- PostgreSQL syntax:\nSTRING_AGG ( expression, separator [order_by_clause] );",
+              "compatibility": {
+                  "mysql": { "supported": true, "since": "8.0", "notes": "Implemented through equivalent GROUP_CONCAT function; default separator is comma" },
+                  "postgresql": { "supported": true, "since": "9.0", "notes": "Supports ORDER BY inside aggregation" },
+                  "sqlserver": { "supported": true, "since": "2017 (v14.x)", "notes": "Native support; clean syntax" },
+                  "oracle": { "supported": true, "since": "11g Release 2 (11.2)", "notes": "NOTE: Implemented through equivalent LISTAGG function; supports ordering" },
+                  "sqlite": { "supported": true, "since": "3.44.0 (released Nov 2023)", "notes": "Alias added for compatibility with other databases; implemented as alias for GROUP_CONCAT" }
+              },
+              "details": "The PostgreSQL STRING_AGG() function is an aggregate function that concatenates a list of strings and places a separator between them. It does not add the separator at the end of the string."
+          }
+        };
 
         // Search for a command
         function searchCommand(command) {
