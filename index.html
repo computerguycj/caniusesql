@@ -502,6 +502,18 @@
                   "sqlite": { "supported": true, "since": "3.44.0 (released Nov 2023)", "notes": "Alias added for compatibility with other databases; implemented as alias for GROUP_CONCAT" }
               },
               "details": "The PostgreSQL STRING_AGG() function is an aggregate function that concatenates a list of strings and places a separator between them. It does not add the separator at the end of the string."
+          },
+          "lateral": {
+            "description": "Allows a subquery in the FROM clause to reference columns from tables to its left, enabling advanced row-by-row operations.",
+            "syntax": "SELECT t.id, x.val\nFROM my_table t, LATERAL (SELECT val FROM other_table WHERE other_table.ref_id = t.id) x;",
+            "compatibility": {
+                "mysql": { "supported": true, "since": "8.0.14", "notes": "Supported as of 8.0.14; use LATERAL keyword." },
+                "postgresql": { "supported": true, "since": "9.3", "notes": "Full support for LATERAL." },
+                "sqlserver": { "supported": true, "since": "2005", "notes": "Use CROSS APPLY/OUTER APPLY instead of LATERAL." },
+                "oracle": { "supported": true, "since": "12c", "notes": "Supported as of 12c; use LATERAL keyword." },
+                "sqlite": { "supported": false, "notes": "No support for LATERAL or APPLY." }
+            },
+            "details": "LATERAL enables correlated subqueries in the FROM clause, making it possible to join each row to a derived table that depends on that row. In SQL Server, use CROSS APPLY or OUTER APPLY for similar functionality."
           }
         };
 
