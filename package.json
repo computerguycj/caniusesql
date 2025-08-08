@@ -1,0 +1,6 @@
+{
+  "name": "sql-compatibility-checker",
+  "version": "1.0.0",
+  "description": "SQL Command Compatibility Checker",
+  "main": "index.html"
+}
