@@ -528,6 +528,9 @@
                 document.getElementById('commandSearch').value = command;
             }
             
+            // Update URL with search query
+            updateURL(searchInput);
+            
             // Get selected database systems
             const selectedDatabases = {
                 mysql: document.getElementById('mysql').checked,
@@ -666,11 +669,47 @@
             detailView.style.display = 'block';
         }
         
+        // Function to get query parameter from URL
+        function getQueryParameter(name) {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get(name);
+        }
+
+        // Function to update URL with search query
+        function updateURL(query) {
+            const url = new URL(window.location);
+            if (query && query.trim()) {
+                url.searchParams.set('q', query.trim());
+            } else {
+                url.searchParams.delete('q');
+            }
+            window.history.replaceState({}, '', url);
+        }
+
+        // Function to initialize search from URL on page load
+        function initializeFromURL() {
+            const queryParam = getQueryParameter('q');
+            if (queryParam) {
+                document.getElementById('commandSearch').value = queryParam;
+                searchCommand(queryParam);
+            }
+        }
+
         // Event listener for search box to enable search on Enter key
         document.getElementById('commandSearch').addEventListener('keypress', function(event) {
             if (event.key === 'Enter') {
                 searchCommand();
             }
+        });
+
+        // Initialize search from URL when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeFromURL();
+        });
+
+        // Listen for back/forward browser navigation
+        window.addEventListener('popstate', function(event) {
+            initializeFromURL();
         });
     </script>
 </body>
