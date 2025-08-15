@@ -257,7 +257,7 @@
               "postgresql": {
                 "supported": true,
                 "since": "15",
-                "notes": "Native MERGE support since PostgreSQL 15<br>Prior to this version, use<br>WITH upsert AS (<br>  UPDATE t SET … WHERE … RETURNING *\n)\nINSERT INTO t (…) SELECT … WHERE NOT EXISTS (SELECT 1 FROM upsert);",
+                "notes": "Native MERGE support since PostgreSQL 15<br>Prior to this version, use<br>WITH upsert AS (<br>  UPDATE t SET … WHERE … RETURNING *<br>)<br>INSERT INTO t (…) SELECT … WHERE NOT EXISTS (SELECT 1 FROM upsert);",
                 "syntax": "MERGE INTO target_table<br>USING source_table<br>  ON (target.pk = source.pk)<br>WHEN MATCHED THEN<br>  UPDATE SET …<br>WHEN NOT MATCHED THEN<br>  INSERT (…) VALUES (…);"
               },
               "sqlserver": { 
