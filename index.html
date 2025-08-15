@@ -248,9 +248,24 @@
             "description": "Performs insert, update, or delete operations on a target table based on a join to a source table.",
             "syntax": "MERGE INTO target_table\nUSING source_table\n  ON (target.pk = source.pk)\nWHEN MATCHED THEN\n  UPDATE SET …\nWHEN NOT MATCHED THEN\n  INSERT (…) VALUES (…);",
             "compatibility": {
-              "mysql": { "supported": false, "notes": "No MERGE—use INSERT…ON DUPLICATE KEY UPDATE",     "syntax": "INSERT INTO t (…) VALUES (…) ON DUPLICATE KEY UPDATE …;" },
-              "postgresql": { "supported": false, "notes": "No MERGE—emulate via CTE + INSERT/UPDATE",     "syntax": "WITH upsert AS (\n  UPDATE t SET … WHERE … RETURNING *\n)\nINSERT INTO t (…) SELECT … WHERE NOT EXISTS (SELECT 1 FROM upsert);" },
-              "sqlserver": { "supported": true,  "since": "2008", "notes": "Available since SQL Server 2008",      "syntax": "MERGE INTO target AS T\nUSING source AS S\n  ON T.pk = S.pk\nWHEN MATCHED THEN UPDATE SET …\nWHEN NOT MATCHED THEN INSERT (… ) VALUES (… );" },
+
+              "mysql": { 
+                "supported": false, 
+                "notes": "No MERGE—use INSERT…ON DUPLICATE KEY UPDATE", 
+                "syntax": "INSERT INTO t (…) VALUES (…) ON DUPLICATE KEY UPDATE …;" 
+              },
+              "postgresql": {
+                "supported": true,
+                "since": "15",
+                "notes": "Native MERGE support since PostgreSQL 15. Prior to this version, use WITH upsert AS (\n  UPDATE t SET … WHERE … RETURNING *\n)\nINSERT INTO t (…) SELECT … WHERE NOT EXISTS (SELECT 1 FROM upsert);.",
+                "syntax": "MERGE INTO target_table\nUSING source_table\n  ON (target.pk = source.pk)\nWHEN MATCHED THEN\n  UPDATE SET …\nWHEN NOT MATCHED THEN\n  INSERT (…) VALUES (…);"
+              },
+              "sqlserver": { 
+                "supported": true,  
+                "since": "2008", 
+                "notes": "Available since SQL Server 2008",      
+                "syntax": "MERGE INTO target AS T\nUSING source AS S\n  ON T.pk = S.pk\nWHEN MATCHED THEN UPDATE SET …\nWHEN NOT MATCHED THEN INSERT (… ) VALUES (… );" 
+              },
               "oracle": { "supported": true,  "since": "9i",   "notes": "Available since Oracle 9i",         "syntax": "MERGE INTO target T\nUSING source S\n  ON (T.pk = S.pk)\nWHEN MATCHED THEN UPDATE SET …\nWHEN NOT MATCHED THEN INSERT (…) VALUES (…);" },
               "sqlite": { "supported": false, "notes": "No MERGE—use INSERT…ON CONFLICT",        "syntax": "INSERT INTO t (…) VALUES (…) ON CONFLICT(pk) DO UPDATE SET …;" }
             },
@@ -521,6 +536,14 @@
         function searchCommand(command) {
             // Use the passed command or get from input
             const searchInput = command || document.getElementById('commandSearch').value.trim().toLowerCase();
+            function escapeHTML(str) {
+                return str.replace(/&/g, "&amp;")
+                          .replace(/</g, "&lt;")
+                          .replace(/>/g, "&gt;")
+                          .replace(/\"/g, "&quot;")
+                          .replace(/'/g, "&#39;")
+                          .replace(/\//g, "&#x2F;");
+            }
             if (!searchInput) return;
             
             // If command is passed, update the search box
@@ -598,7 +621,7 @@
                 if (similarCommands.length > 0) {
                     let resultHTML = `
                         <div class="result-message">
-                            <p>No exact match found for "${searchInput}". Did you mean:</p>
+                            <p>No exact match found for "${escapeHTML(searchInput)}". Did you mean:</p>
                             <ul>
                     `;
                     
@@ -615,7 +638,7 @@
                 } else {
                     resultContainer.innerHTML = `
                         <div class="result-message">
-                            <p>No results found for "${searchInput}".</p>
+                            <p>No results found for "${escapeHTML(searchInput)}".</p>
                             <p>Try searching for a different SQL command or check our examples above.</p>
                         </div>
                     `;
