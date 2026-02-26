@@ -529,6 +529,19 @@
                 "sqlite": { "supported": false, "notes": "No support for LATERAL or APPLY." }
             },
             "details": "LATERAL enables correlated subqueries in the FROM clause, making it possible to join each row to a derived table that depends on that row. In SQL Server, use CROSS APPLY or OUTER APPLY for similar functionality."
+          },
+
+          "comments": {
+            "description": "Annotate SQL code with single-line (--) or block (/* */) comments. All major SQL engines support both styles.",
+            "syntax": "-- single-line comment\n\n/* block comment\n   spans multiple lines */\n\nSELECT col -- inline comment\nFROM tbl;",
+            "compatibility": {
+              "mysql":      { "supported": true, "since": "all", "notes": "Both -- and /* */ supported. Special /*! version */ conditional execution syntax executes the enclosed SQL only on MySQL servers at or above the given version number.", "syntax": "-- single-line\n/* block */\n/*!50700 SELECT 'MySQL 5.7+'; */" },
+              "postgresql": { "supported": true, "since": "all", "notes": "Both -- and /* */ supported. Block comments can be nested: /* outer /* inner */ still commented */.", "syntax": "-- single-line\n/* block */\n/* outer /* nested */ still a comment */" },
+              "sqlserver":  { "supported": true, "since": "all", "notes": "Both -- and /* */ supported. No nested block comments.", "syntax": "-- single-line\n/* block */" },
+              "oracle":     { "supported": true, "since": "all", "notes": "Both -- and /* */ supported. Optimizer hints use the /*+ hint */ form.", "syntax": "-- single-line\n/* block */\nSELECT /*+ FULL(t) */ * FROM t;" },
+              "sqlite":     { "supported": true, "since": "all", "notes": "Both -- and /* */ supported. No nested block comments.", "syntax": "-- single-line\n/* block */" }
+            },
+            "details": "Single-line comments (--) and block comments (/* */) are universally supported. Notable differences: PostgreSQL allows nested block comments; MySQL supports conditional execution via /*!version ... */; Oracle uses /*+ ... */ for query optimizer hints."
           }
         };
 
