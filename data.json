@@ -832,5 +832,940 @@
       }
     },
     "details": "Single-line comments (--) and block comments (/* */) are universally supported. Notable differences: PostgreSQL allows nested block comments; MySQL supports conditional execution via /*!version ... */; Oracle uses /*+ ... */ for query optimizer hints."
+  },
+  "join": {
+    "description": "Combine rows from two or more tables based on a related column. All core join types are universally supported. Search for a specific type: <a href=\"#\" onclick=\"searchCommand('inner join'); return false;\">INNER JOIN</a>, <a href=\"#\" onclick=\"searchCommand('left join'); return false;\">LEFT JOIN</a>, <a href=\"#\" onclick=\"searchCommand('right join'); return false;\">RIGHT JOIN</a>, <a href=\"#\" onclick=\"searchCommand('full outer join'); return false;\">FULL OUTER JOIN</a>, <a href=\"#\" onclick=\"searchCommand('cross join'); return false;\">CROSS JOIN</a>.",
+    "syntax": "SELECT a.col, b.col\nFROM table_a a\nJOIN table_b b ON a.id = b.a_id;",
+    "compatibility": {
+      "mysql": {
+        "supported": true,
+        "since": "all",
+        "notes": "All standard join types supported.",
+        "syntax": "SELECT a.col, b.col FROM a JOIN b ON a.id = b.a_id;"
+      },
+      "postgresql": {
+        "supported": true,
+        "since": "all",
+        "notes": "All standard join types supported.",
+        "syntax": "SELECT a.col, b.col FROM a JOIN b ON a.id = b.a_id;"
+      },
+      "sqlserver": {
+        "supported": true,
+        "since": "all",
+        "notes": "All standard join types supported.",
+        "syntax": "SELECT a.col, b.col FROM a JOIN b ON a.id = b.a_id;"
+      },
+      "oracle": {
+        "supported": true,
+        "since": "all",
+        "notes": "All standard join types supported. Legacy (+) outer-join syntax also exists.",
+        "syntax": "SELECT a.col, b.col FROM a JOIN b ON a.id = b.a_id;"
+      },
+      "sqlite": {
+        "supported": true,
+        "since": "all",
+        "notes": "All join types supported; RIGHT JOIN and FULL OUTER JOIN added in 3.39.0.",
+        "syntax": "SELECT a.col, b.col FROM a JOIN b ON a.id = b.a_id;"
+      }
+    },
+    "details": "SQL JOINs are the primary mechanism for combining rows across tables. See specific types: INNER JOIN, LEFT JOIN, RIGHT JOIN, FULL OUTER JOIN, CROSS JOIN."
+  },
+  "inner join": {
+    "description": "Returns only rows where the join condition matches in both tables.",
+    "syntax": "SELECT a.col, b.col\nFROM table_a a\nINNER JOIN table_b b ON a.id = b.a_id;",
+    "compatibility": {
+      "mysql": {
+        "supported": true,
+        "since": "all",
+        "notes": "INNER keyword is optional; JOIN alone implies INNER JOIN.",
+        "syntax": "SELECT a.col, b.col FROM a INNER JOIN b ON a.id = b.a_id;"
+      },
+      "postgresql": {
+        "supported": true,
+        "since": "all",
+        "notes": "INNER keyword is optional; JOIN alone implies INNER JOIN.",
+        "syntax": "SELECT a.col, b.col FROM a INNER JOIN b ON a.id = b.a_id;"
+      },
+      "sqlserver": {
+        "supported": true,
+        "since": "all",
+        "notes": "INNER keyword is optional; JOIN alone implies INNER JOIN.",
+        "syntax": "SELECT a.col, b.col FROM a INNER JOIN b ON a.id = b.a_id;"
+      },
+      "oracle": {
+        "supported": true,
+        "since": "all",
+        "notes": "INNER keyword is optional; JOIN alone implies INNER JOIN.",
+        "syntax": "SELECT a.col, b.col FROM a INNER JOIN b ON a.id = b.a_id;"
+      },
+      "sqlite": {
+        "supported": true,
+        "since": "all",
+        "notes": "INNER keyword is optional; JOIN alone implies INNER JOIN.",
+        "syntax": "SELECT a.col, b.col FROM a INNER JOIN b ON a.id = b.a_id;"
+      }
+    },
+    "details": "The most common join type. Rows with no match in either table are excluded from the result."
+  },
+  "left join": {
+    "description": "Returns all rows from the left table and matching rows from the right; NULLs fill unmatched right-side columns.",
+    "syntax": "SELECT a.col, b.col\nFROM table_a a\nLEFT JOIN table_b b ON a.id = b.a_id;",
+    "compatibility": {
+      "mysql": {
+        "supported": true,
+        "since": "all",
+        "notes": "OUTER keyword is optional (LEFT JOIN = LEFT OUTER JOIN).",
+        "syntax": "SELECT a.col, b.col FROM a LEFT JOIN b ON a.id = b.a_id;"
+      },
+      "postgresql": {
+        "supported": true,
+        "since": "all",
+        "notes": "OUTER keyword is optional (LEFT JOIN = LEFT OUTER JOIN).",
+        "syntax": "SELECT a.col, b.col FROM a LEFT JOIN b ON a.id = b.a_id;"
+      },
+      "sqlserver": {
+        "supported": true,
+        "since": "all",
+        "notes": "OUTER keyword is optional (LEFT JOIN = LEFT OUTER JOIN).",
+        "syntax": "SELECT a.col, b.col FROM a LEFT JOIN b ON a.id = b.a_id;"
+      },
+      "oracle": {
+        "supported": true,
+        "since": "all",
+        "notes": "OUTER keyword is optional. Legacy syntax: WHERE a.id = b.a_id(+)",
+        "syntax": "SELECT a.col, b.col FROM a LEFT JOIN b ON a.id = b.a_id;"
+      },
+      "sqlite": {
+        "supported": true,
+        "since": "all",
+        "notes": "OUTER keyword is optional (LEFT JOIN = LEFT OUTER JOIN).",
+        "syntax": "SELECT a.col, b.col FROM a LEFT JOIN b ON a.id = b.a_id;"
+      }
+    },
+    "details": "Use LEFT JOIN to keep all records from the left table even when no match exists on the right."
+  },
+  "right join": {
+    "description": "Returns all rows from the right table and matching rows from the left; NULLs fill unmatched left-side columns.",
+    "syntax": "SELECT a.col, b.col\nFROM table_a a\nRIGHT JOIN table_b b ON a.id = b.a_id;",
+    "compatibility": {
+      "mysql": {
+        "supported": true,
+        "since": "all",
+        "notes": "OUTER keyword is optional.",
+        "syntax": "SELECT a.col, b.col FROM a RIGHT JOIN b ON a.id = b.a_id;"
+      },
+      "postgresql": {
+        "supported": true,
+        "since": "all",
+        "notes": "OUTER keyword is optional.",
+        "syntax": "SELECT a.col, b.col FROM a RIGHT JOIN b ON a.id = b.a_id;"
+      },
+      "sqlserver": {
+        "supported": true,
+        "since": "all",
+        "notes": "OUTER keyword is optional.",
+        "syntax": "SELECT a.col, b.col FROM a RIGHT JOIN b ON a.id = b.a_id;"
+      },
+      "oracle": {
+        "supported": true,
+        "since": "all",
+        "notes": "OUTER keyword is optional. Legacy syntax: WHERE a.id(+) = b.a_id",
+        "syntax": "SELECT a.col, b.col FROM a RIGHT JOIN b ON a.id = b.a_id;"
+      },
+      "sqlite": {
+        "supported": true,
+        "since": "3.39.0",
+        "notes": "RIGHT JOIN added in SQLite 3.39.0 (July 2022). Rewrite as LEFT JOIN with tables swapped for older versions.",
+        "syntax": "SELECT a.col, b.col FROM a RIGHT JOIN b ON a.id = b.a_id;"
+      }
+    },
+    "details": "RIGHT JOIN is the mirror of LEFT JOIN. Since it can always be rewritten as a LEFT JOIN with tables swapped, it is less commonly used."
+  },
+  "full outer join": {
+    "description": "Returns all rows from both tables; NULLs fill columns where no match exists on either side.",
+    "syntax": "SELECT a.col, b.col\nFROM table_a a\nFULL OUTER JOIN table_b b ON a.id = b.a_id;",
+    "compatibility": {
+      "mysql": {
+        "supported": false,
+        "notes": "Not supported. Emulate with LEFT JOIN UNION RIGHT JOIN.",
+        "syntax": "SELECT a.col, b.col FROM a LEFT JOIN b ON a.id = b.id\nUNION\nSELECT a.col, b.col FROM a RIGHT JOIN b ON a.id = b.id;"
+      },
+      "postgresql": {
+        "supported": true,
+        "since": "all",
+        "notes": "OUTER keyword is optional.",
+        "syntax": "SELECT a.col, b.col FROM a FULL OUTER JOIN b ON a.id = b.a_id;"
+      },
+      "sqlserver": {
+        "supported": true,
+        "since": "all",
+        "notes": "OUTER keyword is optional.",
+        "syntax": "SELECT a.col, b.col FROM a FULL OUTER JOIN b ON a.id = b.a_id;"
+      },
+      "oracle": {
+        "supported": true,
+        "since": "all",
+        "notes": "OUTER keyword is optional.",
+        "syntax": "SELECT a.col, b.col FROM a FULL OUTER JOIN b ON a.id = b.a_id;"
+      },
+      "sqlite": {
+        "supported": true,
+        "since": "3.39.0",
+        "notes": "FULL OUTER JOIN added in SQLite 3.39.0 (July 2022). Emulate with UNION on older versions.",
+        "syntax": "SELECT a.col, b.col FROM a FULL OUTER JOIN b ON a.id = b.a_id;"
+      }
+    },
+    "details": "Useful for finding rows that exist in one table but not the other. MySQL has no native support and requires a UNION workaround."
+  },
+  "cross join": {
+    "description": "Produces the cartesian product of two tables — every row of the left combined with every row of the right. No join condition.",
+    "syntax": "SELECT a.col, b.col\nFROM table_a a\nCROSS JOIN table_b b;",
+    "compatibility": {
+      "mysql": {
+        "supported": true,
+        "since": "all",
+        "notes": "CROSS JOIN keyword or comma syntax (FROM a, b) both produce a cartesian product.",
+        "syntax": "SELECT a.col, b.col FROM a CROSS JOIN b;"
+      },
+      "postgresql": {
+        "supported": true,
+        "since": "all",
+        "notes": "CROSS JOIN keyword or comma syntax (FROM a, b) both produce a cartesian product.",
+        "syntax": "SELECT a.col, b.col FROM a CROSS JOIN b;"
+      },
+      "sqlserver": {
+        "supported": true,
+        "since": "all",
+        "notes": "CROSS JOIN keyword or comma syntax (FROM a, b) both produce a cartesian product.",
+        "syntax": "SELECT a.col, b.col FROM a CROSS JOIN b;"
+      },
+      "oracle": {
+        "supported": true,
+        "since": "all",
+        "notes": "CROSS JOIN keyword or comma syntax (FROM a, b) both produce a cartesian product.",
+        "syntax": "SELECT a.col, b.col FROM a CROSS JOIN b;"
+      },
+      "sqlite": {
+        "supported": true,
+        "since": "all",
+        "notes": "CROSS JOIN keyword or comma syntax (FROM a, b) both produce a cartesian product.",
+        "syntax": "SELECT a.col, b.col FROM a CROSS JOIN b;"
+      }
+    },
+    "details": "Rarely needed in application code but useful for generating combinations or test data. N rows × M rows = N*M result rows."
+  },
+  "create index": {
+    "description": "Create an index on one or more columns to speed up queries at the cost of write overhead.",
+    "syntax": "CREATE INDEX idx_name\nON table_name (column1, column2);",
+    "compatibility": {
+      "mysql": {
+        "supported": true,
+        "since": "all",
+        "notes": "B-tree default. FULLTEXT and SPATIAL indexes also available. Prefix indexes required for TEXT/BLOB columns.",
+        "syntax": "CREATE INDEX idx ON tbl (col);\nCREATE UNIQUE INDEX idx ON tbl (col);\nCREATE FULLTEXT INDEX idx ON tbl (col);"
+      },
+      "postgresql": {
+        "supported": true,
+        "since": "all",
+        "notes": "Widest variety of index types: B-tree (default), Hash, GiST, GIN, BRIN, SP-GiST. Supports partial indexes (WHERE clause), expression indexes, and CREATE INDEX CONCURRENTLY (builds without locking the table).",
+        "syntax": "CREATE INDEX idx ON tbl (col);\nCREATE INDEX idx ON tbl (col) WHERE active = true;  -- partial\nCREATE INDEX idx ON tbl (LOWER(col));  -- expression\nCREATE INDEX CONCURRENTLY idx ON tbl (col);  -- no lock"
+      },
+      "sqlserver": {
+        "supported": true,
+        "since": "all",
+        "notes": "Clustered vs. non-clustered indexes. Filtered indexes (WHERE clause) since 2008. Columnstore indexes since 2012.",
+        "syntax": "CREATE INDEX idx ON tbl (col);\nCREATE CLUSTERED INDEX idx ON tbl (col);\nCREATE INDEX idx ON tbl (col) WHERE active = 1;  -- filtered"
+      },
+      "oracle": {
+        "supported": true,
+        "since": "all",
+        "notes": "B-tree default. Function-based, bitmap, and domain indexes also supported.",
+        "syntax": "CREATE INDEX idx ON tbl (col);\nCREATE BITMAP INDEX idx ON tbl (col);\nCREATE INDEX idx ON tbl (UPPER(col));  -- function-based"
+      },
+      "sqlite": {
+        "supported": true,
+        "since": "all",
+        "notes": "B-tree only. Partial indexes (WHERE clause) supported since 3.8.9.",
+        "syntax": "CREATE INDEX idx ON tbl (col);\nCREATE INDEX idx ON tbl (col) WHERE active = 1;"
+      }
+    },
+    "details": "PostgreSQL's CREATE INDEX CONCURRENTLY is uniquely useful in production — it builds the index without locking the table for writes. All engines support composite and unique indexes."
+  },
+  "create view": {
+    "description": "Define a named virtual table based on a SELECT query.",
+    "syntax": "CREATE VIEW view_name AS\nSELECT col1, col2\nFROM table_name\nWHERE condition;",
+    "compatibility": {
+      "mysql": {
+        "supported": true,
+        "since": "all",
+        "notes": "Standard views supported. No materialized views.",
+        "syntax": "CREATE VIEW v AS SELECT col FROM tbl WHERE active = 1;"
+      },
+      "postgresql": {
+        "supported": true,
+        "since": "all",
+        "notes": "Standard views + MATERIALIZED VIEW (since 9.3) with REFRESH MATERIALIZED VIEW [CONCURRENTLY] (since 9.4).",
+        "syntax": "CREATE VIEW v AS SELECT col FROM tbl;\nCREATE MATERIALIZED VIEW mv AS SELECT col FROM tbl;\nREFRESH MATERIALIZED VIEW CONCURRENTLY mv;"
+      },
+      "sqlserver": {
+        "supported": true,
+        "since": "all",
+        "notes": "Standard views + indexed views (CREATE UNIQUE CLUSTERED INDEX on a view materializes it, similar to a materialized view).",
+        "syntax": "CREATE VIEW v AS SELECT col FROM tbl;\n-- Materialize it:\nCREATE UNIQUE CLUSTERED INDEX idx ON v (col);"
+      },
+      "oracle": {
+        "supported": true,
+        "since": "all",
+        "notes": "Standard views + MATERIALIZED VIEW (predates PostgreSQL's). Supports ON COMMIT REFRESH and ON DEMAND REFRESH.",
+        "syntax": "CREATE VIEW v AS SELECT col FROM tbl;\nCREATE MATERIALIZED VIEW mv\nREFRESH ON DEMAND AS SELECT col FROM tbl;"
+      },
+      "sqlite": {
+        "supported": true,
+        "since": "all",
+        "notes": "Views are read-only. INSERT/UPDATE/DELETE through a view requires an INSTEAD OF trigger.",
+        "syntax": "CREATE VIEW v AS SELECT col FROM tbl;"
+      }
+    },
+    "details": "PostgreSQL and Oracle support true MATERIALIZED VIEWs (pre-computed, stored on disk). SQLite views are read-only. SQL Server achieves materialization via indexed views."
+  },
+  "case when": {
+    "description": "Conditional expression returning different values based on evaluated conditions.",
+    "syntax": "-- Searched CASE (most common)\nSELECT CASE\n  WHEN score >= 90 THEN 'A'\n  WHEN score >= 80 THEN 'B'\n  ELSE 'C'\nEND AS grade\nFROM results;\n\n-- Simple CASE\nSELECT CASE status WHEN 1 THEN 'Active' WHEN 0 THEN 'Inactive' END\nFROM tbl;",
+    "compatibility": {
+      "mysql": {
+        "supported": true,
+        "since": "all",
+        "notes": "Both simple and searched CASE. Also supports IF(condition, true_val, false_val) and IIF() as a 2-arg shorthand.",
+        "syntax": "SELECT CASE WHEN x > 0 THEN 'pos' ELSE 'neg' END FROM tbl;\nSELECT IF(x > 0, 'pos', 'neg') FROM tbl;"
+      },
+      "postgresql": {
+        "supported": true,
+        "since": "all",
+        "notes": "Both simple and searched CASE. CASE can appear in SELECT, WHERE, ORDER BY, HAVING, and aggregate arguments.",
+        "syntax": "SELECT CASE WHEN x > 0 THEN 'pos' ELSE 'neg' END FROM tbl;"
+      },
+      "sqlserver": {
+        "supported": true,
+        "since": "all",
+        "notes": "Both simple and searched CASE. Also IIF(condition, true_val, false_val) since SQL Server 2012.",
+        "syntax": "SELECT CASE WHEN x > 0 THEN 'pos' ELSE 'neg' END FROM tbl;\nSELECT IIF(x > 0, 'pos', 'neg') FROM tbl;"
+      },
+      "oracle": {
+        "supported": true,
+        "since": "all",
+        "notes": "Both simple and searched CASE. Legacy DECODE(expr, search, result, ...) function also works.",
+        "syntax": "SELECT CASE WHEN x > 0 THEN 'pos' ELSE 'neg' END FROM tbl;\nSELECT DECODE(x, 1, 'one', 2, 'two', 'other') FROM tbl;"
+      },
+      "sqlite": {
+        "supported": true,
+        "since": "all",
+        "notes": "Both simple and searched CASE fully supported.",
+        "syntax": "SELECT CASE WHEN x > 0 THEN 'pos' ELSE 'neg' END FROM tbl;"
+      }
+    },
+    "details": "CASE is SQL-standard and works identically across all major engines. Dialect-specific shorthands (IF, IIF, DECODE) exist but are not portable."
+  },
+  "coalesce": {
+    "description": "Returns the first non-NULL value from a list of expressions.",
+    "syntax": "SELECT COALESCE(preferred_name, first_name, 'Unknown') FROM users;",
+    "compatibility": {
+      "mysql": {
+        "supported": true,
+        "since": "all",
+        "notes": "Standard COALESCE. Also IFNULL(expr1, expr2) as a 2-arg shorthand.",
+        "syntax": "SELECT COALESCE(a, b, 'default') FROM tbl;\nSELECT IFNULL(a, 'default') FROM tbl;"
+      },
+      "postgresql": {
+        "supported": true,
+        "since": "all",
+        "notes": "Standard COALESCE. Accepts any number of arguments.",
+        "syntax": "SELECT COALESCE(a, b, c, 'default') FROM tbl;"
+      },
+      "sqlserver": {
+        "supported": true,
+        "since": "all",
+        "notes": "Standard COALESCE. Also ISNULL(check_expr, replacement) as a 2-arg shorthand (differs from COALESCE in type coercion).",
+        "syntax": "SELECT COALESCE(a, b, 'default') FROM tbl;\nSELECT ISNULL(a, 'default') FROM tbl;"
+      },
+      "oracle": {
+        "supported": true,
+        "since": "all",
+        "notes": "Standard COALESCE. Also NVL(expr1, expr2) for 2-arg and NVL2(expr1, not_null_val, null_val) for conditional 3-arg.",
+        "syntax": "SELECT COALESCE(a, b, 'default') FROM tbl;\nSELECT NVL(a, 'default') FROM tbl;\nSELECT NVL2(a, 'has value', 'is null') FROM tbl;"
+      },
+      "sqlite": {
+        "supported": true,
+        "since": "all",
+        "notes": "Standard COALESCE. Also IFNULL(x, y) as a 2-arg shorthand.",
+        "syntax": "SELECT COALESCE(a, b, 'default') FROM tbl;"
+      }
+    },
+    "details": "COALESCE is SQL-standard. All engines also ship proprietary 2-argument shorthands (IFNULL, ISNULL, NVL) that predate the standard."
+  },
+  "cast": {
+    "description": "Convert a value from one data type to another.",
+    "syntax": "SELECT CAST(price AS VARCHAR(20)) FROM products;",
+    "compatibility": {
+      "mysql": {
+        "supported": true,
+        "since": "all",
+        "notes": "CAST(expr AS type). Also CONVERT(expr, type). Supports a limited set of target types (CHAR, SIGNED, UNSIGNED, DATE, DATETIME, DECIMAL, JSON, BINARY).",
+        "syntax": "SELECT CAST(price AS CHAR) FROM tbl;\nSELECT CONVERT(price, CHAR) FROM tbl;"
+      },
+      "postgresql": {
+        "supported": true,
+        "since": "all",
+        "notes": "CAST(expr AS type). Also :: shorthand cast operator (expr::type) which is very commonly used in practice and works anywhere an expression is valid.",
+        "syntax": "SELECT CAST(price AS TEXT) FROM tbl;\nSELECT price::text FROM tbl;  -- :: shorthand\nSELECT '2024-01-01'::date;\nSELECT '42'::int + 1;"
+      },
+      "sqlserver": {
+        "supported": true,
+        "since": "all",
+        "notes": "CAST(expr AS type). Also CONVERT(type, expr [, style]) which adds optional style codes for date/number formatting.",
+        "syntax": "SELECT CAST(price AS NVARCHAR(20)) FROM tbl;\nSELECT CONVERT(VARCHAR, GETDATE(), 103);  -- style 103 = dd/mm/yyyy"
+      },
+      "oracle": {
+        "supported": true,
+        "since": "all",
+        "notes": "CAST standard. TO_DATE(), TO_NUMBER(), TO_CHAR() are the traditional Oracle conversion functions for common types.",
+        "syntax": "SELECT CAST(price AS VARCHAR2(20)) FROM tbl;\nSELECT TO_CHAR(hire_date, 'YYYY-MM-DD') FROM tbl;\nSELECT TO_NUMBER('42.5') FROM DUAL;"
+      },
+      "sqlite": {
+        "supported": true,
+        "since": "all",
+        "notes": "CAST(expr AS type). SQLite uses flexible type affinity; CAST influences storage affinity rather than strictly enforcing types.",
+        "syntax": "SELECT CAST(price AS TEXT) FROM tbl;\nSELECT CAST('3.14' AS REAL);"
+      }
+    },
+    "details": "CAST is SQL-standard. PostgreSQL's :: shorthand is unique and extremely common in practice. SQL Server's CONVERT adds format-style codes useful for date/number display."
+  },
+  "truncate": {
+    "description": "Remove all rows from a table instantly, without logging individual row deletions.",
+    "syntax": "TRUNCATE TABLE table_name;",
+    "compatibility": {
+      "mysql": {
+        "supported": true,
+        "since": "all",
+        "notes": "Resets AUTO_INCREMENT counter to its starting value. Cannot be rolled back in InnoDB without an explicit transaction.",
+        "syntax": "TRUNCATE TABLE tbl;"
+      },
+      "postgresql": {
+        "supported": true,
+        "since": "all",
+        "notes": "Uniquely transactional — can be rolled back within a transaction. Supports RESTART IDENTITY / CONTINUE IDENTITY (sequence handling) and CASCADE / RESTRICT (foreign key handling).",
+        "syntax": "TRUNCATE TABLE tbl;\nTRUNCATE TABLE tbl RESTART IDENTITY CASCADE;"
+      },
+      "sqlserver": {
+        "supported": true,
+        "since": "all",
+        "notes": "Resets identity counter. Cannot truncate a table referenced by an active foreign key constraint.",
+        "syntax": "TRUNCATE TABLE tbl;"
+      },
+      "oracle": {
+        "supported": true,
+        "since": "all",
+        "notes": "DDL operation — implicitly commits the current transaction. Cannot be rolled back.",
+        "syntax": "TRUNCATE TABLE tbl;"
+      },
+      "sqlite": {
+        "supported": false,
+        "notes": "No TRUNCATE command. Use DELETE FROM tbl (no WHERE clause). Reclaim space with VACUUM.",
+        "syntax": "DELETE FROM tbl;  -- equivalent; pair with VACUUM to reclaim space"
+      }
+    },
+    "details": "Much faster than DELETE on large tables because it deallocates data pages rather than logging row-by-row. PostgreSQL is unique in making TRUNCATE fully transactional. SQLite lacks the command entirely."
+  },
+  "like": {
+    "description": "Pattern matching within strings using % (any sequence of characters) and _ (exactly one character) wildcards.",
+    "syntax": "SELECT * FROM users WHERE name LIKE 'J%';",
+    "compatibility": {
+      "mysql": {
+        "supported": true,
+        "since": "all",
+        "notes": "Case sensitivity depends on column collation (case-insensitive by default with utf8mb4_general_ci). REGEXP / RLIKE for full regex.",
+        "syntax": "SELECT * FROM tbl WHERE name LIKE 'J%';\nSELECT * FROM tbl WHERE name REGEXP '^J[aeiou]';"
+      },
+      "postgresql": {
+        "supported": true,
+        "since": "all",
+        "notes": "LIKE is case-sensitive. ILIKE for case-insensitive matching (PostgreSQL extension). SIMILAR TO for SQL-standard regex. ~ / ~* for POSIX regex matching.",
+        "syntax": "SELECT * FROM tbl WHERE name LIKE 'J%';    -- case-sensitive\nSELECT * FROM tbl WHERE name ILIKE 'j%';   -- case-insensitive\nSELECT * FROM tbl WHERE name ~ '^J[aeiou]'; -- POSIX regex"
+      },
+      "sqlserver": {
+        "supported": true,
+        "since": "all",
+        "notes": "Case sensitivity depends on column/database collation. Uniquely supports [] character class ranges in patterns: LIKE '[A-Z]%'.",
+        "syntax": "SELECT * FROM tbl WHERE name LIKE 'J%';\nSELECT * FROM tbl WHERE name LIKE '[A-Z]%';  -- starts with any letter"
+      },
+      "oracle": {
+        "supported": true,
+        "since": "all",
+        "notes": "Case-sensitive by default. REGEXP_LIKE(col, pattern [, flags]) for full regex. ESCAPE clause for literal % or _ in patterns.",
+        "syntax": "SELECT * FROM tbl WHERE name LIKE 'J%';\nSELECT * FROM tbl WHERE REGEXP_LIKE(name, '^J', 'i');  -- case-insensitive regex"
+      },
+      "sqlite": {
+        "supported": true,
+        "since": "all",
+        "notes": "LIKE is case-insensitive for ASCII letters by default (unusual). GLOB provides case-sensitive matching using * and ? instead of % and _.",
+        "syntax": "SELECT * FROM tbl WHERE name LIKE 'j%';  -- matches 'John' AND 'john'\nSELECT * FROM tbl WHERE name GLOB 'J*';  -- case-sensitive"
+      }
+    },
+    "details": "SQLite's default case-insensitivity and PostgreSQL's case-sensitive LIKE (use ILIKE instead) are common porting gotchas. SQL Server's [] character class extension is unique among the five engines."
+  },
+  "subquery": {
+    "description": "A SELECT statement nested inside another query, used in WHERE, FROM, SELECT, or HAVING clauses.",
+    "syntax": "-- Scalar subquery in WHERE:\nSELECT name FROM employees\nWHERE salary > (SELECT AVG(salary) FROM employees);\n\n-- Correlated subquery:\nSELECT name FROM employees e\nWHERE salary > (\n  SELECT AVG(salary) FROM employees\n  WHERE dept_id = e.dept_id\n);",
+    "compatibility": {
+      "mysql": {
+        "supported": true,
+        "since": "all",
+        "notes": "All subquery types supported. Optimization historically weak in older versions — greatly improved in 8.0 with hash joins and derived condition pushdown.",
+        "syntax": "SELECT * FROM t WHERE id IN (SELECT id FROM t2 WHERE active = 1);"
+      },
+      "postgresql": {
+        "supported": true,
+        "since": "all",
+        "notes": "Excellent support for all subquery types. Also supports LATERAL subqueries and efficient EXISTS/NOT EXISTS.",
+        "syntax": "SELECT * FROM t WHERE EXISTS (SELECT 1 FROM t2 WHERE t2.ref = t.id);"
+      },
+      "sqlserver": {
+        "supported": true,
+        "since": "all",
+        "notes": "Full support for scalar, correlated, and derived-table subqueries.",
+        "syntax": "SELECT * FROM t WHERE id IN (SELECT id FROM t2 WHERE active = 1);"
+      },
+      "oracle": {
+        "supported": true,
+        "since": "all",
+        "notes": "Full support. Scalar subqueries can appear in SELECT lists and many other expression contexts.",
+        "syntax": "SELECT name, (SELECT COUNT(*) FROM orders o WHERE o.cust_id = c.id) AS cnt FROM customers c;"
+      },
+      "sqlite": {
+        "supported": true,
+        "since": "all",
+        "notes": "Full support for correlated subqueries, EXISTS, and derived tables.",
+        "syntax": "SELECT * FROM t WHERE id IN (SELECT id FROM t2 WHERE active = 1);"
+      }
+    },
+    "details": "Subqueries can often be rewritten as JOINs or CTEs for readability or performance. MySQL pre-8.0 had known optimizer issues with IN subqueries that were fixed in 8.0."
+  },
+  "trigger": {
+    "description": "A procedure that fires automatically in response to INSERT, UPDATE, or DELETE events on a table.",
+    "syntax": "-- Syntax varies by engine; this is MySQL/SQLite style:\nCREATE TRIGGER trg_name\nBEFORE INSERT ON table_name\nFOR EACH ROW\nBEGIN\n  SET NEW.created_at = NOW();\nEND;",
+    "compatibility": {
+      "mysql": {
+        "supported": true,
+        "since": "5.0.2",
+        "notes": "BEFORE/AFTER on INSERT/UPDATE/DELETE. One trigger per event/timing combination per table (before 8.0.16). Uses NEW and OLD row references.",
+        "syntax": "CREATE TRIGGER trg BEFORE INSERT ON tbl\nFOR EACH ROW SET NEW.created_at = NOW();"
+      },
+      "postgresql": {
+        "supported": true,
+        "since": "all",
+        "notes": "BEFORE/AFTER/INSTEAD OF. Multiple triggers per event allowed. Trigger logic lives in a separate PL/pgSQL FUNCTION returning TRIGGER. Supports both row-level and statement-level triggers.",
+        "syntax": "CREATE FUNCTION set_updated_at() RETURNS trigger LANGUAGE plpgsql AS $$\nBEGIN NEW.updated_at = now(); RETURN NEW; END;\n$$;\n\nCREATE TRIGGER trg BEFORE UPDATE ON tbl\nFOR EACH ROW EXECUTE FUNCTION set_updated_at();"
+      },
+      "sqlserver": {
+        "supported": true,
+        "since": "all",
+        "notes": "AFTER and INSTEAD OF DML triggers. DDL triggers (for schema changes) since 2005. Uses inserted and deleted pseudo-tables.",
+        "syntax": "CREATE TRIGGER trg ON tbl AFTER INSERT AS\nBEGIN\n  UPDATE tbl SET updated_at = GETDATE()\n  WHERE id IN (SELECT id FROM inserted);\nEND;"
+      },
+      "oracle": {
+        "supported": true,
+        "since": "all",
+        "notes": "BEFORE/AFTER/INSTEAD OF. Row-level and statement-level. Schema-level and database-level event triggers also supported. Uses :NEW and :OLD.",
+        "syntax": "CREATE TRIGGER trg BEFORE INSERT ON tbl\nFOR EACH ROW BEGIN :NEW.created_at := SYSDATE; END;"
+      },
+      "sqlite": {
+        "supported": true,
+        "since": "2.5.0",
+        "notes": "BEFORE/AFTER/INSTEAD OF (INSTEAD OF only on views). No statement-level triggers. Uses NEW and OLD row references.",
+        "syntax": "CREATE TRIGGER trg AFTER INSERT ON tbl\nBEGIN\n  UPDATE tbl SET updated_at = datetime('now') WHERE id = NEW.id;\nEND;"
+      }
+    },
+    "details": "PostgreSQL's trigger model is the most flexible, using separate reusable functions in any supported language. SQL Server triggers work with batches of rows (via inserted/deleted tables) rather than single rows."
+  },
+  "stored procedure": {
+    "description": "A named, reusable block of SQL and procedural logic stored in the database.",
+    "syntax": "-- MySQL / SQL Server style:\nCREATE PROCEDURE proc_name(IN param1 INT)\nBEGIN\n  SELECT * FROM tbl WHERE id = param1;\nEND;",
+    "compatibility": {
+      "mysql": {
+        "supported": true,
+        "since": "5.0",
+        "notes": "CREATE PROCEDURE with BEGIN...END. Supports IN, OUT, INOUT parameters. Called with CALL proc_name(...).",
+        "syntax": "CREATE PROCEDURE get_user(IN uid INT)\nBEGIN\n  SELECT * FROM users WHERE id = uid;\nEND;\n\nCALL get_user(42);"
+      },
+      "postgresql": {
+        "supported": true,
+        "since": "11",
+        "notes": "CREATE PROCEDURE added in PG 11. Key distinction from functions: procedures can COMMIT and ROLLBACK within their body. Called with CALL. Before PG 11, use CREATE FUNCTION with VOID return type as a workaround.",
+        "syntax": "CREATE PROCEDURE update_balance(uid INT, amount NUMERIC)\nLANGUAGE plpgsql AS $$\nBEGIN\n  UPDATE accounts SET balance = balance + amount WHERE id = uid;\n  COMMIT;\nEND;\n$$;\n\nCALL update_balance(1, 100.00);"
+      },
+      "sqlserver": {
+        "supported": true,
+        "since": "all",
+        "notes": "CREATE PROCEDURE (or PROC). Rich T-SQL with TRY/CATCH, temp tables, and dynamic SQL. Called with EXEC or EXECUTE.",
+        "syntax": "CREATE PROCEDURE get_user @uid INT AS\nBEGIN\n  SELECT * FROM users WHERE id = @uid;\nEND;\n\nEXEC get_user 42;"
+      },
+      "oracle": {
+        "supported": true,
+        "since": "all",
+        "notes": "CREATE PROCEDURE using PL/SQL. Called with EXEC or CALL. Rich exception handling with EXCEPTION...WHEN blocks.",
+        "syntax": "CREATE PROCEDURE get_user(uid IN NUMBER) AS\nBEGIN\n  SELECT * FROM users WHERE id = uid;\nEXCEPTION WHEN OTHERS THEN NULL;\nEND;\n\nEXEC get_user(42);"
+      },
+      "sqlite": {
+        "supported": false,
+        "notes": "No stored procedures. All logic must live in the application. Triggers can handle some reactive logic.",
+        "syntax": "-- Not supported."
+      }
+    },
+    "details": "PostgreSQL's CREATE PROCEDURE (PG 11+) is distinct from CREATE FUNCTION — procedures can manage transactions (COMMIT/ROLLBACK inside the body). SQLite has no server-side procedural code."
+  },
+  "explain": {
+    "description": "Display the execution plan the query optimizer chose, optionally running the query to show actual statistics.",
+    "syntax": "EXPLAIN SELECT * FROM orders WHERE customer_id = 42;",
+    "compatibility": {
+      "mysql": {
+        "supported": true,
+        "since": "all",
+        "notes": "EXPLAIN shows estimated plan. EXPLAIN ANALYZE (runs the query, shows actual stats) added in 8.0.18. EXPLAIN FORMAT=JSON or FORMAT=TREE for structured output.",
+        "syntax": "EXPLAIN SELECT * FROM tbl WHERE col = 1;\nEXPLAIN ANALYZE SELECT * FROM tbl WHERE col = 1;  -- 8.0.18+\nEXPLAIN FORMAT=TREE SELECT * FROM tbl WHERE col = 1;"
+      },
+      "postgresql": {
+        "supported": true,
+        "since": "all",
+        "notes": "EXPLAIN (estimated) and EXPLAIN ANALYZE (executes and shows actual rows, loops, timing). Rich options: EXPLAIN (ANALYZE, BUFFERS, FORMAT JSON). The most detailed output of any engine.",
+        "syntax": "EXPLAIN SELECT * FROM tbl WHERE col = 1;\nEXPLAIN ANALYZE SELECT * FROM tbl WHERE col = 1;\nEXPLAIN (ANALYZE, BUFFERS, FORMAT JSON) SELECT * FROM tbl WHERE col = 1;"
+      },
+      "sqlserver": {
+        "supported": true,
+        "since": "all",
+        "notes": "SET SHOWPLAN_XML/SHOWPLAN_TEXT ON before query. SET STATISTICS IO/TIME ON for I/O and timing. Graphical execution plans in SSMS and Azure Data Studio.",
+        "syntax": "SET SHOWPLAN_XML ON;\nGO\nSELECT * FROM tbl WHERE col = 1;\nGO\nSET SHOWPLAN_XML OFF;\n-- Or: SET STATISTICS IO ON; SET STATISTICS TIME ON;"
+      },
+      "oracle": {
+        "supported": true,
+        "since": "all",
+        "notes": "Two-step: EXPLAIN PLAN FOR ... stores the plan, then query PLAN_TABLE to retrieve it. DBMS_XPLAN.DISPLAY provides formatted output. AUTOTRACE in SQL*Plus is a common shortcut.",
+        "syntax": "EXPLAIN PLAN FOR SELECT * FROM tbl WHERE col = 1;\nSELECT * FROM TABLE(DBMS_XPLAN.DISPLAY);"
+      },
+      "sqlite": {
+        "supported": true,
+        "since": "all",
+        "notes": "EXPLAIN QUERY PLAN shows a readable high-level plan. EXPLAIN (without QUERY PLAN) shows raw virtual machine bytecode.",
+        "syntax": "EXPLAIN QUERY PLAN SELECT * FROM tbl WHERE col = 1;\nEXPLAIN SELECT * FROM tbl WHERE col = 1;  -- bytecode"
+      }
+    },
+    "details": "PostgreSQL's EXPLAIN (ANALYZE, BUFFERS) gives the richest output of any engine. Oracle's EXPLAIN workflow is uniquely two-step (write to PLAN_TABLE, then read it). SQL Server plans are best viewed graphically in SSMS."
+  },
+  "listen/notify": {
+    "description": "Asynchronous publish/subscribe messaging built into the database — no external message broker needed.",
+    "syntax": "-- Session 1 (subscriber):\nLISTEN order_updates;\n\n-- Session 2 (publisher):\nNOTIFY order_updates, '{\"id\": 42}';",
+    "compatibility": {
+      "mysql": {
+        "supported": false,
+        "notes": "Not supported. Use application-layer messaging (Redis pub/sub, etc.).",
+        "syntax": "-- Not supported."
+      },
+      "postgresql": {
+        "supported": true,
+        "since": "all",
+        "notes": "LISTEN channel registers interest. NOTIFY channel [, payload] fires on transaction commit. Clients receive notifications via the connection. pg_notify(channel, payload) can be called from triggers or functions. Payload limited to ~8000 bytes. Works within a single database only.",
+        "syntax": "-- Session 1:\nLISTEN order_updates;\n\n-- Session 2:\nNOTIFY order_updates, '{\"id\": 42, \"status\": \"shipped\"}';\n\n-- From inside a trigger:\nSELECT pg_notify('order_updates', row_to_json(NEW)::text);"
+      },
+      "sqlserver": {
+        "supported": false,
+        "notes": "Not supported as SQL. Service Broker provides similar functionality but with a very different architecture and syntax.",
+        "syntax": "-- Not supported. See Service Broker."
+      },
+      "oracle": {
+        "supported": false,
+        "notes": "Not supported as SQL. DBMS_ALERT and DBMS_PIPE PL/SQL packages provide async signaling but are PL/SQL-only.",
+        "syntax": "-- Not supported as SQL. See DBMS_ALERT."
+      },
+      "sqlite": {
+        "supported": false,
+        "notes": "Not supported. SQLite is a single-process embedded database with no server process to hold pub/sub channels.",
+        "syntax": "-- Not supported."
+      }
+    },
+    "details": "Unique to PostgreSQL. Commonly used for cache invalidation, real-time job queue signaling, and live-update feeds — without any external infrastructure. Fires on COMMIT, not on the NOTIFY call itself."
+  },
+  "generate_series": {
+    "description": "Generate a set of integer, numeric, or timestamp values as a virtual table row source.",
+    "syntax": "SELECT * FROM generate_series(1, 10) AS n;\n\n-- Calendar of months:\nSELECT generate_series(\n  '2024-01-01'::date,\n  '2024-12-01',\n  '1 month'\n)::date AS month;",
+    "compatibility": {
+      "mysql": {
+        "supported": false,
+        "notes": "Not supported. Workaround: recursive CTE (limited to @@cte_max_recursion_depth, default 1000).",
+        "syntax": "WITH RECURSIVE n AS (\n  SELECT 1 AS val\n  UNION ALL\n  SELECT val + 1 FROM n WHERE val < 10\n)\nSELECT val FROM n;"
+      },
+      "postgresql": {
+        "supported": true,
+        "since": "8.0",
+        "notes": "generate_series(start, stop[, step]) for integers/bigints/numerics. Timestamp support added in 8.4. Negative step works. Returns empty set if start > stop (with positive step).",
+        "syntax": "SELECT generate_series(1, 10);\nSELECT generate_series(1, 10, 2);  -- odd numbers: 1,3,5,7,9\nSELECT generate_series(\n  '2024-01-01'::timestamptz,\n  '2024-12-31',\n  '1 month'\n) AS month;"
+      },
+      "sqlserver": {
+        "supported": true,
+        "since": "2022",
+        "notes": "GENERATE_SERIES(start, stop[, step]) added in SQL Server 2022. Requires database compatibility level 160. Supports int, bigint, decimal, numeric. No timestamp/date support.",
+        "syntax": "SELECT value FROM GENERATE_SERIES(1, 10);\nSELECT value FROM GENERATE_SERIES(1, 10, 2);\n-- Requires: ALTER DATABASE db SET COMPATIBILITY_LEVEL = 160;"
+      },
+      "oracle": {
+        "supported": false,
+        "notes": "Not supported. Workaround: CONNECT BY LEVEL for integers; recursive CTE for other types.",
+        "syntax": "SELECT LEVEL AS n FROM DUAL CONNECT BY LEVEL <= 10;"
+      },
+      "sqlite": {
+        "supported": false,
+        "notes": "Not supported. Workaround: recursive CTE.",
+        "syntax": "WITH RECURSIVE n(val) AS (\n  SELECT 1\n  UNION ALL\n  SELECT val + 1 FROM n WHERE val < 10\n)\nSELECT val FROM n;"
+      }
+    },
+    "details": "PostgreSQL's timestamp/interval support is the killer feature — filling a date spine for reporting, finding calendar gaps, or generating billing periods is trivial. SQL Server 2022 added a limited version (integers/decimals only, requires compatibility level 160)."
+  },
+  "returning": {
+    "description": "Return column values from rows affected by an INSERT, UPDATE, or DELETE — without a separate SELECT round-trip.",
+    "syntax": "INSERT INTO users (name) VALUES ('Alice') RETURNING id, created_at;\n\nUPDATE orders SET status = 'shipped' WHERE id = 42 RETURNING *;\n\nDELETE FROM sessions WHERE expired_at < NOW() RETURNING session_id;",
+    "compatibility": {
+      "mysql": {
+        "supported": false,
+        "notes": "Not supported. Use LAST_INSERT_ID() for the auto-increment key after INSERT; no equivalent for UPDATE or DELETE.",
+        "syntax": "INSERT INTO tbl (name) VALUES ('Alice');\nSELECT LAST_INSERT_ID();  -- only for the generated key"
+      },
+      "postgresql": {
+        "supported": true,
+        "since": "8.2",
+        "notes": "Full RETURNING on INSERT, UPDATE, and DELETE. Can return any expression. Also supported in MERGE (PG 15+). Returns post-change values for UPDATE, deleted values for DELETE.",
+        "syntax": "INSERT INTO users (name) VALUES ('Alice') RETURNING id, created_at;\nUPDATE orders SET status = 'shipped' WHERE id = 42 RETURNING *;\nDELETE FROM sessions WHERE expired_at < NOW() RETURNING session_id;"
+      },
+      "sqlserver": {
+        "supported": true,
+        "since": "2005",
+        "notes": "OUTPUT clause with INSERTED.* (post-change) and DELETED.* (pre-change). Different syntax but functionally equivalent. Can redirect output into a table variable with OUTPUT ... INTO.",
+        "syntax": "INSERT INTO users (name) OUTPUT INSERTED.id, INSERTED.name VALUES ('Alice');\nUPDATE orders SET status = 'shipped' OUTPUT INSERTED.*, DELETED.status WHERE id = 42;\nDELETE FROM sessions OUTPUT DELETED.session_id WHERE expired_at < GETDATE();"
+      },
+      "oracle": {
+        "supported": true,
+        "since": "all",
+        "notes": "RETURNING ... INTO :bind_var. Requires PL/SQL host/bind variables — cannot return a bare result set in plain SQL. Effectively PL/SQL-only; single-row practical for INSERT.",
+        "syntax": "-- PL/SQL context only:\nINSERT INTO users (name) VALUES ('Alice')\nRETURNING id INTO :new_id;\n-- :new_id is a bind variable in application code"
+      },
+      "sqlite": {
+        "supported": true,
+        "since": "3.35.0",
+        "notes": "RETURNING clause added in SQLite 3.35.0 (March 2021). Syntax matches PostgreSQL.",
+        "syntax": "INSERT INTO users (name) VALUES ('Alice') RETURNING id;\nUPDATE orders SET status = 'shipped' WHERE id = 42 RETURNING *;"
+      }
+    },
+    "details": "MySQL's lack of RETURNING for UPDATE/DELETE is a common pain point. Oracle's implementation requires PL/SQL bind variables, making it impractical in plain SQL. SQL Server's OUTPUT clause is fully equivalent but uses different keywords."
+  },
+  "exclusion constraints": {
+    "description": "A generalization of UNIQUE constraints that uses arbitrary operators — most commonly used to prevent overlapping date/time ranges or spatial objects.",
+    "syntax": "CREATE TABLE bookings (\n  room   INT,\n  during TSRANGE,\n  EXCLUDE USING gist (room WITH =, during WITH &&)\n);",
+    "compatibility": {
+      "mysql": {
+        "supported": false,
+        "notes": "Not supported. Preventing overlapping ranges requires triggers or application logic.",
+        "syntax": "-- Not supported."
+      },
+      "postgresql": {
+        "supported": true,
+        "since": "9.0",
+        "notes": "EXCLUDE USING index_method (col WITH op, ...). Uses GiST or SP-GiST indexes. The btree_gist extension is usually needed to mix btree-comparable columns (like INT) with range/geometric operators. Can use any operator with an appropriate operator class.",
+        "syntax": "-- Prevent room double-booking:\nCREATE EXTENSION btree_gist;  -- usually required\n\nCREATE TABLE bookings (\n  room   INT,\n  during TSRANGE,\n  EXCLUDE USING gist (room WITH =, during WITH &&)\n);\n\n-- No two rows can share the same room AND have overlapping time ranges."
+      },
+      "sqlserver": {
+        "supported": false,
+        "notes": "Not supported. Only UNIQUE and CHECK constraints available; overlap prevention requires triggers.",
+        "syntax": "-- Not supported."
+      },
+      "oracle": {
+        "supported": false,
+        "notes": "Not supported. Only UNIQUE and CHECK constraints available.",
+        "syntax": "-- Not supported."
+      },
+      "sqlite": {
+        "supported": false,
+        "notes": "Not supported. Only UNIQUE and CHECK constraints available.",
+        "syntax": "-- Not supported."
+      }
+    },
+    "details": "Unique to PostgreSQL. Enables database-enforced non-overlap rules (e.g., no two reservations for the same room in the same time window) declaratively, without triggers or application checks."
+  },
+  "range types": {
+    "description": "First-class data types representing a continuous range of values (integers, dates, timestamps) with built-in operators for containment, overlap, and adjacency.",
+    "syntax": "-- Does a range contain a point?\nSELECT '[1,10)'::int4range @> 5;  -- true\n\n-- Do two ranges overlap?\nSELECT '[1,5)'::int4range && '[3,8)'::int4range;  -- true",
+    "compatibility": {
+      "mysql": {
+        "supported": false,
+        "notes": "No range types. Use two columns (start_date, end_date) and enforce constraints manually or via triggers.",
+        "syntax": "-- Not supported.\nSELECT * FROM bookings\nWHERE start_date < '2024-02-01' AND end_date > '2024-01-01';"
+      },
+      "postgresql": {
+        "supported": true,
+        "since": "9.2",
+        "notes": "Built-in types: int4range, int8range, numrange, tsrange, tstzrange, daterange. Multirange types (int4multirange, etc.) added in PG 14. Operators: @> (contains), <@ (contained by), && (overlaps), << (strictly left of), >> (strictly right of), -|- (adjacent). GiST indexable. Boundary inclusivity is explicit: [1,5) vs (1,5].",
+        "syntax": "SELECT '[1,5)'::int4range @> 3;   -- true\nSELECT '[1,5)'::int4range && '[3,8)'::int4range;  -- true\n\nCREATE TABLE events (\n  name   TEXT,\n  during TSRANGE\n);\nCREATE INDEX ON events USING gist (during);\n\n-- Query events overlapping a window:\nSELECT * FROM events\nWHERE during && '[2024-01-01,2024-02-01)'::tsrange;"
+      },
+      "sqlserver": {
+        "supported": false,
+        "notes": "No range types. Temporal tables (2016+) handle system-time history but are not general-purpose range types.",
+        "syntax": "-- Not supported."
+      },
+      "oracle": {
+        "supported": false,
+        "notes": "No range types. INTERVAL types exist but represent durations, not ranges.",
+        "syntax": "-- Not supported."
+      },
+      "sqlite": {
+        "supported": false,
+        "notes": "No range types. Use two columns.",
+        "syntax": "-- Not supported."
+      }
+    },
+    "details": "Unique to PostgreSQL. Range types are especially powerful in combination with exclusion constraints and GiST indexes — the canonical use case is a double-booking prevention system."
+  },
+  "filter (aggregate)": {
+    "description": "Add a per-aggregate WHERE condition to filter the rows included in that specific aggregate, without a separate subquery.",
+    "syntax": "SELECT\n  COUNT(*) FILTER (WHERE status = 'active')   AS active_count,\n  COUNT(*) FILTER (WHERE status = 'inactive') AS inactive_count,\n  AVG(salary) FILTER (WHERE dept = 'eng')    AS eng_avg_salary\nFROM employees;",
+    "compatibility": {
+      "mysql": {
+        "supported": false,
+        "notes": "Not supported. Use SUM(CASE WHEN cond THEN 1 ELSE 0 END) or COUNT(CASE WHEN cond THEN 1 END) as a workaround.",
+        "syntax": "SELECT\n  SUM(CASE WHEN status='active'   THEN 1 ELSE 0 END) AS active_count,\n  SUM(CASE WHEN status='inactive' THEN 1 ELSE 0 END) AS inactive_count\nFROM employees;"
+      },
+      "postgresql": {
+        "supported": true,
+        "since": "9.4",
+        "notes": "Full support on all aggregate functions including COUNT, SUM, AVG, array_agg, etc. Also works on window functions when the window function is itself an aggregate.",
+        "syntax": "SELECT\n  COUNT(*) FILTER (WHERE status = 'active') AS active_count,\n  AVG(salary) FILTER (WHERE dept = 'eng') AS eng_avg\nFROM employees;"
+      },
+      "sqlserver": {
+        "supported": true,
+        "since": "2022",
+        "notes": "FILTER clause added in SQL Server 2022 (compatibility level 130+). Works with standard aggregates.",
+        "syntax": "SELECT COUNT(*) FILTER (WHERE status = 'active') AS active_count FROM employees;"
+      },
+      "oracle": {
+        "supported": false,
+        "notes": "Not supported. Use CASE expressions inside aggregates.",
+        "syntax": "SELECT COUNT(CASE WHEN status='active' THEN 1 END) AS active_count FROM employees;"
+      },
+      "sqlite": {
+        "supported": true,
+        "since": "3.30.0",
+        "notes": "FILTER clause added in SQLite 3.30.0 (October 2019). Works with all built-in aggregates.",
+        "syntax": "SELECT COUNT(*) FILTER (WHERE status = 'active') FROM employees;"
+      }
+    },
+    "details": "Defined in the SQL standard (ISO/IEC 9075:2003). Oracle is the notable holdout. The CASE workaround is portable across all engines but significantly more verbose."
+  },
+  "within group": {
+    "description": "Ordered-set aggregate functions that require a sort order to compute their result: PERCENTILE_CONT (interpolated median), PERCENTILE_DISC (exact value), and MODE (most frequent value).",
+    "syntax": "SELECT\n  PERCENTILE_CONT(0.5) WITHIN GROUP (ORDER BY salary) AS median_salary,\n  MODE() WITHIN GROUP (ORDER BY dept_id)                AS most_common_dept\nFROM employees;",
+    "compatibility": {
+      "mysql": {
+        "supported": false,
+        "notes": "No PERCENTILE_CONT, PERCENTILE_DISC, or MODE. Median requires a workaround with subqueries or variables.",
+        "syntax": "-- Median workaround (MySQL 8.0+):\nWITH ranked AS (\n  SELECT salary,\n    ROW_NUMBER() OVER (ORDER BY salary) AS rn,\n    COUNT(*) OVER () AS total\n  FROM employees\n)\nSELECT AVG(salary) FROM ranked WHERE rn IN (FLOOR((total+1)/2), CEIL((total+1)/2));"
+      },
+      "postgresql": {
+        "supported": true,
+        "since": "9.4",
+        "notes": "PERCENTILE_CONT, PERCENTILE_DISC, and MODE() all supported as true group aggregates (no OVER clause required). PERCENTILE_CONT interpolates; PERCENTILE_DISC returns an actual data value.",
+        "syntax": "SELECT\n  PERCENTILE_CONT(0.5) WITHIN GROUP (ORDER BY salary) AS median,\n  PERCENTILE_DISC(0.5) WITHIN GROUP (ORDER BY salary) AS median_exact,\n  MODE() WITHIN GROUP (ORDER BY dept_id) AS most_common_dept\nFROM employees;"
+      },
+      "sqlserver": {
+        "supported": true,
+        "since": "2012",
+        "notes": "PERCENTILE_CONT and PERCENTILE_DISC supported, but ONLY as window functions — they require an OVER() clause and cannot be used as standalone group aggregates. No MODE() function.",
+        "syntax": "-- NOTE: requires OVER() in SQL Server:\nSELECT DISTINCT\n  PERCENTILE_CONT(0.5) WITHIN GROUP (ORDER BY salary) OVER () AS median,\n  PERCENTILE_DISC(0.5) WITHIN GROUP (ORDER BY salary) OVER () AS median_exact\nFROM employees;"
+      },
+      "oracle": {
+        "supported": true,
+        "since": "8i",
+        "notes": "PERCENTILE_CONT and PERCENTILE_DISC supported as both group aggregates and analytic functions. No MODE() — use STATS_MODE(expr) instead (added in Oracle 10g).",
+        "syntax": "SELECT\n  PERCENTILE_CONT(0.5) WITHIN GROUP (ORDER BY salary) AS median\nFROM employees;\n\nSELECT STATS_MODE(dept_id) AS most_common_dept FROM employees;"
+      },
+      "sqlite": {
+        "supported": false,
+        "notes": "No ordered-set aggregates.",
+        "syntax": "-- Not supported."
+      }
+    },
+    "details": "Key gotcha: SQL Server only supports these as window functions (OVER() clause required), not standalone group aggregates. PostgreSQL is the only engine with MODE(). Oracle uses STATS_MODE() as an equivalent."
+  },
+  "row-level security": {
+    "description": "Attach policies to a table so different users or roles automatically see or can modify only the rows they are permitted to access.",
+    "syntax": "ALTER TABLE orders ENABLE ROW LEVEL SECURITY;\n\nCREATE POLICY own_orders ON orders\n  USING (customer_id = current_setting('app.user_id')::int);",
+    "compatibility": {
+      "mysql": {
+        "supported": false,
+        "notes": "Not supported natively. Must be simulated with views or application-layer filtering.",
+        "syntax": "-- Not supported. Workaround: a view with a WHERE clause\nCREATE VIEW my_orders AS\n  SELECT * FROM orders WHERE customer_id = GET_USER_ID();"
+      },
+      "postgresql": {
+        "supported": true,
+        "since": "9.5",
+        "notes": "ALTER TABLE ... ENABLE ROW LEVEL SECURITY, then CREATE POLICY. Policies can be permissive (OR logic) or restrictive (AND logic). Superusers bypass RLS by default; use FORCE ROW LEVEL SECURITY to override. session variables (current_setting()) are the standard way to pass the current user identity.",
+        "syntax": "ALTER TABLE orders ENABLE ROW LEVEL SECURITY;\nALTER TABLE orders FORCE ROW LEVEL SECURITY;\n\n-- Allow users to see only their own rows:\nCREATE POLICY own_orders ON orders FOR SELECT\n  USING (customer_id = current_setting('app.user_id')::int);\n\n-- Allow admins to see everything:\nCREATE POLICY admin_all ON orders FOR ALL TO admin_role\n  USING (true);"
+      },
+      "sqlserver": {
+        "supported": true,
+        "since": "2016",
+        "notes": "CREATE SECURITY POLICY using inline table-valued functions as filter and block predicates. More verbose than PostgreSQL. Supports FILTER predicates (hide rows) and BLOCK predicates (prevent writes).",
+        "syntax": "CREATE FUNCTION dbo.rls_fn(@cust_id INT)\nRETURNS TABLE WITH SCHEMABINDING AS\nRETURN SELECT 1 AS ok WHERE @cust_id = CAST(SESSION_CONTEXT(N'user_id') AS INT);\n\nCREATE SECURITY POLICY dbo.OrderPolicy\nADD FILTER PREDICATE dbo.rls_fn(customer_id) ON dbo.orders\nWITH (STATE = ON);"
+      },
+      "oracle": {
+        "supported": true,
+        "since": "8i",
+        "notes": "Virtual Private Database (VPD) via DBMS_RLS.ADD_POLICY(). Predates PostgreSQL RLS. Requires PL/SQL — not pure SQL DDL. Policy function returns a WHERE clause string dynamically appended to queries.",
+        "syntax": "CREATE FUNCTION rls_policy(schema_v VARCHAR2, tbl VARCHAR2)\nRETURN VARCHAR2 AS\nBEGIN RETURN 'customer_id = SYS_CONTEXT(''USERENV'',''SESSION_USER'')'; END;\n\nBEGIN\n  DBMS_RLS.ADD_POLICY('SCOTT','ORDERS','own_orders','SCOTT','rls_policy');\nEND;"
+      },
+      "sqlite": {
+        "supported": false,
+        "notes": "Not supported. SQLite has no multi-user access control model.",
+        "syntax": "-- Not supported."
+      }
+    },
+    "details": "PostgreSQL's CREATE POLICY is the cleanest SQL DDL syntax. Oracle's VPD (Virtual Private Database) is the oldest implementation but requires PL/SQL. SQL Server's approach uses inline TVFs, which is powerful but verbose."
+  },
+  "tablesample": {
+    "description": "Return a random sample of rows from a table efficiently, without scanning and sorting the full table.",
+    "syntax": "SELECT * FROM tbl TABLESAMPLE BERNOULLI(10);  -- ~10% of rows, row-level\nSELECT * FROM tbl TABLESAMPLE SYSTEM(10);     -- ~10% of rows, page-level (faster)",
+    "compatibility": {
+      "mysql": {
+        "supported": false,
+        "notes": "Not supported. ORDER BY RAND() LIMIT n works but scans the full table and is very slow on large datasets.",
+        "syntax": "SELECT * FROM tbl ORDER BY RAND() LIMIT 1000;  -- slow\nSELECT * FROM tbl WHERE id % 10 = 0 LIMIT 1000;  -- faster but deterministic/biased"
+      },
+      "postgresql": {
+        "supported": true,
+        "since": "9.5",
+        "notes": "Two methods: BERNOULLI (true row-level statistical sample — accurate but slower) and SYSTEM (page-level — faster but may have clustering bias). Optional REPEATABLE(seed) for reproducible results. Custom sampling methods can be added via extensions (e.g., tsm_system_rows).",
+        "syntax": "SELECT * FROM tbl TABLESAMPLE BERNOULLI(10);\nSELECT * FROM tbl TABLESAMPLE SYSTEM(10);\nSELECT * FROM tbl TABLESAMPLE BERNOULLI(5) REPEATABLE(42);  -- reproducible\n-- With extension:\nSELECT * FROM tbl TABLESAMPLE SYSTEM_ROWS(1000);  -- exact row count"
+      },
+      "sqlserver": {
+        "supported": true,
+        "since": "2005",
+        "notes": "TABLESAMPLE SYSTEM(n PERCENT) or TABLESAMPLE (n ROWS). Only the SYSTEM method (page-level). Optional REPEATABLE(seed).",
+        "syntax": "SELECT * FROM tbl TABLESAMPLE SYSTEM(10 PERCENT);\nSELECT * FROM tbl TABLESAMPLE (1000 ROWS) REPEATABLE(42);"
+      },
+      "oracle": {
+        "supported": true,
+        "since": "8i",
+        "notes": "Non-standard SAMPLE clause syntax (not called TABLESAMPLE). SAMPLE(pct) is row-level (like BERNOULLI); SAMPLE BLOCK(pct) is page-level (like SYSTEM). Optional SEED(n) for reproducibility.",
+        "syntax": "SELECT * FROM tbl SAMPLE(10);         -- row-level ~10%\nSELECT * FROM tbl SAMPLE BLOCK(10);   -- page-level ~10%\nSELECT * FROM tbl SAMPLE(10) SEED(42);"
+      },
+      "sqlite": {
+        "supported": false,
+        "notes": "Not supported. Workaround: random rowid selection.",
+        "syntax": "SELECT * FROM tbl WHERE rowid IN (\n  SELECT rowid FROM tbl ORDER BY RANDOM() LIMIT 1000\n);"
+      }
+    },
+    "details": "PostgreSQL is the only engine offering both BERNOULLI (true row-level) and SYSTEM (page-level) methods in standard SQL. SYSTEM is faster but results can be biased toward rows that happen to share a page. Oracle uses non-standard SAMPLE syntax."
   }
 }
