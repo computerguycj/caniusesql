@@ -34,7 +34,9 @@
         "syntax": "WITH cte_name AS (\n  SELECT col1, col2\n  FROM tbl\n  WHERE …\n)\nSELECT *\nFROM cte_name;"
       }
     },
-    "details": "Common Table Expressions (CTEs) are named temporary result sets that exist within the scope of a single statement."
+    "details": "Common Table Expressions (CTEs) are named temporary result sets that exist within the scope of a single statement.",
+    "category": "Query Techniques",
+    "slug": "with-cte"
   },
   "merge": {
     "description": "Performs insert, update, or delete operations on a target table based on a join to a source table.",
@@ -48,8 +50,8 @@
       "postgresql": {
         "supported": true,
         "since": "15",
-        "notes": "Native MERGE support since PostgreSQL 15<br>Prior to this version, use<br>WITH upsert AS (<br>  UPDATE t SET … WHERE … RETURNING *<br>)<br>INSERT INTO t (…) SELECT … WHERE NOT EXISTS (SELECT 1 FROM upsert);",
-        "syntax": "MERGE INTO target_table<br>USING source_table<br>  ON (target.pk = source.pk)<br>WHEN MATCHED THEN<br>  UPDATE SET …<br>WHEN NOT MATCHED THEN<br>  INSERT (…) VALUES (…);"
+        "notes": "Native MERGE support since PostgreSQL 15\nPrior to this version, use\nWITH upsert AS (\n  UPDATE t SET … WHERE … RETURNING *\n)\nINSERT INTO t (…) SELECT … WHERE NOT EXISTS (SELECT 1 FROM upsert);",
+        "syntax": "MERGE INTO target_table\nUSING source_table\n  ON (target.pk = source.pk)\nWHEN MATCHED THEN\n  UPDATE SET …\nWHEN NOT MATCHED THEN\n  INSERT (…) VALUES (…);"
       },
       "sqlserver": {
         "supported": true,
@@ -69,7 +71,9 @@
         "syntax": "INSERT INTO t (…) VALUES (…) ON CONFLICT(pk) DO UPDATE SET …;"
       }
     },
-    "details": "Useful for ETL and slowly changing dimensions."
+    "details": "Useful for ETL and slowly changing dimensions.",
+    "category": "DML",
+    "slug": "merge"
   },
   "json_table": {
     "description": "Extracts JSON data and returns it as a relational table.",
@@ -105,7 +109,9 @@
         "syntax": "SELECT\n  json_extract(value, '$.name') AS name,\n  json_extract(value, '$.age')  AS age\nFROM tbl, json_each(json_col);"
       }
     },
-    "details": "Turn JSON docs into relational rows/columns for easy querying."
+    "details": "Turn JSON docs into relational rows/columns for easy querying.",
+    "category": "JSON",
+    "slug": "json-table"
   },
   "window functions": {
     "description": "Perform calculations across a set of rows related to the current row.",
@@ -142,7 +148,9 @@
         "syntax": "SELECT col1,\n       SUM(col2)  OVER (PARTITION BY col1) AS total\nFROM tbl;"
       }
     },
-    "details": "Includes ranking, aggregate, and value functions like LEAD and LAG."
+    "details": "Includes ranking, aggregate, and value functions like LEAD and LAG.",
+    "category": "Query Techniques",
+    "slug": "window-functions"
   },
   "pivot": {
     "description": "Rotates rows into columns, creating cross-tab reports.",
@@ -176,7 +184,9 @@
         "syntax": "SELECT\n  category,\n  SUM(CASE WHEN month='Jan' THEN value END) AS Jan,\n  …\nFROM sales\nGROUP BY category;"
       }
     },
-    "details": "Shorthand for conditional aggregation—transform rows into columns."
+    "details": "Shorthand for conditional aggregation—transform rows into columns.",
+    "category": "Query Techniques",
+    "slug": "pivot"
   },
   "full text search": {
     "description": "Specialized indexing and querying for efficient text searches.",
@@ -213,7 +223,9 @@
         "syntax": "SELECT rowid, *\nFROM articles_fts\nWHERE articles_fts MATCH 'terms';"
       }
     },
-    "details": "Syntax and capabilities vary widely by system."
+    "details": "Syntax and capabilities vary widely by system.",
+    "category": "Indexes & Search",
+    "slug": "full-text-search"
   },
   "recursive cte": {
     "description": "A CTE that references itself for hierarchies or graph traversals.",
@@ -250,7 +262,9 @@
         "syntax": "WITH RECURSIVE cte AS (…)\nSELECT * FROM cte;"
       }
     },
-    "details": "Great for org charts, file trees, and any hierarchical data."
+    "details": "Great for org charts, file trees, and any hierarchical data.",
+    "category": "Query Techniques",
+    "slug": "recursive-cte"
   },
   "upsert": {
     "description": "Insert rows that don't exist and update those that do in one statement.",
@@ -287,7 +301,9 @@
         "syntax": "INSERT INTO tbl (…) VALUES (…) ON CONFLICT(pk) DO UPDATE SET …;"
       }
     },
-    "details": "Atomic insert-or-update in one shot."
+    "details": "Atomic insert-or-update in one shot.",
+    "category": "DML",
+    "slug": "upsert"
   },
   "select": {
     "description": "Retrieve rows from one or more tables.",
@@ -324,7 +340,9 @@
         "syntax": "SELECT * FROM tbl WHERE … ORDER BY col LIMIT 10 OFFSET 5;"
       }
     },
-    "details": "Core retrieval statement, with dialect-specific paging syntax."
+    "details": "Core retrieval statement, with dialect-specific paging syntax.",
+    "category": "DML",
+    "slug": "select"
   },
   "insert": {
     "description": "Add new rows to a table.",
@@ -361,7 +379,9 @@
         "syntax": "INSERT INTO tbl (c1,c2) VALUES (v1,v2);"
       }
     },
-    "details": "Basic DML for creating rows."
+    "details": "Basic DML for creating rows.",
+    "category": "DML",
+    "slug": "insert"
   },
   "update": {
     "description": "Modify existing rows in a table.",
@@ -398,7 +418,9 @@
         "syntax": "UPDATE tbl SET c1=v1 WHERE …;"
       }
     },
-    "details": "Basic DML for modifying rows."
+    "details": "Basic DML for modifying rows.",
+    "category": "DML",
+    "slug": "update"
   },
   "delete": {
     "description": "Remove rows from a table.",
@@ -435,7 +457,9 @@
         "syntax": "DELETE FROM tbl WHERE …;"
       }
     },
-    "details": "Basic DML for removing rows."
+    "details": "Basic DML for removing rows.",
+    "category": "DML",
+    "slug": "delete"
   },
   "create table": {
     "description": "Define a new table and its columns.",
@@ -472,7 +496,9 @@
         "syntax": "CREATE TABLE tbl (\n  id   INTEGER PRIMARY KEY AUTOINCREMENT,\n  name TEXT NOT NULL\n);"
       }
     },
-    "details": "DDL to create a new relational table."
+    "details": "DDL to create a new relational table.",
+    "category": "DDL",
+    "slug": "create-table"
   },
   "alter table": {
     "description": "Modify an existing table’s structure.",
@@ -509,7 +535,9 @@
         "syntax": "ALTER TABLE tbl\nADD COLUMN nick TEXT;"
       }
     },
-    "details": "DDL for evolving schemas."
+    "details": "DDL for evolving schemas.",
+    "category": "DDL",
+    "slug": "alter-table"
   },
   "drop table": {
     "description": "Remove a table and all its data.",
@@ -546,7 +574,9 @@
         "syntax": "DROP TABLE IF EXISTS tbl;"
       }
     },
-    "details": "DDL to remove a table."
+    "details": "DDL to remove a table.",
+    "category": "DDL",
+    "slug": "drop-table"
   },
   "set operations": {
     "description": "Combine rows from multiple queries: UNION, INTERSECT, EXCEPT/MINUS.",
@@ -583,7 +613,9 @@
         "syntax": "SELECT …\nINTERSECT\nSELECT …\nEXCEPT\nSELECT …;"
       }
     },
-    "details": "Combine result-sets by set logic."
+    "details": "Combine result-sets by set logic.",
+    "category": "Query Techniques",
+    "slug": "set-operations"
   },
   "group by": {
     "description": "Aggregate rows sharing common values.",
@@ -620,7 +652,9 @@
         "syntax": "SELECT col, COUNT(*)\nFROM tbl\nGROUP BY col\nHAVING COUNT(*)>1;"
       }
     },
-    "details": "Combine rows with same keys for aggregation."
+    "details": "Combine rows with same keys for aggregation.",
+    "category": "Query Techniques",
+    "slug": "group-by"
   },
   "order by": {
     "description": "Sort the result set by one or more columns.",
@@ -657,7 +691,9 @@
         "syntax": "… ORDER BY col DESC;"
       }
     },
-    "details": "Defines row sort order."
+    "details": "Defines row sort order.",
+    "category": "Query Techniques",
+    "slug": "order-by"
   },
   "distinct": {
     "description": "Eliminate duplicate rows in a result set.",
@@ -694,7 +730,9 @@
         "syntax": "SELECT DISTINCT col FROM tbl;"
       }
     },
-    "details": "Remove duplicate rows."
+    "details": "Remove duplicate rows.",
+    "category": "Query Techniques",
+    "slug": "distinct"
   },
   "transactions": {
     "description": "Control units of work with atomicity.",
@@ -731,7 +769,9 @@
         "syntax": "BEGIN;\n…\nCOMMIT;\n-- or ROLLBACK;"
       }
     },
-    "details": "Ensure atomic, consistent, isolated, durable operations."
+    "details": "Ensure atomic, consistent, isolated, durable operations.",
+    "category": "Transactions",
+    "slug": "transactions"
   },
   "string agg": {
     "description": "Concatenates strings separated by a specified separator. In PostgreSQL, this is STRING_AGG; in MySQL and SQLite, use GROUP_CONCAT; in Oracle, use LISTAGG; and in SQL Server, use STRING_AGG (since 2017). Syntax and features may differ between databases.",
@@ -763,7 +803,9 @@
         "notes": "Alias added for compatibility with other databases; implemented as alias for GROUP_CONCAT"
       }
     },
-    "details": "The PostgreSQL STRING_AGG() function is an aggregate function that concatenates a list of strings and places a separator between them. It does not add the separator at the end of the string."
+    "details": "The PostgreSQL STRING_AGG() function is an aggregate function that concatenates a list of strings and places a separator between them. It does not add the separator at the end of the string.",
+    "category": "Functions",
+    "slug": "string-agg"
   },
   "lateral": {
     "description": "Allows a subquery in the FROM clause to reference columns from tables to its left, enabling advanced row-by-row operations.",
@@ -794,7 +836,9 @@
         "notes": "No support for LATERAL or APPLY."
       }
     },
-    "details": "LATERAL enables correlated subqueries in the FROM clause, making it possible to join each row to a derived table that depends on that row. In SQL Server, use CROSS APPLY or OUTER APPLY for similar functionality."
+    "details": "LATERAL enables correlated subqueries in the FROM clause, making it possible to join each row to a derived table that depends on that row. In SQL Server, use CROSS APPLY or OUTER APPLY for similar functionality.",
+    "category": "Query Techniques",
+    "slug": "lateral"
   },
   "comments": {
     "description": "Annotate SQL code with single-line (--) or block (/* */) comments. All major SQL engines support both styles.",
@@ -831,7 +875,9 @@
         "syntax": "-- single-line\n/* block */"
       }
     },
-    "details": "Single-line comments (--) and block comments (/* */) are universally supported. Notable differences: PostgreSQL allows nested block comments; MySQL supports conditional execution via /*!version ... */; Oracle uses /*+ ... */ for query optimizer hints."
+    "details": "Single-line comments (--) and block comments (/* */) are universally supported. Notable differences: PostgreSQL allows nested block comments; MySQL supports conditional execution via /*!version ... */; Oracle uses /*+ ... */ for query optimizer hints.",
+    "category": "Syntax",
+    "slug": "comments"
   },
   "join": {
     "description": "Combine rows from two or more tables based on a related column. All core join types are universally supported. Search for a specific type: <a href=\"#\" onclick=\"searchCommand('inner join'); return false;\">INNER JOIN</a>, <a href=\"#\" onclick=\"searchCommand('left join'); return false;\">LEFT JOIN</a>, <a href=\"#\" onclick=\"searchCommand('right join'); return false;\">RIGHT JOIN</a>, <a href=\"#\" onclick=\"searchCommand('full outer join'); return false;\">FULL OUTER JOIN</a>, <a href=\"#\" onclick=\"searchCommand('cross join'); return false;\">CROSS JOIN</a>.",
@@ -868,7 +914,9 @@
         "syntax": "SELECT a.col, b.col FROM a JOIN b ON a.id = b.a_id;"
       }
     },
-    "details": "SQL JOINs are the primary mechanism for combining rows across tables. See specific types: INNER JOIN, LEFT JOIN, RIGHT JOIN, FULL OUTER JOIN, CROSS JOIN."
+    "details": "SQL JOINs are the primary mechanism for combining rows across tables. See specific types: INNER JOIN, LEFT JOIN, RIGHT JOIN, FULL OUTER JOIN, CROSS JOIN.",
+    "category": "Joins",
+    "slug": "join"
   },
   "inner join": {
     "description": "Returns only rows where the join condition matches in both tables.",
@@ -905,7 +953,9 @@
         "syntax": "SELECT a.col, b.col FROM a INNER JOIN b ON a.id = b.a_id;"
       }
     },
-    "details": "The most common join type. Rows with no match in either table are excluded from the result."
+    "details": "The most common join type. Rows with no match in either table are excluded from the result.",
+    "category": "Joins",
+    "slug": "inner-join"
   },
   "left join": {
     "description": "Returns all rows from the left table and matching rows from the right; NULLs fill unmatched right-side columns.",
@@ -942,7 +992,9 @@
         "syntax": "SELECT a.col, b.col FROM a LEFT JOIN b ON a.id = b.a_id;"
       }
     },
-    "details": "Use LEFT JOIN to keep all records from the left table even when no match exists on the right."
+    "details": "Use LEFT JOIN to keep all records from the left table even when no match exists on the right.",
+    "category": "Joins",
+    "slug": "left-join"
   },
   "right join": {
     "description": "Returns all rows from the right table and matching rows from the left; NULLs fill unmatched left-side columns.",
@@ -979,7 +1031,9 @@
         "syntax": "SELECT a.col, b.col FROM a RIGHT JOIN b ON a.id = b.a_id;"
       }
     },
-    "details": "RIGHT JOIN is the mirror of LEFT JOIN. Since it can always be rewritten as a LEFT JOIN with tables swapped, it is less commonly used."
+    "details": "RIGHT JOIN is the mirror of LEFT JOIN. Since it can always be rewritten as a LEFT JOIN with tables swapped, it is less commonly used.",
+    "category": "Joins",
+    "slug": "right-join"
   },
   "full outer join": {
     "description": "Returns all rows from both tables; NULLs fill columns where no match exists on either side.",
@@ -1015,7 +1069,9 @@
         "syntax": "SELECT a.col, b.col FROM a FULL OUTER JOIN b ON a.id = b.a_id;"
       }
     },
-    "details": "Useful for finding rows that exist in one table but not the other. MySQL has no native support and requires a UNION workaround."
+    "details": "Useful for finding rows that exist in one table but not the other. MySQL has no native support and requires a UNION workaround.",
+    "category": "Joins",
+    "slug": "full-outer-join"
   },
   "cross join": {
     "description": "Produces the cartesian product of two tables — every row of the left combined with every row of the right. No join condition.",
@@ -1052,7 +1108,9 @@
         "syntax": "SELECT a.col, b.col FROM a CROSS JOIN b;"
       }
     },
-    "details": "Rarely needed in application code but useful for generating combinations or test data. N rows × M rows = N*M result rows."
+    "details": "Rarely needed in application code but useful for generating combinations or test data. N rows × M rows = N*M result rows.",
+    "category": "Joins",
+    "slug": "cross-join"
   },
   "create index": {
     "description": "Create an index on one or more columns to speed up queries at the cost of write overhead.",
@@ -1089,7 +1147,9 @@
         "syntax": "CREATE INDEX idx ON tbl (col);\nCREATE INDEX idx ON tbl (col) WHERE active = 1;"
       }
     },
-    "details": "PostgreSQL's CREATE INDEX CONCURRENTLY is uniquely useful in production — it builds the index without locking the table for writes. All engines support composite and unique indexes."
+    "details": "PostgreSQL's CREATE INDEX CONCURRENTLY is uniquely useful in production — it builds the index without locking the table for writes. All engines support composite and unique indexes.",
+    "category": "Indexes & Search",
+    "slug": "create-index"
   },
   "create view": {
     "description": "Define a named virtual table based on a SELECT query.",
@@ -1126,7 +1186,9 @@
         "syntax": "CREATE VIEW v AS SELECT col FROM tbl;"
       }
     },
-    "details": "PostgreSQL and Oracle support true MATERIALIZED VIEWs (pre-computed, stored on disk). SQLite views are read-only. SQL Server achieves materialization via indexed views."
+    "details": "PostgreSQL and Oracle support true MATERIALIZED VIEWs (pre-computed, stored on disk). SQLite views are read-only. SQL Server achieves materialization via indexed views.",
+    "category": "DDL",
+    "slug": "create-view"
   },
   "case when": {
     "description": "Conditional expression returning different values based on evaluated conditions.",
@@ -1163,7 +1225,9 @@
         "syntax": "SELECT CASE WHEN x > 0 THEN 'pos' ELSE 'neg' END FROM tbl;"
       }
     },
-    "details": "CASE is SQL-standard and works identically across all major engines. Dialect-specific shorthands (IF, IIF, DECODE) exist but are not portable."
+    "details": "CASE is SQL-standard and works identically across all major engines. Dialect-specific shorthands (IF, IIF, DECODE) exist but are not portable.",
+    "category": "Functions",
+    "slug": "case-when"
   },
   "coalesce": {
     "description": "Returns the first non-NULL value from a list of expressions.",
@@ -1200,7 +1264,9 @@
         "syntax": "SELECT COALESCE(a, b, 'default') FROM tbl;"
       }
     },
-    "details": "COALESCE is SQL-standard. All engines also ship proprietary 2-argument shorthands (IFNULL, ISNULL, NVL) that predate the standard."
+    "details": "COALESCE is SQL-standard. All engines also ship proprietary 2-argument shorthands (IFNULL, ISNULL, NVL) that predate the standard.",
+    "category": "Functions",
+    "slug": "coalesce"
   },
   "cast": {
     "description": "Convert a value from one data type to another.",
@@ -1237,7 +1303,9 @@
         "syntax": "SELECT CAST(price AS TEXT) FROM tbl;\nSELECT CAST('3.14' AS REAL);"
       }
     },
-    "details": "CAST is SQL-standard. PostgreSQL's :: shorthand is unique and extremely common in practice. SQL Server's CONVERT adds format-style codes useful for date/number display."
+    "details": "CAST is SQL-standard. PostgreSQL's :: shorthand is unique and extremely common in practice. SQL Server's CONVERT adds format-style codes useful for date/number display.",
+    "category": "Functions",
+    "slug": "cast"
   },
   "truncate": {
     "description": "Remove all rows from a table instantly, without logging individual row deletions.",
@@ -1273,7 +1341,9 @@
         "syntax": "DELETE FROM tbl;  -- equivalent; pair with VACUUM to reclaim space"
       }
     },
-    "details": "Much faster than DELETE on large tables because it deallocates data pages rather than logging row-by-row. PostgreSQL is unique in making TRUNCATE fully transactional. SQLite lacks the command entirely."
+    "details": "Much faster than DELETE on large tables because it deallocates data pages rather than logging row-by-row. PostgreSQL is unique in making TRUNCATE fully transactional. SQLite lacks the command entirely.",
+    "category": "DML",
+    "slug": "truncate"
   },
   "like": {
     "description": "Pattern matching within strings using % (any sequence of characters) and _ (exactly one character) wildcards.",
@@ -1310,7 +1380,9 @@
         "syntax": "SELECT * FROM tbl WHERE name LIKE 'j%';  -- matches 'John' AND 'john'\nSELECT * FROM tbl WHERE name GLOB 'J*';  -- case-sensitive"
       }
     },
-    "details": "SQLite's default case-insensitivity and PostgreSQL's case-sensitive LIKE (use ILIKE instead) are common porting gotchas. SQL Server's [] character class extension is unique among the five engines."
+    "details": "SQLite's default case-insensitivity and PostgreSQL's case-sensitive LIKE (use ILIKE instead) are common porting gotchas. SQL Server's [] character class extension is unique among the five engines.",
+    "category": "Query Techniques",
+    "slug": "like"
   },
   "subquery": {
     "description": "A SELECT statement nested inside another query, used in WHERE, FROM, SELECT, or HAVING clauses.",
@@ -1347,7 +1419,9 @@
         "syntax": "SELECT * FROM t WHERE id IN (SELECT id FROM t2 WHERE active = 1);"
       }
     },
-    "details": "Subqueries can often be rewritten as JOINs or CTEs for readability or performance. MySQL pre-8.0 had known optimizer issues with IN subqueries that were fixed in 8.0."
+    "details": "Subqueries can often be rewritten as JOINs or CTEs for readability or performance. MySQL pre-8.0 had known optimizer issues with IN subqueries that were fixed in 8.0.",
+    "category": "Query Techniques",
+    "slug": "subquery"
   },
   "trigger": {
     "description": "A procedure that fires automatically in response to INSERT, UPDATE, or DELETE events on a table.",
@@ -1384,7 +1458,9 @@
         "syntax": "CREATE TRIGGER trg AFTER INSERT ON tbl\nBEGIN\n  UPDATE tbl SET updated_at = datetime('now') WHERE id = NEW.id;\nEND;"
       }
     },
-    "details": "PostgreSQL's trigger model is the most flexible, using separate reusable functions in any supported language. SQL Server triggers work with batches of rows (via inserted/deleted tables) rather than single rows."
+    "details": "PostgreSQL's trigger model is the most flexible, using separate reusable functions in any supported language. SQL Server triggers work with batches of rows (via inserted/deleted tables) rather than single rows.",
+    "category": "Programmability",
+    "slug": "trigger"
   },
   "stored procedure": {
     "description": "A named, reusable block of SQL and procedural logic stored in the database.",
@@ -1420,7 +1496,9 @@
         "syntax": "-- Not supported."
       }
     },
-    "details": "PostgreSQL's CREATE PROCEDURE (PG 11+) is distinct from CREATE FUNCTION — procedures can manage transactions (COMMIT/ROLLBACK inside the body). SQLite has no server-side procedural code."
+    "details": "PostgreSQL's CREATE PROCEDURE (PG 11+) is distinct from CREATE FUNCTION — procedures can manage transactions (COMMIT/ROLLBACK inside the body). SQLite has no server-side procedural code.",
+    "category": "Programmability",
+    "slug": "stored-procedure"
   },
   "explain": {
     "description": "Display the execution plan the query optimizer chose, optionally running the query to show actual statistics.",
@@ -1457,7 +1535,9 @@
         "syntax": "EXPLAIN QUERY PLAN SELECT * FROM tbl WHERE col = 1;\nEXPLAIN SELECT * FROM tbl WHERE col = 1;  -- bytecode"
       }
     },
-    "details": "PostgreSQL's EXPLAIN (ANALYZE, BUFFERS) gives the richest output of any engine. Oracle's EXPLAIN workflow is uniquely two-step (write to PLAN_TABLE, then read it). SQL Server plans are best viewed graphically in SSMS."
+    "details": "PostgreSQL's EXPLAIN (ANALYZE, BUFFERS) gives the richest output of any engine. Oracle's EXPLAIN workflow is uniquely two-step (write to PLAN_TABLE, then read it). SQL Server plans are best viewed graphically in SSMS.",
+    "category": "Administration",
+    "slug": "explain"
   },
   "listen/notify": {
     "description": "Asynchronous publish/subscribe messaging built into the database — no external message broker needed.",
@@ -1490,7 +1570,9 @@
         "syntax": "-- Not supported."
       }
     },
-    "details": "Unique to PostgreSQL. Commonly used for cache invalidation, real-time job queue signaling, and live-update feeds — without any external infrastructure. Fires on COMMIT, not on the NOTIFY call itself."
+    "details": "Unique to PostgreSQL. Commonly used for cache invalidation, real-time job queue signaling, and live-update feeds — without any external infrastructure. Fires on COMMIT, not on the NOTIFY call itself.",
+    "category": "Administration",
+    "slug": "listen-notify"
   },
   "generate_series": {
     "description": "Generate a set of integer, numeric, or timestamp values as a virtual table row source.",
@@ -1524,7 +1606,9 @@
         "syntax": "WITH RECURSIVE n(val) AS (\n  SELECT 1\n  UNION ALL\n  SELECT val + 1 FROM n WHERE val < 10\n)\nSELECT val FROM n;"
       }
     },
-    "details": "PostgreSQL's timestamp/interval support is the killer feature — filling a date spine for reporting, finding calendar gaps, or generating billing periods is trivial. SQL Server 2022 added a limited version (integers/decimals only, requires compatibility level 160)."
+    "details": "PostgreSQL's timestamp/interval support is the killer feature — filling a date spine for reporting, finding calendar gaps, or generating billing periods is trivial. SQL Server 2022 added a limited version (integers/decimals only, requires compatibility level 160).",
+    "category": "Functions",
+    "slug": "generate-series"
   },
   "returning": {
     "description": "Return column values from rows affected by an INSERT, UPDATE, or DELETE — without a separate SELECT round-trip.",
@@ -1560,7 +1644,9 @@
         "syntax": "INSERT INTO users (name) VALUES ('Alice') RETURNING id;\nUPDATE orders SET status = 'shipped' WHERE id = 42 RETURNING *;"
       }
     },
-    "details": "MySQL's lack of RETURNING for UPDATE/DELETE is a common pain point. Oracle's implementation requires PL/SQL bind variables, making it impractical in plain SQL. SQL Server's OUTPUT clause is fully equivalent but uses different keywords."
+    "details": "MySQL's lack of RETURNING for UPDATE/DELETE is a common pain point. Oracle's implementation requires PL/SQL bind variables, making it impractical in plain SQL. SQL Server's OUTPUT clause is fully equivalent but uses different keywords.",
+    "category": "DML",
+    "slug": "returning"
   },
   "exclusion constraints": {
     "description": "A generalization of UNIQUE constraints that uses arbitrary operators — most commonly used to prevent overlapping date/time ranges or spatial objects.",
@@ -1593,7 +1679,9 @@
         "syntax": "-- Not supported."
       }
     },
-    "details": "Unique to PostgreSQL. Enables database-enforced non-overlap rules (e.g., no two reservations for the same room in the same time window) declaratively, without triggers or application checks."
+    "details": "Unique to PostgreSQL. Enables database-enforced non-overlap rules (e.g., no two reservations for the same room in the same time window) declaratively, without triggers or application checks.",
+    "category": "DDL",
+    "slug": "exclusion-constraints"
   },
   "range types": {
     "description": "First-class data types representing a continuous range of values (integers, dates, timestamps) with built-in operators for containment, overlap, and adjacency.",
@@ -1626,7 +1714,9 @@
         "syntax": "-- Not supported."
       }
     },
-    "details": "Unique to PostgreSQL. Range types are especially powerful in combination with exclusion constraints and GiST indexes — the canonical use case is a double-booking prevention system."
+    "details": "Unique to PostgreSQL. Range types are especially powerful in combination with exclusion constraints and GiST indexes — the canonical use case is a double-booking prevention system.",
+    "category": "Data Types",
+    "slug": "range-types"
   },
   "filter (aggregate)": {
     "description": "Add a per-aggregate WHERE condition to filter the rows included in that specific aggregate, without a separate subquery.",
@@ -1661,7 +1751,9 @@
         "syntax": "SELECT COUNT(*) FILTER (WHERE status = 'active') FROM employees;"
       }
     },
-    "details": "Defined in the SQL standard (ISO/IEC 9075:2003). Oracle is the notable holdout. The CASE workaround is portable across all engines but significantly more verbose."
+    "details": "Defined in the SQL standard (ISO/IEC 9075:2003). Oracle is the notable holdout. The CASE workaround is portable across all engines but significantly more verbose.",
+    "category": "Functions",
+    "slug": "filter-aggregate"
   },
   "within group": {
     "description": "Ordered-set aggregate functions that require a sort order to compute their result: PERCENTILE_CONT (interpolated median), PERCENTILE_DISC (exact value), and MODE (most frequent value).",
@@ -1696,7 +1788,9 @@
         "syntax": "-- Not supported."
       }
     },
-    "details": "Key gotcha: SQL Server only supports these as window functions (OVER() clause required), not standalone group aggregates. PostgreSQL is the only engine with MODE(). Oracle uses STATS_MODE() as an equivalent."
+    "details": "Key gotcha: SQL Server only supports these as window functions (OVER() clause required), not standalone group aggregates. PostgreSQL is the only engine with MODE(). Oracle uses STATS_MODE() as an equivalent.",
+    "category": "Functions",
+    "slug": "within-group"
   },
   "row-level security": {
     "description": "Attach policies to a table so different users or roles automatically see or can modify only the rows they are permitted to access.",
@@ -1731,7 +1825,9 @@
         "syntax": "-- Not supported."
       }
     },
-    "details": "PostgreSQL's CREATE POLICY is the cleanest SQL DDL syntax. Oracle's VPD (Virtual Private Database) is the oldest implementation but requires PL/SQL. SQL Server's approach uses inline TVFs, which is powerful but verbose."
+    "details": "PostgreSQL's CREATE POLICY is the cleanest SQL DDL syntax. Oracle's VPD (Virtual Private Database) is the oldest implementation but requires PL/SQL. SQL Server's approach uses inline TVFs, which is powerful but verbose.",
+    "category": "Security",
+    "slug": "row-level-security"
   },
   "tablesample": {
     "description": "Return a random sample of rows from a table efficiently, without scanning and sorting the full table.",
@@ -1766,6 +1862,8 @@
         "syntax": "SELECT * FROM tbl WHERE rowid IN (\n  SELECT rowid FROM tbl ORDER BY RANDOM() LIMIT 1000\n);"
       }
     },
-    "details": "PostgreSQL is the only engine offering both BERNOULLI (true row-level) and SYSTEM (page-level) methods in standard SQL. SYSTEM is faster but results can be biased toward rows that happen to share a page. Oracle uses non-standard SAMPLE syntax."
+    "details": "PostgreSQL is the only engine offering both BERNOULLI (true row-level) and SYSTEM (page-level) methods in standard SQL. SYSTEM is faster but results can be biased toward rows that happen to share a page. Oracle uses non-standard SAMPLE syntax.",
+    "category": "Query Techniques",
+    "slug": "tablesample"
   }
 }
