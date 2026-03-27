@@ -1865,5 +1865,548 @@
     "details": "PostgreSQL is the only engine offering both BERNOULLI (true row-level) and SYSTEM (page-level) methods in standard SQL. SYSTEM is faster but results can be biased toward rows that happen to share a page. Oracle uses non-standard SAMPLE syntax.",
     "category": "Query Techniques",
     "slug": "tablesample"
+  },
+  "concat": {
+    "description": "Concatenate two or more strings into a single string. Behavior with NULL values differs significantly between engines.",
+    "syntax": "SELECT CONCAT(first_name, ' ', last_name) AS full_name\nFROM users;",
+    "category": "Functions",
+    "slug": "concat",
+    "compatibility": {
+      "mysql": {
+        "supported": true,
+        "since": "all",
+        "notes": "CONCAT() ignores NULL arguments (treats them as empty string). CONCAT_WS(sep, ...) skips NULLs and adds a separator between non-null values.",
+        "syntax": "SELECT CONCAT('Hello', ' ', 'World');       -- 'Hello World'\nSELECT CONCAT('a', NULL, 'b');             -- 'ab' (NULL silently ignored)\nSELECT CONCAT_WS(', ', 'Alice', NULL, 'Bob');  -- 'Alice, Bob'"
+      },
+      "postgresql": {
+        "supported": true,
+        "since": "all",
+        "notes": "CONCAT() ignores NULLs (like MySQL). The || operator is the standard alternative but propagates NULLs — 'a' || NULL = NULL. Use CONCAT() or COALESCE() when NULL safety matters.",
+        "syntax": "SELECT CONCAT('Hello', ' ', 'World');       -- 'Hello World'\nSELECT 'Hello' || ' ' || 'World';          -- 'Hello World'\nSELECT 'a' || NULL;                        -- NULL\nSELECT CONCAT('a', NULL, 'b');             -- 'ab'"
+      },
+      "sqlserver": {
+        "supported": true,
+        "since": "2012",
+        "notes": "CONCAT() added in SQL Server 2012 and treats NULLs as empty strings. Before 2012, use + operator — but + propagates NULLs unless SET CONCAT_NULL_YIELDS_NULL OFF. CONCAT_WS() added in SQL Server 2017.",
+        "syntax": "SELECT CONCAT('Hello', ' ', 'World');       -- 'Hello World'\nSELECT CONCAT('a', NULL, 'b');             -- 'ab'\nSELECT 'Hello' + ' ' + 'World';           -- 'Hello World' (pre-2012)\nSELECT CONCAT_WS(', ', 'Alice', NULL, 'Bob');  -- 'Alice, Bob' (2017+)"
+      },
+      "oracle": {
+        "supported": true,
+        "since": "all",
+        "notes": "CONCAT() accepts exactly two arguments. For more than two strings, use the || operator or nest CONCAT() calls. In Oracle, NULL is treated as empty string in string concatenation (|| propagates, but CONCAT ignores).",
+        "syntax": "SELECT CONCAT('Hello', ' World') FROM DUAL;          -- 'Hello World'\nSELECT 'Hello' || ' ' || 'World' FROM DUAL;          -- 'Hello World'\nSELECT CONCAT(CONCAT('a', 'b'), 'c') FROM DUAL;      -- 'abc'"
+      },
+      "sqlite": {
+        "supported": true,
+        "since": "3.44.0",
+        "notes": "CONCAT() added in SQLite 3.44.0 (Nov 2023). Before that, use the || operator exclusively. || propagates NULLs — use COALESCE() to guard against them.",
+        "syntax": "SELECT CONCAT('Hello', ' ', 'World');       -- 3.44.0+\nSELECT 'Hello' || ' ' || 'World';          -- all versions\nSELECT COALESCE(name, '') || ' ' || COALESCE(suffix, '') FROM tbl;"
+      }
+    },
+    "details": "The biggest gotcha: the || operator propagates NULLs in PostgreSQL and SQLite (any NULL in the chain = NULL result), while CONCAT() in MySQL, SQL Server, and PostgreSQL treats NULLs as empty strings. Oracle's CONCAT() only takes two arguments. CONCAT_WS() (MySQL 2017+, SQL Server 2017+) is the cleanest option when you have a separator and want to skip NULLs automatically."
+  },
+  "substring": {
+    "description": "Extract a portion of a string starting at a given position, optionally for a given length.",
+    "syntax": "SELECT SUBSTRING(column, start_position, length)\nFROM tbl;",
+    "category": "Functions",
+    "slug": "substring",
+    "compatibility": {
+      "mysql": {
+        "supported": true,
+        "since": "all",
+        "notes": "SUBSTRING(str, pos, len) and SUBSTR() are synonyms. Position is 1-based. If pos is negative, counts from the end of the string.",
+        "syntax": "SELECT SUBSTRING('Hello World', 7, 5);     -- 'World'\nSELECT SUBSTRING('Hello World', -5);       -- 'World' (from end)\nSELECT MID('Hello World', 7, 5);           -- 'World' (synonym)"
+      },
+      "postgresql": {
+        "supported": true,
+        "since": "all",
+        "notes": "SUBSTRING(str FROM pos FOR len) is the SQL-standard form. SUBSTRING(str, pos, len) also works. Supports regex: SUBSTRING(str FROM pattern) extracts the first match.",
+        "syntax": "SELECT SUBSTRING('Hello World' FROM 7 FOR 5);   -- 'World'\nSELECT SUBSTRING('Hello World', 7, 5);           -- 'World'\nSELECT SUBSTRING('abc123' FROM '[0-9]+');         -- '123' (regex)"
+      },
+      "sqlserver": {
+        "supported": true,
+        "since": "all",
+        "notes": "SUBSTRING(str, start, length). 1-based position. All three arguments are required. No negative indexing from end — use LEN() arithmetic instead.",
+        "syntax": "SELECT SUBSTRING('Hello World', 7, 5);     -- 'World'\n-- Last 5 chars:\nSELECT SUBSTRING(col, LEN(col) - 4, 5) FROM tbl;"
+      },
+      "oracle": {
+        "supported": true,
+        "since": "all",
+        "notes": "SUBSTR(str, position, length). Both SUBSTR and SUBSTRING work. Position is 1-based; negative position counts from the end.",
+        "syntax": "SELECT SUBSTR('Hello World', 7, 5) FROM DUAL;   -- 'World'\nSELECT SUBSTR('Hello World', -5) FROM DUAL;     -- 'World'"
+      },
+      "sqlite": {
+        "supported": true,
+        "since": "all",
+        "notes": "SUBSTR(str, start, length). 1-based. Negative start counts from the end. SUBSTRING is also accepted as a synonym.",
+        "syntax": "SELECT SUBSTR('Hello World', 7, 5);        -- 'World'\nSELECT SUBSTR('Hello World', -5);          -- 'World'"
+      }
+    },
+    "details": "Function name is the main portability trap: MySQL/SQL Server/PostgreSQL use SUBSTRING, Oracle prefers SUBSTR (though both work on PG and Oracle). The SQL-standard form is SUBSTRING(str FROM pos FOR len) — only PostgreSQL supports it. PostgreSQL uniquely supports regex extraction with SUBSTRING(str FROM pattern)."
+  },
+  "trim": {
+    "description": "Remove leading and/or trailing characters (typically whitespace) from a string.",
+    "syntax": "SELECT TRIM('  hello  ');        -- 'hello'\nSELECT LTRIM('  hello');         -- 'hello  '\nSELECT RTRIM('hello  ');         -- '  hello'",
+    "category": "Functions",
+    "slug": "trim",
+    "compatibility": {
+      "mysql": {
+        "supported": true,
+        "since": "all",
+        "notes": "TRIM([LEADING|TRAILING|BOTH] [remstr FROM] str). Removes whitespace by default. LTRIM() and RTRIM() for one-sided trim. Can trim specific characters: TRIM(BOTH 'x' FROM 'xxhelloxx').",
+        "syntax": "SELECT TRIM('  hello  ');                  -- 'hello'\nSELECT TRIM(BOTH 'x' FROM 'xxhelloxx');   -- 'hello'\nSELECT LTRIM('  hello');                  -- 'hello'\nSELECT RTRIM('hello  ');                  -- 'hello'"
+      },
+      "postgresql": {
+        "supported": true,
+        "since": "all",
+        "notes": "TRIM([LEADING|TRAILING|BOTH] [chars FROM] str). Also LTRIM(str [, chars]) and RTRIM(str [, chars]) which accept a set of characters to strip (not just whitespace). btrim() = TRIM(BOTH ...).",
+        "syntax": "SELECT TRIM('  hello  ');                      -- 'hello'\nSELECT TRIM(BOTH 'x' FROM 'xxhelloxx');       -- 'hello'\nSELECT LTRIM('xxxhello', 'x');                -- 'hello'\nSELECT BTRIM('xxhelloxx', 'x');               -- 'hello'"
+      },
+      "sqlserver": {
+        "supported": true,
+        "since": "all",
+        "notes": "LTRIM() and RTRIM() have always been available. TRIM() (both sides, whitespace) added in SQL Server 2017. TRIM() with a character set argument added in SQL Server 2022.",
+        "syntax": "SELECT LTRIM(RTRIM('  hello  '));           -- pre-2017 both-side trim\nSELECT TRIM('  hello  ');                  -- 2017+\nSELECT TRIM('x' FROM 'xxhelloxx');        -- 2022+ (character argument)"
+      },
+      "oracle": {
+        "supported": true,
+        "since": "all",
+        "notes": "TRIM([LEADING|TRAILING|BOTH] [char FROM] str). LTRIM(str [, chars]) and RTRIM(str [, chars]) also available and accept character sets.",
+        "syntax": "SELECT TRIM('  hello  ') FROM DUAL;              -- 'hello'\nSELECT TRIM(BOTH 'x' FROM 'xxhelloxx') FROM DUAL; -- 'hello'\nSELECT LTRIM('xxxhello', 'x') FROM DUAL;          -- 'hello'"
+      },
+      "sqlite": {
+        "supported": true,
+        "since": "all",
+        "notes": "TRIM(str [, chars]), LTRIM(str [, chars]), RTRIM(str [, chars]). The optional chars argument is a set of characters to strip, not a substring.",
+        "syntax": "SELECT TRIM('  hello  ');                  -- 'hello'\nSELECT TRIM('xxhelloxx', 'x');            -- 'hello'\nSELECT LTRIM('  hello');                  -- 'hello'"
+      }
+    },
+    "details": "SQL Server is the notable laggard — TRIM() for both sides only arrived in 2017 (use LTRIM(RTRIM()) before that). PostgreSQL and Oracle's LTRIM/RTRIM accept a character *set* argument, not a substring — LTRIM('abcfoo', 'abc') strips any leading a, b, or c characters, not the literal substring 'abc'."
+  },
+  "length": {
+    "description": "Return the number of characters (or bytes) in a string.",
+    "syntax": "SELECT LENGTH(column) FROM tbl;",
+    "category": "Functions",
+    "slug": "length",
+    "compatibility": {
+      "mysql": {
+        "supported": true,
+        "since": "all",
+        "notes": "LENGTH() returns byte length (important for multi-byte UTF-8 strings). CHAR_LENGTH() / CHARACTER_LENGTH() returns character count. For emoji/CJK text, use CHAR_LENGTH().",
+        "syntax": "SELECT LENGTH('hello');                  -- 5\nSELECT LENGTH('caf\\u00e9');              -- 5 bytes (UTF-8: 'é' = 2 bytes) → 6\nSELECT CHAR_LENGTH('caf\\u00e9');         -- 4 characters"
+      },
+      "postgresql": {
+        "supported": true,
+        "since": "all",
+        "notes": "LENGTH() returns character count (not bytes) for text/varchar. OCTET_LENGTH() returns byte length. BIT_LENGTH() returns bit count. For bytea columns, LENGTH() returns byte count.",
+        "syntax": "SELECT LENGTH('hello');                  -- 5\nSELECT LENGTH('café');                   -- 4 (characters)\nSELECT OCTET_LENGTH('café');             -- 5 (bytes in UTF-8)"
+      },
+      "sqlserver": {
+        "supported": true,
+        "since": "all",
+        "notes": "LEN() returns character count, excluding trailing spaces. DATALENGTH() returns byte length (NVARCHAR = 2 bytes per char). LEN() does NOT count trailing spaces — use DATALENGTH() if that matters.",
+        "syntax": "SELECT LEN('hello');                     -- 5\nSELECT LEN('hello   ');                  -- 5 (trailing spaces ignored)\nSELECT DATALENGTH(N'hello');             -- 10 (NVARCHAR: 2 bytes/char)"
+      },
+      "oracle": {
+        "supported": true,
+        "since": "all",
+        "notes": "LENGTH() returns character count based on database character set. LENGTHB() returns byte length. LENGTHC() uses Unicode complete character count.",
+        "syntax": "SELECT LENGTH('hello') FROM DUAL;        -- 5\nSELECT LENGTHB('café') FROM DUAL;        -- 5 (bytes)\nSELECT LENGTH('café') FROM DUAL;         -- 4 (chars)"
+      },
+      "sqlite": {
+        "supported": true,
+        "since": "all",
+        "notes": "LENGTH() returns character count for TEXT values. For BLOB values, returns byte count. SQLite stores text as UTF-8 or UTF-16 internally.",
+        "syntax": "SELECT LENGTH('hello');                  -- 5\nSELECT LENGTH('café');                   -- 4 (characters)"
+      }
+    },
+    "details": "The biggest trap: SQL Server uses LEN() not LENGTH() and silently ignores trailing spaces. MySQL's LENGTH() returns bytes, not characters — always use CHAR_LENGTH() for multi-byte text in MySQL. PostgreSQL and SQLite's LENGTH() correctly returns character count."
+  },
+  "upper / lower": {
+    "description": "Convert a string to all uppercase or all lowercase characters.",
+    "syntax": "SELECT UPPER(name), LOWER(email)\nFROM users;",
+    "category": "Functions",
+    "slug": "upper-lower",
+    "compatibility": {
+      "mysql": {
+        "supported": true,
+        "since": "all",
+        "notes": "UPPER() and LOWER(). Case conversion is locale-aware based on the column's collation. UCASE() and LCASE() are deprecated synonyms.",
+        "syntax": "SELECT UPPER('hello world');   -- 'HELLO WORLD'\nSELECT LOWER('HELLO WORLD');   -- 'hello world'"
+      },
+      "postgresql": {
+        "supported": true,
+        "since": "all",
+        "notes": "UPPER() and LOWER(). Locale/collation-aware. For case-insensitive comparisons, prefer ILIKE or citext extension rather than manually lowercasing.",
+        "syntax": "SELECT UPPER('hello world');   -- 'HELLO WORLD'\nSELECT LOWER('HELLO WORLD');   -- 'hello world'"
+      },
+      "sqlserver": {
+        "supported": true,
+        "since": "all",
+        "notes": "UPPER() and LOWER(). Behavior is collation-dependent. Turkish collation (tr_TR) is the classic gotcha — 'i'.UPPER() ≠ 'I' under Turkish collation rules.",
+        "syntax": "SELECT UPPER('hello world');   -- 'HELLO WORLD'\nSELECT LOWER('HELLO WORLD');   -- 'hello world'"
+      },
+      "oracle": {
+        "supported": true,
+        "since": "all",
+        "notes": "UPPER() and LOWER(). NLS_LANGUAGE session parameter affects case conversion for locale-specific characters.",
+        "syntax": "SELECT UPPER('hello world') FROM DUAL;  -- 'HELLO WORLD'\nSELECT LOWER('HELLO WORLD') FROM DUAL;  -- 'hello world'"
+      },
+      "sqlite": {
+        "supported": true,
+        "since": "all",
+        "notes": "UPPER() and LOWER() only work on ASCII characters by default. Non-ASCII characters (accented letters, etc.) are NOT case-converted without loading the ICU extension.",
+        "syntax": "SELECT UPPER('hello');         -- 'HELLO'\nSELECT UPPER('café');          -- 'CAFé' (é not converted without ICU)"
+      }
+    },
+    "details": "SQLite is the major gotcha — UPPER/LOWER only affects ASCII by default, so accented characters are silently left alone. SQL Server's Turkish collation is a classic production bug. For case-insensitive search, avoid LOWER(col) = LOWER(input) and use engine-native features instead: ILIKE (PostgreSQL), COLLATE (SQL Server/MySQL)."
+  },
+  "replace": {
+    "description": "Replace all occurrences of a substring within a string with a new substring.",
+    "syntax": "SELECT REPLACE(column, 'old_value', 'new_value')\nFROM tbl;",
+    "category": "Functions",
+    "slug": "replace",
+    "compatibility": {
+      "mysql": {
+        "supported": true,
+        "since": "all",
+        "notes": "REPLACE(str, from_str, to_str). Case-sensitive (regardless of collation). Replaces all occurrences.",
+        "syntax": "SELECT REPLACE('Hello World', 'World', 'SQL');  -- 'Hello SQL'\nSELECT REPLACE('aabbcc', 'b', 'x');             -- 'aaxxcc'"
+      },
+      "postgresql": {
+        "supported": true,
+        "since": "all",
+        "notes": "REPLACE(str, from, to). Case-sensitive. For case-insensitive replace, use REGEXP_REPLACE with the 'i' flag.",
+        "syntax": "SELECT REPLACE('Hello World', 'World', 'SQL');         -- 'Hello SQL'\nSELECT REGEXP_REPLACE('Hello World', 'world', 'SQL', 'i'); -- case-insensitive"
+      },
+      "sqlserver": {
+        "supported": true,
+        "since": "all",
+        "notes": "REPLACE(str, old, new). Case sensitivity depends on the database collation. In a case-insensitive collation, REPLACE('Hello', 'hello', 'X') returns 'X'.",
+        "syntax": "SELECT REPLACE('Hello World', 'World', 'SQL');  -- 'Hello SQL'\nSELECT REPLACE('aabbcc', 'b', 'x');             -- 'aaxxcc'"
+      },
+      "oracle": {
+        "supported": true,
+        "since": "all",
+        "notes": "REPLACE(str, search [, replacement]). If replacement is omitted or NULL, all occurrences of search are deleted. Case-sensitive.",
+        "syntax": "SELECT REPLACE('Hello World', 'World', 'SQL') FROM DUAL;  -- 'Hello SQL'\nSELECT REPLACE('Hello World', 'World') FROM DUAL;          -- 'Hello ' (deleted)"
+      },
+      "sqlite": {
+        "supported": true,
+        "since": "all",
+        "notes": "REPLACE(str, old, new). Case-sensitive. Replaces all occurrences.",
+        "syntax": "SELECT REPLACE('Hello World', 'World', 'SQL');  -- 'Hello SQL'"
+      }
+    },
+    "details": "All five engines support REPLACE with the same three-argument signature. Case sensitivity is the key difference: MySQL is always case-sensitive, SQL Server follows collation, PostgreSQL is always case-sensitive (use REGEXP_REPLACE with 'i' flag for case-insensitive). Oracle's optional third argument (deletion mode) is unique."
+  },
+  "current timestamp": {
+    "description": "Retrieve the current date and/or time from the database server. Each engine has multiple synonyms with subtle differences around timezone awareness and precision.",
+    "syntax": "SELECT CURRENT_TIMESTAMP;  -- SQL standard, returns date+time",
+    "category": "Functions",
+    "slug": "current-timestamp",
+    "compatibility": {
+      "mysql": {
+        "supported": true,
+        "since": "all",
+        "notes": "NOW() returns datetime in session timezone. CURRENT_TIMESTAMP is a synonym. SYSDATE() returns the time at the moment of execution (differs from NOW() inside stored procs). UTC_TIMESTAMP() for UTC. CURDATE() / CURTIME() for date or time only.",
+        "syntax": "SELECT NOW();               -- '2024-03-15 14:23:01'\nSELECT CURRENT_TIMESTAMP;   -- same as NOW()\nSELECT UTC_TIMESTAMP();     -- UTC\nSELECT CURDATE();           -- '2024-03-15'\nSELECT CURTIME();           -- '14:23:01'"
+      },
+      "postgresql": {
+        "supported": true,
+        "since": "all",
+        "notes": "NOW() and CURRENT_TIMESTAMP return timestamptz (with timezone) fixed at transaction start — the same value is returned throughout a transaction. CLOCK_TIMESTAMP() returns the real current time (changes mid-transaction). CURRENT_DATE and CURRENT_TIME also available.",
+        "syntax": "SELECT NOW();                  -- transaction start time, with tz\nSELECT CURRENT_TIMESTAMP;      -- same as NOW()\nSELECT CLOCK_TIMESTAMP();      -- actual wall clock (changes mid-tx)\nSELECT CURRENT_DATE;           -- '2024-03-15'\nSELECT CURRENT_TIME;           -- '14:23:01.123456+00'"
+      },
+      "sqlserver": {
+        "supported": true,
+        "since": "all",
+        "notes": "GETDATE() returns local server time as datetime. GETUTCDATE() for UTC. SYSDATETIME() returns higher-precision datetime2. SYSUTCDATETIME() for UTC datetime2. CURRENT_TIMESTAMP is a synonym for GETDATE().",
+        "syntax": "SELECT GETDATE();              -- '2024-03-15 14:23:01.123'\nSELECT GETUTCDATE();           -- UTC datetime\nSELECT SYSDATETIME();          -- datetime2 (higher precision)\nSELECT CURRENT_TIMESTAMP;      -- synonym for GETDATE()"
+      },
+      "oracle": {
+        "supported": true,
+        "since": "all",
+        "notes": "SYSDATE returns server date/time without timezone (DATE type). SYSTIMESTAMP returns with timezone (TIMESTAMP WITH TIME ZONE). CURRENT_DATE and CURRENT_TIMESTAMP return session timezone values.",
+        "syntax": "SELECT SYSDATE FROM DUAL;           -- server local, no timezone\nSELECT SYSTIMESTAMP FROM DUAL;      -- with timezone, high precision\nSELECT CURRENT_DATE FROM DUAL;      -- session timezone\nSELECT CURRENT_TIMESTAMP FROM DUAL; -- session timezone with tz"
+      },
+      "sqlite": {
+        "supported": true,
+        "since": "all",
+        "notes": "No dedicated function — use datetime(), date(), or time() with 'now'. Always returns UTC. CURRENT_TIMESTAMP, CURRENT_DATE, and CURRENT_TIME are also available as SQL-standard aliases.",
+        "syntax": "SELECT datetime('now');            -- '2024-03-15 14:23:01' (UTC)\nSELECT datetime('now', 'localtime'); -- converted to local time\nSELECT CURRENT_TIMESTAMP;           -- same as datetime('now')\nSELECT date('now');                 -- '2024-03-15'"
+      }
+    },
+    "details": "PostgreSQL's NOW() is fixed at transaction start — call CLOCK_TIMESTAMP() if you need it to advance mid-transaction. Oracle's SYSDATE has no timezone, SYSTIMESTAMP does — easy to mix up. SQLite always returns UTC from 'now' and requires an explicit 'localtime' modifier. SQL Server's GETDATE() precision is milliseconds; use SYSDATETIME() for microseconds."
+  },
+  "date trunc": {
+    "description": "Truncate a date or timestamp to a specified unit of precision (year, month, day, hour, etc.), zeroing out all smaller units.",
+    "syntax": "-- Truncate to start of month:\nSELECT DATE_TRUNC('month', created_at) AS month_start\nFROM orders;",
+    "category": "Functions",
+    "slug": "date-trunc",
+    "compatibility": {
+      "mysql": {
+        "supported": false,
+        "notes": "No DATE_TRUNC(). Use DATE_FORMAT() or arithmetic with DATE() and LAST_DAY(). For truncation to a specific unit, combine YEAR/MONTH/DAY extraction and MAKEDATE/MAKETIME.",
+        "syntax": "-- Truncate to start of month:\nSELECT DATE_FORMAT(created_at, '%Y-%m-01') AS month_start FROM orders;\n-- Truncate to start of hour:\nSELECT DATE_FORMAT(created_at, '%Y-%m-%d %H:00:00') AS hour_start FROM orders;"
+      },
+      "postgresql": {
+        "supported": true,
+        "since": "all",
+        "notes": "DATE_TRUNC(unit, timestamp [, timezone]). Units: microseconds, milliseconds, second, minute, hour, day, week, month, quarter, year, decade, century, millennium. Optional timezone argument added in PG 12.",
+        "syntax": "SELECT DATE_TRUNC('month', NOW());                        -- first of current month\nSELECT DATE_TRUNC('hour', created_at) FROM orders;       -- truncate to hour\nSELECT DATE_TRUNC('week', NOW());                        -- start of ISO week (Monday)\nSELECT DATE_TRUNC('month', NOW(), 'America/New_York');   -- with timezone (PG 12+)"
+      },
+      "sqlserver": {
+        "supported": true,
+        "since": "2022",
+        "notes": "DATE_TRUNC(datepart, date) added in SQL Server 2022. For older versions, use DATEADD/DATEDIFF arithmetic: DATEADD(month, DATEDIFF(month, 0, col), 0).",
+        "syntax": "-- SQL Server 2022+:\nSELECT DATE_TRUNC(month, created_at) FROM orders;\n\n-- Older versions (workaround):\nSELECT DATEADD(month, DATEDIFF(month, 0, created_at), 0) FROM orders;\nSELECT DATEADD(day,   DATEDIFF(day,   0, created_at), 0) FROM orders;"
+      },
+      "oracle": {
+        "supported": true,
+        "since": "all",
+        "notes": "TRUNC(date, format). Format strings differ from PostgreSQL: 'MM' for month, 'DD' for day, 'HH' for hour, 'YYYY' for year. No direct equivalent for week truncation.",
+        "syntax": "SELECT TRUNC(SYSDATE, 'MM') FROM DUAL;    -- first of current month\nSELECT TRUNC(SYSDATE, 'YYYY') FROM DUAL;  -- first of year\nSELECT TRUNC(SYSDATE, 'DD') FROM DUAL;    -- midnight today\nSELECT TRUNC(SYSDATE, 'HH') FROM DUAL;    -- current hour"
+      },
+      "sqlite": {
+        "supported": false,
+        "notes": "No DATE_TRUNC(). Use strftime() to format and truncate dates.",
+        "syntax": "-- Truncate to start of month:\nSELECT strftime('%Y-%m-01', created_at) FROM orders;\n-- Truncate to start of hour:\nSELECT strftime('%Y-%m-%d %H:00:00', created_at) FROM orders;"
+      }
+    },
+    "details": "PostgreSQL's DATE_TRUNC is the gold standard and supports the widest range of units including quarter and decade. Oracle uses TRUNC() with different format strings. MySQL and SQLite have no native truncation — string formatting via DATE_FORMAT/strftime is the workaround. SQL Server only got DATE_TRUNC in 2022; the DATEADD/DATEDIFF pattern is how everyone was doing it before."
+  },
+  "extract / datepart": {
+    "description": "Extract a specific component (year, month, day, hour, etc.) from a date or timestamp as a numeric value.",
+    "syntax": "SELECT EXTRACT(YEAR FROM order_date) AS order_year\nFROM orders;",
+    "category": "Functions",
+    "slug": "extract-datepart",
+    "compatibility": {
+      "mysql": {
+        "supported": true,
+        "since": "all",
+        "notes": "EXTRACT(unit FROM date) is SQL-standard and supported. Also YEAR(date), MONTH(date), DAY(date), HOUR(time), MINUTE(time), SECOND(time) as shorthand functions. DAYOFWEEK() returns 1=Sunday, WEEKDAY() returns 0=Monday.",
+        "syntax": "SELECT EXTRACT(YEAR FROM NOW());          -- 2024\nSELECT YEAR(NOW()), MONTH(NOW()), DAY(NOW());\nSELECT DAYOFWEEK(NOW());                  -- 1=Sun, 7=Sat\nSELECT WEEK(NOW());                       -- ISO week number"
+      },
+      "postgresql": {
+        "supported": true,
+        "since": "all",
+        "notes": "EXTRACT(field FROM source) returns a float8. DATE_PART(field, source) is equivalent. Fields include: year, month, day, hour, minute, second, milliseconds, epoch, dow (0=Sun), isodow (1=Mon), week, quarter, timezone.",
+        "syntax": "SELECT EXTRACT(YEAR FROM NOW());          -- 2024\nSELECT EXTRACT(DOW FROM NOW());           -- 0=Sun, 6=Sat\nSELECT EXTRACT(ISODOW FROM NOW());        -- 1=Mon, 7=Sun (ISO)\nSELECT EXTRACT(EPOCH FROM NOW());         -- Unix timestamp\nSELECT DATE_PART('month', NOW());         -- same as EXTRACT"
+      },
+      "sqlserver": {
+        "supported": true,
+        "since": "all",
+        "notes": "DATEPART(datepart, date) returns an integer. YEAR(date), MONTH(date), DAY(date) are shorthand. Parts include: year, quarter, month, dayofyear, day, weekday, week, hour, minute, second, millisecond, microsecond. DATEPART(weekday, date) is locale-dependent (SET DATEFIRST).",
+        "syntax": "SELECT DATEPART(YEAR, GETDATE());         -- 2024\nSELECT DATEPART(QUARTER, GETDATE());      -- 1-4\nSELECT YEAR(GETDATE()), MONTH(GETDATE()), DAY(GETDATE());\nSELECT DATEPART(WEEKDAY, GETDATE());      -- locale-dependent"
+      },
+      "oracle": {
+        "supported": true,
+        "since": "all",
+        "notes": "EXTRACT(field FROM date). Fields: YEAR, MONTH, DAY, HOUR, MINUTE, SECOND, TIMEZONE_HOUR, TIMEZONE_MINUTE. TO_CHAR(date, 'format') is the traditional Oracle approach for formatting.",
+        "syntax": "SELECT EXTRACT(YEAR FROM SYSDATE) FROM DUAL;      -- 2024\nSELECT EXTRACT(MONTH FROM SYSDATE) FROM DUAL;     -- 1-12\nSELECT TO_CHAR(SYSDATE, 'Q') FROM DUAL;           -- quarter (1-4)\nSELECT TO_CHAR(SYSDATE, 'IW') FROM DUAL;          -- ISO week number"
+      },
+      "sqlite": {
+        "supported": false,
+        "notes": "No EXTRACT() or DATEPART(). Use strftime() with format codes: %Y=year, %m=month, %d=day, %H=hour, %M=minute, %S=second, %w=weekday (0=Sun), %W=week number.",
+        "syntax": "SELECT CAST(strftime('%Y', 'now') AS INTEGER);   -- year\nSELECT CAST(strftime('%m', 'now') AS INTEGER);   -- month\nSELECT strftime('%w', 'now');                    -- 0=Sun, 6=Sat"
+      }
+    },
+    "details": "SQL Server uses DATEPART() instead of EXTRACT() — they're equivalent but different names. PostgreSQL's EXTRACT(EPOCH FROM ts) to get a Unix timestamp is uniquely useful. SQLite has no EXTRACT at all; strftime() with a CAST is the workaround. Week-of-year and day-of-week numbering differs between engines (ISO vs locale-based) — always test if you're using those."
+  },
+  "having": {
+    "description": "Filter the results of a GROUP BY aggregation. WHERE filters individual rows before grouping; HAVING filters groups after aggregation.",
+    "syntax": "SELECT dept_id, COUNT(*) AS employee_count\nFROM employees\nGROUP BY dept_id\nHAVING COUNT(*) > 10;",
+    "category": "Query Techniques",
+    "slug": "having",
+    "compatibility": {
+      "mysql": {
+        "supported": true,
+        "since": "all",
+        "notes": "Standard HAVING. MySQL extension: HAVING can reference column aliases defined in SELECT (e.g. HAVING total > 100 where total is a SELECT alias). This is non-standard behavior.",
+        "syntax": "SELECT dept_id, COUNT(*) AS cnt\nFROM employees\nGROUP BY dept_id\nHAVING cnt > 10;   -- MySQL allows alias reference (non-standard)"
+      },
+      "postgresql": {
+        "supported": true,
+        "since": "all",
+        "notes": "Standard HAVING. Column aliases from SELECT cannot be referenced in HAVING (unlike MySQL) — repeat the expression or use a subquery/CTE.",
+        "syntax": "SELECT dept_id, COUNT(*) AS cnt\nFROM employees\nGROUP BY dept_id\nHAVING COUNT(*) > 10;   -- must repeat COUNT(*), not alias 'cnt'"
+      },
+      "sqlserver": {
+        "supported": true,
+        "since": "all",
+        "notes": "Standard HAVING. Aliases from SELECT cannot be referenced in HAVING.",
+        "syntax": "SELECT dept_id, COUNT(*) AS cnt\nFROM employees\nGROUP BY dept_id\nHAVING COUNT(*) > 10;"
+      },
+      "oracle": {
+        "supported": true,
+        "since": "all",
+        "notes": "Standard HAVING. Aliases from SELECT cannot be referenced in HAVING.",
+        "syntax": "SELECT dept_id, COUNT(*) AS cnt\nFROM employees\nGROUP BY dept_id\nHAVING COUNT(*) > 10;"
+      },
+      "sqlite": {
+        "supported": true,
+        "since": "all",
+        "notes": "Standard HAVING supported. SQLite also allows referencing SELECT aliases in HAVING, similar to MySQL.",
+        "syntax": "SELECT dept_id, COUNT(*) AS cnt\nFROM employees\nGROUP BY dept_id\nHAVING cnt > 10;   -- alias reference works in SQLite"
+      }
+    },
+    "details": "The most common mistake: using HAVING instead of WHERE for row-level filters (HAVING runs after grouping and is slower). The alias-in-HAVING shortcut works in MySQL and SQLite but will fail in PostgreSQL, SQL Server, and Oracle — repeat the aggregate expression for portability."
+  },
+  "exists": {
+    "description": "Test whether a subquery returns any rows. Returns TRUE if the subquery produces at least one row, FALSE otherwise. Short-circuits on the first match.",
+    "syntax": "SELECT name\nFROM customers c\nWHERE EXISTS (\n  SELECT 1 FROM orders o WHERE o.customer_id = c.id\n);",
+    "category": "Query Techniques",
+    "slug": "exists",
+    "compatibility": {
+      "mysql": {
+        "supported": true,
+        "since": "all",
+        "notes": "EXISTS and NOT EXISTS fully supported. The subquery's SELECT list is irrelevant — SELECT 1, SELECT *, SELECT NULL all perform the same. Optimizer may convert to a join internally.",
+        "syntax": "SELECT name FROM customers c\nWHERE EXISTS (\n  SELECT 1 FROM orders o WHERE o.customer_id = c.id\n);\n\n-- NOT EXISTS:\nSELECT name FROM customers c\nWHERE NOT EXISTS (\n  SELECT 1 FROM orders o WHERE o.customer_id = c.id\n);"
+      },
+      "postgresql": {
+        "supported": true,
+        "since": "all",
+        "notes": "EXISTS and NOT EXISTS fully supported. Often faster than IN with large subquery result sets because it short-circuits. The planner typically converts to a semi-join or anti-join.",
+        "syntax": "SELECT name FROM customers c\nWHERE EXISTS (\n  SELECT 1 FROM orders o WHERE o.customer_id = c.id\n);"
+      },
+      "sqlserver": {
+        "supported": true,
+        "since": "all",
+        "notes": "EXISTS and NOT EXISTS fully supported. Prefer EXISTS over IN when the subquery can return NULLs — NOT IN with NULLs returns no rows (NULL != NULL), while NOT EXISTS handles NULLs correctly.",
+        "syntax": "SELECT name FROM customers c\nWHERE EXISTS (\n  SELECT 1 FROM orders o WHERE o.customer_id = c.id\n);"
+      },
+      "oracle": {
+        "supported": true,
+        "since": "all",
+        "notes": "EXISTS and NOT EXISTS fully supported. Oracle's optimizer is good at converting EXISTS to efficient join plans.",
+        "syntax": "SELECT name FROM customers c\nWHERE EXISTS (\n  SELECT 1 FROM orders o WHERE o.customer_id = c.id\n);"
+      },
+      "sqlite": {
+        "supported": true,
+        "since": "all",
+        "notes": "EXISTS and NOT EXISTS fully supported.",
+        "syntax": "SELECT name FROM customers c\nWHERE EXISTS (\n  SELECT 1 FROM orders o WHERE o.customer_id = c.id\n);"
+      }
+    },
+    "details": "The NULL trap with NOT IN is the critical gotcha: NOT IN returns zero rows if the subquery result contains any NULL, because SQL can't prove that the value is not equal to NULL. NOT EXISTS handles NULLs correctly and is generally the safer choice. EXISTS short-circuits at the first matching row, making it efficient even for large subqueries."
+  },
+  "is null / is not null": {
+    "description": "Test whether a value is NULL (missing/unknown). NULL cannot be compared with = or != — only IS NULL and IS NOT NULL work correctly.",
+    "syntax": "SELECT * FROM users WHERE phone IS NULL;\nSELECT * FROM users WHERE phone IS NOT NULL;",
+    "category": "Query Techniques",
+    "slug": "is-null",
+    "compatibility": {
+      "mysql": {
+        "supported": true,
+        "since": "all",
+        "notes": "IS NULL and IS NOT NULL standard. Also has the null-safe equality operator <=> (col <=> NULL is equivalent to col IS NULL), useful in joins where NULL should equal NULL.",
+        "syntax": "SELECT * FROM users WHERE phone IS NULL;\nSELECT * FROM users WHERE phone IS NOT NULL;\nSELECT * FROM tbl WHERE col <=> NULL;    -- null-safe equals\nSELECT * FROM tbl WHERE NOT (col <=> 'val');  -- null-safe not-equals"
+      },
+      "postgresql": {
+        "supported": true,
+        "since": "all",
+        "notes": "IS NULL and IS NOT NULL standard. IS DISTINCT FROM / IS NOT DISTINCT FROM are the null-safe equality operators: (a IS DISTINCT FROM b) is true when they differ even if one is NULL.",
+        "syntax": "SELECT * FROM users WHERE phone IS NULL;\nSELECT * FROM users WHERE phone IS NOT NULL;\nSELECT * FROM tbl WHERE a IS NOT DISTINCT FROM b;  -- null-safe equals\nSELECT * FROM tbl WHERE a IS DISTINCT FROM b;       -- null-safe not-equals"
+      },
+      "sqlserver": {
+        "supported": true,
+        "since": "all",
+        "notes": "IS NULL and IS NOT NULL standard. For null-safe comparison use SET ANSI_NULLS OFF (deprecated) or ISNULL()/COALESCE(). No dedicated null-safe equality operator.",
+        "syntax": "SELECT * FROM users WHERE phone IS NULL;\nSELECT * FROM users WHERE phone IS NOT NULL;\n-- Null-safe equals workaround:\nSELECT * FROM tbl WHERE (a = b OR (a IS NULL AND b IS NULL));"
+      },
+      "oracle": {
+        "supported": true,
+        "since": "all",
+        "notes": "IS NULL and IS NOT NULL standard. Critical Oracle quirk: empty string '' is treated as NULL — there is no distinction between empty string and NULL in Oracle.",
+        "syntax": "SELECT * FROM users WHERE phone IS NULL;\n-- In Oracle, these are equivalent:\nSELECT * FROM tbl WHERE col IS NULL;\nSELECT * FROM tbl WHERE col = '';   -- '' IS NULL in Oracle"
+      },
+      "sqlite": {
+        "supported": true,
+        "since": "all",
+        "notes": "IS NULL and IS NOT NULL standard. SQLite also supports IS as a null-safe equality operator: (a IS b) is true when both are NULL or both have the same value.",
+        "syntax": "SELECT * FROM users WHERE phone IS NULL;\nSELECT * FROM tbl WHERE a IS b;      -- null-safe equals\nSELECT * FROM tbl WHERE a IS NOT b;  -- null-safe not-equals"
+      }
+    },
+    "details": "Oracle's empty-string-as-NULL is one of the most surprising production gotchas in SQL — inserting '' into an Oracle VARCHAR2 stores NULL. Null-safe equality (where NULL equals NULL) has three different syntaxes: <=> in MySQL, IS NOT DISTINCT FROM in PostgreSQL, IS in SQLite, and no clean operator in SQL Server."
+  },
+  "row_number": {
+    "description": "Assign a sequential integer to each row within a result set or partition, starting at 1. Rows with equal values receive different numbers (unlike RANK).",
+    "syntax": "SELECT\n  name,\n  ROW_NUMBER() OVER (PARTITION BY dept_id ORDER BY salary DESC) AS rn\nFROM employees;",
+    "category": "Functions",
+    "slug": "row-number",
+    "compatibility": {
+      "mysql": {
+        "supported": true,
+        "since": "8.0",
+        "notes": "ROW_NUMBER() fully supported since MySQL 8.0. Not available in MySQL 5.x — use user-defined variables as a workaround.",
+        "syntax": "SELECT name, ROW_NUMBER() OVER (PARTITION BY dept_id ORDER BY salary DESC) AS rn\nFROM employees;\n\n-- Pre-8.0 workaround:\nSELECT name, @rn := @rn + 1 AS rn FROM employees, (SELECT @rn := 0) r;"
+      },
+      "postgresql": {
+        "supported": true,
+        "since": "8.4",
+        "notes": "ROW_NUMBER() fully supported. Commonly used with a CTE to filter to a specific rank (top-N per group pattern).",
+        "syntax": "SELECT name, ROW_NUMBER() OVER (PARTITION BY dept_id ORDER BY salary DESC) AS rn\nFROM employees;\n\n-- Top-1 per group:\nWITH ranked AS (\n  SELECT *, ROW_NUMBER() OVER (PARTITION BY dept_id ORDER BY salary DESC) AS rn\n  FROM employees\n)\nSELECT * FROM ranked WHERE rn = 1;"
+      },
+      "sqlserver": {
+        "supported": true,
+        "since": "2005",
+        "notes": "ROW_NUMBER() fully supported since SQL Server 2005. The ORDER BY inside OVER() is required for ROW_NUMBER (unlike some other window functions).",
+        "syntax": "SELECT name, ROW_NUMBER() OVER (PARTITION BY dept_id ORDER BY salary DESC) AS rn\nFROM employees;"
+      },
+      "oracle": {
+        "supported": true,
+        "since": "8i",
+        "notes": "ROW_NUMBER() fully supported. Oracle also has ROWNUM (a pseudocolumn, not a window function) which assigns numbers before ORDER BY is applied — they behave differently.",
+        "syntax": "SELECT name, ROW_NUMBER() OVER (PARTITION BY dept_id ORDER BY salary DESC) AS rn\nFROM employees;\n\n-- ROWNUM is NOT the same:\nSELECT ROWNUM, name FROM employees;  -- assigned before sorting"
+      },
+      "sqlite": {
+        "supported": true,
+        "since": "3.25.0",
+        "notes": "ROW_NUMBER() fully supported since SQLite 3.25.0 (September 2018).",
+        "syntax": "SELECT name, ROW_NUMBER() OVER (PARTITION BY dept_id ORDER BY salary DESC) AS rn\nFROM employees;"
+      }
+    },
+    "details": "The top-N per group pattern (get the highest-paid employee per department) is one of the most common uses. Oracle's ROWNUM pseudocolumn is a frequent source of confusion — it's not equivalent to ROW_NUMBER() OVER () because it assigns numbers before sorting. MySQL 5.x had no ROW_NUMBER(), which caused years of painful workarounds with session variables."
+  },
+  "lag / lead": {
+    "description": "Access the value from a row before (LAG) or after (LEAD) the current row within an ordered window partition — without a self-join.",
+    "syntax": "SELECT\n  order_date,\n  amount,\n  LAG(amount)  OVER (ORDER BY order_date) AS prev_amount,\n  LEAD(amount) OVER (ORDER BY order_date) AS next_amount\nFROM orders;",
+    "category": "Functions",
+    "slug": "lag-lead",
+    "compatibility": {
+      "mysql": {
+        "supported": true,
+        "since": "8.0",
+        "notes": "LAG(expr [, offset [, default]]) and LEAD(expr [, offset [, default]]). Offset defaults to 1. Default value returned when offset goes out of bounds (instead of NULL).",
+        "syntax": "SELECT\n  order_date,\n  amount,\n  LAG(amount, 1, 0) OVER (ORDER BY order_date) AS prev_amount\nFROM orders;"
+      },
+      "postgresql": {
+        "supported": true,
+        "since": "8.4",
+        "notes": "LAG(expr [, offset [, default]]) and LEAD(expr [, offset [, default]]). Supports any offset and a default value for when the offset goes beyond partition bounds.",
+        "syntax": "SELECT\n  order_date,\n  amount,\n  LAG(amount)      OVER (ORDER BY order_date)          AS prev_amount,\n  LAG(amount, 2)   OVER (ORDER BY order_date)          AS two_ago,\n  LEAD(amount, 1, 0) OVER (PARTITION BY cust_id ORDER BY order_date) AS next_amount\nFROM orders;"
+      },
+      "sqlserver": {
+        "supported": true,
+        "since": "2012",
+        "notes": "LAG(expr [, offset [, default]]) and LEAD(expr [, offset [, default]]). Added in SQL Server 2012. Offset must be a non-negative integer constant.",
+        "syntax": "SELECT\n  order_date,\n  amount,\n  LAG(amount, 1, 0)  OVER (ORDER BY order_date) AS prev_amount,\n  LEAD(amount, 1, 0) OVER (ORDER BY order_date) AS next_amount\nFROM orders;"
+      },
+      "oracle": {
+        "supported": true,
+        "since": "8i",
+        "notes": "LAG(expr [, offset [, default]]) and LEAD(expr [, offset [, default]]). One of the earliest implementations — Oracle has had these since 8i.",
+        "syntax": "SELECT\n  order_date,\n  amount,\n  LAG(amount, 1, 0)  OVER (ORDER BY order_date) AS prev_amount,\n  LEAD(amount, 1, 0) OVER (ORDER BY order_date) AS next_amount\nFROM orders;"
+      },
+      "sqlite": {
+        "supported": true,
+        "since": "3.25.0",
+        "notes": "LAG() and LEAD() fully supported since SQLite 3.25.0 (September 2018).",
+        "syntax": "SELECT\n  order_date,\n  amount,\n  LAG(amount)  OVER (ORDER BY order_date) AS prev_amount,\n  LEAD(amount) OVER (ORDER BY order_date) AS next_amount\nFROM orders;"
+      }
+    },
+    "details": "LAG/LEAD replaced the classic self-join pattern (join a table to itself on id-1). The optional default argument (third parameter) controls what's returned at partition boundaries — without it you get NULL, which can break calculations. SQL Server didn't add these until 2012; Oracle had them since 8i."
   }
 }
