@@ -2408,5 +2408,705 @@
       }
     },
     "details": "LAG/LEAD replaced the classic self-join pattern (join a table to itself on id-1). The optional default argument (third parameter) controls what's returned at partition boundaries — without it you get NULL, which can break calculations. SQL Server didn't add these until 2012; Oracle had them since 8i."
+  },
+  "charindex / instr / position": {
+    "description": "Search for a substring within a string and return the position of the first occurrence. Returns 0 or NULL if not found, depending on the engine.",
+    "syntax": "-- Standard SQL:\nPOSITION('needle' IN haystack_col)\n\n-- Common alternatives:\nCHARINDEX('needle', haystack_col)\nINSTR(haystack_col, 'needle')",
+    "category": "Functions",
+    "slug": "string-search",
+    "compatibility": {
+      "mysql": {
+        "supported": true,
+        "since": "all",
+        "notes": "INSTR(str, substr) and LOCATE(substr, str [, start]) are the native functions. POSITION(substr IN str) also works as SQL-standard syntax. Returns 0 if not found (not NULL).",
+        "syntax": "SELECT INSTR('hello world', 'world');       -- 7\nSELECT LOCATE('world', 'hello world');     -- 7\nSELECT LOCATE('world', 'hello world', 8);  -- 0 (start after pos 8)\nSELECT POSITION('world' IN 'hello world'); -- 7"
+      },
+      "postgresql": {
+        "supported": true,
+        "since": "all",
+        "notes": "POSITION(substr IN str) is the standard form. STRPOS(str, substr) is a PostgreSQL-specific alias with reversed argument order. Returns 0 if not found. No CHARINDEX or INSTR.",
+        "syntax": "SELECT POSITION('world' IN 'hello world');  -- 7\nSELECT STRPOS('hello world', 'world');      -- 7"
+      },
+      "sqlserver": {
+        "supported": true,
+        "since": "all",
+        "notes": "CHARINDEX(needle, haystack [, start]) is the primary function. Returns 0 if not found. PATINDEX('%pattern%', str) supports LIKE-style wildcards. No INSTR or POSITION.",
+        "syntax": "SELECT CHARINDEX('world', 'hello world');      -- 7\nSELECT CHARINDEX('world', 'hello world', 8);   -- 0\nSELECT PATINDEX('%wor%', 'hello world');        -- 7"
+      },
+      "oracle": {
+        "supported": true,
+        "since": "all",
+        "notes": "INSTR(str, substr [, start [, occurrence]]) is the primary function. Unique: supports nth-occurrence search and negative start position (search from end). Returns 0 if not found.",
+        "syntax": "SELECT INSTR('hello world', 'l')         FROM DUAL; -- 3\nSELECT INSTR('hello world', 'l', 1, 2)  FROM DUAL; -- 4 (2nd occurrence)\nSELECT INSTR('hello world', 'l', -1)    FROM DUAL; -- 10 (search from end)"
+      },
+      "sqlite": {
+        "supported": true,
+        "since": "all",
+        "notes": "INSTR(haystack, needle) returns the position of the first occurrence. Returns 0 if not found. Argument order is reversed compared to SQL Server's CHARINDEX.",
+        "syntax": "SELECT INSTR('hello world', 'world');  -- 7\nSELECT INSTR('hello world', 'xyz');    -- 0"
+      }
+    },
+    "details": "Argument order is a constant gotcha: MySQL's LOCATE and SQL Server's CHARINDEX take (needle, haystack), while PostgreSQL's STRPOS and SQLite's INSTR take (haystack, needle). Oracle's INSTR is the most powerful, supporting nth-occurrence and reverse search. All engines return 0 (not NULL) when the substring is not found."
+  },
+  "regex": {
+    "description": "Match strings against regular expression patterns, enabling flexible search beyond simple LIKE wildcards.",
+    "syntax": "-- Varies significantly by engine.\n-- PostgreSQL:\nSELECT * FROM tbl WHERE col ~ '^[A-Z]';\n\n-- MySQL:\nSELECT * FROM tbl WHERE col REGEXP '^[A-Z]';",
+    "category": "Query Techniques",
+    "slug": "regex",
+    "compatibility": {
+      "mysql": {
+        "supported": true,
+        "since": "all",
+        "notes": "REGEXP and RLIKE operators for matching. REGEXP_LIKE(col, pattern [, flags]), REGEXP_SUBSTR(), REGEXP_REPLACE(), REGEXP_INSTR() added in 8.0. Uses ICU regex library (8.0+), POSIX before that. Case-insensitive by default.",
+        "syntax": "SELECT * FROM tbl WHERE col REGEXP '^[A-Z]';\nSELECT REGEXP_LIKE('Hello', '^h', 'i');         -- 1 (case-insensitive)\nSELECT REGEXP_REPLACE('foo123', '[0-9]+', '#');  -- 'foo#'\nSELECT REGEXP_SUBSTR('foo123bar', '[0-9]+');     -- '123'"
+      },
+      "postgresql": {
+        "supported": true,
+        "since": "all",
+        "notes": "Rich operator set: ~ (match, case-sensitive), ~* (match, case-insensitive), !~ (no match), !~* (no match, case-insensitive). SIMILAR TO for SQL-standard regex. regexp_match(), regexp_matches(), regexp_replace(), regexp_split_to_table() as functions.",
+        "syntax": "SELECT * FROM tbl WHERE col ~ '^[A-Z]';          -- case-sensitive\nSELECT * FROM tbl WHERE col ~* '^[a-z]';         -- case-insensitive\nSELECT regexp_match('foo123', '[0-9]+');          -- {123}\nSELECT regexp_replace('foo123', '[0-9]+', '#');   -- 'foo#'\nSELECT * FROM regexp_split_to_table('a,b,c', ',') AS t(val);"
+      },
+      "sqlserver": {
+        "supported": false,
+        "notes": "No native regex support in T-SQL. LIKE with [] character class provides limited pattern matching. Full regex requires CLR integration (SQLCLR) or application-layer filtering.",
+        "syntax": "-- Limited: LIKE with [] character class:\nSELECT * FROM tbl WHERE col LIKE '[A-Z]%';       -- starts with a letter\nSELECT * FROM tbl WHERE col LIKE '[0-9][0-9][0-9]'; -- 3 digits\n-- Full regex: not supported without CLR"
+      },
+      "oracle": {
+        "supported": true,
+        "since": "10g",
+        "notes": "REGEXP_LIKE(col, pattern [, flags]) for WHERE clauses. Also REGEXP_SUBSTR(), REGEXP_INSTR(), REGEXP_REPLACE(), REGEXP_COUNT(). Uses POSIX Extended Regular Expressions. Case-sensitive by default; use 'i' flag for case-insensitive.",
+        "syntax": "SELECT * FROM tbl WHERE REGEXP_LIKE(col, '^[A-Z]');\nSELECT * FROM tbl WHERE REGEXP_LIKE(col, '^[a-z]', 'i');\nSELECT REGEXP_REPLACE('foo123', '[0-9]+', '#') FROM DUAL;  -- 'foo#'\nSELECT REGEXP_SUBSTR('foo123bar', '[0-9]+')    FROM DUAL;  -- '123'"
+      },
+      "sqlite": {
+        "supported": false,
+        "notes": "The REGEXP operator exists in the syntax but has no built-in implementation — it requires a user-defined function to be registered at connection time. Most SQLite drivers (Python's sqlite3, etc.) do not register one by default.",
+        "syntax": "-- Requires a registered UDF; not available by default.\n-- In Python:\n-- conn.create_function('regexp', 2, lambda p, s: bool(re.search(p, s)))\nSELECT * FROM tbl WHERE col REGEXP '^[A-Z]';"
+      }
+    },
+    "details": "SQL Server is the major holdout — no native regex means workarounds are LIKE with limited [] syntax or moving regex logic to the application. PostgreSQL's operator-based approach (~ / ~* / !~ / !~*) is the most concise. SQLite's REGEXP is a syntax trap — it exists but silently fails unless a UDF is registered."
+  },
+  "date add / interval arithmetic": {
+    "description": "Add or subtract a time interval from a date or timestamp value. Syntax varies more than almost any other operation across SQL engines.",
+    "syntax": "-- Standard SQL (rarely supported as-is):\nSELECT CURRENT_DATE + INTERVAL '7' DAY;\n\n-- Common alternatives:\nDATEADD(day, 7, some_date)          -- SQL Server\nsome_date + INTERVAL 7 DAY          -- MySQL\nsome_date + INTERVAL '7 days'       -- PostgreSQL",
+    "category": "Functions",
+    "slug": "date-add",
+    "compatibility": {
+      "mysql": {
+        "supported": true,
+        "since": "all",
+        "notes": "DATE_ADD(date, INTERVAL n unit) and DATE_SUB(date, INTERVAL n unit). Also supports + INTERVAL shorthand. Units: MICROSECOND, SECOND, MINUTE, HOUR, DAY, WEEK, MONTH, QUARTER, YEAR, and compound types (SECOND_MICROSECOND, etc.).",
+        "syntax": "SELECT DATE_ADD('2024-01-15', INTERVAL 7 DAY);         -- 2024-01-22\nSELECT DATE_SUB('2024-01-15', INTERVAL 1 MONTH);        -- 2023-12-15\nSELECT '2024-01-15' + INTERVAL 7 DAY;                  -- shorthand\nSELECT NOW() + INTERVAL '2:30' HOUR_MINUTE;"
+      },
+      "postgresql": {
+        "supported": true,
+        "since": "all",
+        "notes": "Uses + / - operators with INTERVAL literals. Interval syntax is flexible: '7 days', '1 month 2 days', '2 hours 30 minutes'. AGE(ts1, ts2) returns a human-readable interval between two timestamps. INTERVAL arithmetic is the most expressive of any engine.",
+        "syntax": "SELECT '2024-01-15'::date + INTERVAL '7 days';          -- 2024-01-22\nSELECT NOW() - INTERVAL '1 month 2 days';\nSELECT NOW() + INTERVAL '2 hours 30 minutes';\nSELECT AGE('2024-06-01'::date, '2023-01-15'::date);    -- 1 year 4 mons 17 days"
+      },
+      "sqlserver": {
+        "supported": true,
+        "since": "all",
+        "notes": "DATEADD(unit, n, date) is the only method — no INTERVAL type or + operator for dates. Units spelled out: year, quarter, month, week, day, hour, minute, second, millisecond, microsecond, nanosecond.",
+        "syntax": "SELECT DATEADD(day,    7,  '2024-01-15');   -- 2024-01-22\nSELECT DATEADD(month, -1, '2024-01-15');   -- 2023-12-15\nSELECT DATEADD(hour,  2,  GETDATE());\nSELECT DATEADD(year,  1,  GETDATE());"
+      },
+      "oracle": {
+        "supported": true,
+        "since": "all",
+        "notes": "DATE + n adds n days (integer arithmetic). For months/years use ADD_MONTHS(date, n). INTERVAL types exist for precise interval arithmetic. No DATEADD function.",
+        "syntax": "SELECT SYSDATE + 7              FROM DUAL;   -- 7 days later\nSELECT ADD_MONTHS(SYSDATE, 1)   FROM DUAL;   -- 1 month later\nSELECT ADD_MONTHS(SYSDATE, -3)  FROM DUAL;   -- 3 months earlier\nSELECT SYSDATE + INTERVAL '2' HOUR FROM DUAL;"
+      },
+      "sqlite": {
+        "supported": true,
+        "since": "all",
+        "notes": "datetime() and date() functions accept a modifier string. Modifiers: '+N days', '+N months', '+N years', 'start of month', 'weekday N', etc. No INTERVAL type or DATEADD function.",
+        "syntax": "SELECT date('2024-01-15', '+7 days');           -- 2024-01-22\nSELECT date('2024-01-15', '+1 month');          -- 2024-02-15\nSELECT datetime('now', '-1 year', '+3 months');\nSELECT date('now', 'start of month', '+1 month', '-1 day');  -- last day of current month"
+      }
+    },
+    "details": "Date arithmetic is one of the least portable areas of SQL. SQL Server requires DATEADD() — no operator shorthand. Oracle's DATE + n adds days only; months require ADD_MONTHS(). PostgreSQL's INTERVAL arithmetic is the most expressive. SQLite's modifier string approach ('now', '+7 days') is unique and surprisingly capable."
+  },
+  "date format": {
+    "description": "Format a date or timestamp value as a string in a specific display format. Every engine has a different function name and format code system.",
+    "syntax": "-- No cross-engine standard exists.\n-- Common approaches:\nFORMAT(date_col, 'yyyy-MM-dd')                -- SQL Server\nTO_CHAR(date_col, 'YYYY-MM-DD')               -- Oracle / PostgreSQL\nDATE_FORMAT(date_col, '%Y-%m-%d')             -- MySQL",
+    "category": "Functions",
+    "slug": "date-format",
+    "compatibility": {
+      "mysql": {
+        "supported": true,
+        "since": "all",
+        "notes": "DATE_FORMAT(date, format) uses % format codes: %Y (4-digit year), %m (month 01-12), %d (day 01-31), %H (hour 00-23), %i (minute), %s (second). TIME_FORMAT() for time-only values.",
+        "syntax": "SELECT DATE_FORMAT(NOW(), '%Y-%m-%d');           -- '2024-03-15'\nSELECT DATE_FORMAT(NOW(), '%d/%m/%Y');           -- '15/03/2024'\nSELECT DATE_FORMAT(NOW(), '%Y-%m-%d %H:%i:%s');  -- '2024-03-15 14:30:00'\nSELECT DATE_FORMAT(NOW(), '%W, %M %e, %Y');      -- 'Friday, March 15, 2024'"
+      },
+      "postgresql": {
+        "supported": true,
+        "since": "all",
+        "notes": "TO_CHAR(timestamp, format) uses its own format codes: YYYY (year), MM (month), DD (day), HH24 (hour), MI (minute), SS (second). TO_DATE() and TO_TIMESTAMP() for parsing. Very rich format string options including ordinals (DDth), spelled-out months (Month), etc.",
+        "syntax": "SELECT TO_CHAR(NOW(), 'YYYY-MM-DD');              -- '2024-03-15'\nSELECT TO_CHAR(NOW(), 'DD/MM/YYYY');              -- '15/03/2024'\nSELECT TO_CHAR(NOW(), 'YYYY-MM-DD HH24:MI:SS');  -- '2024-03-15 14:30:00'\nSELECT TO_CHAR(NOW(), 'FMMonth DDth, YYYY');      -- 'March 15th, 2024'"
+      },
+      "sqlserver": {
+        "supported": true,
+        "since": "2012",
+        "notes": "FORMAT(value, format [, culture]) uses .NET format strings. Flexible but slow on large datasets — avoid in WHERE clauses or high-volume queries. Pre-2012: use CONVERT(VARCHAR, date, style) with numeric style codes (103 = dd/mm/yyyy, 120 = yyyy-mm-dd hh:mi:ss).",
+        "syntax": "SELECT FORMAT(GETDATE(), 'yyyy-MM-dd');               -- '2024-03-15'\nSELECT FORMAT(GETDATE(), 'dd/MM/yyyy');               -- '15/03/2024'\nSELECT FORMAT(GETDATE(), 'D', 'en-US');               -- 'Friday, March 15, 2024'\n-- Pre-2012 / high-performance alternative:\nSELECT CONVERT(VARCHAR, GETDATE(), 120);              -- '2024-03-15 14:30:00'"
+      },
+      "oracle": {
+        "supported": true,
+        "since": "all",
+        "notes": "TO_CHAR(date, format) using Oracle format codes: YYYY, MM, DD, HH24, MI, SS. TO_DATE(str, format) for parsing. Format codes differ from PostgreSQL's despite the same function name — Oracle uses HH24 for 24h hour, PostgreSQL also uses HH24, so that one is compatible.",
+        "syntax": "SELECT TO_CHAR(SYSDATE, 'YYYY-MM-DD')           FROM DUAL; -- '2024-03-15'\nSELECT TO_CHAR(SYSDATE, 'DD/MM/YYYY')           FROM DUAL; -- '15/03/2024'\nSELECT TO_CHAR(SYSDATE, 'YYYY-MM-DD HH24:MI:SS') FROM DUAL;\nSELECT TO_CHAR(SYSDATE, 'Day, Month DD YYYY')    FROM DUAL;"
+      },
+      "sqlite": {
+        "supported": true,
+        "since": "all",
+        "notes": "strftime(format, date) uses % format codes similar to C's strftime: %Y, %m, %d, %H, %M, %S. date() and time() return fixed ISO 8601 formats. No TO_CHAR or DATE_FORMAT.",
+        "syntax": "SELECT strftime('%Y-%m-%d', 'now');              -- '2024-03-15'\nSELECT strftime('%d/%m/%Y', 'now');              -- '15/03/2024'\nSELECT strftime('%Y-%m-%d %H:%M:%S', 'now');    -- '2024-03-15 14:30:00'\nSELECT date('now');                              -- '2024-03-15' (ISO 8601 only)"
+      }
+    },
+    "details": "Date formatting is almost entirely non-portable. MySQL uses % codes (DATE_FORMAT), PostgreSQL and Oracle both use TO_CHAR but with slightly different code sets, SQL Server's FORMAT() uses .NET strings, and SQLite uses C-style strftime. The only safe portable path is formatting dates in application code rather than SQL."
+  },
+  "datediff": {
+    "description": "Calculate the difference between two date or timestamp values, returning an integer count of a specified unit (days, months, etc.) or an interval.",
+    "syntax": "-- SQL Server / MySQL:\nDATEDIFF(unit, start_date, end_date)\n\n-- PostgreSQL:\nend_date - start_date  -- returns integer days for dates",
+    "category": "Functions",
+    "slug": "datediff",
+    "compatibility": {
+      "mysql": {
+        "supported": true,
+        "since": "all",
+        "notes": "DATEDIFF(end, start) returns integer days only — no unit argument. For other units use TIMESTAMPDIFF(unit, start, end). Units: MICROSECOND, SECOND, MINUTE, HOUR, DAY, WEEK, MONTH, QUARTER, YEAR. Note argument order is reversed between DATEDIFF and TIMESTAMPDIFF.",
+        "syntax": "SELECT DATEDIFF('2024-03-15', '2024-01-01');              -- 74 (days)\nSELECT TIMESTAMPDIFF(MONTH, '2024-01-01', '2024-03-15');  -- 2\nSELECT TIMESTAMPDIFF(HOUR,  '2024-01-01', NOW());         -- hours since Jan 1"
+      },
+      "postgresql": {
+        "supported": true,
+        "since": "all",
+        "notes": "No DATEDIFF function. Use subtraction: date2 - date1 returns integer days for DATE types, INTERVAL for TIMESTAMP types. EXTRACT(epoch FROM ts2 - ts1) converts interval to seconds. AGE(ts2, ts1) returns human-readable interval.",
+        "syntax": "SELECT '2024-03-15'::date - '2024-01-01'::date;          -- 74 (integer days)\nSELECT AGE('2024-03-15'::date, '2024-01-01'::date);      -- 2 mons 14 days\nSELECT EXTRACT(epoch FROM NOW() - '2024-01-01'::date);   -- seconds\nSELECT EXTRACT(day FROM '2024-03-15'::date - '2024-01-01'::date);"
+      },
+      "sqlserver": {
+        "supported": true,
+        "since": "all",
+        "notes": "DATEDIFF(unit, start, end) with explicit unit. Units: year, quarter, month, week, day, hour, minute, second, millisecond, microsecond, nanosecond. Counts boundary crossings, not exact elapsed time — DATEDIFF(year, '2023-12-31', '2024-01-01') returns 1.",
+        "syntax": "SELECT DATEDIFF(day,   '2024-01-01', '2024-03-15');  -- 74\nSELECT DATEDIFF(month, '2024-01-01', '2024-03-15');  -- 2\nSELECT DATEDIFF(year,  '2023-12-31', '2024-01-01');  -- 1 (boundary crossing!)\nSELECT DATEDIFF(hour,  '2024-01-01', GETDATE());"
+      },
+      "oracle": {
+        "supported": true,
+        "since": "all",
+        "notes": "No DATEDIFF function. DATE subtraction returns fractional days (a NUMBER). MONTHS_BETWEEN(d1, d2) returns fractional months. For hours/minutes, multiply day difference by 24 or 1440.",
+        "syntax": "SELECT SYSDATE - DATE '2024-01-01'               FROM DUAL; -- fractional days\nSELECT MONTHS_BETWEEN(DATE '2024-03-15', DATE '2024-01-01') FROM DUAL; -- 2.45...\nSELECT TRUNC(SYSDATE - DATE '2024-01-01')        FROM DUAL; -- whole days\nSELECT (SYSDATE - DATE '2024-01-01') * 24        FROM DUAL; -- hours"
+      },
+      "sqlite": {
+        "supported": true,
+        "since": "all",
+        "notes": "No DATEDIFF function. Use julianday() subtraction for day differences. julianday() converts any date/timestamp to a floating-point Julian day number, so subtraction gives fractional days.",
+        "syntax": "SELECT julianday('2024-03-15') - julianday('2024-01-01');  -- 74.0\nSELECT CAST(julianday('now') - julianday('2024-01-01') AS INTEGER);  -- whole days\n-- Hours:\nSELECT (julianday('now') - julianday('2024-01-01')) * 24;"
+      }
+    },
+    "details": "SQL Server's DATEDIFF counts boundary crossings, not elapsed time — a well-known gotcha (Dec 31 → Jan 1 = 1 year difference). PostgreSQL's subtraction of DATE columns returns an integer directly, which is the cleanest syntax. Oracle and SQLite both require workarounds (MONTHS_BETWEEN / julianday). MySQL's DATEDIFF is days-only; TIMESTAMPDIFF is needed for other units."
+  },
+  "primary key": {
+    "description": "A column or set of columns that uniquely identifies each row in a table. Enforces uniqueness and NOT NULL, and typically drives the clustered index.",
+    "syntax": "CREATE TABLE users (\n  id   INT PRIMARY KEY,\n  name TEXT NOT NULL\n);\n\n-- Or as a named table constraint:\nCREATE TABLE users (\n  id   INT,\n  name TEXT,\n  CONSTRAINT pk_users PRIMARY KEY (id)\n);",
+    "category": "DDL",
+    "slug": "primary-key",
+    "compatibility": {
+      "mysql": {
+        "supported": true,
+        "since": "all",
+        "notes": "InnoDB tables are clustered by the primary key — row data is physically stored in PK order. AUTO_INCREMENT is the standard way to generate surrogate keys. Composite PKs supported. No natural integer sequence type (use AUTO_INCREMENT).",
+        "syntax": "CREATE TABLE users (\n  id   INT AUTO_INCREMENT PRIMARY KEY,\n  name VARCHAR(100) NOT NULL\n) ENGINE=InnoDB;\n\n-- Composite:\nCREATE TABLE order_items (\n  order_id INT,\n  item_id  INT,\n  PRIMARY KEY (order_id, item_id)\n);"
+      },
+      "postgresql": {
+        "supported": true,
+        "since": "all",
+        "notes": "PK implicitly adds a UNIQUE index and NOT NULL. SERIAL (legacy) or IDENTITY (SQL standard, PG 10+) or GENERATED ALWAYS AS IDENTITY for auto-increment. Tables are heap-organized (not clustered by PK) — use CLUSTER command to physically reorder if needed.",
+        "syntax": "-- Modern (PG 10+):\nCREATE TABLE users (\n  id   INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,\n  name TEXT NOT NULL\n);\n\n-- Legacy SERIAL style:\nCREATE TABLE users (\n  id   SERIAL PRIMARY KEY,\n  name TEXT NOT NULL\n);"
+      },
+      "sqlserver": {
+        "supported": true,
+        "since": "all",
+        "notes": "By default, PK creates a CLUSTERED index — data pages are physically ordered by PK. IDENTITY(seed, increment) for auto-increment. Can explicitly create as NONCLUSTERED if you need a different clustered index. NEWID() / NEWSEQUENTIALID() for UUID primary keys.",
+        "syntax": "CREATE TABLE users (\n  id   INT IDENTITY(1,1) PRIMARY KEY,\n  name NVARCHAR(100) NOT NULL\n);\n\n-- Non-clustered PK:\nCREATE TABLE users (\n  id INT PRIMARY KEY NONCLUSTERED,\n  name NVARCHAR(100)\n);"
+      },
+      "oracle": {
+        "supported": true,
+        "since": "all",
+        "notes": "PKs create a unique index (B-tree by default). Auto-increment via SEQUENCE + trigger (legacy) or GENERATED AS IDENTITY (12c+). Oracle tables are heap-organized by default; index-organized tables (IOT) cluster by PK.",
+        "syntax": "-- Modern (12c+):\nCREATE TABLE users (\n  id   NUMBER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,\n  name VARCHAR2(100) NOT NULL\n);\n\n-- Legacy sequence approach:\nCREATE SEQUENCE user_seq START WITH 1 INCREMENT BY 1;\nCREATE TABLE users (id NUMBER DEFAULT user_seq.NEXTVAL PRIMARY KEY, name VARCHAR2(100));"
+      },
+      "sqlite": {
+        "supported": true,
+        "since": "all",
+        "notes": "INTEGER PRIMARY KEY (exactly this type + constraint) is a special alias for the internal rowid — it auto-increments. AUTOINCREMENT keyword additionally prevents rowid reuse after deletions. Any other PK type creates a standard unique constraint without rowid aliasing.",
+        "syntax": "CREATE TABLE users (\n  id   INTEGER PRIMARY KEY,      -- auto-increment via rowid alias\n  name TEXT NOT NULL\n);\n\n-- AUTOINCREMENT prevents rowid reuse:\nCREATE TABLE users (\n  id   INTEGER PRIMARY KEY AUTOINCREMENT,\n  name TEXT\n);"
+      }
+    },
+    "details": "Physical storage differs significantly: SQL Server and MySQL (InnoDB) cluster the table by the primary key, making PK choice affect read performance. PostgreSQL and Oracle are heap-organized. SQLite's INTEGER PRIMARY KEY rowid aliasing is unique and subtle — using TEXT PRIMARY KEY does not auto-increment."
+  },
+  "foreign key": {
+    "description": "A column or set of columns that references the primary key of another table, enforcing referential integrity between parent and child tables.",
+    "syntax": "CREATE TABLE orders (\n  id          INT PRIMARY KEY,\n  customer_id INT,\n  FOREIGN KEY (customer_id) REFERENCES customers(id)\n    ON DELETE CASCADE\n    ON UPDATE CASCADE\n);",
+    "category": "DDL",
+    "slug": "foreign-key",
+    "compatibility": {
+      "mysql": {
+        "supported": true,
+        "since": "all",
+        "notes": "Foreign keys are only enforced by the InnoDB engine — MyISAM silently ignores FK constraints. ON DELETE / ON UPDATE actions: RESTRICT, CASCADE, SET NULL, NO ACTION, SET DEFAULT. Both columns must have compatible types and the parent column must be indexed.",
+        "syntax": "CREATE TABLE orders (\n  id          INT AUTO_INCREMENT PRIMARY KEY,\n  customer_id INT,\n  FOREIGN KEY (customer_id) REFERENCES customers(id)\n    ON DELETE CASCADE\n    ON UPDATE RESTRICT\n) ENGINE=InnoDB;\n\n-- Disable FK checks for bulk loads:\nSET FOREIGN_KEY_CHECKS = 0;"
+      },
+      "postgresql": {
+        "supported": true,
+        "since": "all",
+        "notes": "Full FK support with DEFERRABLE / INITIALLY DEFERRED options — you can defer constraint checking to end of transaction, useful for circular references or batch inserts. ON DELETE actions: NO ACTION, RESTRICT, CASCADE, SET NULL, SET DEFAULT.",
+        "syntax": "CREATE TABLE orders (\n  id          SERIAL PRIMARY KEY,\n  customer_id INT REFERENCES customers(id) ON DELETE CASCADE\n);\n\n-- Deferrable constraint:\nALTER TABLE orders ADD CONSTRAINT fk_customer\n  FOREIGN KEY (customer_id) REFERENCES customers(id)\n  DEFERRABLE INITIALLY DEFERRED;"
+      },
+      "sqlserver": {
+        "supported": true,
+        "since": "all",
+        "notes": "Standard FK support. ON DELETE / ON UPDATE: NO ACTION, CASCADE, SET NULL, SET DEFAULT. FKs can be temporarily disabled with ALTER TABLE ... NOCHECK CONSTRAINT for bulk loads. Cannot cascade to the same table through multiple paths (no multiple cascade paths).",
+        "syntax": "CREATE TABLE orders (\n  id          INT IDENTITY PRIMARY KEY,\n  customer_id INT,\n  CONSTRAINT fk_orders_customer\n    FOREIGN KEY (customer_id) REFERENCES customers(id)\n    ON DELETE CASCADE\n);\n\n-- Disable for bulk load:\nALTER TABLE orders NOCHECK CONSTRAINT fk_orders_customer;"
+      },
+      "oracle": {
+        "supported": true,
+        "since": "all",
+        "notes": "Standard FK support. ON DELETE CASCADE and ON DELETE SET NULL supported; ON UPDATE CASCADE is NOT supported in Oracle. FKs can be disabled/enabled without dropping. An index on the FK column is recommended (Oracle does not auto-create it, unlike other engines).",
+        "syntax": "CREATE TABLE orders (\n  id          NUMBER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,\n  customer_id NUMBER,\n  CONSTRAINT fk_orders_customer\n    FOREIGN KEY (customer_id) REFERENCES customers(id)\n    ON DELETE CASCADE\n);\n\n-- Recommended: index the FK column manually\nCREATE INDEX idx_orders_cust ON orders(customer_id);"
+      },
+      "sqlite": {
+        "supported": true,
+        "since": "3.6.19",
+        "notes": "Foreign key enforcement is DISABLED by default and must be enabled per connection with PRAGMA foreign_keys = ON. Without this pragma, FK constraints are parsed but silently ignored. This is a common gotcha for SQLite users.",
+        "syntax": "-- REQUIRED: enable FK enforcement first\nPRAGMA foreign_keys = ON;\n\nCREATE TABLE orders (\n  id          INTEGER PRIMARY KEY,\n  customer_id INTEGER REFERENCES customers(id) ON DELETE CASCADE\n);"
+      }
+    },
+    "details": "SQLite's foreign keys are off by default — the most common FK gotcha in the SQLite ecosystem. Oracle does not support ON UPDATE CASCADE. MySQL's FK enforcement depends on the storage engine (InnoDB yes, MyISAM no). PostgreSQL's DEFERRABLE constraint option is unique and powerful for complex batch operations."
+  },
+  "check constraint": {
+    "description": "A constraint that enforces a boolean condition on column values at the row level — the database rejects any INSERT or UPDATE that would violate it.",
+    "syntax": "CREATE TABLE employees (\n  id     INT PRIMARY KEY,\n  salary NUMERIC,\n  status VARCHAR(20),\n  CONSTRAINT chk_salary CHECK (salary > 0),\n  CONSTRAINT chk_status CHECK (status IN ('active','inactive','pending'))\n);",
+    "category": "DDL",
+    "slug": "check-constraint",
+    "compatibility": {
+      "mysql": {
+        "supported": true,
+        "since": "8.0.16",
+        "notes": "CHECK constraints were parsed but silently ignored before 8.0.16. From 8.0.16 they are enforced. Subqueries are not allowed inside CHECK expressions. Functions must be deterministic.",
+        "syntax": "CREATE TABLE employees (\n  id     INT PRIMARY KEY,\n  salary DECIMAL(10,2),\n  status VARCHAR(20),\n  CONSTRAINT chk_salary CHECK (salary > 0),\n  CONSTRAINT chk_status CHECK (status IN ('active', 'inactive', 'pending'))\n);\n\n-- Add to existing table:\nALTER TABLE employees ADD CONSTRAINT chk_age CHECK (age >= 18);"
+      },
+      "postgresql": {
+        "supported": true,
+        "since": "all",
+        "notes": "Full CHECK support. Expressions can call user-defined functions, but they must be immutable for use in constraints. NOT VALID option lets you add a constraint without scanning existing rows (validate later with VALIDATE CONSTRAINT).",
+        "syntax": "CREATE TABLE employees (\n  id     SERIAL PRIMARY KEY,\n  salary NUMERIC CHECK (salary > 0),\n  status TEXT   CHECK (status IN ('active', 'inactive', 'pending'))\n);\n\n-- Add without scanning existing rows:\nALTER TABLE employees\n  ADD CONSTRAINT chk_salary CHECK (salary > 0) NOT VALID;\nALTER TABLE employees VALIDATE CONSTRAINT chk_salary;"
+      },
+      "sqlserver": {
+        "supported": true,
+        "since": "all",
+        "notes": "Full CHECK support. WITH NOCHECK option adds the constraint without validating existing rows. Subqueries not allowed. User-defined functions can be called if they are deterministic.",
+        "syntax": "CREATE TABLE employees (\n  id     INT IDENTITY PRIMARY KEY,\n  salary DECIMAL(10,2) CHECK (salary > 0),\n  status NVARCHAR(20)  CHECK (status IN ('active','inactive','pending'))\n);\n\n-- Add without checking existing rows:\nALTER TABLE employees\n  WITH NOCHECK ADD CONSTRAINT chk_salary CHECK (salary > 0);"
+      },
+      "oracle": {
+        "supported": true,
+        "since": "all",
+        "notes": "Full CHECK support. SYSDATE, SYSTIMESTAMP, USER, ROWNUM, and sequence references are not allowed in CHECK expressions. ENABLE NOVALIDATE lets you add a constraint without checking existing rows.",
+        "syntax": "CREATE TABLE employees (\n  id     NUMBER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,\n  salary NUMBER       CONSTRAINT chk_salary CHECK (salary > 0),\n  status VARCHAR2(20) CONSTRAINT chk_status CHECK (status IN ('active','inactive','pending'))\n);\n\nALTER TABLE employees ADD CONSTRAINT chk_age CHECK (age >= 18) ENABLE NOVALIDATE;"
+      },
+      "sqlite": {
+        "supported": true,
+        "since": "all",
+        "notes": "CHECK constraints are supported. Unlike other engines, SQLite evaluates them but does not enforce NOT NULL as a separate concept from CHECK. Subqueries are allowed in CHECK expressions (unlike most other engines). Constraints cannot be dropped after creation (the table must be recreated).",
+        "syntax": "CREATE TABLE employees (\n  id     INTEGER PRIMARY KEY,\n  salary REAL    CHECK (salary > 0),\n  status TEXT    CHECK (status IN ('active', 'inactive', 'pending'))\n);\n\n-- SQLite allows subqueries in CHECK (unusual):\nCREATE TABLE items (\n  cat_id INT CHECK (cat_id IN (SELECT id FROM categories))\n);"
+      }
+    },
+    "details": "MySQL silently ignored CHECK constraints before 8.0.16 — a major source of data integrity bugs for anyone who assumed they were enforced. PostgreSQL's NOT VALID / VALIDATE CONSTRAINT split is uniquely useful for adding constraints to large tables without a blocking table scan. SQLite allows subqueries in CHECK expressions, which no other engine supports."
+  },
+  "unique constraint": {
+    "description": "Enforce that all values in a column or combination of columns are distinct across all rows. Unlike a PRIMARY KEY, a unique constraint allows NULL values (with engine-specific behavior).",
+    "syntax": "CREATE TABLE users (\n  id    INT PRIMARY KEY,\n  email TEXT UNIQUE,\n  username TEXT,\n  CONSTRAINT uq_username UNIQUE (username)\n);",
+    "category": "DDL",
+    "slug": "unique-constraint",
+    "compatibility": {
+      "mysql": {
+        "supported": true,
+        "since": "all",
+        "notes": "UNIQUE constraints allow multiple NULLs (NULL is not considered equal to NULL). Creating a UNIQUE constraint also creates a UNIQUE index. Composite unique constraints supported. Can be used as a FK target.",
+        "syntax": "CREATE TABLE users (\n  id       INT AUTO_INCREMENT PRIMARY KEY,\n  email    VARCHAR(255) UNIQUE,\n  username VARCHAR(50)\n);\n\n-- Composite unique:\nALTER TABLE users ADD CONSTRAINT uq_name_email UNIQUE (username, email);\n\n-- Drop:\nALTER TABLE users DROP INDEX uq_name_email;"
+      },
+      "postgresql": {
+        "supported": true,
+        "since": "all",
+        "notes": "NULLs are not considered equal — multiple NULLs are allowed. PG 15+ adds NULLS NOT DISTINCT option to treat NULLs as equal (only one NULL allowed). Unique constraints create an underlying unique index. UNIQUE NULLS NOT DISTINCT is the standard way to enforce at-most-one NULL.",
+        "syntax": "CREATE TABLE users (\n  id    SERIAL PRIMARY KEY,\n  email TEXT UNIQUE\n);\n\n-- PG 15+: treat NULL as equal (only one NULL allowed):\nCREATE UNIQUE INDEX ON users (email) NULLS NOT DISTINCT;\n\n-- Composite:\nALTER TABLE users ADD CONSTRAINT uq_name UNIQUE (first_name, last_name);"
+      },
+      "sqlserver": {
+        "supported": true,
+        "since": "all",
+        "notes": "Only ONE NULL allowed per unique-constrained column (SQL Server treats NULLs as equal for uniqueness purposes — opposite of standard SQL). A filtered unique index (WHERE col IS NOT NULL) can work around this if you need multiple NULLs.",
+        "syntax": "CREATE TABLE users (\n  id    INT IDENTITY PRIMARY KEY,\n  email NVARCHAR(255) UNIQUE\n);\n\n-- Allow multiple NULLs via filtered index:\nCREATE UNIQUE INDEX uq_email ON users(email) WHERE email IS NOT NULL;\n\n-- Drop:\nALTER TABLE users DROP CONSTRAINT uq_users_email;"
+      },
+      "oracle": {
+        "supported": true,
+        "since": "all",
+        "notes": "Multiple NULLs allowed (NULL != NULL). Composite unique constraint with all-NULL rows are allowed (partial NULLs enforce uniqueness on non-NULL combinations). Creating a UNIQUE constraint creates a unique index.",
+        "syntax": "CREATE TABLE users (\n  id    NUMBER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,\n  email VARCHAR2(255) UNIQUE\n);\n\n-- Named constraint:\nALTER TABLE users ADD CONSTRAINT uq_email UNIQUE (email);\n\n-- Disable without dropping:\nALTER TABLE users DISABLE CONSTRAINT uq_email;"
+      },
+      "sqlite": {
+        "supported": true,
+        "since": "all",
+        "notes": "Multiple NULLs allowed in UNIQUE columns (NULL != NULL). A UNIQUE constraint on a column creates an implicit index. Constraints cannot be removed after creation without recreating the table.",
+        "syntax": "CREATE TABLE users (\n  id    INTEGER PRIMARY KEY,\n  email TEXT UNIQUE\n);\n\n-- Composite:\nCREATE TABLE memberships (\n  user_id INT,\n  group_id INT,\n  UNIQUE (user_id, group_id)\n);"
+      }
+    },
+    "details": "NULL handling is the key divergence: SQL Server allows only ONE NULL per unique column (treats NULLs as equal), while PostgreSQL, MySQL, Oracle, and SQLite allow multiple NULLs (NULL != NULL). PostgreSQL 15 added NULLS NOT DISTINCT to opt into SQL Server's behavior. This is a subtle but real portability trap."
+  },
+  "default value": {
+    "description": "Specify a value to be used automatically when no value is provided for a column during INSERT.",
+    "syntax": "CREATE TABLE events (\n  id         INT PRIMARY KEY,\n  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,\n  status     VARCHAR(20) DEFAULT 'pending'\n);",
+    "category": "DDL",
+    "slug": "default-value",
+    "compatibility": {
+      "mysql": {
+        "supported": true,
+        "since": "all",
+        "notes": "Literal defaults for any type. Expression defaults (DEFAULT (expr)) supported from 8.0.13. CURRENT_TIMESTAMP as default for DATETIME/TIMESTAMP. ON UPDATE CURRENT_TIMESTAMP auto-updates the column on row modification.",
+        "syntax": "CREATE TABLE events (\n  id         INT AUTO_INCREMENT PRIMARY KEY,\n  status     VARCHAR(20)  DEFAULT 'pending',\n  score      INT          DEFAULT 0,\n  created_at DATETIME     DEFAULT CURRENT_TIMESTAMP,\n  updated_at DATETIME     DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP\n);\n\n-- Expression default (8.0.13+):\nCREATE TABLE items (price DECIMAL(10,2), tax DECIMAL(10,2) DEFAULT (price * 0.1));"
+      },
+      "postgresql": {
+        "supported": true,
+        "since": "all",
+        "notes": "Defaults can be any expression, including function calls. CURRENT_TIMESTAMP, NOW(), gen_random_uuid(), etc. all work. DEFAULT can be set or dropped with ALTER TABLE ... SET DEFAULT / DROP DEFAULT.",
+        "syntax": "CREATE TABLE events (\n  id         SERIAL PRIMARY KEY,\n  status     TEXT        DEFAULT 'pending',\n  created_at TIMESTAMPTZ DEFAULT NOW(),\n  token      UUID        DEFAULT gen_random_uuid()\n);\n\nALTER TABLE events ALTER COLUMN status SET DEFAULT 'active';\nALTER TABLE events ALTER COLUMN status DROP DEFAULT;"
+      },
+      "sqlserver": {
+        "supported": true,
+        "since": "all",
+        "notes": "Named DEFAULT constraints are preferred over inline defaults — they can be referenced and dropped by name. GETDATE(), NEWID(), NEWSEQUENTIALID() are common default expressions. DEFAULT keyword can be used in INSERT to explicitly invoke the default.",
+        "syntax": "CREATE TABLE events (\n  id         INT IDENTITY PRIMARY KEY,\n  status     NVARCHAR(20) CONSTRAINT df_status DEFAULT 'pending',\n  created_at DATETIME     CONSTRAINT df_created DEFAULT GETDATE(),\n  token      UNIQUEIDENTIFIER CONSTRAINT df_token DEFAULT NEWID()\n);\n\n-- Explicit default in INSERT:\nINSERT INTO events (status, created_at) VALUES (DEFAULT, DEFAULT);\n\n-- Drop a named default:\nALTER TABLE events DROP CONSTRAINT df_status;"
+      },
+      "oracle": {
+        "supported": true,
+        "since": "all",
+        "notes": "Standard DEFAULT with literals or expressions. SYSDATE, SYSTIMESTAMP, SYS_GUID() (UUID) as common defaults. 12c+ adds DEFAULT ON NULL — applies the default even when NULL is explicitly inserted (unlike standard DEFAULT which only fires when the column is omitted).",
+        "syntax": "CREATE TABLE events (\n  id         NUMBER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,\n  status     VARCHAR2(20)  DEFAULT 'pending',\n  created_at TIMESTAMP     DEFAULT SYSTIMESTAMP,\n  token      RAW(16)       DEFAULT SYS_GUID()\n);\n\n-- 12c+: default even when NULL is explicitly inserted:\nCREATE TABLE items (qty NUMBER DEFAULT ON NULL 1);"
+      },
+      "sqlite": {
+        "supported": true,
+        "since": "all",
+        "notes": "Supports literal defaults and a limited set of functions: CURRENT_TIME, CURRENT_DATE, CURRENT_TIMESTAMP. Arbitrary expression defaults are supported in parentheses. Cannot alter defaults after table creation without recreating the table.",
+        "syntax": "CREATE TABLE events (\n  id         INTEGER PRIMARY KEY,\n  status     TEXT     DEFAULT 'pending',\n  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,\n  score      INTEGER  DEFAULT 0\n);"
+      }
+    },
+    "details": "Oracle 12c's DEFAULT ON NULL is unique — it fires the default even when NULL is explicitly provided, not just when the column is omitted from INSERT. SQL Server's named DEFAULT constraints are best practice since they can be dropped by name. SQLite does not allow altering defaults post-creation."
+  },
+  "not null": {
+    "description": "A column constraint that prevents NULL values from being stored, requiring every row to supply a value for that column.",
+    "syntax": "CREATE TABLE users (\n  id    INT NOT NULL PRIMARY KEY,\n  email TEXT NOT NULL,\n  bio   TEXT NULL  -- explicit NULL (optional)\n);",
+    "category": "DDL",
+    "slug": "not-null",
+    "compatibility": {
+      "mysql": {
+        "supported": true,
+        "since": "all",
+        "notes": "Standard NOT NULL. Strict mode (STRICT_ALL_TABLES or STRICT_TRANS_TABLES) affects behavior: without strict mode, MySQL may insert empty string or 0 instead of rejecting the INSERT on a NOT NULL column — enabling strict mode is strongly recommended.",
+        "syntax": "CREATE TABLE users (\n  id    INT          NOT NULL AUTO_INCREMENT PRIMARY KEY,\n  email VARCHAR(255) NOT NULL,\n  bio   TEXT         NULL\n);\n\n-- Enable strict mode (recommended):\nSET sql_mode = 'STRICT_ALL_TABLES';\n\n-- Add NOT NULL to existing column:\nALTER TABLE users MODIFY COLUMN bio TEXT NOT NULL DEFAULT '';"
+      },
+      "postgresql": {
+        "supported": true,
+        "since": "all",
+        "notes": "Standard NOT NULL. PG 17 adds ALTER TABLE ... ALTER COLUMN ... SET NOT NULL as a fast path that avoids a full table scan when a CHECK constraint already guarantees no NULLs. NOT NULL can also be added as a named constraint (ALTER TABLE ... ADD CONSTRAINT ... NOT NULL) in PG 17+.",
+        "syntax": "CREATE TABLE users (\n  id    SERIAL PRIMARY KEY,\n  email TEXT NOT NULL,\n  bio   TEXT\n);\n\n-- Add NOT NULL to existing column:\nALTER TABLE users ALTER COLUMN email SET NOT NULL;\n\n-- Remove NOT NULL:\nALTER TABLE users ALTER COLUMN email DROP NOT NULL;"
+      },
+      "sqlserver": {
+        "supported": true,
+        "since": "all",
+        "notes": "Standard NOT NULL. Columns are nullable by default. To change nullability on an existing column the column must be redefined with ALTER TABLE ... ALTER COLUMN. If data contains NULLs, the ALTER will fail.",
+        "syntax": "CREATE TABLE users (\n  id    INT           NOT NULL IDENTITY PRIMARY KEY,\n  email NVARCHAR(255) NOT NULL,\n  bio   NVARCHAR(MAX) NULL\n);\n\n-- Change nullability:\nALTER TABLE users ALTER COLUMN email NVARCHAR(255) NOT NULL;\n\n-- If NULLs exist, update first:\nUPDATE users SET email = '' WHERE email IS NULL;\nALTER TABLE users ALTER COLUMN email NVARCHAR(255) NOT NULL;"
+      },
+      "oracle": {
+        "supported": true,
+        "since": "all",
+        "notes": "Standard NOT NULL. In Oracle, an empty string ('') is treated as NULL — unlike every other engine. This means NOT NULL also blocks empty string inserts. Modifying nullability: ALTER TABLE ... MODIFY col NOT NULL or ALTER TABLE ... MODIFY col NULL.",
+        "syntax": "CREATE TABLE users (\n  id    NUMBER        NOT NULL PRIMARY KEY,\n  email VARCHAR2(255) NOT NULL,\n  bio   VARCHAR2(4000)\n);\n\n-- Change nullability:\nALTER TABLE users MODIFY email VARCHAR2(255) NOT NULL;\nALTER TABLE users MODIFY bio   VARCHAR2(4000) NULL;"
+      },
+      "sqlite": {
+        "supported": true,
+        "since": "all",
+        "notes": "Standard NOT NULL. The exception: INTEGER PRIMARY KEY columns implicitly get NOT NULL (and auto-increment behavior). SQLite allows ALTER TABLE to rename columns and add columns, but NOT NULL cannot be added to an existing column without recreating the table.",
+        "syntax": "CREATE TABLE users (\n  id    INTEGER PRIMARY KEY,  -- implicitly NOT NULL\n  email TEXT NOT NULL,\n  bio   TEXT                  -- nullable\n);"
+      }
+    },
+    "details": "Oracle's treatment of empty string ('') as NULL is a notorious portability trap — NOT NULL in Oracle also blocks empty strings, unlike all other engines. MySQL without strict mode may silently coerce a NOT NULL violation to a default value instead of rejecting the INSERT, which is arguably worse behavior than an error."
+  },
+  "in / not in": {
+    "description": "Test whether a value matches any value in a list or subquery. IN is shorthand for multiple OR equality conditions; NOT IN is the negation.",
+    "syntax": "SELECT * FROM orders WHERE status IN ('pending', 'processing', 'shipped');\n\nSELECT * FROM orders WHERE customer_id NOT IN (\n  SELECT id FROM customers WHERE region = 'EU'\n);",
+    "category": "Query Techniques",
+    "slug": "in-not-in",
+    "compatibility": {
+      "mysql": {
+        "supported": true,
+        "since": "all",
+        "notes": "Standard IN/NOT IN. Key gotcha: NOT IN with a subquery that returns any NULL will return no rows — because NULL != anything is UNKNOWN, not FALSE. Use NOT EXISTS instead when the subquery might return NULLs. IN list size is limited by max_allowed_packet.",
+        "syntax": "SELECT * FROM orders WHERE status IN ('pending', 'processing');\nSELECT * FROM orders WHERE id NOT IN (1, 2, 3);\n\n-- Safer alternative when NULLs possible:\nSELECT * FROM orders o\nWHERE NOT EXISTS (\n  SELECT 1 FROM blacklist b WHERE b.id = o.customer_id\n);"
+      },
+      "postgresql": {
+        "supported": true,
+        "since": "all",
+        "notes": "Standard IN/NOT IN. Same NULL trap: NOT IN with a NULL in the list or subquery returns no rows. Use NOT EXISTS for safety. PostgreSQL also supports = ANY(array) and <> ALL(array) as alternatives. IN with large static lists can be slower than = ANY(ARRAY[...]).",
+        "syntax": "SELECT * FROM orders WHERE status IN ('pending', 'processing');\n\n-- Array alternative (often faster for large lists):\nSELECT * FROM orders WHERE status = ANY(ARRAY['pending', 'processing']);\n\n-- NOT IN NULL trap workaround:\nSELECT * FROM orders o\nWHERE NOT EXISTS (SELECT 1 FROM blacklist b WHERE b.id = o.customer_id);"
+      },
+      "sqlserver": {
+        "supported": true,
+        "since": "all",
+        "notes": "Standard IN/NOT IN. Same NULL trap with NOT IN. No array type, so = ANY(array) is not available. IN list maximum is not explicitly documented but very large lists may cause parameter sniffing issues — a table variable or temp table is better for lists over ~1000 values.",
+        "syntax": "SELECT * FROM orders WHERE status IN ('pending', 'processing', 'shipped');\nSELECT * FROM orders WHERE id NOT IN (1, 2, 3);\n\n-- For large lists, use a table:\nDECLARE @ids TABLE (id INT);\nINSERT INTO @ids VALUES (1),(2),(3);\nSELECT * FROM orders WHERE id IN (SELECT id FROM @ids);"
+      },
+      "oracle": {
+        "supported": true,
+        "since": "all",
+        "notes": "Standard IN/NOT IN. Same NULL trap. IN list is limited to 1000 elements per expression — a hard limit. For larger lists, use IN with a subquery or a collection type. NOT EXISTS is recommended over NOT IN for correlated subqueries.",
+        "syntax": "SELECT * FROM orders WHERE status IN ('pending', 'processing');\n\n-- Hard limit: max 1000 items in IN list:\n-- SELECT * FROM t WHERE id IN (1, 2, ..., 1001);  -- ORA-01795 error!\n\n-- Workaround for large lists:\nSELECT * FROM orders WHERE id IN (SELECT id FROM my_id_list_table);"
+      },
+      "sqlite": {
+        "supported": true,
+        "since": "all",
+        "notes": "Standard IN/NOT IN. Same NULL trap with NOT IN. No array type. IN with a subquery is fully supported. No hard limit on IN list size (subject to SQLITE_MAX_VARIABLE_NUMBER, default 999 bound parameters).",
+        "syntax": "SELECT * FROM orders WHERE status IN ('pending', 'processing');\nSELECT * FROM orders WHERE id NOT IN (1, 2, 3);\n\n-- NULL trap demonstration:\nSELECT * FROM t WHERE x NOT IN (1, NULL);  -- always returns 0 rows!"
+      }
+    },
+    "details": "The NULL trap is the universal gotcha: NOT IN (subquery) returns zero rows if the subquery returns any NULL. This affects all engines identically. Use NOT EXISTS instead of NOT IN when the list or subquery may contain NULLs. Oracle's hard 1000-element IN list limit is unique and produces a runtime error, not a compile-time warning."
+  },
+  "between": {
+    "description": "Test whether a value falls within an inclusive range. BETWEEN a AND b is equivalent to val >= a AND val <= b — both endpoints are included.",
+    "syntax": "SELECT * FROM orders\nWHERE amount BETWEEN 100 AND 500;\n\nSELECT * FROM events\nWHERE event_date BETWEEN '2024-01-01' AND '2024-03-31';",
+    "category": "Query Techniques",
+    "slug": "between",
+    "compatibility": {
+      "mysql": {
+        "supported": true,
+        "since": "all",
+        "notes": "Standard inclusive BETWEEN. Works on numerics, dates, and strings (lexicographic comparison). NOT BETWEEN for exclusion. Date BETWEEN is inclusive of the end date — BETWEEN '2024-01-01' AND '2024-01-31' includes all of Jan 31 only up to midnight if the column is DATE type; if DATETIME, use < '2024-02-01' instead.",
+        "syntax": "SELECT * FROM orders WHERE amount BETWEEN 100 AND 500;\nSELECT * FROM orders WHERE amount NOT BETWEEN 100 AND 500;\n\n-- Date range (DATE type — safe):\nSELECT * FROM events WHERE event_date BETWEEN '2024-01-01' AND '2024-01-31';\n\n-- DATETIME — use < instead to avoid midnight trap:\nSELECT * FROM events WHERE created_at >= '2024-01-01' AND created_at < '2024-02-01';"
+      },
+      "postgresql": {
+        "supported": true,
+        "since": "all",
+        "notes": "Standard inclusive BETWEEN. Also supports BETWEEN SYMMETRIC (swaps bounds if first > second, so order doesn't matter). NOT BETWEEN and NOT BETWEEN SYMMETRIC available. Same timestamp end-of-day trap as MySQL.",
+        "syntax": "SELECT * FROM orders WHERE amount BETWEEN 100 AND 500;\nSELECT * FROM orders WHERE amount NOT BETWEEN 100 AND 500;\n\n-- SYMMETRIC: order doesn't matter\nSELECT * FROM orders WHERE amount BETWEEN SYMMETRIC 500 AND 100;  -- same as 100..500"
+      },
+      "sqlserver": {
+        "supported": true,
+        "since": "all",
+        "notes": "Standard inclusive BETWEEN. No SYMMETRIC variant. Same timestamp end-of-day trap — prefer >= / < for DATETIME ranges. BETWEEN on strings uses collation-dependent comparison.",
+        "syntax": "SELECT * FROM orders WHERE amount BETWEEN 100 AND 500;\nSELECT * FROM orders WHERE amount NOT BETWEEN 100 AND 500;\n\n-- Safe datetime range (no midnight trap):\nSELECT * FROM orders\nWHERE created_at >= '2024-01-01' AND created_at < '2024-02-01';"
+      },
+      "oracle": {
+        "supported": true,
+        "since": "all",
+        "notes": "Standard inclusive BETWEEN. No SYMMETRIC variant. DATE type in Oracle includes a time component (unlike ANSI DATE which is date-only), so date BETWEEN can have timestamp precision traps. Use TRUNC() to strip time component when needed.",
+        "syntax": "SELECT * FROM orders WHERE amount BETWEEN 100 AND 500;\n\n-- Oracle DATE includes time — use TRUNC to strip it:\nSELECT * FROM events\nWHERE event_date BETWEEN TRUNC(SYSDATE) AND TRUNC(SYSDATE) + 1;"
+      },
+      "sqlite": {
+        "supported": true,
+        "since": "all",
+        "notes": "Standard inclusive BETWEEN. No SYMMETRIC variant. SQLite has no dedicated DATE type — dates stored as TEXT (ISO 8601), REAL (Julian day), or INTEGER (Unix epoch). BETWEEN on TEXT dates works correctly as long as dates are in YYYY-MM-DD format (lexicographic order matches chronological order).",
+        "syntax": "SELECT * FROM orders WHERE amount BETWEEN 100 AND 500;\n\n-- Text dates work correctly in ISO 8601 format:\nSELECT * FROM events\nWHERE event_date BETWEEN '2024-01-01' AND '2024-03-31';"
+      }
+    },
+    "details": "BETWEEN is inclusive on both ends in all engines — this is a common mistake when filtering DATETIME/TIMESTAMP columns. The safe pattern for timestamp ranges is always col >= start AND col < end (exclusive upper bound). PostgreSQL's BETWEEN SYMMETRIC is unique. Oracle's DATE type secretly includes time, which makes date BETWEEN behave differently than expected."
+  },
+  "limit / top / fetch first": {
+    "description": "Restrict the number of rows returned by a query. Every engine supports this but with different syntax.",
+    "syntax": "-- Standard SQL (supported by most modern engines):\nSELECT * FROM tbl ORDER BY col OFFSET 20 ROWS FETCH NEXT 10 ROWS ONLY;\n\n-- Common alternatives:\nSELECT * FROM tbl LIMIT 10 OFFSET 20;  -- MySQL, PostgreSQL, SQLite\nSELECT TOP 10 * FROM tbl;              -- SQL Server",
+    "category": "Query Techniques",
+    "slug": "limit-top",
+    "compatibility": {
+      "mysql": {
+        "supported": true,
+        "since": "all",
+        "notes": "LIMIT n or LIMIT offset, n or LIMIT n OFFSET offset. No FETCH FIRST. LIMIT without ORDER BY returns an arbitrary set of rows — always include ORDER BY for deterministic pagination. LIMIT in subqueries has restrictions in older versions.",
+        "syntax": "SELECT * FROM tbl ORDER BY id LIMIT 10;            -- first 10\nSELECT * FROM tbl ORDER BY id LIMIT 10 OFFSET 20;  -- rows 21-30\nSELECT * FROM tbl ORDER BY id LIMIT 20, 10;        -- offset,count shorthand"
+      },
+      "postgresql": {
+        "supported": true,
+        "since": "all",
+        "notes": "LIMIT n OFFSET m (non-standard but widely supported). Also supports the SQL-standard FETCH FIRST n ROWS ONLY since PostgreSQL 8.4. LIMIT ALL means no limit. OFFSET without LIMIT is valid.",
+        "syntax": "SELECT * FROM tbl ORDER BY id LIMIT 10;\nSELECT * FROM tbl ORDER BY id LIMIT 10 OFFSET 20;\n\n-- Standard SQL:\nSELECT * FROM tbl ORDER BY id\nOFFSET 20 ROWS FETCH NEXT 10 ROWS ONLY;\n\n-- No limit:\nSELECT * FROM tbl ORDER BY id LIMIT ALL OFFSET 5;"
+      },
+      "sqlserver": {
+        "supported": true,
+        "since": "2012",
+        "notes": "OFFSET ... FETCH is the standard syntax (SQL Server 2012+). TOP n is available in all versions but is non-standard and does not support OFFSET. TOP with PERCENT and WITH TIES options available. OFFSET FETCH requires ORDER BY.",
+        "syntax": "-- Modern standard:\nSELECT * FROM tbl ORDER BY id\nOFFSET 20 ROWS FETCH NEXT 10 ROWS ONLY;\n\n-- Legacy TOP (all versions):\nSELECT TOP 10 * FROM tbl ORDER BY id;\nSELECT TOP 10 PERCENT * FROM tbl ORDER BY id;\nSELECT TOP 10 WITH TIES * FROM tbl ORDER BY id;"
+      },
+      "oracle": {
+        "supported": true,
+        "since": "12c",
+        "notes": "FETCH FIRST is the SQL-standard syntax, supported since 12c. Before 12c, use ROWNUM in a subquery (notoriously tricky — ROWNUM is assigned before ORDER BY). OFFSET ... FETCH supported in 12c+.",
+        "syntax": "-- Modern (12c+):\nSELECT * FROM tbl ORDER BY id\nFETCH FIRST 10 ROWS ONLY;\n\nSELECT * FROM tbl ORDER BY id\nOFFSET 20 ROWS FETCH NEXT 10 ROWS ONLY;\n\n-- Legacy ROWNUM (pre-12c — must wrap in subquery):\nSELECT * FROM (\n  SELECT * FROM tbl ORDER BY id\n) WHERE ROWNUM <= 10;"
+      },
+      "sqlite": {
+        "supported": true,
+        "since": "all",
+        "notes": "LIMIT n OFFSET m. Also accepts LIMIT offset, n (comma syntax, same as MySQL). LIMIT -1 means no limit (useful for OFFSET without a row cap). No FETCH FIRST.",
+        "syntax": "SELECT * FROM tbl ORDER BY id LIMIT 10;\nSELECT * FROM tbl ORDER BY id LIMIT 10 OFFSET 20;\n\n-- Offset without row cap:\nSELECT * FROM tbl ORDER BY id LIMIT -1 OFFSET 20;"
+      }
+    },
+    "details": "The SQL-standard syntax is OFFSET m ROWS FETCH NEXT n ROWS ONLY — supported by PostgreSQL, SQL Server 2012+, and Oracle 12c+. MySQL and SQLite use the non-standard but simpler LIMIT/OFFSET. Oracle's pre-12c ROWNUM approach is famously error-prone (ROWNUM is applied before ORDER BY, requiring a subquery wrapper). Always include ORDER BY — without it, which rows you get is undefined."
+  },
+  "rank / dense_rank": {
+    "description": "Window functions that assign a rank to each row within a partition. RANK skips rank numbers after ties; DENSE_RANK does not skip.",
+    "syntax": "SELECT\n  name,\n  score,\n  RANK()       OVER (ORDER BY score DESC) AS rank,\n  DENSE_RANK() OVER (ORDER BY score DESC) AS dense_rank\nFROM scores;",
+    "category": "Functions",
+    "slug": "rank-dense-rank",
+    "compatibility": {
+      "mysql": {
+        "supported": true,
+        "since": "8.0",
+        "notes": "RANK(), DENSE_RANK(), and PERCENT_RANK() all added in MySQL 8.0. Not available in 5.7 or earlier — requires workarounds with user variables.",
+        "syntax": "SELECT\n  name,\n  score,\n  RANK()        OVER (ORDER BY score DESC) AS rnk,\n  DENSE_RANK()  OVER (ORDER BY score DESC) AS dense_rnk,\n  PERCENT_RANK() OVER (ORDER BY score DESC) AS pct_rnk\nFROM scores;\n\n-- With partition:\nSELECT name, dept, score,\n  RANK() OVER (PARTITION BY dept ORDER BY score DESC) AS dept_rank\nFROM scores;"
+      },
+      "postgresql": {
+        "supported": true,
+        "since": "8.4",
+        "notes": "RANK(), DENSE_RANK(), PERCENT_RANK(), CUME_DIST() all supported. Standard OVER clause with PARTITION BY and ORDER BY.",
+        "syntax": "SELECT\n  name,\n  score,\n  RANK()       OVER (ORDER BY score DESC) AS rnk,\n  DENSE_RANK() OVER (ORDER BY score DESC) AS dense_rnk\nFROM scores;\n\n-- Partition by department:\nSELECT name, dept, score,\n  DENSE_RANK() OVER (PARTITION BY dept ORDER BY score DESC) AS dept_rank\nFROM scores;"
+      },
+      "sqlserver": {
+        "supported": true,
+        "since": "2005",
+        "notes": "RANK(), DENSE_RANK(), NTILE(), PERCENT_RANK() all available since 2005. Standard syntax.",
+        "syntax": "SELECT\n  name,\n  score,\n  RANK()       OVER (ORDER BY score DESC) AS rnk,\n  DENSE_RANK() OVER (ORDER BY score DESC) AS dense_rnk\nFROM scores;\n\nSELECT name, dept, score,\n  RANK() OVER (PARTITION BY dept ORDER BY score DESC) AS dept_rank\nFROM scores;"
+      },
+      "oracle": {
+        "supported": true,
+        "since": "8i",
+        "notes": "RANK() and DENSE_RANK() have two forms in Oracle: the standard analytic (window) form with OVER(), and a unique aggregate form — RANK(value) WITHIN GROUP (ORDER BY col) — which computes the hypothetical rank of a given value without a full window scan.",
+        "syntax": "-- Analytic (standard) form:\nSELECT name, score,\n  RANK()       OVER (ORDER BY score DESC) AS rnk,\n  DENSE_RANK() OVER (ORDER BY score DESC) AS dense_rnk\nFROM scores;\n\n-- Hypothetical aggregate (Oracle-unique):\nSELECT RANK(85) WITHIN GROUP (ORDER BY score DESC) AS hyp_rank\nFROM scores;"
+      },
+      "sqlite": {
+        "supported": true,
+        "since": "3.25.0",
+        "notes": "RANK() and DENSE_RANK() added in SQLite 3.25.0 (September 2018). Standard syntax.",
+        "syntax": "SELECT\n  name,\n  score,\n  RANK()       OVER (ORDER BY score DESC) AS rnk,\n  DENSE_RANK() OVER (ORDER BY score DESC) AS dense_rnk\nFROM scores;"
+      }
+    },
+    "details": "The difference: if three rows tie for 2nd place, RANK gives them all 2 and then skips to 5; DENSE_RANK gives them all 2 and continues with 3. DENSE_RANK is usually what you actually want for leaderboards. Oracle's hypothetical aggregate form (RANK(val) WITHIN GROUP) is unique — it answers 'what rank would this value get?' without needing a full result set."
+  },
+  "first_value / last_value": {
+    "description": "Window functions that return the first or last value in the current window frame. Commonly used to carry forward the first value in a group or compare each row to the group's boundary.",
+    "syntax": "SELECT\n  name,\n  dept,\n  salary,\n  FIRST_VALUE(salary) OVER (PARTITION BY dept ORDER BY salary DESC) AS highest_in_dept,\n  LAST_VALUE(salary)  OVER (PARTITION BY dept ORDER BY salary DESC\n    ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING) AS lowest_in_dept\nFROM employees;",
+    "category": "Functions",
+    "slug": "first-last-value",
+    "compatibility": {
+      "mysql": {
+        "supported": true,
+        "since": "8.0",
+        "notes": "FIRST_VALUE() and LAST_VALUE() added in MySQL 8.0. Default window frame is RANGE BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW — this means LAST_VALUE() will usually return the current row's value, not the last in the partition. Always specify the frame explicitly for LAST_VALUE.",
+        "syntax": "SELECT name, dept, salary,\n  FIRST_VALUE(salary) OVER (PARTITION BY dept ORDER BY salary DESC) AS top_salary,\n  -- Must specify UNBOUNDED FOLLOWING for LAST_VALUE to work as expected:\n  LAST_VALUE(salary)  OVER (\n    PARTITION BY dept ORDER BY salary DESC\n    ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING\n  ) AS bottom_salary\nFROM employees;"
+      },
+      "postgresql": {
+        "supported": true,
+        "since": "8.4",
+        "notes": "FIRST_VALUE() and LAST_VALUE() supported. Same default frame gotcha as MySQL — LAST_VALUE needs explicit ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING to see the true last value in the partition.",
+        "syntax": "SELECT name, dept, salary,\n  FIRST_VALUE(salary) OVER w AS top_salary,\n  LAST_VALUE(salary)  OVER w AS bottom_salary\nFROM employees\nWINDOW w AS (\n  PARTITION BY dept ORDER BY salary DESC\n  ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING\n);"
+      },
+      "sqlserver": {
+        "supported": true,
+        "since": "2012",
+        "notes": "FIRST_VALUE() and LAST_VALUE() added in SQL Server 2012. Same default frame gotcha. IGNORE NULLS option added in SQL Server 2022.",
+        "syntax": "SELECT name, dept, salary,\n  FIRST_VALUE(salary) OVER (PARTITION BY dept ORDER BY salary DESC) AS top_salary,\n  LAST_VALUE(salary)  OVER (\n    PARTITION BY dept ORDER BY salary DESC\n    ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING\n  ) AS bottom_salary\nFROM employees;\n\n-- SQL Server 2022+:\nSELECT FIRST_VALUE(salary) IGNORE NULLS OVER (ORDER BY hire_date) FROM employees;"
+      },
+      "oracle": {
+        "supported": true,
+        "since": "8i",
+        "notes": "FIRST_VALUE() and LAST_VALUE() supported. IGNORE NULLS / RESPECT NULLS options available (Oracle supports these earlier than other engines). Same default frame gotcha with LAST_VALUE.",
+        "syntax": "SELECT name, dept, salary,\n  FIRST_VALUE(salary) OVER (PARTITION BY dept ORDER BY salary DESC) AS top_salary,\n  LAST_VALUE(salary)  OVER (\n    PARTITION BY dept ORDER BY salary DESC\n    ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING\n  ) AS bottom_salary,\n  FIRST_VALUE(salary) IGNORE NULLS OVER (ORDER BY hire_date) AS first_non_null\nFROM employees;"
+      },
+      "sqlite": {
+        "supported": true,
+        "since": "3.25.0",
+        "notes": "FIRST_VALUE() and LAST_VALUE() added in SQLite 3.25.0. Standard syntax. Same default frame gotcha with LAST_VALUE.",
+        "syntax": "SELECT name, dept, salary,\n  FIRST_VALUE(salary) OVER (PARTITION BY dept ORDER BY salary DESC) AS top_salary,\n  LAST_VALUE(salary)  OVER (\n    PARTITION BY dept ORDER BY salary DESC\n    ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING\n  ) AS bottom_salary\nFROM employees;"
+      }
+    },
+    "details": "LAST_VALUE's default frame (RANGE UNBOUNDED PRECEDING TO CURRENT ROW) is a universal gotcha — it almost always returns the current row's own value, not the partition's last value. Always explicitly specify ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING when using LAST_VALUE. FIRST_VALUE does not have this problem because the first row is always in frame."
+  },
+  "ntile": {
+    "description": "Divide rows in a window partition into a specified number of ranked buckets (tiles) as evenly as possible, returning the bucket number for each row.",
+    "syntax": "SELECT\n  name,\n  score,\n  NTILE(4) OVER (ORDER BY score DESC) AS quartile\nFROM students;",
+    "category": "Functions",
+    "slug": "ntile",
+    "compatibility": {
+      "mysql": {
+        "supported": true,
+        "since": "8.0",
+        "notes": "NTILE(n) added in MySQL 8.0. Distributes rows into n buckets. If rows don't divide evenly, earlier buckets get one extra row. NTILE(100) = percentile bucket.",
+        "syntax": "SELECT name, score,\n  NTILE(4)   OVER (ORDER BY score DESC) AS quartile,\n  NTILE(10)  OVER (ORDER BY score DESC) AS decile,\n  NTILE(100) OVER (ORDER BY score DESC) AS percentile\nFROM students;\n\n-- With partition:\nSELECT name, dept, salary,\n  NTILE(3) OVER (PARTITION BY dept ORDER BY salary DESC) AS salary_tier\nFROM employees;"
+      },
+      "postgresql": {
+        "supported": true,
+        "since": "8.4",
+        "notes": "Standard NTILE(n). Supports the WINDOW clause shorthand for reusing window definitions.",
+        "syntax": "SELECT name, score,\n  NTILE(4) OVER (ORDER BY score DESC) AS quartile\nFROM students;\n\n-- Reusing window definition:\nSELECT name, score,\n  NTILE(4) OVER w AS quartile,\n  NTILE(10) OVER w AS decile\nFROM students\nWINDOW w AS (ORDER BY score DESC);"
+      },
+      "sqlserver": {
+        "supported": true,
+        "since": "2005",
+        "notes": "Standard NTILE(n). Available since SQL Server 2005.",
+        "syntax": "SELECT name, score,\n  NTILE(4)  OVER (ORDER BY score DESC) AS quartile,\n  NTILE(10) OVER (ORDER BY score DESC) AS decile\nFROM students;"
+      },
+      "oracle": {
+        "supported": true,
+        "since": "8i",
+        "notes": "Standard NTILE(n). Available since 8i.",
+        "syntax": "SELECT name, score,\n  NTILE(4) OVER (ORDER BY score DESC) AS quartile\nFROM students;"
+      },
+      "sqlite": {
+        "supported": true,
+        "since": "3.25.0",
+        "notes": "NTILE(n) added in SQLite 3.25.0.",
+        "syntax": "SELECT name, score,\n  NTILE(4) OVER (ORDER BY score DESC) AS quartile\nFROM students;"
+      }
+    },
+    "details": "NTILE is universally supported across all engines (post MySQL 8.0). The bucket distribution rule for uneven splits is consistent: earlier buckets get the extra row. NTILE(100) gives approximate percentile buckets; for true percentiles use PERCENTILE_CONT() WITHIN GROUP."
+  },
+  "window frame (rows/range)": {
+    "description": "Control which rows are included in a window function's calculation relative to the current row. The frame clause (ROWS or RANGE BETWEEN ... AND ...) determines the sliding window boundaries.",
+    "syntax": "SELECT\n  order_date,\n  amount,\n  -- 7-day rolling sum (preceding rows by date range):\n  SUM(amount) OVER (\n    ORDER BY order_date\n    RANGE BETWEEN INTERVAL '6 days' PRECEDING AND CURRENT ROW\n  ) AS rolling_7day\nFROM orders;",
+    "category": "Query Techniques",
+    "slug": "window-frame",
+    "compatibility": {
+      "mysql": {
+        "supported": true,
+        "since": "8.0",
+        "notes": "ROWS and RANGE frames supported since 8.0. GROUPS frame mode added in 8.0. Frame boundaries: UNBOUNDED PRECEDING, n PRECEDING, CURRENT ROW, n FOLLOWING, UNBOUNDED FOLLOWING. RANGE with numeric/interval offsets supported.",
+        "syntax": "-- Running total:\nSELECT dt, amt,\n  SUM(amt) OVER (ORDER BY dt ROWS UNBOUNDED PRECEDING) AS running_total\nFROM sales;\n\n-- 3-row moving average:\nSELECT dt, amt,\n  AVG(amt) OVER (ORDER BY dt ROWS BETWEEN 2 PRECEDING AND CURRENT ROW) AS moving_avg_3\nFROM sales;\n\n-- 7-day rolling sum:\nSELECT dt, amt,\n  SUM(amt) OVER (\n    ORDER BY dt\n    RANGE BETWEEN INTERVAL 6 DAY PRECEDING AND CURRENT ROW\n  ) AS rolling_7day\nFROM sales;"
+      },
+      "postgresql": {
+        "supported": true,
+        "since": "8.4",
+        "notes": "ROWS and RANGE supported since 8.4. GROUPS mode added in PG 11. RANGE with numeric/interval offsets. EXCLUDE clause (EXCLUDE CURRENT ROW, EXCLUDE GROUP, EXCLUDE TIES, EXCLUDE NO OTHERS) added in PG 11 for fine-grained control.",
+        "syntax": "-- Running total:\nSELECT dt, amt,\n  SUM(amt) OVER (ORDER BY dt ROWS UNBOUNDED PRECEDING) AS running_total\nFROM sales;\n\n-- 3-row moving average:\nSELECT dt, amt,\n  AVG(amt) OVER (ORDER BY dt ROWS BETWEEN 2 PRECEDING AND CURRENT ROW) AS moving_avg_3\nFROM sales;\n\n-- 7-day rolling (interval RANGE):\nSELECT dt, amt,\n  SUM(amt) OVER (\n    ORDER BY dt\n    RANGE BETWEEN '6 days'::interval PRECEDING AND CURRENT ROW\n  ) AS rolling_7day\nFROM sales;\n\n-- EXCLUDE CURRENT ROW (PG 11+):\nSELECT dt, amt,\n  AVG(amt) OVER (\n    ORDER BY dt ROWS BETWEEN 2 PRECEDING AND 2 FOLLOWING\n    EXCLUDE CURRENT ROW\n  ) AS peer_avg\nFROM sales;"
+      },
+      "sqlserver": {
+        "supported": true,
+        "since": "2012",
+        "notes": "ROWS and RANGE supported since SQL Server 2012. No GROUPS mode. RANGE with numeric offsets supported but RANGE INTERVAL is not (use ROWS for date rolling windows instead). No EXCLUDE clause.",
+        "syntax": "-- Running total:\nSELECT dt, amt,\n  SUM(amt) OVER (ORDER BY dt ROWS UNBOUNDED PRECEDING) AS running_total\nFROM sales;\n\n-- 3-row moving average:\nSELECT dt, amt,\n  AVG(amt) OVER (ORDER BY dt ROWS BETWEEN 2 PRECEDING AND CURRENT ROW) AS moving_avg_3\nFROM sales;\n\n-- Rolling 7-day (SQL Server: use ROWS, not RANGE INTERVAL):\nSELECT dt, amt,\n  SUM(amt) OVER (ORDER BY dt ROWS BETWEEN 6 PRECEDING AND CURRENT ROW) AS rolling_7row\nFROM sales;"
+      },
+      "oracle": {
+        "supported": true,
+        "since": "8i",
+        "notes": "ROWS and RANGE supported since 8i. No GROUPS mode. RANGE with numeric or interval offsets. No EXCLUDE clause. Default frame when ORDER BY is present: RANGE UNBOUNDED PRECEDING TO CURRENT ROW.",
+        "syntax": "-- Running total:\nSELECT dt, amt,\n  SUM(amt) OVER (ORDER BY dt ROWS UNBOUNDED PRECEDING) AS running_total\nFROM sales;\n\n-- 3-row moving average:\nSELECT dt, amt,\n  AVG(amt) OVER (ORDER BY dt ROWS BETWEEN 2 PRECEDING AND CURRENT ROW) AS moving_avg\nFROM sales;\n\n-- 7-day rolling (interval RANGE):\nSELECT dt, amt,\n  SUM(amt) OVER (\n    ORDER BY dt\n    RANGE BETWEEN INTERVAL '6' DAY PRECEDING AND CURRENT ROW\n  ) AS rolling_7day\nFROM sales;"
+      },
+      "sqlite": {
+        "supported": true,
+        "since": "3.25.0",
+        "notes": "ROWS and RANGE supported since 3.25.0. GROUPS mode added in 3.28.0. No EXCLUDE clause. RANGE with numeric offsets supported. No INTERVAL type, so RANGE date rolling requires storing dates as numeric types (Julian day or Unix epoch).",
+        "syntax": "-- Running total:\nSELECT dt, amt,\n  SUM(amt) OVER (ORDER BY dt ROWS UNBOUNDED PRECEDING) AS running_total\nFROM sales;\n\n-- 3-row moving average:\nSELECT dt, amt,\n  AVG(amt) OVER (ORDER BY dt ROWS BETWEEN 2 PRECEDING AND CURRENT ROW) AS moving_avg\nFROM sales;"
+      }
+    },
+    "details": "Default frame when ORDER BY is present: RANGE BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW — this is why LAST_VALUE usually returns the current row (it's the last in the default frame). ROWS mode is offset by physical row count; RANGE mode is offset by value distance (requires ORDER BY on a numeric/date). SQL Server does not support RANGE INTERVAL — use ROWS for rolling date windows instead. PostgreSQL 11's EXCLUDE clause is unique and useful for peer-comparison calculations."
   }
 }
