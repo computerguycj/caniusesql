@@ -5,6 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Can I Use SQL? | SQL Compatibility Checker</title>
     <meta name="description" content="Check SQL command compatibility across MySQL, PostgreSQL, SQL Server, Oracle, and SQLite. Find out which databases support SELECT, MERGE, PIVOT, CTEs, window functions, and more.">
+    <meta property="og:site_name" content="Can I Use SQL?">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://caniusesql.com/">
+    <meta property="og:title" content="Can I Use SQL? | SQL Compatibility Checker">
+    <meta property="og:description" content="Check SQL command compatibility across MySQL, PostgreSQL, SQL Server, Oracle, and SQLite. Find out which databases support SELECT, MERGE, PIVOT, CTEs, window functions, and more.">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="Can I Use SQL? | SQL Compatibility Checker">
+    <meta name="twitter:description" content="Check SQL command compatibility across MySQL, PostgreSQL, SQL Server, Oracle, and SQLite. Find out which databases support SELECT, MERGE, PIVOT, CTEs, window functions, and more.">
     <link rel="sitemap" type="application/xml" href="/sitemap.xml">
     <style>
         body {
@@ -437,19 +445,27 @@
             return urlParams.get(name);
         }
 
-        // Update <title> and <meta description> for the current command
+        // Update <title>, <meta description>, and OG/Twitter tags for the current command
         function updateMeta(query) {
             const foundCommand = sqlDatabase && Object.keys(sqlDatabase).find(cmd => cmd.toLowerCase() === query.toLowerCase());
+            let title, desc, url;
             if (foundCommand) {
-                const desc = sqlDatabase[foundCommand].description;
-                document.title = foundCommand.toUpperCase() + ' SQL Compatibility | MySQL, PostgreSQL, SQL Server, Oracle, SQLite';
-                document.querySelector('meta[name="description"]').setAttribute('content',
-                    foundCommand.toUpperCase() + ': ' + desc + ' Check support across MySQL, PostgreSQL, SQL Server, Oracle, and SQLite.');
+                const commandDesc = sqlDatabase[foundCommand].description;
+                title = foundCommand.toUpperCase() + ' SQL Compatibility | MySQL, PostgreSQL, SQL Server, Oracle, SQLite';
+                desc = foundCommand.toUpperCase() + ': ' + commandDesc + ' Check support across MySQL, PostgreSQL, SQL Server, Oracle, and SQLite.';
+                url = 'https://caniusesql.com/?q=' + encodeURIComponent(foundCommand);
             } else {
-                document.title = 'Can I Use SQL? | SQL Compatibility Checker';
-                document.querySelector('meta[name="description"]').setAttribute('content',
-                    'Check SQL command compatibility across MySQL, PostgreSQL, SQL Server, Oracle, and SQLite. Find out which databases support SELECT, MERGE, PIVOT, CTEs, window functions, and more.');
+                title = 'Can I Use SQL? | SQL Compatibility Checker';
+                desc = 'Check SQL command compatibility across MySQL, PostgreSQL, SQL Server, Oracle, and SQLite. Find out which databases support SELECT, MERGE, PIVOT, CTEs, window functions, and more.';
+                url = 'https://caniusesql.com/';
             }
+            document.title = title;
+            document.querySelector('meta[name="description"]').setAttribute('content', desc);
+            document.querySelector('meta[property="og:title"]').setAttribute('content', title);
+            document.querySelector('meta[property="og:description"]').setAttribute('content', desc);
+            document.querySelector('meta[property="og:url"]').setAttribute('content', url);
+            document.querySelector('meta[name="twitter:title"]').setAttribute('content', title);
+            document.querySelector('meta[name="twitter:description"]').setAttribute('content', desc);
         }
 
         // Function to update URL with search query
