@@ -3108,5 +3108,386 @@
       }
     },
     "details": "Default frame when ORDER BY is present: RANGE BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW — this is why LAST_VALUE usually returns the current row (it's the last in the default frame). ROWS mode is offset by physical row count; RANGE mode is offset by value distance (requires ORDER BY on a numeric/date). SQL Server does not support RANGE INTERVAL — use ROWS for rolling date windows instead. PostgreSQL 11's EXCLUDE clause is unique and useful for peer-comparison calculations."
+  },
+  "json extract": {
+    "description": "Extract a scalar value or sub-document from a JSON column using a path expression.",
+    "syntax": "-- MySQL / SQLite path syntax:\nSELECT JSON_EXTRACT(data, '$.name') AS name\nFROM users;\n\n-- PostgreSQL operator shorthand:\nSELECT data->>'name' AS name\nFROM users;\n\n-- SQL Server / Oracle:\nSELECT JSON_VALUE(data, '$.name') AS name\nFROM users;",
+    "category": "JSON",
+    "slug": "json-extract",
+    "compatibility": {
+      "mysql": {
+        "supported": true,
+        "since": "5.7.8",
+        "notes": "JSON_EXTRACT(col, path) returns a JSON-encoded value. The -> operator is shorthand for JSON_EXTRACT; ->> is shorthand for JSON_UNQUOTE(JSON_EXTRACT(...)) and returns unquoted text. Paths use $.key, $.key.subkey, $.array[n] notation.",
+        "syntax": "-- Function form:\nSELECT JSON_EXTRACT(data, '$.name')         AS name_json,\n       JSON_EXTRACT(data, '$.address.city')   AS city_json\nFROM users;\n\n-- Operator shorthand (5.7.8+):\nSELECT data->'$.name'   AS name_json,\n       data->>'$.name'  AS name_text\nFROM users;\n\n-- Array index:\nSELECT JSON_EXTRACT(data, '$.tags[0]') AS first_tag\nFROM posts;"
+      },
+      "postgresql": {
+        "supported": true,
+        "since": "9.3",
+        "notes": "The -> operator returns a JSON value; ->> returns text. For nested paths use #> (JSON) and #>> (text) with an array of keys. jsonb columns support the same operators plus GIN-indexable containment operators (@>, <@, ?, ?|, ?&). json_extract_path() and jsonb_extract_path_text() are function equivalents.",
+        "syntax": "-- Single key, JSON result:\nSELECT data->'name'            AS name_json\nFROM users;\n\n-- Single key, text result:\nSELECT data->>'name'           AS name_text\nFROM users;\n\n-- Nested path, JSON result:\nSELECT data#>'{address,city}'  AS city_json\nFROM users;\n\n-- Nested path, text result:\nSELECT data#>>'{address,city}' AS city_text\nFROM users;\n\n-- Function form:\nSELECT jsonb_extract_path_text(data, 'address', 'city') AS city\nFROM users;"
+      },
+      "sqlserver": {
+        "supported": true,
+        "since": "2016",
+        "notes": "JSON_VALUE(col, path) extracts a scalar (returns NVARCHAR). JSON_QUERY(col, path) extracts an object or array (returns NVARCHAR containing JSON). Passing the wrong function for the value type returns NULL silently. No -> operators — all access is function-based with $.key path strings.",
+        "syntax": "-- Scalar extraction:\nSELECT JSON_VALUE(data, '$.name')          AS name,\n       JSON_VALUE(data, '$.address.city')   AS city\nFROM users;\n\n-- Object / array extraction:\nSELECT JSON_QUERY(data, '$.address')       AS address_obj,\n       JSON_QUERY(data, '$.tags')           AS tags_arr\nFROM users;\n\n-- In WHERE clause:\nSELECT *\nFROM users\nWHERE JSON_VALUE(data, '$.active') = 'true';"
+      },
+      "oracle": {
+        "supported": true,
+        "since": "12c",
+        "notes": "JSON_VALUE(col, path) extracts a scalar; JSON_QUERY(col, path) extracts objects or arrays. The RETURNING clause controls the output type. Error handling clauses (NULL ON ERROR, ERROR ON ERROR) prevent silent failures. Oracle 21c added JSON_TRANSFORM and dot-notation access on JSON type columns.",
+        "syntax": "-- Scalar:\nSELECT JSON_VALUE(data, '$.name')                       AS name,\n       JSON_VALUE(data, '$.score' RETURNING NUMBER)      AS score\nFROM users;\n\n-- Object / array:\nSELECT JSON_QUERY(data, '$.address')                    AS address_obj,\n       JSON_QUERY(data, '$.tags' WITH ARRAY WRAPPER)     AS tags_arr\nFROM users;\n\n-- Dot notation (21c+ native JSON type):\nSELECT u.data.name.string()  AS name\nFROM users u;"
+      },
+      "sqlite": {
+        "supported": true,
+        "since": "3.9.0",
+        "notes": "json_extract(col, path) is the core function, available since 3.9.0. The -> and ->> operators (matching MySQL semantics) were added in SQLite 3.38.0 (2022-02-22). ->> always returns an SQL value (text/integer/real), never a JSON-encoded string.",
+        "syntax": "-- Function form (3.9.0+):\nSELECT json_extract(data, '$.name')         AS name,\n       json_extract(data, '$.address.city')  AS city\nFROM users;\n\n-- Operator form (3.38.0+):\nSELECT data->>'name'          AS name_text,\n       data->'$.address'      AS address_json\nFROM users;\n\n-- Array element:\nSELECT json_extract(data, '$.tags[0]') AS first_tag\nFROM posts;"
+      }
+    },
+    "details": "Path syntax is consistent across engines ($.key, $.nested.key, $.array[n]) but function names and operators diverge sharply. PostgreSQL alone uses #> / #>> for multi-key nested paths. SQL Server splits extraction into JSON_VALUE (scalars only) vs JSON_QUERY (objects/arrays only) — passing the wrong function silently returns NULL instead of an error. SQLite's -> / ->> operators arrived in 3.38.0; apps targeting older SQLite must use json_extract()."
+  },
+  "json_agg / json_arrayagg": {
+    "description": "Aggregate multiple rows into a single JSON array (or object), collapsing a one-to-many relationship into a nested JSON structure within a query.",
+    "syntax": "-- PostgreSQL:\nSELECT dept_id,\n       json_agg(employee_name ORDER BY employee_name) AS employees\nFROM employees\nGROUP BY dept_id;\n\n-- MySQL:\nSELECT dept_id,\n       JSON_ARRAYAGG(employee_name) AS employees\nFROM employees\nGROUP BY dept_id;",
+    "category": "JSON",
+    "slug": "json-agg",
+    "compatibility": {
+      "mysql": {
+        "supported": true,
+        "since": "5.7.22",
+        "notes": "JSON_ARRAYAGG(expr) aggregates values into a JSON array. JSON_OBJECTAGG(key_expr, value_expr) aggregates key-value pairs into a JSON object. Both added in 5.7.22. No ORDER BY inside the aggregate — sort the outer query or use a subquery. NULL values in the expression are included as JSON null.",
+        "syntax": "-- Array of values:\nSELECT dept_id,\n       JSON_ARRAYAGG(employee_name) AS employees\nFROM employees\nGROUP BY dept_id;\n\n-- Object from key-value pairs:\nSELECT JSON_OBJECTAGG(setting_key, setting_value) AS config\nFROM app_settings\nWHERE user_id = 1;\n\n-- Aggregate full JSON objects (nest JSON_OBJECT inside):\nSELECT dept_id,\n       JSON_ARRAYAGG(\n         JSON_OBJECT('name', employee_name, 'salary', salary)\n       ) AS staff\nFROM employees\nGROUP BY dept_id;"
+      },
+      "postgresql": {
+        "supported": true,
+        "since": "9.3",
+        "notes": "json_agg(expr) aggregates into a json array (since 9.3); jsonb_agg(expr) returns jsonb (since 9.4). json_object_agg(key, value) / jsonb_object_agg(key, value) aggregate into a JSON object. ORDER BY is supported inside the aggregate. NULL values are included as JSON null. Use FILTER (WHERE ...) to exclude rows.",
+        "syntax": "-- json array (ordered):\nSELECT dept_id,\n       json_agg(employee_name ORDER BY employee_name) AS employees\nFROM employees\nGROUP BY dept_id;\n\n-- jsonb array:\nSELECT dept_id,\n       jsonb_agg(employee_name) AS employees\nFROM employees\nGROUP BY dept_id;\n\n-- Object from key-value pairs:\nSELECT json_object_agg(setting_key, setting_value) AS config\nFROM app_settings\nWHERE user_id = 1;\n\n-- Aggregate full row as JSON:\nSELECT dept_id,\n       jsonb_agg(to_jsonb(e) - 'dept_id') AS staff\nFROM employees e\nGROUP BY dept_id;"
+      },
+      "sqlserver": {
+        "supported": false,
+        "notes": "No JSON_ARRAYAGG or json_agg. Use FOR JSON PATH / FOR JSON AUTO on a subquery to produce a JSON array. STRING_AGG can be combined with JSON_OBJECT (SQL Server 2022+) for simple cases. The result of FOR JSON is NVARCHAR, not a typed JSON column.",
+        "syntax": "-- Subquery with FOR JSON PATH:\nSELECT d.dept_id,\n       (SELECT e.employee_name\n        FROM employees e\n        WHERE e.dept_id = d.dept_id\n        FOR JSON PATH) AS employees\nFROM departments d;\n\n-- STRING_AGG + manual JSON (simple case):\nSELECT dept_id,\n       '[' + STRING_AGG('\"' + employee_name + '\"', ',') + ']' AS employees\nFROM employees\nGROUP BY dept_id;"
+      },
+      "oracle": {
+        "supported": true,
+        "since": "18c",
+        "notes": "JSON_ARRAYAGG(expr) and JSON_OBJECTAGG(key VALUE value) added in Oracle 18c. In Oracle 12c, workarounds include LISTAGG combined with manual JSON construction, or using JSON_ARRAY with a subquery. ORDER BY and ON NULL clauses supported inside JSON_ARRAYAGG.",
+        "syntax": "-- Array of values (18c+):\nSELECT dept_id,\n       JSON_ARRAYAGG(employee_name ORDER BY employee_name) AS employees\nFROM employees\nGROUP BY dept_id;\n\n-- Object from key-value pairs (18c+):\nSELECT JSON_OBJECTAGG(setting_key VALUE setting_value) AS config\nFROM app_settings\nWHERE user_id = 1;\n\n-- 12c workaround with LISTAGG:\nSELECT dept_id,\n       '[' || LISTAGG('\"' || employee_name || '\"', ',') WITHIN GROUP (ORDER BY employee_name) || ']' AS employees\nFROM employees\nGROUP BY dept_id;"
+      },
+      "sqlite": {
+        "supported": true,
+        "since": "3.9.0",
+        "notes": "json_group_array(expr) aggregates values into a JSON array. json_group_object(name, value) aggregates into a JSON object. Both available since 3.9.0 when the JSON1 extension was added. In most SQLite distributions the JSON1 extension is compiled in by default.",
+        "syntax": "-- Array of values:\nSELECT dept_id,\n       json_group_array(employee_name) AS employees\nFROM employees\nGROUP BY dept_id;\n\n-- Object from key-value pairs:\nSELECT json_group_object(setting_key, setting_value) AS config\nFROM app_settings\nWHERE user_id = 1;\n\n-- Aggregate JSON objects:\nSELECT dept_id,\n       json_group_array(\n         json_object('name', employee_name, 'salary', salary)\n       ) AS staff\nFROM employees\nGROUP BY dept_id;"
+      }
+    },
+    "details": "Function naming is completely non-standard across engines: json_agg (PostgreSQL), JSON_ARRAYAGG (MySQL/Oracle 18c), json_group_array (SQLite), and FOR JSON PATH (SQL Server). SQL Server is the only engine with no native aggregate function — it requires a subquery with FOR JSON. PostgreSQL is the only engine supporting ORDER BY inside the aggregate directly and offers FILTER (WHERE ...) for conditional aggregation. Oracle added JSON_ARRAYAGG in 18c; Oracle 12c users need a LISTAGG workaround."
+  },
+  "json operators (-> / ->>)": {
+    "description": "Shorthand operators for navigating JSON document structure. -> extracts a JSON value; ->> extracts a text (unquoted) value. Availability and exact semantics vary significantly by engine.",
+    "syntax": "-- PostgreSQL (json/jsonb):\nSELECT data->'address'       AS address_json,\n       data->>'name'         AS name_text,\n       data#>'{addr,city}'   AS city_json,\n       data#>>'{addr,city}'  AS city_text\nFROM users;\n\n-- MySQL:\nSELECT data->'$.name'   AS name_json,\n       data->>'$.name'  AS name_text\nFROM users;",
+    "category": "JSON",
+    "slug": "json-operators",
+    "compatibility": {
+      "mysql": {
+        "supported": true,
+        "since": "5.7.8",
+        "notes": "col->'$.path' is shorthand for JSON_EXTRACT(col, '$.path') and returns a JSON-encoded value (strings include surrounding quotes). col->>'$.path' is shorthand for JSON_UNQUOTE(JSON_EXTRACT(col, '$.path')) and returns unquoted text. Path expressions must include the $ root prefix.",
+        "syntax": "-- -> returns JSON-encoded value (quoted strings):\nSELECT data->'$.name'       AS name_with_quotes\nFROM users;\n-- Result: \"Alice\"\n\n-- ->> returns unquoted text:\nSELECT data->>'$.name'      AS name_plain\nFROM users;\n-- Result: Alice\n\n-- Nested:\nSELECT data->'$.address.city'  AS city_json,\n       data->>'$.address.city' AS city_text\nFROM users;\n\n-- In WHERE:\nSELECT * FROM users WHERE data->>'$.active' = 'true';"
+      },
+      "postgresql": {
+        "supported": true,
+        "since": "9.3",
+        "notes": "Richest operator set of any engine. -> extracts a JSON/JSONB value by key (or array index). ->> extracts as text. #> extracts by path array (JSON result); #>> extracts by path array (text result). jsonb columns additionally support @> (contains), <@ (contained by), ? (key exists), ?| (any key exists), ?& (all keys exist) — all indexable with GIN. The json type supports -> and ->> but not the containment operators.",
+        "syntax": "-- Key extraction:\nSELECT data->'name'             AS name_json,\n       data->>'name'            AS name_text\nFROM users;\n\n-- Array index:\nSELECT data->'tags'->0          AS first_tag_json,\n       data->'tags'->>0         AS first_tag_text\nFROM posts;\n\n-- Nested path (path array):\nSELECT data#>'{address,city}'   AS city_json,\n       data#>>'{address,city}'  AS city_text\nFROM users;\n\n-- jsonb containment / existence:\nSELECT * FROM users WHERE data @> '{\"role\":\"admin\"}';\nSELECT * FROM users WHERE data ? 'email';\nSELECT * FROM users WHERE data ?| ARRAY['admin','superuser'];"
+      },
+      "sqlserver": {
+        "supported": false,
+        "notes": "No -> or ->> operators. All JSON access is through functions: JSON_VALUE() for scalars and JSON_QUERY() for objects/arrays. Path expressions are string arguments to functions, not operators. There is no operator-based path syntax.",
+        "syntax": "-- Must use functions instead of operators:\nSELECT JSON_VALUE(data, '$.name')        AS name,\n       JSON_QUERY(data, '$.address')      AS address_obj\nFROM users;\n\n-- No shorthand; every access needs the full function call:\nSELECT JSON_VALUE(data, '$.address.city') AS city\nFROM users\nWHERE JSON_VALUE(data, '$.active') = 'true';"
+      },
+      "oracle": {
+        "supported": false,
+        "notes": "No -> or ->> operators in standard SQL access. All access uses JSON_VALUE() and JSON_QUERY() functions with path string arguments. Oracle 21c introduced a native JSON data type with dot-notation access (col.key.subkey), but this only applies to columns declared as JSON type, not VARCHAR2/CLOB with JSON content.",
+        "syntax": "-- Function-based access only:\nSELECT JSON_VALUE(data, '$.name')    AS name,\n       JSON_QUERY(data, '$.address')  AS address_obj\nFROM users;\n\n-- Oracle 21c dot notation (JSON type columns only):\nSELECT u.data.name.string(),\n       u.data.address.city.string()\nFROM users u;"
+      },
+      "sqlite": {
+        "supported": true,
+        "since": "3.38.0",
+        "notes": "-> and ->> operators added in SQLite 3.38.0 (2022-02-22). SQLite's ->> always returns an SQL value (text, integer, real, or NULL) — it never returns a JSON-encoded string, which differs from MySQL's -> behavior. For SQLite < 3.38.0, use json_extract() exclusively.",
+        "syntax": "-- -> returns JSON encoding:\nSELECT data->'name'          AS name_json\nFROM users;\n-- Result: \"Alice\" (with quotes)\n\n-- ->> returns SQL value:\nSELECT data->>'name'         AS name_text\nFROM users;\n-- Result: Alice (no quotes)\n\n-- Chained:\nSELECT data->'address'->>'city'  AS city\nFROM users;\n\n-- Fallback for older SQLite:\nSELECT json_extract(data, '$.name') AS name\nFROM users;"
+      }
+    },
+    "details": "PostgreSQL has the most complete operator set: ->, ->>, #>, #>> for extraction plus @>, <@, ?, ?|, ?& for containment and key existence on jsonb (all GIN-indexable). MySQL and SQLite share -> / ->> but with a key difference: MySQL's ->> returns JSON_UNQUOTE output (text) while SQLite's ->> returns a native SQL type directly. SQL Server and Oracle have no operators at all — only functions. Note that MySQL's path expressions require the $ prefix (data->>'$.name') while PostgreSQL's do not (data->>'name')."
+  },
+  "rollup": {
+    "description": "An extension of GROUP BY that generates subtotal and grand-total rows automatically. Produces a result set with multiple levels of aggregation in a single query.",
+    "syntax": "SELECT region, country, SUM(sales) AS total_sales\nFROM orders\nGROUP BY ROLLUP(region, country);\n-- Produces: per-country rows, per-region subtotals, grand total",
+    "category": "Query Techniques",
+    "slug": "rollup",
+    "compatibility": {
+      "mysql": {
+        "supported": true,
+        "since": "4.1",
+        "notes": "MySQL uses the non-standard WITH ROLLUP modifier on GROUP BY, available since 4.1. MySQL 8.0 also accepts the standard GROUP BY ROLLUP(...) syntax. Use GROUPING(col) (added in 8.0) to distinguish NULL subtotal rows from actual NULL data values. HAVING filtering applies after rollup rows are generated.",
+        "syntax": "-- Non-standard (works since 4.1):\nSELECT region, country, SUM(sales) AS total_sales\nFROM orders\nGROUP BY region, country WITH ROLLUP;\n\n-- Standard syntax (8.0+):\nSELECT region, country, SUM(sales) AS total_sales\nFROM orders\nGROUP BY ROLLUP(region, country);\n\n-- Distinguish subtotal NULLs from real NULLs (8.0+):\nSELECT\n  IF(GROUPING(region), 'All Regions', region)   AS region,\n  IF(GROUPING(country), 'Subtotal', country)     AS country,\n  SUM(sales) AS total_sales\nFROM orders\nGROUP BY region, country WITH ROLLUP;"
+      },
+      "postgresql": {
+        "supported": true,
+        "since": "9.5",
+        "notes": "Standard GROUP BY ROLLUP(...) syntax. GROUPING(col) function available to identify rollup-generated NULL rows. Can be combined with GROUPING SETS and CUBE in the same GROUP BY clause.",
+        "syntax": "SELECT region, country, SUM(sales) AS total_sales\nFROM orders\nGROUP BY ROLLUP(region, country);\n\n-- Identify rollup rows:\nSELECT\n  CASE GROUPING(region) WHEN 1 THEN 'All Regions' ELSE region END AS region,\n  CASE GROUPING(country) WHEN 1 THEN 'Subtotal'    ELSE country END AS country,\n  SUM(sales) AS total_sales\nFROM orders\nGROUP BY ROLLUP(region, country);"
+      },
+      "sqlserver": {
+        "supported": true,
+        "since": "2008",
+        "notes": "Standard GROUP BY ROLLUP(...) syntax supported since 2008. The older WITH ROLLUP modifier (SQL Server 2005 syntax) is also still accepted. GROUPING(col) and GROUPING_ID(...) available to detect rollup rows.",
+        "syntax": "-- Standard syntax:\nSELECT region, country, SUM(sales) AS total_sales\nFROM orders\nGROUP BY ROLLUP(region, country);\n\n-- Legacy syntax (still works):\nSELECT region, country, SUM(sales) AS total_sales\nFROM orders\nGROUP BY region, country WITH ROLLUP;\n\n-- GROUPING_ID for multi-level identification:\nSELECT region, country,\n       SUM(sales)                  AS total_sales,\n       GROUPING_ID(region, country) AS grouping_level\nFROM orders\nGROUP BY ROLLUP(region, country);"
+      },
+      "oracle": {
+        "supported": true,
+        "since": "8i",
+        "notes": "Standard GROUP BY ROLLUP(...) syntax, available since Oracle 8i. GROUPING(col) and GROUPING_ID() available. Can combine ROLLUP, CUBE, and GROUPING SETS in one GROUP BY clause.",
+        "syntax": "SELECT region, country, SUM(sales) AS total_sales\nFROM orders\nGROUP BY ROLLUP(region, country);\n\n-- With GROUPING to label subtotals:\nSELECT\n  DECODE(GROUPING(region), 1, 'All Regions', region)   AS region,\n  DECODE(GROUPING(country), 1, 'Subtotal', country)     AS country,\n  SUM(sales) AS total_sales\nFROM orders\nGROUP BY ROLLUP(region, country);"
+      },
+      "sqlite": {
+        "supported": false,
+        "notes": "ROLLUP is not supported. Workaround: use UNION ALL to manually combine the detailed rows, subtotals, and grand total.",
+        "syntax": "-- Workaround with UNION ALL:\nSELECT region, country, SUM(sales) AS total_sales\nFROM orders GROUP BY region, country\nUNION ALL\nSELECT region, NULL, SUM(sales)\nFROM orders GROUP BY region\nUNION ALL\nSELECT NULL, NULL, SUM(sales)\nFROM orders;"
+      }
+    },
+    "details": "ROLLUP(a, b, c) generates n+1 grouping levels: (a,b,c), (a,b), (a), and (). The NULL values in subtotal rows represent 'all values for this column' — use GROUPING(col) to distinguish them from genuine NULL data. MySQL is the only engine that uses a non-standard WITH ROLLUP modifier syntax as its primary form (though it also accepts standard syntax in 8.0+). SQLite is the only major engine with no ROLLUP support at all."
+  },
+  "cube": {
+    "description": "An extension of GROUP BY ROLLUP that generates subtotals for every possible combination of the specified columns, not just hierarchical rollups. Produces 2^n grouping combinations for n columns.",
+    "syntax": "SELECT region, product, SUM(sales) AS total_sales\nFROM orders\nGROUP BY CUBE(region, product);\n-- Produces: (region,product), (region), (product), and () grand total",
+    "category": "Query Techniques",
+    "slug": "cube",
+    "compatibility": {
+      "mysql": {
+        "supported": false,
+        "notes": "CUBE is not supported. MySQL only supports ROLLUP via GROUP BY ... WITH ROLLUP or GROUP BY ROLLUP(...) syntax. Workaround: use UNION ALL to manually union each combination, or use GROUPING SETS-style UNION ALL queries.",
+        "syntax": "-- Workaround with UNION ALL for 2 dimensions:\nSELECT region, product, SUM(sales) AS total\nFROM orders GROUP BY region, product\nUNION ALL\nSELECT region, NULL, SUM(sales)\nFROM orders GROUP BY region\nUNION ALL\nSELECT NULL, product, SUM(sales)\nFROM orders GROUP BY product\nUNION ALL\nSELECT NULL, NULL, SUM(sales)\nFROM orders;"
+      },
+      "postgresql": {
+        "supported": true,
+        "since": "9.5",
+        "notes": "Standard GROUP BY CUBE(...) syntax. GROUPING(col) available to identify which rollup-generated NULL rows represent which grouping level. For 3 columns, CUBE generates 8 grouping combinations (2^3). Can be mixed with ROLLUP and GROUPING SETS.",
+        "syntax": "SELECT region, product, SUM(sales) AS total_sales\nFROM orders\nGROUP BY CUBE(region, product);\n\n-- Label the grouping rows:\nSELECT\n  COALESCE(region,  'All Regions')   AS region,\n  COALESCE(product, 'All Products')  AS product,\n  SUM(sales)                         AS total_sales,\n  GROUPING(region)                   AS is_region_total,\n  GROUPING(product)                  AS is_product_total\nFROM orders\nGROUP BY CUBE(region, product);"
+      },
+      "sqlserver": {
+        "supported": true,
+        "since": "2008",
+        "notes": "Standard GROUP BY CUBE(...) syntax. GROUPING(col) and GROUPING_ID() available. For very wide CUBE operations, consider breaking into GROUPING SETS for more control over which combinations are generated.",
+        "syntax": "SELECT region, product, SUM(sales) AS total_sales\nFROM orders\nGROUP BY CUBE(region, product);\n\n-- GROUPING_ID returns a bitmap of which cols are aggregated:\nSELECT region, product,\n       SUM(sales)                     AS total_sales,\n       GROUPING_ID(region, product)   AS grouping_level\nFROM orders\nGROUP BY CUBE(region, product);"
+      },
+      "oracle": {
+        "supported": true,
+        "since": "8i",
+        "notes": "Standard GROUP BY CUBE(...) syntax since Oracle 8i. GROUPING() and GROUPING_ID() supported. Can be combined with ROLLUP and GROUPING SETS in a single GROUP BY clause.",
+        "syntax": "SELECT region, product, SUM(sales) AS total_sales\nFROM orders\nGROUP BY CUBE(region, product);\n\n-- With GROUPING:\nSELECT\n  DECODE(GROUPING(region),  1, 'All', region)  AS region,\n  DECODE(GROUPING(product), 1, 'All', product) AS product,\n  SUM(sales) AS total_sales\nFROM orders\nGROUP BY CUBE(region, product);"
+      },
+      "sqlite": {
+        "supported": false,
+        "notes": "CUBE is not supported. Workaround: enumerate all 2^n combinations manually using UNION ALL.",
+        "syntax": "-- Manual CUBE workaround (2 dimensions = 4 queries):\nSELECT region, product, SUM(sales) AS total\nFROM orders GROUP BY region, product\nUNION ALL\nSELECT region, NULL, SUM(sales)\nFROM orders GROUP BY region\nUNION ALL\nSELECT NULL, product, SUM(sales)\nFROM orders GROUP BY product\nUNION ALL\nSELECT NULL, NULL, SUM(sales)\nFROM orders;"
+      }
+    },
+    "details": "CUBE(a, b) generates 4 groupings: (a,b), (a), (b), and (). CUBE(a, b, c) generates 8. The result set grows exponentially with column count — be cautious with high-cardinality columns. GROUPING SETS is a more surgical alternative when you only need specific combinations rather than all of them. MySQL has no CUBE support whatsoever; SQLite has neither CUBE nor ROLLUP. The COALESCE-on-NULL pattern for labeling totals is portable but breaks if the column can contain genuine NULLs — use GROUPING() for correctness."
+  },
+  "grouping sets": {
+    "description": "An explicit list of grouping combinations to compute in a single pass, giving precise control over which subtotals are produced. More flexible than ROLLUP or CUBE.",
+    "syntax": "SELECT region, product, SUM(sales) AS total_sales\nFROM orders\nGROUP BY GROUPING SETS (\n    (region, product),\n    (region),\n    ()\n);",
+    "category": "Query Techniques",
+    "slug": "grouping-sets",
+    "compatibility": {
+      "mysql": {
+        "supported": false,
+        "notes": "GROUPING SETS is not supported. MySQL only supports ROLLUP via GROUP BY ... WITH ROLLUP or GROUP BY ROLLUP(...). For specific grouping combinations, use UNION ALL.",
+        "syntax": "-- UNION ALL workaround:\nSELECT region, product, SUM(sales) AS total\nFROM orders GROUP BY region, product\nUNION ALL\nSELECT region, NULL, SUM(sales)\nFROM orders GROUP BY region\nUNION ALL\nSELECT NULL, NULL, SUM(sales)\nFROM orders;"
+      },
+      "postgresql": {
+        "supported": true,
+        "since": "9.5",
+        "notes": "Standard GROUPING SETS syntax. Can be combined with ROLLUP and CUBE in the same GROUP BY clause. GROUPING(col) identifies which rows are grouping-generated. An empty set () produces the grand total. Equivalent to the corresponding UNION ALL but computed in a single scan.",
+        "syntax": "-- Explicit sets:\nSELECT region, product, SUM(sales) AS total_sales\nFROM orders\nGROUP BY GROUPING SETS (\n    (region, product),\n    (region),\n    ()\n);\n\n-- Combining with ROLLUP:\nSELECT region, product, channel, SUM(sales)\nFROM orders\nGROUP BY GROUPING SETS (\n    ROLLUP(region, product),\n    (channel)\n);\n\n-- Identify grand total row:\nSELECT\n  CASE GROUPING(region)  WHEN 1 THEN 'TOTAL' ELSE region  END AS region,\n  CASE GROUPING(product) WHEN 1 THEN 'TOTAL' ELSE product END AS product,\n  SUM(sales) AS total_sales\nFROM orders\nGROUP BY GROUPING SETS ((region, product), (region), ());"
+      },
+      "sqlserver": {
+        "supported": true,
+        "since": "2008",
+        "notes": "Standard GROUPING SETS syntax since SQL Server 2008. GROUPING() and GROUPING_ID() supported. Useful for reporting queries that need specific subtotal combinations without the full output of CUBE.",
+        "syntax": "SELECT region, product, SUM(sales) AS total_sales\nFROM orders\nGROUP BY GROUPING SETS (\n    (region, product),\n    (region),\n    ()\n);\n\n-- GROUPING_ID returns integer bitmask:\nSELECT region, product,\n       SUM(sales)                    AS total_sales,\n       GROUPING_ID(region, product)  AS level\nFROM orders\nGROUP BY GROUPING SETS ((region, product), (region), ());"
+      },
+      "oracle": {
+        "supported": true,
+        "since": "8i",
+        "notes": "Standard GROUPING SETS syntax since Oracle 8i. Can be combined with ROLLUP and CUBE. GROUPING() and GROUPING_ID() supported.",
+        "syntax": "SELECT region, product, SUM(sales) AS total_sales\nFROM orders\nGROUP BY GROUPING SETS (\n    (region, product),\n    (region),\n    ()\n);\n\n-- Combining ROLLUP and GROUPING SETS:\nSELECT region, product, channel, SUM(sales)\nFROM orders\nGROUP BY GROUPING SETS (\n    ROLLUP(region, product),\n    (channel)\n);"
+      },
+      "sqlite": {
+        "supported": false,
+        "notes": "GROUPING SETS is not supported. Use UNION ALL to combine individual GROUP BY queries for each desired grouping.",
+        "syntax": "-- UNION ALL workaround:\nSELECT region, product, SUM(sales) AS total\nFROM orders GROUP BY region, product\nUNION ALL\nSELECT region, NULL, SUM(sales)\nFROM orders GROUP BY region\nUNION ALL\nSELECT NULL, NULL, SUM(sales)\nFROM orders;"
+      }
+    },
+    "details": "GROUPING SETS is the most explicit of the three grouping extensions (vs ROLLUP and CUBE): you list exactly the combinations you want, nothing more. ROLLUP(a, b) is syntactic sugar for GROUPING SETS((a,b),(a),()), and CUBE(a,b) is syntactic sugar for GROUPING SETS((a,b),(a),(b),()). MySQL is the only major RDBMS with no support for GROUPING SETS; SQLite supports none of the three. When genuinely NULL data values exist in grouping columns, always use GROUPING() to distinguish subtotal NULLs from real NULLs — COALESCE alone is unreliable in that case."
+  },
+  "count / sum / avg / min / max": {
+    "description": "The five core aggregate functions. COUNT counts rows or non-NULL values. SUM and AVG compute totals and averages. MIN and MAX return the smallest and largest value. All are universally supported.",
+    "syntax": "SELECT\n  COUNT(*)              AS total_rows,\n  COUNT(email)          AS rows_with_email,\n  SUM(amount)           AS total_amount,\n  AVG(amount)           AS avg_amount,\n  MIN(created_at)       AS earliest,\n  MAX(created_at)       AS latest\nFROM orders;",
+    "category": "Functions",
+    "slug": "basic-aggregates",
+    "compatibility": {
+      "mysql": {
+        "supported": true,
+        "since": "3.23",
+        "notes": "All five functions supported. COUNT(*) counts all rows including NULLs; COUNT(col) counts non-NULL values only. AVG returns a floating-point result regardless of column type. COUNT(DISTINCT col) and SUM(DISTINCT col) are supported. In MySQL, AVG of an integer column returns a DECIMAL.",
+        "syntax": "-- Core usage:\nSELECT\n  COUNT(*)              AS total_rows,\n  COUNT(email)          AS non_null_emails,\n  COUNT(DISTINCT email) AS unique_emails,\n  SUM(amount)           AS total,\n  AVG(amount)           AS average,\n  MIN(created_at)       AS first_order,\n  MAX(created_at)       AS last_order\nFROM orders;\n\n-- With GROUP BY:\nSELECT dept,\n       COUNT(*)   AS headcount,\n       AVG(salary) AS avg_salary,\n       MAX(salary) AS top_salary\nFROM employees\nGROUP BY dept;"
+      },
+      "postgresql": {
+        "supported": true,
+        "since": "6.0",
+        "notes": "All five functions supported, plus FILTER (WHERE ...) for conditional aggregation on any aggregate. AVG returns NUMERIC for integer/decimal inputs. count(*) is slightly faster than count(1). DISTINCT is supported inside all aggregates. ORDER BY inside aggregates is supported for ordered-set functions.",
+        "syntax": "-- Core usage:\nSELECT\n  COUNT(*)                                   AS total_rows,\n  COUNT(email)                               AS non_null_emails,\n  SUM(amount)                                AS total,\n  AVG(amount)                                AS average,\n  MIN(created_at)                            AS first_order,\n  MAX(created_at)                            AS last_order\nFROM orders;\n\n-- FILTER for conditional aggregation (PostgreSQL-standard, also supported in SQLite 3.30+):\nSELECT\n  COUNT(*) FILTER (WHERE status = 'completed') AS completed_count,\n  SUM(amount) FILTER (WHERE region = 'US')     AS us_total\nFROM orders;"
+      },
+      "sqlserver": {
+        "supported": true,
+        "since": "6.5",
+        "notes": "All five functions supported. COUNT(*) vs COUNT(col) distinction applies. AVG performs integer division when the column is an integer type — cast to FLOAT or DECIMAL to avoid truncation. COUNT_BIG() variant returns BIGINT for very large tables. No FILTER clause — use SUM(CASE WHEN ... THEN 1 ELSE 0 END) as a workaround.",
+        "syntax": "-- Core usage:\nSELECT\n  COUNT(*)    AS total_rows,\n  COUNT(email) AS non_null_emails,\n  SUM(amount)  AS total,\n  AVG(amount)  AS avg_amount,\n  MIN(created_at) AS first_order,\n  MAX(created_at) AS last_order\nFROM orders;\n\n-- Avoid integer AVG truncation:\nSELECT AVG(CAST(salary AS FLOAT)) AS avg_salary\nFROM employees;\n\n-- Conditional aggregation (FILTER workaround):\nSELECT\n  SUM(CASE WHEN status = 'completed' THEN 1 ELSE 0 END) AS completed_count,\n  SUM(CASE WHEN region = 'US' THEN amount ELSE 0 END)   AS us_total\nFROM orders;"
+      },
+      "oracle": {
+        "supported": true,
+        "since": "7",
+        "notes": "All five functions supported. COUNT(*) vs COUNT(col) distinction applies. AVG returns NUMBER. DISTINCT supported in all aggregates. No FILTER clause — use SUM(CASE WHEN ... END) pattern.",
+        "syntax": "SELECT\n  COUNT(*)        AS total_rows,\n  COUNT(email)    AS non_null_emails,\n  SUM(amount)     AS total,\n  AVG(amount)     AS average,\n  MIN(created_at) AS first_order,\n  MAX(created_at) AS last_order\nFROM orders;\n\n-- Conditional aggregation:\nSELECT\n  SUM(CASE WHEN status = 'COMPLETE' THEN 1 ELSE 0 END) AS completed,\n  SUM(CASE WHEN region = 'US' THEN amount ELSE 0 END)  AS us_total\nFROM orders;"
+      },
+      "sqlite": {
+        "supported": true,
+        "since": "1.0",
+        "notes": "All five functions supported. COUNT(*) counts all rows; COUNT(col) skips NULLs. AVG always returns REAL. The FILTER (WHERE ...) clause is supported since SQLite 3.30.0.",
+        "syntax": "SELECT\n  COUNT(*)        AS total_rows,\n  COUNT(email)    AS non_null_emails,\n  SUM(amount)     AS total,\n  AVG(amount)     AS average,\n  MIN(created_at) AS first_order,\n  MAX(created_at) AS last_order\nFROM orders;\n\n-- FILTER clause (3.30.0+):\nSELECT\n  COUNT(*) FILTER (WHERE status = 'completed') AS completed_count\nFROM orders;"
+      }
+    },
+    "details": "COUNT(*) and COUNT(col) are not interchangeable: COUNT(*) counts every row, COUNT(col) excludes rows where col is NULL. This distinction exists identically in all five engines. The most common portability trap is AVG integer division in SQL Server — always cast the input to FLOAT or DECIMAL when averaging integer columns. The FILTER (WHERE ...) clause for conditional aggregation is supported in PostgreSQL, SQLite 3.30+, and is part of the SQL standard — but not in MySQL or SQL Server, where CASE WHEN inside SUM/COUNT is the portable workaround."
+  },
+  "sequence / autoincrement": {
+    "description": "Mechanisms for auto-generating unique sequential integer values, typically used for surrogate primary keys. Syntax and feature names vary significantly across engines.",
+    "syntax": "-- Standard SQL (PostgreSQL 10+, SQL Server 2012+, Oracle 12c+):\nCREATE TABLE orders (\n    id INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,\n    amount DECIMAL(10,2)\n);\n\n-- MySQL:\nCREATE TABLE orders (\n    id INT AUTO_INCREMENT PRIMARY KEY,\n    amount DECIMAL(10,2)\n);",
+    "category": "DDL",
+    "slug": "sequence-autoincrement",
+    "compatibility": {
+      "mysql": {
+        "supported": true,
+        "since": "3.23",
+        "notes": "AUTO_INCREMENT column attribute on INTEGER or BIGINT columns is the standard mechanism. Only one AUTO_INCREMENT column per table, and it must be indexed (usually the PRIMARY KEY). The last inserted ID is retrievable with LAST_INSERT_ID(). CREATE SEQUENCE is not supported in MySQL (it is available in MariaDB). Starting value and increment step can be set at table or server level.",
+        "syntax": "-- Basic AUTO_INCREMENT:\nCREATE TABLE orders (\n    id    INT AUTO_INCREMENT PRIMARY KEY,\n    total DECIMAL(10,2)\n);\n\n-- Custom start value:\nCREATE TABLE orders (\n    id    INT AUTO_INCREMENT PRIMARY KEY,\n    total DECIMAL(10,2)\n) AUTO_INCREMENT = 1000;\n\n-- Reset/set current value:\nALTER TABLE orders AUTO_INCREMENT = 5000;\n\n-- Get last inserted ID:\nSELECT LAST_INSERT_ID();"
+      },
+      "postgresql": {
+        "supported": true,
+        "since": "6.0",
+        "notes": "Three mechanisms available: SERIAL/BIGSERIAL (shorthand macro, pre-10, still common); GENERATED ALWAYS AS IDENTITY and GENERATED BY DEFAULT AS IDENTITY (SQL standard, PostgreSQL 10+, preferred for new code); CREATE SEQUENCE for standalone sequence objects. SERIAL is syntactic sugar that creates a sequence and sets the column default — it is NOT a true identity column. GENERATED ALWAYS prevents manual inserts into the column; GENERATED BY DEFAULT allows overriding with an explicit value.",
+        "syntax": "-- SQL standard (recommended, PG 10+):\nCREATE TABLE orders (\n    id    INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,\n    total DECIMAL(10,2)\n);\n\n-- GENERATED BY DEFAULT (allows override):\nCREATE TABLE orders (\n    id    INTEGER GENERATED BY DEFAULT AS IDENTITY PRIMARY KEY,\n    total DECIMAL(10,2)\n);\n\n-- Legacy SERIAL (still common):\nCREATE TABLE orders (\n    id    SERIAL PRIMARY KEY,\n    total DECIMAL(10,2)\n);\n\n-- Standalone sequence:\nCREATE SEQUENCE order_id_seq START 1000 INCREMENT 1;\nSELECT nextval('order_id_seq');\nSELECT currval('order_id_seq');"
+      },
+      "sqlserver": {
+        "supported": true,
+        "since": "2000",
+        "notes": "IDENTITY(seed, increment) column property is the traditional mechanism, available since SQL Server 2000. A standalone SEQUENCE object (standard SQL) was added in SQL Server 2012. IDENTITY values can be retrieved with SCOPE_IDENTITY() (preferred), @@IDENTITY, or the OUTPUT clause. SET IDENTITY_INSERT ON/OFF allows overriding IDENTITY values when needed.",
+        "syntax": "-- IDENTITY column:\nCREATE TABLE orders (\n    id    INT IDENTITY(1,1) PRIMARY KEY,\n    total DECIMAL(10,2)\n);\n\n-- Get last inserted ID:\nSELECT SCOPE_IDENTITY() AS new_id;\n\n-- OUTPUT clause alternative:\nINSERT INTO orders (total)\nOUTPUT INSERTED.id\nVALUES (99.99);\n\n-- Standalone SEQUENCE (2012+):\nCREATE SEQUENCE order_seq START WITH 1000 INCREMENT BY 1;\nSELECT NEXT VALUE FOR order_seq;"
+      },
+      "oracle": {
+        "supported": true,
+        "since": "7",
+        "notes": "CREATE SEQUENCE has been available since Oracle 7. GENERATED AS IDENTITY (standard SQL) was added in Oracle 12c. Before 12c, the pattern was: create a sequence, then use a BEFORE INSERT trigger or include seq.NEXTVAL in the INSERT statement. In 12c+, identity columns are the modern approach.",
+        "syntax": "-- Standard identity column (12c+):\nCREATE TABLE orders (\n    id    NUMBER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,\n    total NUMBER(10,2)\n);\n\n-- GENERATED BY DEFAULT (allows override):\nCREATE TABLE orders (\n    id    NUMBER GENERATED BY DEFAULT AS IDENTITY START WITH 1000 PRIMARY KEY,\n    total NUMBER(10,2)\n);\n\n-- Legacy sequence approach (pre-12c):\nCREATE SEQUENCE order_id_seq START WITH 1 INCREMENT BY 1 NOCACHE;\n\nINSERT INTO orders (id, total)\nVALUES (order_id_seq.NEXTVAL, 99.99);\n\nSELECT order_id_seq.CURRVAL FROM dual;"
+      },
+      "sqlite": {
+        "supported": true,
+        "since": "1.0",
+        "notes": "INTEGER PRIMARY KEY is an alias for the rowid and auto-increments by default (SQLite chooses one more than the largest existing rowid). The AUTOINCREMENT keyword adds the additional guarantee that rowid values are never reused — this has a minor performance cost and is rarely needed. CREATE SEQUENCE is not supported.",
+        "syntax": "-- INTEGER PRIMARY KEY (implicit autoincrement, recommended):\nCREATE TABLE orders (\n    id    INTEGER PRIMARY KEY,\n    total REAL\n);\n\n-- AUTOINCREMENT keyword (strict no-reuse guarantee):\nCREATE TABLE orders (\n    id    INTEGER PRIMARY KEY AUTOINCREMENT,\n    total REAL\n);\n\n-- Get last inserted rowid:\nSELECT last_insert_rowid();"
+      }
+    },
+    "details": "The SQL standard term is GENERATED AS IDENTITY, supported in PostgreSQL 10+, SQL Server 2012+, and Oracle 12c+ — prefer it for new portable schemas. MySQL's AUTO_INCREMENT and SQL Server's IDENTITY(seed,increment) are engine-specific and will not work elsewhere. SQLite's INTEGER PRIMARY KEY / rowid aliasing is unique: it's automatic and requires no keyword unless you want the strict AUTOINCREMENT no-reuse guarantee. A standalone CREATE SEQUENCE object is supported in PostgreSQL, SQL Server (2012+), and Oracle — but not in MySQL or SQLite."
+  },
+  "nullif": {
+    "description": "Returns NULL if two expressions are equal, otherwise returns the first expression. Commonly used to suppress zero-division errors and convert sentinel values to NULL.",
+    "syntax": "-- Avoid division by zero:\nSELECT total_revenue / NULLIF(total_orders, 0) AS avg_order_value\nFROM sales_summary;\n\n-- Convert empty string to NULL:\nSELECT NULLIF(email, '') AS email\nFROM users;",
+    "category": "Functions",
+    "slug": "nullif",
+    "compatibility": {
+      "mysql": {
+        "supported": true,
+        "since": "3.23",
+        "notes": "NULLIF(expr1, expr2) is fully supported. Standard SQL behavior: returns NULL when expr1 = expr2, returns expr1 otherwise. The comparison is type-sensitive — NULLIF('0', 0) compares after implicit conversion.",
+        "syntax": "-- Division-by-zero guard:\nSELECT amount / NULLIF(quantity, 0) AS unit_price\nFROM order_lines;\n\n-- Empty string to NULL:\nSELECT NULLIF(phone, '')    AS phone,\n       NULLIF(fax,   '')    AS fax\nFROM contacts;\n\n-- NULLIF is equivalent to CASE:\n-- NULLIF(a, b) = CASE WHEN a = b THEN NULL ELSE a END"
+      },
+      "postgresql": {
+        "supported": true,
+        "since": "6.0",
+        "notes": "Standard NULLIF(expr1, expr2) supported. Return type is the type of expr1. Useful combined with COALESCE for conditional NULL substitution. Works on any comparable data type including text, dates, and numeric.",
+        "syntax": "-- Division-by-zero guard:\nSELECT revenue / NULLIF(costs, 0) AS margin\nFROM financials;\n\n-- Combine with COALESCE for default value:\nSELECT COALESCE(NULLIF(nickname, ''), full_name) AS display_name\nFROM users;\n\n-- Date comparison:\nSELECT NULLIF(end_date, '9999-12-31'::date) AS actual_end\nFROM contracts;"
+      },
+      "sqlserver": {
+        "supported": true,
+        "since": "2000",
+        "notes": "Standard NULLIF(expr1, expr2) supported. Commonly used to guard against division-by-zero in SQL Server, where dividing by zero raises an error (not a NULL). NULLIF is often preferred over CASE WHEN ... THEN NULL for readability.",
+        "syntax": "-- Division-by-zero guard (SS raises error on /0):\nSELECT total_sales / NULLIF(units_sold, 0) AS avg_unit_price\nFROM products;\n\n-- Empty string to NULL before ISNULL:\nSELECT ISNULL(NULLIF(phone, ''), 'N/A') AS phone_display\nFROM contacts;\n\n-- Equivalent CASE:\n-- SELECT CASE WHEN a = b THEN NULL ELSE a END"
+      },
+      "oracle": {
+        "supported": true,
+        "since": "9i",
+        "notes": "Standard NULLIF(expr1, expr2) supported since Oracle 9i. In Oracle, dividing by zero raises ORA-01476, so NULLIF is the standard guard. Works on NUMBER, VARCHAR2, DATE, and other comparable types.",
+        "syntax": "-- Division-by-zero guard:\nSELECT revenue / NULLIF(expense, 0) AS ratio\nFROM financials;\n\n-- Empty string: note Oracle treats '' as NULL natively,\n-- so NULLIF(col, '') on VARCHAR2 is typically redundant.\nSELECT NULLIF(status_code, 'N/A') AS status\nFROM tickets;"
+      },
+      "sqlite": {
+        "supported": true,
+        "since": "3.0",
+        "notes": "Standard NULLIF(expr1, expr2) supported. SQLite returns NULL for integer division by zero rather than raising an error, but NULLIF is still useful for explicit intent and portability. Works with any SQLite type affinity.",
+        "syntax": "-- Division-by-zero guard:\nSELECT price / NULLIF(quantity, 0) AS unit_cost\nFROM inventory;\n\n-- Convert sentinel value to NULL:\nSELECT NULLIF(category, 'UNKNOWN') AS category\nFROM products;"
+      }
+    },
+    "details": "NULLIF(a, b) is exactly equivalent to CASE WHEN a = b THEN NULL ELSE a END, and the SQL standard specifies it that way. Its primary use case is division-by-zero protection: NULLIF(denominator, 0) converts a zero to NULL, making the entire division return NULL instead of raising an error. Oracle is notable: it treats empty string '' as NULL natively, so NULLIF(col, '') on VARCHAR2 is usually a no-op. SQL Server division by zero raises a runtime error (unlike SQLite which returns NULL), making NULLIF particularly important there."
+  },
+  "greatest / least": {
+    "description": "Return the largest or smallest value from a list of two or more expressions. Evaluate multiple columns or values in a single call without nested CASE expressions.",
+    "syntax": "-- Clamp a value between a min and max:\nSELECT GREATEST(LEAST(score, 100), 0) AS clamped_score\nFROM results;\n\n-- Latest of two dates:\nSELECT GREATEST(start_date, effective_date) AS use_date\nFROM contracts;",
+    "category": "Functions",
+    "slug": "greatest-least",
+    "compatibility": {
+      "mysql": {
+        "supported": true,
+        "since": "3.23",
+        "notes": "GREATEST(v1, v2, ...) and LEAST(v1, v2, ...) support any number of arguments. If any argument is NULL, the result is NULL. Arguments are compared after implicit type conversion — mixing types triggers coercion rules. Works with numbers, strings, and dates.",
+        "syntax": "-- Largest of two columns:\nSELECT id, GREATEST(q1_sales, q2_sales, q3_sales, q4_sales) AS peak_quarter\nFROM yearly_sales;\n\n-- Clamp between bounds:\nSELECT GREATEST(LEAST(user_rating, 5), 1) AS clamped_rating\nFROM reviews;\n\n-- Latest date:\nSELECT GREATEST(created_at, updated_at) AS last_touched\nFROM records;\n\n-- NULL propagation:\nSELECT GREATEST(1, NULL, 3); -- Returns NULL"
+      },
+      "postgresql": {
+        "supported": true,
+        "since": "6.0",
+        "notes": "GREATEST and LEAST support any number of arguments and any comparable type. Unlike most SQL functions, PostgreSQL's GREATEST/LEAST ignore NULLs and return a non-NULL result if at least one argument is non-NULL. This differs from MySQL and Oracle, where any NULL input produces a NULL result.",
+        "syntax": "-- Greatest of multiple values:\nSELECT GREATEST(q1, q2, q3, q4) AS peak\nFROM quarterly_results;\n\n-- NULL handling (PostgreSQL ignores NULLs):\nSELECT GREATEST(1, NULL, 3);  -- Returns 3 (not NULL)\nSELECT LEAST(1, NULL, 3);     -- Returns 1 (not NULL)\n\n-- Clamp:\nSELECT GREATEST(LEAST(score, 100), 0) AS score_0_to_100\nFROM test_results;\n\n-- Date comparison:\nSELECT GREATEST(signup_date, activation_date) AS first_activity\nFROM users;"
+      },
+      "sqlserver": {
+        "supported": true,
+        "since": "2022",
+        "notes": "GREATEST() and LEAST() were added in SQL Server 2022. Unlike MySQL/Oracle, SQL Server's implementation ignores NULLs (matching PostgreSQL behavior). For SQL Server 2019 and earlier, use a VALUES subquery with aggregation or nested IIF/CASE expressions as a workaround.",
+        "syntax": "-- SQL Server 2022+:\nSELECT GREATEST(q1_sales, q2_sales, q3_sales) AS peak_quarter\nFROM quarterly_results;\n\nSELECT LEAST(ship_date, delivery_date) AS earlier_date\nFROM shipments;\n\n-- Workaround for SQL Server 2019 and earlier (2 values):\nSELECT IIF(q1 > q2, q1, q2) AS greatest_2\nFROM quarterly_results;\n\n-- Workaround for SQL Server 2019 and earlier (3+ values via VALUES):\nSELECT (SELECT MAX(v) FROM (VALUES (q1), (q2), (q3)) AS t(v)) AS peak\nFROM quarterly_results;"
+      },
+      "oracle": {
+        "supported": true,
+        "since": "7",
+        "notes": "GREATEST and LEAST supported since Oracle 7. If any argument is NULL, the result is NULL (same as MySQL, opposite of PostgreSQL). Arguments must be compatible types. Works with NUMBER, VARCHAR2, DATE, and TIMESTAMP.",
+        "syntax": "SELECT GREATEST(q1_sales, q2_sales, q3_sales, q4_sales) AS peak_quarter\nFROM quarterly_results;\n\n-- Clamp:\nSELECT GREATEST(LEAST(score, 100), 0) AS clamped_score\nFROM exam_results;\n\n-- NULL propagation:\nSELECT GREATEST(1, NULL, 3) FROM dual; -- Returns NULL\n\n-- NVL workaround when NULLs must be handled:\nSELECT GREATEST(NVL(col1, 0), NVL(col2, 0)) AS safe_greatest\nFROM t;"
+      },
+      "sqlite": {
+        "supported": false,
+        "notes": "SQLite has no GREATEST or LEAST functions. Workaround for two values: use a CASE expression. For more values, use a subquery with MAX/MIN over a VALUES list (requires SQLite 3.8.3+ for VALUES in subqueries).",
+        "syntax": "-- CASE workaround (2 values):\nSELECT CASE WHEN a >= b THEN a ELSE b END AS greatest_of_two\nFROM t;\n\n-- VALUES subquery workaround (3+ values, SQLite 3.8.3+):\nSELECT (SELECT MAX(v) FROM (VALUES (col1), (col2), (col3)) AS t(v))\n  AS greatest_of_three\nFROM my_table;"
+      }
+    },
+    "details": "The critical portability trap is NULL handling: MySQL and Oracle return NULL if any argument is NULL; PostgreSQL and SQL Server 2022 ignore NULLs and return the greatest/least non-NULL value. When porting between engines, wrap arguments in COALESCE/NVL/ISNULL to normalize NULL behavior. SQL Server only gained GREATEST/LEAST in 2022 — the VALUES subquery pattern (SELECT MAX(v) FROM (VALUES (a),(b),(c)) t(v)) is the cleanest pre-2022 workaround and is also the correct SQLite workaround. SQLite is the only engine in the compatibility matrix with no support."
   }
 }
