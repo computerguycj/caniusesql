@@ -3832,5 +3832,380 @@
       }
     },
     "details": "The SQL standard keyword is SAVEPOINT; SQL Server uses SAVE TRANSACTION instead. RELEASE SAVEPOINT is supported in MySQL, PostgreSQL, and SQLite, but not in Oracle (implicit release on COMMIT) or SQL Server (no equivalent). PostgreSQL's behavior makes savepoints especially critical in application code: any unhandled error puts the transaction into an aborted state that rejects all further commands — ROLLBACK TO SAVEPOINT is the escape hatch that clears the error without losing the entire transaction. SQLite's SAVEPOINT is unique in that it can replace BEGIN entirely and supports arbitrary nesting."
+  },
+  "copy / bulk load": {
+    "description": "High-speed mechanisms for loading large volumes of data from flat files or streams into a table, bypassing row-by-row INSERT overhead. The fastest way to populate or refresh large tables.",
+    "syntax": "-- PostgreSQL:\nCOPY orders (id, customer_id, amount)\nFROM '/data/orders.csv'\nCSV HEADER;\n\n-- MySQL:\nLOAD DATA INFILE '/data/orders.csv'\nINTO TABLE orders\nFIELDS TERMINATED BY ','\nLINES TERMINATED BY '\\n'\nIGNORE 1 ROWS;",
+    "category": "DML",
+    "slug": "copy-bulk-load",
+    "compatibility": {
+      "mysql": {
+        "supported": true,
+        "since": "3.23",
+        "notes": "LOAD DATA INFILE reads from a server-side file path. LOAD DATA LOCAL INFILE reads from the client machine (requires local_infile=ON on both client and server). The mysqlimport CLI tool wraps LOAD DATA INFILE. For cloud environments where file access is restricted, use INSERT with multi-row VALUES or a pipeline tool. CSV, TSV, and custom delimiter/enclosure formats supported.",
+        "syntax": "-- From server-side file:\nLOAD DATA INFILE '/var/lib/mysql-files/orders.csv'\nINTO TABLE orders\nFIELDS TERMINATED BY ',' OPTIONALLY ENCLOSED BY '\"'\nLINES TERMINATED BY '\\n'\nIGNORE 1 ROWS\n(id, customer_id, amount, order_date);\n\n-- From client-side file:\nLOAD DATA LOCAL INFILE '/home/user/orders.csv'\nINTO TABLE orders\nFIELDS TERMINATED BY ','\nLINES TERMINATED BY '\\n'\nIGNORE 1 ROWS;\n\n-- Replace existing rows:\nLOAD DATA INFILE '/data/orders.csv'\nREPLACE INTO TABLE orders\nFIELDS TERMINATED BY ',';"
+      },
+      "postgresql": {
+        "supported": true,
+        "since": "7.0",
+        "notes": "COPY is the standard bulk load mechanism. Server-side COPY reads/writes files on the server (requires superuser). Client-side \\copy (psql meta-command) reads/writes files on the client machine without superuser. COPY also accepts FROM STDIN / TO STDOUT for pipe-based loading. Supported formats: text (default), CSV, binary. Cannot COPY into a view; use INSTEAD OF triggers or a function. The pg_bulkload extension offers even faster loading for very large datasets.",
+        "syntax": "-- From server-side CSV file (requires superuser):\nCOPY orders (id, customer_id, amount, order_date)\nFROM '/data/orders.csv'\nCSV HEADER;\n\n-- From STDIN (useful in scripts / application code):\nCOPY orders FROM STDIN WITH (FORMAT csv, HEADER true);\n\n-- Client-side (psql only, no superuser required):\n-- \\copy orders FROM '/home/user/orders.csv' CSV HEADER\n\n-- To file (export):\nCOPY (SELECT * FROM orders WHERE order_date >= '2024-01-01')\nTO '/data/orders_2024.csv'\nCSV HEADER;\n\n-- Binary format (fastest, non-portable):\nCOPY orders FROM '/data/orders.bin' FORMAT binary;"
+      },
+      "sqlserver": {
+        "supported": true,
+        "since": "6.5",
+        "notes": "Two main options: BULK INSERT (T-SQL statement, server-side file access) and the bcp utility (command-line tool for client-side file transfer). The OPENROWSET(BULK ...) function embeds bulk data in a SELECT, useful for transformation during load. SQL Server Integration Services (SSIS) is the full ETL solution. Azure SQL supports loading from Azure Blob Storage via BULK INSERT with DATASOURCE.",
+        "syntax": "-- BULK INSERT from server-side file:\nBULK INSERT orders\nFROM 'C:\\data\\orders.csv'\nWITH (\n    FIRSTROW = 2,\n    FIELDTERMINATOR = ',',\n    ROWTERMINATOR = '\\n',\n    TABLOCK\n);\n\n-- OPENROWSET(BULK) — load and transform in one step:\nINSERT INTO orders (id, customer_id, amount)\nSELECT id, customer_id, amount\nFROM OPENROWSET(\n    BULK 'C:\\data\\orders.csv',\n    FORMATFILE = 'C:\\data\\orders.fmt'\n) AS src;\n\n-- bcp utility (command line):\n-- bcp mydb.dbo.orders in orders.csv -c -t, -S server -U user -P pass"
+      },
+      "oracle": {
+        "supported": true,
+        "since": "7",
+        "notes": "SQL*Loader (sqlldr) is the primary bulk load utility — a standalone command-line tool with a control file describing the source format. External tables allow querying a flat file as if it were a table and loading with INSERT INTO ... SELECT. The Data Pump (expdp/impdp) is used for Oracle-to-Oracle bulk transfers. Direct-path loading (DIRECT=TRUE in sqlldr) bypasses redo logging for maximum speed.",
+        "syntax": "-- SQL*Loader control file (orders.ctl):\n-- LOAD DATA\n-- INFILE '/data/orders.csv'\n-- INTO TABLE orders\n-- FIELDS TERMINATED BY ','\n-- TRAILING NULLCOLS\n-- (id, customer_id, amount, order_date DATE 'YYYY-MM-DD')\n\n-- Run from command line:\n-- sqlldr userid=user/pass@db control=orders.ctl log=orders.log\n\n-- External table approach:\nCREATE TABLE orders_ext (\n    id NUMBER, customer_id NUMBER, amount NUMBER\n)\nORGANIZATION EXTERNAL (\n    TYPE oracle_loader\n    DEFAULT DIRECTORY data_dir\n    ACCESS PARAMETERS (\n        RECORDS DELIMITED BY NEWLINE\n        FIELDS TERMINATED BY ','\n    )\n    LOCATION ('orders.csv')\n);\n\nINSERT INTO orders SELECT * FROM orders_ext;"
+      },
+      "sqlite": {
+        "supported": false,
+        "notes": "SQLite has no native bulk load statement. The sqlite3 CLI tool has a .import command for loading CSV files, and the .mode csv setting controls CSV parsing. Programmatically, the fastest approach is to use a transaction wrapping many INSERT statements, or to use the SQLite C API's batch insert with prepared statements. The sqlite-utils Python library provides a convenient bulk insert interface.",
+        "syntax": "-- sqlite3 CLI import:\n-- .mode csv\n-- .import /data/orders.csv orders\n\n-- Or with headers (sqlite3 3.32+):\n-- .import --csv --skip 1 /data/orders.csv orders\n\n-- Programmatic bulk insert (wrap in transaction for speed):\n-- BEGIN;\n-- INSERT INTO orders VALUES (1, 101, 99.99, '2024-01-15');\n-- INSERT INTO orders VALUES (2, 102, 49.50, '2024-01-16');\n-- ... (thousands of rows)\n-- COMMIT;\n-- Without the transaction wrapper each INSERT is its own fsync."
+      }
+    },
+    "details": "Wrapping bulk inserts in a single transaction is the universal speedup when native bulk load is unavailable — it eliminates per-row fsync overhead. PostgreSQL's COPY is SQL-based and can be used from application code via libpq or drivers (e.g., pgcopy in Go, COPY from STDIN in Python's psycopg2). SQL Server's TABLOCK hint with BULK INSERT enables minimal logging on simple recovery model databases, significantly reducing log growth. Oracle's direct-path load (sqlldr DIRECT=TRUE) is the fastest option but bypasses triggers and constraints — run a validation pass afterward. MySQL's LOAD DATA LOCAL INFILE is commonly blocked by default for security reasons and requires explicit opt-in on both server and client."
+  },
+  "iif / decode / conditional shorthand": {
+    "description": "Compact conditional expressions that return one of two or more values based on a condition, without the full verbosity of CASE WHEN. Includes IIF (SQL Server, Access), DECODE (Oracle), and IF (MySQL).",
+    "syntax": "-- SQL Server / Access:\nSELECT IIF(salary > 50000, 'Senior', 'Junior') AS grade\nFROM employees;\n\n-- Oracle:\nSELECT DECODE(status, 'A', 'Active', 'I', 'Inactive', 'Unknown') AS label\nFROM accounts;\n\n-- MySQL:\nSELECT IF(salary > 50000, 'Senior', 'Junior') AS grade\nFROM employees;",
+    "category": "Functions",
+    "slug": "iif-decode",
+    "compatibility": {
+      "mysql": {
+        "supported": true,
+        "since": "3.23",
+        "notes": "IF(condition, true_val, false_val) is the primary ternary conditional. IFNULL(expr, fallback) is shorthand for the NULL-check case. IIF is not supported. DECODE is not supported. All three are non-standard; the portable equivalent is CASE WHEN ... END.",
+        "syntax": "-- IF (ternary):\nSELECT IF(salary > 50000, 'Senior', 'Junior') AS grade\nFROM employees;\n\n-- Nested IF (equivalent to CASE WHEN):\nSELECT IF(score >= 90, 'A',\n       IF(score >= 80, 'B',\n       IF(score >= 70, 'C', 'F'))) AS grade\nFROM students;\n\n-- IFNULL (NULL-safe shorthand):\nSELECT IFNULL(nickname, full_name) AS display_name\nFROM users;\n\n-- Portable CASE equivalent:\nSELECT CASE WHEN salary > 50000 THEN 'Senior' ELSE 'Junior' END AS grade\nFROM employees;"
+      },
+      "postgresql": {
+        "supported": false,
+        "notes": "PostgreSQL does not support IIF, DECODE, or IF as conditional functions. The standard CASE WHEN ... END expression covers all use cases. COALESCE and NULLIF handle the common NULL-check patterns. No shorthand alternative — use CASE.",
+        "syntax": "-- CASE WHEN (the only form; IIF/IF/DECODE not available):\nSELECT CASE WHEN salary > 50000 THEN 'Senior' ELSE 'Junior' END AS grade\nFROM employees;\n\n-- Multi-branch (DECODE equivalent):\nSELECT CASE status\n    WHEN 'A' THEN 'Active'\n    WHEN 'I' THEN 'Inactive'\n    ELSE 'Unknown'\nEND AS label\nFROM accounts;\n\n-- NULL check (IFNULL equivalent):\nSELECT COALESCE(nickname, full_name) AS display_name\nFROM users;"
+      },
+      "sqlserver": {
+        "supported": true,
+        "since": "2012",
+        "notes": "IIF(condition, true_val, false_val) added in SQL Server 2012 (ported from Microsoft Access). It is syntactic sugar for CASE WHEN condition THEN true_val ELSE false_val END — the query optimizer treats them identically. CHOOSE(index, val1, val2, ...) also added in 2012, returns the value at the 1-based index position. DECODE is not supported.",
+        "syntax": "-- IIF (SQL Server 2012+):\nSELECT IIF(salary > 50000, 'Senior', 'Junior') AS grade\nFROM employees;\n\n-- Nested IIF:\nSELECT IIF(score >= 90, 'A', IIF(score >= 80, 'B', IIF(score >= 70, 'C', 'F'))) AS grade\nFROM students;\n\n-- CHOOSE (index into list):\nSELECT CHOOSE(priority, 'Low', 'Medium', 'High', 'Critical') AS priority_label\nFROM tickets;\n-- CHOOSE(1,...) = 'Low', CHOOSE(2,...) = 'Medium', etc.\n\n-- ISNULL (NULL check shorthand):\nSELECT ISNULL(nickname, full_name) AS display_name\nFROM users;"
+      },
+      "oracle": {
+        "supported": true,
+        "since": "7",
+        "notes": "DECODE(expr, search1, result1, search2, result2, ..., default) is Oracle's proprietary multi-branch conditional, available since Oracle 7. It handles NULLs specially — DECODE treats two NULLs as equal (unlike = comparison). IIF is not supported. Oracle 9i+ supports the standard CASE WHEN expression alongside DECODE. NVL(expr, default) is the Oracle shorthand for NULL checking (equivalent to COALESCE with two args).",
+        "syntax": "-- DECODE (Oracle proprietary):\nSELECT DECODE(status, 'A', 'Active', 'I', 'Inactive', 'Unknown') AS label\nFROM accounts;\n\n-- DECODE with NULL match (treats NULL = NULL as true):\nSELECT DECODE(region, NULL, 'No Region', region) AS region_label\nFROM customers;\n\n-- DECODE as ternary:\nSELECT DECODE(SIGN(salary - 50000), 1, 'Senior', 'Junior') AS grade\nFROM employees;\n\n-- NVL (NULL shorthand):\nSELECT NVL(nickname, full_name) AS display_name\nFROM users;\n\n-- Standard CASE (preferred for new code, 9i+):\nSELECT CASE WHEN salary > 50000 THEN 'Senior' ELSE 'Junior' END AS grade\nFROM employees;"
+      },
+      "sqlite": {
+        "supported": false,
+        "notes": "SQLite does not support IIF, DECODE, or IF as functions. CASE WHEN ... END is the only conditional expression. COALESCE and IFNULL (SQLite does support IFNULL as an alias for COALESCE with two arguments) handle NULL checks.",
+        "syntax": "-- CASE WHEN (standard form):\nSELECT CASE WHEN salary > 50000 THEN 'Senior' ELSE 'Junior' END AS grade\nFROM employees;\n\n-- IFNULL (SQLite does support this one):\nSELECT IFNULL(nickname, full_name) AS display_name\nFROM users;\n\n-- IIF was added as an alias for CASE WHEN in SQLite 3.32.0:\nSELECT IIF(salary > 50000, 'Senior', 'Junior') AS grade\nFROM employees;"
+      }
+    },
+    "details": "The fully portable form is always CASE WHEN ... THEN ... ELSE ... END — supported by every engine since early versions. IIF exists in SQL Server (2012+) and SQLite (3.32.0+) but nowhere else. Oracle's DECODE is unique: it treats NULL = NULL as true (unlike every other comparison in SQL), making it subtly different from CASE WHEN col IS NULL. MySQL's IF() function is only available in MySQL — do not use it in cross-engine schemas. For NULL-check shorthand: COALESCE is the most portable (SQL standard), NVL is Oracle-only, IFNULL works in MySQL and SQLite, ISNULL works in SQL Server."
+  },
+  "string split / string to rows": {
+    "description": "Split a delimited string into multiple rows or elements. Commonly needed for storing comma-separated lists in a single column and querying them relationally.",
+    "syntax": "-- SQL Server 2016+:\nSELECT value\nFROM STRING_SPLIT('a,b,c,d', ',');\n\n-- PostgreSQL:\nSELECT unnest(string_to_array('a,b,c,d', ',')) AS value;",
+    "category": "Functions",
+    "slug": "string-split",
+    "compatibility": {
+      "mysql": {
+        "supported": false,
+        "notes": "MySQL has no built-in string split function that returns rows. Common workarounds: (1) a recursive CTE (MySQL 8.0+) to iterate through the string; (2) a numbers/tally table approach; (3) JSON_TABLE with JSON_ARRAY conversion. The cleanest approach in MySQL 8.0+ is a recursive CTE.",
+        "syntax": "-- Recursive CTE workaround (MySQL 8.0+):\nWITH RECURSIVE splitter AS (\n    SELECT\n        SUBSTRING_INDEX('a,b,c,d', ',', 1)            AS val,\n        SUBSTRING('a,b,c,d', LOCATE(',','a,b,c,d')+1) AS rest,\n        1 AS lev\n    UNION ALL\n    SELECT\n        SUBSTRING_INDEX(rest, ',', 1),\n        IF(LOCATE(',', rest) > 0,\n           SUBSTRING(rest, LOCATE(',', rest)+1),\n           ''),\n        lev + 1\n    FROM splitter\n    WHERE rest <> ''\n)\nSELECT val FROM splitter;\n\n-- JSON_TABLE workaround (MySQL 8.0+):\nSELECT jt.val\nFROM JSON_TABLE(\n    CONCAT('[\"', REPLACE('a,b,c,d', ',', '\",\"'), '\"]'),\n    '$[*]' COLUMNS (val VARCHAR(100) PATH '$')\n) jt;"
+      },
+      "postgresql": {
+        "supported": true,
+        "since": "8.0",
+        "notes": "string_to_array(str, delimiter) converts a delimited string to a PostgreSQL array, then unnest() expands the array into rows. regexp_split_to_table(str, pattern) splits by regex and directly returns a set of rows. string_to_table(str, delimiter) (PostgreSQL 14+) is the most direct single-function approach.",
+        "syntax": "-- unnest + string_to_array (most common):\nSELECT unnest(string_to_array('a,b,c,d', ',')) AS val;\n\n-- regexp_split_to_table (regex delimiter):\nSELECT regexp_split_to_table('a, b,  c , d', '\\s*,\\s*') AS val;\n\n-- string_to_table (PostgreSQL 14+, cleanest):\nSELECT * FROM string_to_table('a,b,c,d', ',') AS val;\n\n-- Use in a JOIN against a table column:\nSELECT p.id, tag.val\nFROM products p,\nunnest(string_to_array(p.tags, ',')) AS tag(val)\nWHERE tag.val = 'featured';"
+      },
+      "sqlserver": {
+        "supported": true,
+        "since": "2016",
+        "notes": "STRING_SPLIT(string, separator) returns a single-column table (value) of split elements. SQL Server 2022 added an optional third argument (enable_ordinal) that, when set to 1, adds an ordinal column preserving element order. Prior to 2016, the common workarounds were XML-based splitting or a numbers-table TVF.",
+        "syntax": "-- Basic split (2016+):\nSELECT value\nFROM STRING_SPLIT('a,b,c,d', ',');\n\n-- With ordinal column (2022+):\nSELECT ordinal, value\nFROM STRING_SPLIT('a,b,c,d', ',', 1)\nORDER BY ordinal;\n\n-- JOIN against a table column:\nSELECT p.id, s.value AS tag\nFROM products p\nCROSS APPLY STRING_SPLIT(p.tags, ',') s\nWHERE s.value = 'featured';\n\n-- Pre-2016 XML workaround:\nSELECT t.c.value('.', 'VARCHAR(100)') AS val\nFROM (\n    SELECT CAST('<x>' + REPLACE('a,b,c,d',',','</x><x>') + '</x>' AS XML) AS x\n) doc\nCROSS APPLY doc.x.nodes('/x') t(c);"
+      },
+      "oracle": {
+        "supported": true,
+        "since": "10g",
+        "notes": "REGEXP_SUBSTR with CONNECT BY LEVEL is the classic Oracle approach (10g+). Oracle 12c added the ability to use LATERAL with XMLTABLE for cleaner syntax. The built-in APEX_STRING.SPLIT function (if Oracle APEX is installed) provides a simple table function. There is no single built-in function equivalent to STRING_SPLIT.",
+        "syntax": "-- REGEXP_SUBSTR + CONNECT BY (most common pattern):\nSELECT REGEXP_SUBSTR('a,b,c,d', '[^,]+', 1, LEVEL) AS val\nFROM DUAL\nCONNECT BY LEVEL <= REGEXP_COUNT('a,b,c,d', ',') + 1;\n\n-- Against a table column:\nSELECT p.id,\n       REGEXP_SUBSTR(p.tags, '[^,]+', 1, LEVEL) AS tag\nFROM products p\nCONNECT BY LEVEL <= REGEXP_COUNT(p.tags, ',') + 1\n       AND PRIOR p.id = p.id\n       AND PRIOR SYS_GUID() IS NOT NULL;"
+      },
+      "sqlite": {
+        "supported": false,
+        "notes": "SQLite has no string split function. The json_each() workaround (converting the CSV to a JSON array) is the most practical approach in SQLite 3.9+. A recursive CTE can also parse a delimited string.",
+        "syntax": "-- json_each workaround (3.9+):\nSELECT j.value\nFROM json_each(\n    '[\"' || REPLACE('a,b,c,d', ',', '\",\"') || '\"]'\n);\n\n-- Recursive CTE workaround:\nWITH RECURSIVE split(val, rest) AS (\n    SELECT\n        SUBSTR('a,b,c,d', 1, INSTR('a,b,c,d', ',') - 1),\n        SUBSTR('a,b,c,d', INSTR('a,b,c,d', ',') + 1)\n    UNION ALL\n    SELECT\n        CASE WHEN INSTR(rest, ',') > 0\n             THEN SUBSTR(rest, 1, INSTR(rest, ',') - 1)\n             ELSE rest END,\n        CASE WHEN INSTR(rest, ',') > 0\n             THEN SUBSTR(rest, INSTR(rest, ',') + 1)\n             ELSE '' END\n    FROM split WHERE rest != ''\n)\nSELECT val FROM split;"
+      }
+    },
+    "details": "The underlying need (querying a delimited column relationally) is a sign of a denormalized schema — the real fix is normalizing into a child table. That said, STRING_SPLIT (SQL Server 2016+), unnest(string_to_array()) (PostgreSQL), and the json_each workaround (SQLite/MySQL) are commonly needed for migrating or querying legacy data. SQL Server 2016's STRING_SPLIT does not guarantee element order — the ordinal column only arrives in SQL Server 2022. Oracle has no single built-in; the CONNECT BY LEVEL + REGEXP_SUBSTR pattern is the de facto standard but breaks on multi-row inputs without careful PRIOR + SYS_GUID() fencing."
+  },
+  "json modify / json set": {
+    "description": "Update, insert, or delete values within a JSON document stored in a column, returning the modified JSON. Avoids deserializing the entire document in application code just to change one field.",
+    "syntax": "-- SQL Server:\nSELECT JSON_MODIFY(data, '$.status', 'active') AS updated\nFROM users;\n\n-- MySQL:\nSELECT JSON_SET(data, '$.status', 'active') AS updated\nFROM users;\n\n-- PostgreSQL:\nSELECT data || '{\"status\": \"active\"}' AS updated\nFROM users;",
+    "category": "JSON",
+    "slug": "json-modify",
+    "compatibility": {
+      "mysql": {
+        "supported": true,
+        "since": "5.7.8",
+        "notes": "Three distinct functions with different insert/update semantics: JSON_SET inserts or replaces (upsert). JSON_INSERT inserts only if the key does not exist. JSON_REPLACE replaces only if the key already exists. JSON_REMOVE deletes a path. All return a new JSON document; the source column is not modified in-place — use UPDATE ... SET col = JSON_SET(col, ...) to persist changes.",
+        "syntax": "-- JSON_SET (upsert a value):\nUPDATE users\nSET data = JSON_SET(data, '$.status', 'active')\nWHERE id = 1;\n\n-- JSON_INSERT (add only if key absent):\nUPDATE users\nSET data = JSON_INSERT(data, '$.created_at', NOW())\nWHERE id = 1;\n\n-- JSON_REPLACE (update only if key exists):\nUPDATE users\nSET data = JSON_REPLACE(data, '$.status', 'inactive')\nWHERE id = 1;\n\n-- JSON_REMOVE (delete a key):\nUPDATE users\nSET data = JSON_REMOVE(data, '$.temp_token')\nWHERE id = 1;\n\n-- Modify nested path:\nUPDATE users\nSET data = JSON_SET(data, '$.address.city', 'Portland')\nWHERE id = 1;\n\n-- Append to array:\nUPDATE posts\nSET data = JSON_ARRAY_APPEND(data, '$.tags', 'featured')\nWHERE id = 42;"
+      },
+      "postgresql": {
+        "supported": true,
+        "since": "9.5",
+        "notes": "No single JSON_SET function. Instead, the || (concatenation) operator merges/overwrites top-level keys on jsonb. For deep updates, jsonb_set(target, path_array, new_value) (9.5+) modifies a nested key. jsonb_set_lax() (14+) adds NULL-handling options. jsonb_insert() (9.6+) inserts into arrays at a specific position. jsonb_strip_nulls() removes null-valued keys. The #- operator removes a key by path.",
+        "syntax": "-- Top-level key upsert (|| operator):\nUPDATE users\nSET data = data || '{\"status\": \"active\"}'::jsonb\nWHERE id = 1;\n\n-- Deep nested update (jsonb_set):\nUPDATE users\nSET data = jsonb_set(data, '{address,city}', '\"Portland\"')\nWHERE id = 1;\n\n-- Insert into array at position:\nUPDATE posts\nSET data = jsonb_insert(data, '{tags,0}', '\"featured\"')\nWHERE id = 42;\n\n-- Remove a key (top-level):\nUPDATE users\nSET data = data - 'temp_token'\nWHERE id = 1;\n\n-- Remove a nested key (#- operator):\nUPDATE users\nSET data = data #- '{address,zip}'\nWHERE id = 1;"
+      },
+      "sqlserver": {
+        "supported": true,
+        "since": "2016",
+        "notes": "JSON_MODIFY(expression, path, new_value) is the single function for all mutations. Setting new_value to NULL removes the key (or sets it to JSON null — use JSON_MODIFY(col, 'lax $.key', NULL) to force removal). Supports append mode for arrays: JSON_MODIFY(col, 'append $.tags', 'featured'). JSON_MODIFY can be chained/nested to modify multiple paths. Returns NVARCHAR.",
+        "syntax": "-- Set a value:\nUPDATE users\nSET data = JSON_MODIFY(data, '$.status', 'active')\nWHERE id = 1;\n\n-- Remove a key (set to SQL NULL, not JSON null):\nUPDATE users\nSET data = JSON_MODIFY(data, '$.temp_token', NULL)\nWHERE id = 1;\n\n-- Append to array:\nUPDATE posts\nSET data = JSON_MODIFY(data, 'append $.tags', 'featured')\nWHERE id = 42;\n\n-- Chain multiple modifications:\nUPDATE users\nSET data = JSON_MODIFY(\n               JSON_MODIFY(data, '$.status', 'active'),\n               '$.updated_at', GETDATE()\n           )\nWHERE id = 1;\n\n-- Nested path:\nUPDATE users\nSET data = JSON_MODIFY(data, '$.address.city', 'Portland')\nWHERE id = 1;"
+      },
+      "oracle": {
+        "supported": true,
+        "since": "21c",
+        "notes": "JSON_TRANSFORM (Oracle 21c+) is the primary function for modifying JSON documents with a dedicated mini-language of operations: SET, INSERT, REPLACE, APPEND, REMOVE, RENAME, KEEP, COPY, MOVE, SORT, FLATTEN. Prior to 21c, JSON modification required extracting values, modifying in application code, and updating the column. Oracle 12c/18c had no in-database JSON mutation functions.",
+        "syntax": "-- JSON_TRANSFORM (21c+):\nUPDATE users\nSET data = JSON_TRANSFORM(\n    data,\n    SET '$.status' = 'active',\n    SET '$.updated_at' = SYSTIMESTAMP\n)\nWHERE id = 1;\n\n-- Remove a key:\nUPDATE users\nSET data = JSON_TRANSFORM(data, REMOVE '$.temp_token')\nWHERE id = 1;\n\n-- Append to array:\nUPDATE posts\nSET data = JSON_TRANSFORM(data, APPEND '$.tags' = 'featured')\nWHERE id = 42;\n\n-- Pre-21c workaround (extract, modify, reserialize):\n-- Must be done in application code or a PL/SQL procedure."
+      },
+      "sqlite": {
+        "supported": true,
+        "since": "3.9.0",
+        "notes": "json_set(json, path, value, ...) (upsert), json_insert(json, path, value, ...) (insert only), json_replace(json, path, value, ...) (replace only), and json_remove(json, path, ...) follow the same insert/replace/upsert semantics as MySQL. All available since SQLite 3.9.0. Multiple paths can be modified in a single call. Returns a new JSON string; must be used in an UPDATE to persist.",
+        "syntax": "-- json_set (upsert):\nUPDATE users\nSET data = json_set(data, '$.status', 'active')\nWHERE id = 1;\n\n-- json_remove:\nUPDATE users\nSET data = json_remove(data, '$.temp_token')\nWHERE id = 1;\n\n-- Multiple paths in one call:\nUPDATE users\nSET data = json_set(data,\n    '$.status', 'active',\n    '$.updated_at', datetime('now')\n)\nWHERE id = 1;\n\n-- json_insert (add only if absent):\nUPDATE users\nSET data = json_insert(data, '$.created_at', datetime('now'))\nWHERE id = 1;"
+      }
+    },
+    "details": "MySQL and SQLite share the same three-function split (JSON_SET/json_set for upsert, JSON_INSERT/json_insert for insert-only, JSON_REPLACE/json_replace for replace-only) — the most orthogonal API. SQL Server's JSON_MODIFY is a single function that covers all cases including array append, but requires chaining for multiple updates. PostgreSQL has no JSON_SET — it uses the || operator for top-level merges and jsonb_set() for nested updates; the #- operator and - operator handle removal. Oracle had no JSON mutation functions at all until 21c's JSON_TRANSFORM, which introduces a mini-language rather than function arguments. In all engines, these functions return a new JSON value — they do not modify in place; an UPDATE statement is required to persist changes."
+  },
+  "array data type": {
+    "description": "A column type that stores an ordered list of values of a uniform type within a single cell. Eliminates the need for a child table for simple multi-value attributes, at the cost of normalization.",
+    "syntax": "-- PostgreSQL:\nCREATE TABLE products (\n    id       SERIAL PRIMARY KEY,\n    tags     TEXT[],\n    scores   INTEGER[]\n);\n\nINSERT INTO products (tags, scores)\nVALUES (ARRAY['featured','sale'], ARRAY[4,5,3]);",
+    "category": "Data Types",
+    "slug": "array-types",
+    "compatibility": {
+      "mysql": {
+        "supported": false,
+        "notes": "MySQL has no native array data type. Common alternatives: (1) a normalized child table (preferred); (2) a JSON column storing a JSON array; (3) a comma-separated string (discouraged — hard to query). The JSON approach gives the most array-like functionality with json_contains(), json_extract(), and json_array_append().",
+        "syntax": "-- JSON array alternative:\nCREATE TABLE products (\n    id   INT PRIMARY KEY AUTO_INCREMENT,\n    tags JSON\n);\n\nINSERT INTO products (tags) VALUES (JSON_ARRAY('featured','sale'));\n\nSELECT * FROM products\nWHERE JSON_CONTAINS(tags, JSON_QUOTE('featured'));\n\n-- Append to array:\nUPDATE products\nSET tags = JSON_ARRAY_APPEND(tags, '$', 'new-tag')\nWHERE id = 1;"
+      },
+      "postgresql": {
+        "supported": true,
+        "since": "7.1",
+        "notes": "First-class array type for every base type: integer[], text[], boolean[], numeric[], timestamptz[], etc. Arrays are zero-indexed in the C tradition internally but one-indexed in SQL access (arr[1] is the first element). Multidimensional arrays supported. GIN indexes enable fast containment queries (@>, &&). unnest() expands an array to rows. array_agg() is the inverse — collapses rows into an array.",
+        "syntax": "CREATE TABLE products (\n    id     SERIAL PRIMARY KEY,\n    tags   TEXT[],\n    scores INTEGER[]\n);\n\nINSERT INTO products (tags, scores)\nVALUES (ARRAY['featured','sale'], ARRAY[4,5,3]);\n\n-- Index access (1-based):\nSELECT tags[1] AS first_tag FROM products;\n\n-- Containment: rows where tags includes 'featured':\nSELECT * FROM products WHERE tags @> ARRAY['featured'];\n\n-- Overlap: any tag in common:\nSELECT * FROM products WHERE tags && ARRAY['sale','new'];\n\n-- Expand to rows:\nSELECT id, unnest(tags) AS tag FROM products;\n\n-- GIN index for fast containment:\nCREATE INDEX idx_tags ON products USING GIN (tags);\n\n-- Array functions:\nSELECT array_length(tags, 1),\n       array_append(tags, 'clearance'),\n       array_remove(tags, 'sale')\nFROM products;"
+      },
+      "sqlserver": {
+        "supported": false,
+        "notes": "SQL Server has no native array type. Alternatives: (1) a normalized child table; (2) a JSON column (SQL Server 2016+); (3) a delimited string with STRING_SPLIT; (4) an XML column with nodes() querying.",
+        "syntax": "-- JSON array alternative (2016+):\nALTER TABLE products ADD tags NVARCHAR(MAX);\n\nUPDATE products\nSET tags = JSON_MODIFY(tags, 'append $', 'featured')\nWHERE id = 1;\n\nSELECT p.id, s.value AS tag\nFROM products p\nCROSS APPLY STRING_SPLIT(\n    (SELECT STRING_AGG(value,',') FROM OPENJSON(p.tags)), ','\n) s;\n\n-- XML alternative:\nSELECT t.c.value('.','NVARCHAR(50)') AS tag\nFROM products p\nCROSS APPLY (\n    SELECT CAST('<t>' + REPLACE(p.tags_csv,',','</t><t>') + '</t>' AS XML)\n) x(xml_val)\nCROSS APPLY xml_val.nodes('/t') t(c);"
+      },
+      "oracle": {
+        "supported": true,
+        "since": "8i",
+        "notes": "Oracle supports arrays through VARRAY (variable-size array with a fixed maximum) and nested tables (unbounded, stored out-of-line). Both require defining a named type. The SQL/JSON path operators (12c+) on JSON columns are commonly preferred over VARRAY for flexible multi-value storage in modern Oracle. VARRAYs are stored inline in the row; nested tables require a separate storage clause.",
+        "syntax": "-- Define a VARRAY type:\nCREATE TYPE tag_array AS VARRAY(20) OF VARCHAR2(50);\n\n-- Use it in a table:\nCREATE TABLE products (\n    id   NUMBER PRIMARY KEY,\n    tags tag_array\n);\n\nINSERT INTO products VALUES (1, tag_array('featured','sale'));\n\n-- Query: unnest via TABLE():\nSELECT p.id, t.COLUMN_VALUE AS tag\nFROM products p,\nTABLE(p.tags) t\nWHERE t.COLUMN_VALUE = 'featured';\n\n-- Nested table (unbounded, out-of-line storage):\nCREATE TYPE tag_table AS TABLE OF VARCHAR2(50);"
+      },
+      "sqlite": {
+        "supported": false,
+        "notes": "SQLite has no native array type. SQLite's flexible type system (type affinity) means you can store a JSON array in any TEXT column. The json_each() function provides array iteration. For simple cases, a comma-separated string with json_each on a JSON conversion is the lightest workaround.",
+        "syntax": "-- JSON array in a TEXT column:\nCREATE TABLE products (\n    id   INTEGER PRIMARY KEY,\n    tags TEXT  -- store as JSON array string\n);\n\nINSERT INTO products (tags) VALUES ('[\"featured\",\"sale\"]');\n\n-- Query elements:\nSELECT p.id, j.value AS tag\nFROM products p,\njson_each(p.tags) j\nWHERE j.value = 'featured';\n\n-- Append to array:\nUPDATE products\nSET tags = json_insert(tags, '$[#]', 'clearance')\nWHERE id = 1;"
+      }
+    },
+    "details": "PostgreSQL is the only engine with a true native array type supporting arbitrary element types, multidimensional arrays, GIN indexes for fast containment queries, and a rich function library (array_agg, unnest, array_append, @>, &&). Oracle has arrays via VARRAY and nested tables but they require DDL type definitions and have storage complexities that make JSON columns a more common modern choice. MySQL, SQL Server, and SQLite all lack native arrays — the JSON column workaround is the most ergonomic alternative in all three, especially since JSON array operators (JSON_CONTAINS in MySQL, OPENJSON in SQL Server, json_each in SQLite) are reasonably capable."
+  },
+  "unpivot": {
+    "description": "Transform columns into rows — the inverse of PIVOT. Takes values spread across multiple columns and normalizes them into a key-value row structure. Useful for reshaping wide, denormalized data.",
+    "syntax": "-- SQL Server (UNPIVOT operator):\nSELECT product_id, quarter, sales\nFROM quarterly_sales\nUNPIVOT (\n    sales FOR quarter IN (q1, q2, q3, q4)\n) AS u;\n\n-- Universal (UNION ALL approach):\nSELECT product_id, 'q1' AS quarter, q1 AS sales FROM quarterly_sales\nUNION ALL\nSELECT product_id, 'q2', q2 FROM quarterly_sales\nUNION ALL\nSELECT product_id, 'q3', q3 FROM quarterly_sales\nUNION ALL\nSELECT product_id, 'q4', q4 FROM quarterly_sales;",
+    "category": "Query Techniques",
+    "slug": "unpivot",
+    "compatibility": {
+      "mysql": {
+        "supported": false,
+        "notes": "No UNPIVOT operator. The universal UNION ALL workaround works in all MySQL versions. In MySQL 8.0+, a JSON-based approach using JSON_TABLE can dynamically unpivot a JSON object into rows.",
+        "syntax": "-- UNION ALL workaround (works in all versions):\nSELECT product_id, 'q1' AS quarter, q1 AS sales\nFROM quarterly_sales WHERE q1 IS NOT NULL\nUNION ALL\nSELECT product_id, 'q2', q2\nFROM quarterly_sales WHERE q2 IS NOT NULL\nUNION ALL\nSELECT product_id, 'q3', q3\nFROM quarterly_sales WHERE q3 IS NOT NULL\nUNION ALL\nSELECT product_id, 'q4', q4\nFROM quarterly_sales WHERE q4 IS NOT NULL\nORDER BY product_id, quarter;"
+      },
+      "postgresql": {
+        "supported": false,
+        "notes": "PostgreSQL has no UNPIVOT keyword. The idiomatic approach uses a VALUES clause with a CROSS JOIN LATERAL or a CROSS JOIN (VALUES ...) to enumerate the column-to-row mapping. This is concise and avoids repeating the FROM clause for each union branch.",
+        "syntax": "-- VALUES + CROSS JOIN (PostgreSQL idiomatic approach):\nSELECT s.product_id, v.quarter, v.sales\nFROM quarterly_sales s\nCROSS JOIN (VALUES\n    ('q1', s.q1),\n    ('q2', s.q2),\n    ('q3', s.q3),\n    ('q4', s.q4)\n) AS v(quarter, sales)\nWHERE v.sales IS NOT NULL;\n\n-- UNION ALL alternative (portable):\nSELECT product_id, 'q1' AS quarter, q1 AS sales FROM quarterly_sales\nUNION ALL\nSELECT product_id, 'q2', q2 FROM quarterly_sales\nUNION ALL\nSELECT product_id, 'q3', q3 FROM quarterly_sales\nUNION ALL\nSELECT product_id, 'q4', q4 FROM quarterly_sales;"
+      },
+      "sqlserver": {
+        "supported": true,
+        "since": "2005",
+        "notes": "UNPIVOT operator available since SQL Server 2005. Syntax mirrors PIVOT: specify the value column name, the key column name, and the list of source columns. UNPIVOT automatically excludes NULL values — rows where the source column is NULL do not appear in the output. For dynamic column lists (unknown at query time), use dynamic SQL.",
+        "syntax": "-- Standard UNPIVOT:\nSELECT product_id, quarter, sales\nFROM quarterly_sales\nUNPIVOT (\n    sales FOR quarter IN (q1, q2, q3, q4)\n) AS unpvt;\n\n-- Multiple value columns (unpivot pairs):\n-- Requires a workaround since UNPIVOT handles one value column;\n-- use UNION ALL for multi-value unpivots.\n\n-- CROSS APPLY alternative (more flexible):\nSELECT s.product_id, v.quarter, v.sales\nFROM quarterly_sales s\nCROSS APPLY (VALUES\n    ('q1', s.q1),\n    ('q2', s.q2),\n    ('q3', s.q3),\n    ('q4', s.q4)\n) AS v(quarter, sales)\nWHERE v.sales IS NOT NULL;"
+      },
+      "oracle": {
+        "supported": true,
+        "since": "11g",
+        "notes": "UNPIVOT operator available since Oracle 11g. Supports INCLUDE NULLS / EXCLUDE NULLS clause (EXCLUDE NULLS is the default, unlike the behavior implied by UNION ALL which includes NULLs unless filtered). Can unpivot multiple value columns simultaneously.",
+        "syntax": "-- Standard UNPIVOT:\nSELECT product_id, quarter, sales\nFROM quarterly_sales\nUNPIVOT (\n    sales FOR quarter IN (q1, q2, q3, q4)\n);\n\n-- Include NULL rows:\nSELECT product_id, quarter, sales\nFROM quarterly_sales\nUNPIVOT INCLUDE NULLS (\n    sales FOR quarter IN (q1 AS 'Q1', q2 AS 'Q2',\n                          q3 AS 'Q3', q4 AS 'Q4')\n);\n\n-- Custom labels for the key column:\nSELECT product_id, quarter, sales\nFROM quarterly_sales\nUNPIVOT (\n    sales FOR quarter IN (q1 AS 'Q1 Sales', q2 AS 'Q2 Sales',\n                          q3 AS 'Q3 Sales', q4 AS 'Q4 Sales')\n);"
+      },
+      "sqlite": {
+        "supported": false,
+        "notes": "No UNPIVOT operator. Use the UNION ALL workaround or, in SQLite 3.8.3+, the VALUES table constructor with a CROSS JOIN.",
+        "syntax": "-- UNION ALL workaround:\nSELECT product_id, 'q1' AS quarter, q1 AS sales\nFROM quarterly_sales WHERE q1 IS NOT NULL\nUNION ALL\nSELECT product_id, 'q2', q2\nFROM quarterly_sales WHERE q2 IS NOT NULL\nUNION ALL\nSELECT product_id, 'q3', q3\nFROM quarterly_sales WHERE q3 IS NOT NULL\nUNION ALL\nSELECT product_id, 'q4', q4\nFROM quarterly_sales WHERE q4 IS NOT NULL;\n\n-- VALUES + JOIN workaround (3.8.3+):\nSELECT s.product_id, v.quarter, v.sales\nFROM quarterly_sales s\nJOIN (VALUES ('q1'), ('q2'), ('q3'), ('q4')) AS v(quarter)\nON 1=1  -- cross join via VALUES"
+      }
+    },
+    "details": "Only SQL Server (2005+) and Oracle (11g+) have a native UNPIVOT operator. The most portable alternative is the UNION ALL pattern — one SELECT per column being unpivoted. For long column lists this becomes verbose; the VALUES + CROSS APPLY/CROSS JOIN approach (SQL Server, PostgreSQL, SQLite 3.8.3+) is more concise and scans the source table only once. SQL Server's UNPIVOT automatically excludes NULLs; Oracle's UNPIVOT defaults to EXCLUDE NULLS but can be changed with INCLUDE NULLS. The CROSS APPLY (VALUES ...) pattern in SQL Server is generally preferred over the UNPIVOT keyword because it handles multiple value columns and is easier to extend."
+  },
+  "insert into select": {
+    "description": "Copy rows from one query result into a table, optionally transforming them in transit. The fundamental pattern for populating summary tables, migrating data, and archiving rows.",
+    "syntax": "-- Insert rows from another table:\nINSERT INTO archive_orders (id, customer_id, amount, archived_at)\nSELECT id, customer_id, amount, NOW()\nFROM orders\nWHERE order_date < '2023-01-01';\n\n-- Create and populate a new table in one step:\nSELECT id, customer_id, amount\nINTO new_table\nFROM orders;  -- SQL Server syntax",
+    "category": "DML",
+    "slug": "insert-select",
+    "compatibility": {
+      "mysql": {
+        "supported": true,
+        "since": "3.23",
+        "notes": "INSERT INTO ... SELECT is fully supported. Column list in the INSERT is optional if the SELECT returns columns in the exact same order and count as the table. CREATE TABLE ... SELECT creates and populates a new table in one statement (MySQL-specific shorthand). AUTO_INCREMENT columns are populated normally during INSERT INTO ... SELECT.",
+        "syntax": "-- Standard INSERT INTO ... SELECT:\nINSERT INTO archive_orders (id, customer_id, amount, archived_at)\nSELECT id, customer_id, amount, NOW()\nFROM orders\nWHERE order_date < '2023-01-01';\n\n-- Create and populate (MySQL-specific):\nCREATE TABLE orders_backup AS\nSELECT * FROM orders;\n\n-- With transformation:\nINSERT INTO product_summary (category, total_revenue, avg_price)\nSELECT category,\n       SUM(price * quantity),\n       AVG(price)\nFROM order_items\nGROUP BY category;\n\n-- Ignore duplicate key conflicts:\nINSERT IGNORE INTO users_cache\nSELECT id, email FROM users_import;"
+      },
+      "postgresql": {
+        "supported": true,
+        "since": "6.0",
+        "notes": "INSERT INTO ... SELECT is fully supported. SELECT INTO creates a new table from a query (PostgreSQL-specific; standard SQL uses CREATE TABLE AS SELECT). CREATE TABLE AS SELECT is the portable form. Can include ON CONFLICT clause for upsert behavior on the destination table.",
+        "syntax": "-- Standard INSERT INTO ... SELECT:\nINSERT INTO archive_orders (id, customer_id, amount, archived_at)\nSELECT id, customer_id, amount, NOW()\nFROM orders\nWHERE order_date < '2023-01-01';\n\n-- Create and populate:\nCREATE TABLE orders_backup AS\nSELECT * FROM orders;\n\n-- PostgreSQL-specific SELECT INTO (avoid in stored procedures):\nSELECT * INTO orders_backup FROM orders;\n\n-- With ON CONFLICT:\nINSERT INTO product_cache (id, price)\nSELECT id, price FROM products\nON CONFLICT (id) DO UPDATE SET price = EXCLUDED.price;\n\n-- From a CTE:\nWITH recent AS (\n    SELECT * FROM orders WHERE order_date >= CURRENT_DATE - 30\n)\nINSERT INTO recent_orders_summary\nSELECT customer_id, COUNT(*), SUM(amount) FROM recent GROUP BY customer_id;"
+      },
+      "sqlserver": {
+        "supported": true,
+        "since": "6.5",
+        "notes": "INSERT INTO ... SELECT fully supported. SELECT INTO creates a new table (SQL Server extension, same as PostgreSQL). For large inserts, TABLOCK hint with minimal logging (simple recovery model) dramatically reduces log growth. The OUTPUT clause captures inserted rows in the same statement. Can use OPENROWSET or linked servers as the source.",
+        "syntax": "-- Standard INSERT INTO ... SELECT:\nINSERT INTO archive_orders (id, customer_id, amount, archived_at)\nSELECT id, customer_id, amount, GETDATE()\nFROM orders\nWHERE order_date < '2023-01-01';\n\n-- Create and populate (SQL Server extension):\nSELECT * INTO orders_backup FROM orders;\n-- Or standard form:\nSELECT * INTO orders_backup FROM orders WHERE 1=0;  -- structure only\n\n-- With OUTPUT to capture inserted IDs:\nINSERT INTO product_cache (id, price)\nOUTPUT INSERTED.id, INSERTED.price INTO @inserted_log\nSELECT id, price FROM products;\n\n-- Bulk hint for minimal logging:\nINSERT INTO staging_table WITH (TABLOCK)\nSELECT * FROM source_table;"
+      },
+      "oracle": {
+        "supported": true,
+        "since": "7",
+        "notes": "INSERT INTO ... SELECT fully supported. CREATE TABLE AS SELECT (CTAS) is the Oracle form for create-and-populate. INSERT ALL allows inserting into multiple tables from a single SELECT. The APPEND hint enables direct-path insert (faster, bypasses buffer cache, locks the table for the duration).",
+        "syntax": "-- Standard INSERT INTO ... SELECT:\nINSERT INTO archive_orders (id, customer_id, amount, archived_at)\nSELECT id, customer_id, amount, SYSDATE\nFROM orders\nWHERE order_date < DATE '2023-01-01';\n\n-- Create and populate (CTAS):\nCREATE TABLE orders_backup AS\nSELECT * FROM orders;\n\n-- Direct-path insert (APPEND hint — faster for large volumes):\nINSERT /*+ APPEND */ INTO archive_orders\nSELECT * FROM orders WHERE order_date < DATE '2023-01-01';\nCOMMIT;  -- APPEND requires explicit commit before the table is accessible\n\n-- INSERT ALL into multiple tables:\nINSERT ALL\n    INTO us_orders   SELECT * WHERE region = 'US'\n    INTO eu_orders   SELECT * WHERE region = 'EU'\n    INTO other_orders SELECT * WHERE region NOT IN ('US','EU')\nSELECT * FROM orders;"
+      },
+      "sqlite": {
+        "supported": true,
+        "since": "1.0",
+        "notes": "INSERT INTO ... SELECT fully supported. CREATE TABLE AS SELECT creates and populates a new table. Wrapping a large INSERT INTO ... SELECT in a transaction is critical for performance — SQLite without a transaction performs an fsync per row.",
+        "syntax": "-- Standard INSERT INTO ... SELECT:\nINSERT INTO archive_orders (id, customer_id, amount)\nSELECT id, customer_id, amount\nFROM orders\nWHERE order_date < '2023-01-01';\n\n-- Create and populate:\nCREATE TABLE orders_backup AS\nSELECT * FROM orders;\n\n-- Wrap in transaction for performance:\nBEGIN;\nINSERT INTO archive_orders SELECT * FROM orders WHERE order_date < '2023-01-01';\nCOMMIT;\n\n-- With INSERT OR IGNORE for conflict handling:\nINSERT OR IGNORE INTO users_cache\nSELECT id, email FROM users_import;"
+      }
+    },
+    "details": "INSERT INTO ... SELECT is universally supported and has been since the earliest versions of all five engines. The more interesting divergences are in the create-and-populate shorthand: CREATE TABLE AS SELECT is the SQL standard form and works in MySQL, PostgreSQL, Oracle, and SQLite; SELECT INTO is a SQL Server and PostgreSQL extension. Oracle's INSERT /*+ APPEND */ hint enables direct-path loading (equivalent to bulk load, bypasses buffer cache) but exclusively locks the segment until COMMIT. Oracle's INSERT ALL is unique — it can fan one SELECT into multiple target tables in a single statement, useful for partitioned loading."
+  },
+  "create schema": {
+    "description": "Create a named namespace within a database that groups related tables, views, and other objects. Schemas provide organizational structure and a layer of access control.",
+    "syntax": "CREATE SCHEMA sales;\n\nCREATE TABLE sales.orders (\n    id     INT PRIMARY KEY,\n    amount DECIMAL(10,2)\n);\n\nSELECT * FROM sales.orders;",
+    "category": "DDL",
+    "slug": "create-schema",
+    "compatibility": {
+      "mysql": {
+        "supported": true,
+        "since": "5.0",
+        "notes": "In MySQL, SCHEMA is a synonym for DATABASE — CREATE SCHEMA and CREATE DATABASE are interchangeable. There is no sub-database namespace concept; each schema/database is a fully separate unit. The dot notation (schema.table) is the cross-database reference syntax. This differs from every other engine where schemas are namespaces within a database.",
+        "syntax": "-- CREATE SCHEMA = CREATE DATABASE in MySQL:\nCREATE SCHEMA sales;\n-- Equivalent to:\nCREATE DATABASE sales;\n\n-- Use the schema:\nUSE sales;\nCREATE TABLE orders (id INT PRIMARY KEY, amount DECIMAL(10,2));\n\n-- Cross-database reference:\nSELECT * FROM sales.orders;\n\n-- CREATE SCHEMA with charset:\nCREATE SCHEMA sales\n    CHARACTER SET utf8mb4\n    COLLATE utf8mb4_unicode_ci;"
+      },
+      "postgresql": {
+        "supported": true,
+        "since": "7.3",
+        "notes": "Schemas are namespaces within a PostgreSQL database (distinct from databases themselves). The default schema is public. search_path controls which schemas are searched when an unqualified name is used. CREATE SCHEMA ... AUTHORIZATION assigns schema ownership. Objects in different schemas can be queried in the same connection; cross-database queries require foreign data wrappers (postgres_fdw).",
+        "syntax": "-- Create a schema:\nCREATE SCHEMA sales;\nCREATE SCHEMA sales AUTHORIZATION alice;  -- owned by alice\n\n-- Create a table in the schema:\nCREATE TABLE sales.orders (\n    id     SERIAL PRIMARY KEY,\n    amount NUMERIC(10,2)\n);\n\n-- Set the search path for the session:\nSET search_path TO sales, public;\n\n-- After setting search_path, unqualified names resolve to sales first:\nSELECT * FROM orders;  -- resolves to sales.orders\n\n-- Grant schema usage:\nGRANT USAGE ON SCHEMA sales TO reporting_role;\nGRANT SELECT ON ALL TABLES IN SCHEMA sales TO reporting_role;"
+      },
+      "sqlserver": {
+        "supported": true,
+        "since": "2005",
+        "notes": "Schemas are sub-namespaces within a database (SQL Server 2005 replaced the old owner-based dbo.table model). The default schema is dbo. Each login has a default schema. Permissions can be granted at the schema level, applying to all current and future objects. The four-part name server.database.schema.object can reference objects across databases and linked servers.",
+        "syntax": "-- Create a schema:\nCREATE SCHEMA sales AUTHORIZATION dbo;\n\n-- Create table in schema:\nCREATE TABLE sales.orders (\n    id     INT IDENTITY PRIMARY KEY,\n    amount DECIMAL(10,2)\n);\n\n-- Transfer an existing table to a different schema:\nALTER SCHEMA sales TRANSFER dbo.legacy_orders;\n\n-- Grant permissions at schema level:\nGRANT SELECT ON SCHEMA::sales TO reporting_user;\nGRANT EXECUTE ON SCHEMA::sales TO api_user;\n\n-- Four-part reference:\nSELECT * FROM myserver.mydb.sales.orders;"
+      },
+      "oracle": {
+        "supported": false,
+        "notes": "Oracle does not have a separate SCHEMA object — in Oracle, every user IS a schema. Creating a user (CREATE USER) creates the schema of the same name. Objects are owned by users/schemas, and the two terms are interchangeable in Oracle. There is no CREATE SCHEMA DDL to create a new namespace independently of a user. The CREATE SCHEMA statement exists in Oracle but only as a convenience to create multiple objects in one transaction, not to create the schema itself.",
+        "syntax": "-- In Oracle, schema = user:\nCREATE USER sales IDENTIFIED BY password\n    DEFAULT TABLESPACE users\n    QUOTA UNLIMITED ON users;\n\nGRANT CREATE SESSION, CREATE TABLE TO sales;\n\n-- Log in as the sales user:\n-- sqlplus sales/password@db\n\nCREATE TABLE orders (id NUMBER PRIMARY KEY, amount NUMBER(10,2));\n-- This table is now sales.orders\n\n-- Access from another user:\nSELECT * FROM sales.orders;\n\n-- Grant access:\nGRANT SELECT ON sales.orders TO reporting_user;"
+      },
+      "sqlite": {
+        "supported": false,
+        "notes": "SQLite has no schema namespace concept within a database file. Each SQLite database file is a single namespace. The ATTACH DATABASE statement allows attaching multiple database files to one connection, and the attached databases are referenced by alias — this is the closest equivalent to cross-schema access.",
+        "syntax": "-- No schemas, but ATTACH DATABASE gives a similar namespace:\nATTACH DATABASE '/data/sales.db' AS sales;\nATTACH DATABASE '/data/hr.db'    AS hr;\n\n-- Cross-database (cross-schema equivalent) query:\nSELECT s.id, h.employee_name\nFROM sales.orders s\nJOIN hr.employees h ON h.id = s.employee_id;\n\n-- The main database is always accessible as 'main':\nSELECT * FROM main.products;\n\n-- List attached databases:\nPRAGMA database_list;"
+      }
+    },
+    "details": "The term 'schema' means fundamentally different things across engines. In MySQL, SCHEMA = DATABASE — they are completely synonymous. In PostgreSQL, SQL Server, and the SQL standard, a schema is a namespace within a database (one database can contain many schemas). In Oracle, a schema is inseparable from a user account — you cannot create a schema without creating a user. SQLite has no schemas; ATTACH DATABASE provides a similar multi-namespace capability. The SQL standard search path concept (controlling which schema is default for unqualified names) exists natively in PostgreSQL (search_path) and SQL Server (default schema per login), but not in MySQL or Oracle in the same form."
+  },
+  "collation and character sets": {
+    "description": "Collation defines the rules for comparing and sorting string data — which characters are equal, how case and accents are handled, and sort order. Character set (charset) defines which characters can be stored. Together they determine string behavior throughout the engine.",
+    "syntax": "-- Column-level collation:\nCREATE TABLE users (\n    username VARCHAR(100) COLLATE Latin1_General_CI_AS,  -- SQL Server\n    email    VARCHAR(100) COLLATE utf8mb4_unicode_ci      -- MySQL\n);\n\n-- Case-insensitive search (collation-dependent):\nSELECT * FROM users WHERE username = 'Alice'; -- may match 'alice', 'ALICE'",
+    "category": "Administration",
+    "slug": "collation",
+    "compatibility": {
+      "mysql": {
+        "supported": true,
+        "since": "4.1",
+        "notes": "Character set and collation are separate but related settings. Character set determines storable characters (utf8mb4 is the recommended charset — note utf8 in MySQL is a misleading alias for a 3-byte subset that cannot store 4-byte Unicode like emoji; use utf8mb4). Collation determines sort/comparison rules. Can be set at server, database, table, and column level. utf8mb4_unicode_ci is case-insensitive and accent-insensitive; utf8mb4_bin is binary (case-sensitive, byte-by-byte). Collation mismatches between joined columns cause the 'Illegal mix of collations' error.",
+        "syntax": "-- Server default (my.cnf):\n-- character-set-server = utf8mb4\n-- collation-server = utf8mb4_unicode_ci\n\n-- Database level:\nCREATE DATABASE myapp\n    CHARACTER SET utf8mb4\n    COLLATE utf8mb4_unicode_ci;\n\n-- Table level:\nCREATE TABLE users (\n    username VARCHAR(100)\n) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;\n\n-- Column level:\nCREATE TABLE products (\n    name VARCHAR(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,\n    sku  VARCHAR(50)  CHARACTER SET utf8mb4 COLLATE utf8mb4_bin\n);\n\n-- Ad-hoc comparison:\nSELECT * FROM users\nWHERE username = 'alice' COLLATE utf8mb4_bin;  -- force case-sensitive\n\n-- List available collations:\nSHOW COLLATION WHERE Charset = 'utf8mb4';"
+      },
+      "postgresql": {
+        "supported": true,
+        "since": "9.1",
+        "notes": "PostgreSQL collation support uses the underlying OS locale (libc provider) or the ICU library (ICU provider, recommended for cross-platform consistency since PostgreSQL 10). Database-level collation is set at CREATE DATABASE and cannot be changed afterward. Column-level COLLATE overrides apply to comparisons, ORDER BY, and indexes. The C collation is byte-order (equivalent to POSIX, fastest, no locale rules). ICU deterministic=false collations (15+) allow accent/case-insensitive indexes.",
+        "syntax": "-- Database with specific collation:\nCREATE DATABASE myapp\n    ENCODING 'UTF8'\n    LC_COLLATE 'en_US.UTF-8'\n    LC_CTYPE   'en_US.UTF-8'\n    TEMPLATE template0;\n\n-- Column collation:\nCREATE TABLE users (\n    username TEXT COLLATE \"en-US-x-icu\",  -- ICU\n    email    TEXT COLLATE \"C\"             -- byte order\n);\n\n-- Ad-hoc comparison with explicit collation:\nSELECT * FROM users\nWHERE username = 'alice' COLLATE \"case_insensitive\";\n\n-- Case-insensitive collation (PG 12+ with ICU):\nCREATE COLLATION case_insensitive (\n    provider = icu,\n    locale = 'und-u-ks-level2',\n    deterministic = false\n);\n\n-- List collations:\nSELECT * FROM pg_collation;"
+      },
+      "sqlserver": {
+        "supported": true,
+        "since": "7.0",
+        "notes": "Collation names in SQL Server encode multiple attributes: locale (Latin1_General), case sensitivity (CI = case-insensitive, CS = case-sensitive), accent sensitivity (AI = accent-insensitive, AS = accent-sensitive), and optionally width and kana sensitivity. The default collation for a SQL Server installation is set at setup time and affects system databases. SQL_* collations are legacy; Windows collations (Latin1_General_*) and BIN2 (binary) are current. Collation conflicts between tempdb and user databases are a common source of errors.",
+        "syntax": "-- Server/database collation:\nCREATE DATABASE myapp\n    COLLATE Latin1_General_CI_AS;\n\n-- Column collation:\nCREATE TABLE users (\n    username NVARCHAR(100) COLLATE Latin1_General_CI_AS,\n    sku      VARCHAR(50)   COLLATE Latin1_General_CS_AS  -- case-sensitive\n);\n\n-- Ad-hoc collation in query:\nSELECT * FROM users\nWHERE username = N'alice' COLLATE Latin1_General_CS_AS;\n\n-- Accent-insensitive:\nSELECT * FROM users\nWHERE username = N'cafe' COLLATE Latin1_General_CI_AI;\n-- Matches: cafe, café, CAFE, CAFÉ\n\n-- List available collations:\nSELECT * FROM fn_helpcollations();\n\n-- Check database collation:\nSELECT DATABASEPROPERTYEX(DB_NAME(), 'Collation');"
+      },
+      "oracle": {
+        "supported": true,
+        "since": "12c",
+        "notes": "Oracle's collation support has evolved significantly. Pre-12c: NLS_SORT and NLS_COMP session parameters control sort order and comparison behavior. 12c+: column-level COLLATE clause added. 21c+: enhanced Unicode collation with BINARY_AI (accent-insensitive), BINARY_CI (case-insensitive). The database character set (AL32UTF8 = Unicode) is set at creation and cannot be changed. NLS_SORT=BINARY_CI + NLS_COMP=LINGUISTIC enables case-insensitive comparisons globally.",
+        "syntax": "-- Database character set (set at CREATE DATABASE, not changeable):\n-- AL32UTF8 is the recommended Unicode character set.\n\n-- Session-level collation control (pre-12c approach):\nALTER SESSION SET NLS_SORT = 'BINARY_CI';  -- case-insensitive sort\nALTER SESSION SET NLS_COMP = 'LINGUISTIC'; -- use NLS_SORT for comparisons\n\n-- Column-level COLLATE (12c+):\nCREATE TABLE users (\n    username VARCHAR2(100) COLLATE BINARY_CI,  -- case-insensitive\n    sku      VARCHAR2(50)  COLLATE BINARY       -- binary (default)\n);\n\n-- Ad-hoc:\nSELECT * FROM users\nWHERE NLSSORT(username,'NLS_SORT=BINARY_CI') = NLSSORT('alice','NLS_SORT=BINARY_CI');\n\n-- Check NLS settings:\nSELECT * FROM NLS_DATABASE_PARAMETERS\nWHERE PARAMETER IN ('NLS_CHARACTERSET','NLS_SORT','NLS_COMP');"
+      },
+      "sqlite": {
+        "supported": true,
+        "since": "3.0",
+        "notes": "SQLite has three built-in collations: BINARY (default, case-sensitive byte comparison), NOCASE (case-insensitive for ASCII A-Z only, not Unicode), and RTRIM (BINARY with trailing spaces ignored). Custom collations can be registered at runtime via the application layer (e.g., sqlite3_create_collation() in C, or driver-level in Python/Go). No ICU or Unicode-aware case folding built in — for full Unicode case-insensitive search, register a custom collation or use LOWER().",
+        "syntax": "-- Column with NOCASE collation:\nCREATE TABLE users (\n    username TEXT COLLATE NOCASE,  -- ASCII case-insensitive\n    email    TEXT COLLATE BINARY   -- default, case-sensitive\n);\n\n-- NOCASE in a query:\nSELECT * FROM users\nWHERE username = 'alice' COLLATE NOCASE;\n-- Matches: alice, Alice, ALICE (ASCII only)\n\n-- Index respects collation:\nCREATE INDEX idx_username ON users (username COLLATE NOCASE);\n\n-- LOWER() workaround for Unicode case-insensitivity:\nSELECT * FROM users\nWHERE LOWER(username) = LOWER('Ünïcödé');\n\n-- List collations:\nPRAGMA collation_list;"
+      }
+    },
+    "details": "The single most common collation-related bug: MySQL's utf8 charset is NOT full Unicode (it's a 3-byte subset that silently truncates 4-byte characters like emoji). Always use utf8mb4. In SQL Server, collation mismatches between columns in a JOIN produce 'cannot resolve collation conflict' errors — most commonly hit when joining against #temp tables in tempdb (which uses the server collation). PostgreSQL's ICU-based collations (10+) are recommended over libc collations for cross-platform consistency, particularly for case-insensitive and accent-insensitive indexes (deterministic=false, PG 15+). SQLite's NOCASE is ASCII-only — it does not fold Unicode characters and will not treat 'é' and 'E' as equal."
+  },
+  "named window clause": {
+    "description": "Define a reusable window specification with a name in a WINDOW clause, then reference it by name across multiple window functions in the same query. Eliminates duplicated OVER(...) definitions.",
+    "syntax": "SELECT\n    name,\n    salary,\n    RANK()        OVER w AS rnk,\n    DENSE_RANK()  OVER w AS dense_rnk,\n    AVG(salary)   OVER w AS dept_avg\nFROM employees\nWINDOW w AS (PARTITION BY dept ORDER BY salary DESC);",
+    "category": "Query Techniques",
+    "slug": "window-clause",
+    "compatibility": {
+      "mysql": {
+        "supported": true,
+        "since": "8.0",
+        "notes": "WINDOW clause supported since MySQL 8.0. Named windows can be referenced by name in OVER (name) or extended in OVER (name ORDER BY ...) to add or modify clauses. A named window cannot be redefined differently in the same query. ORDER BY and PARTITION BY defined in the named window can be extended but not overridden by the referencing OVER clause.",
+        "syntax": "SELECT\n    name, dept, salary,\n    RANK()       OVER w               AS dept_rank,\n    DENSE_RANK() OVER w               AS dept_dense_rank,\n    AVG(salary)  OVER w               AS dept_avg_salary,\n    SUM(salary)  OVER dept_total      AS dept_total_salary\nFROM employees\nWINDOW\n    w          AS (PARTITION BY dept ORDER BY salary DESC),\n    dept_total AS (PARTITION BY dept);\n\n-- Extending a named window:\nSELECT\n    name,\n    ROW_NUMBER() OVER (w ORDER BY hire_date)  AS hire_order\nFROM employees\nWINDOW w AS (PARTITION BY dept);\n-- hire_date ORDER BY extends the named window w"
+      },
+      "postgresql": {
+        "supported": true,
+        "since": "8.4",
+        "notes": "WINDOW clause fully supported since PostgreSQL 8.4 — the earliest of any engine. Named windows can be extended with additional ORDER BY or frame clauses in the referencing OVER clause but cannot change the existing PARTITION BY or ORDER BY. Multiple named windows can be defined, and one named window can reference another (inheritance).",
+        "syntax": "SELECT\n    name, dept, salary,\n    RANK()        OVER w  AS dept_rank,\n    DENSE_RANK()  OVER w  AS dept_dense_rank,\n    AVG(salary)   OVER w  AS dept_avg,\n    SUM(salary)   OVER pt AS dept_total\nFROM employees\nWINDOW\n    w  AS (PARTITION BY dept ORDER BY salary DESC),\n    pt AS (PARTITION BY dept);\n\n-- Window inheritance (one named window builds on another):\nSELECT\n    name,\n    ROW_NUMBER() OVER w1 AS rn,\n    RANK()       OVER w2 AS rnk\nFROM employees\nWINDOW\n    w1 AS (PARTITION BY dept),\n    w2 AS (w1 ORDER BY salary DESC);\n-- w2 inherits the PARTITION BY from w1"
+      },
+      "sqlserver": {
+        "supported": false,
+        "notes": "SQL Server does not support the WINDOW clause. Named window definitions cannot be declared and reused. Each window function must repeat its full OVER (...) specification. If multiple window functions share the same OVER clause, the optimizer may still recognize and reuse the window internally, but the syntax must be duplicated.",
+        "syntax": "-- Must repeat the OVER clause for each window function:\nSELECT\n    name, dept, salary,\n    RANK()       OVER (PARTITION BY dept ORDER BY salary DESC) AS dept_rank,\n    DENSE_RANK() OVER (PARTITION BY dept ORDER BY salary DESC) AS dept_dense_rank,\n    AVG(salary)  OVER (PARTITION BY dept ORDER BY salary DESC) AS dept_avg\nFROM employees;\n\n-- A CTE can reduce repetition slightly:\nWITH windowed AS (\n    SELECT *,\n           RANK()       OVER (PARTITION BY dept ORDER BY salary DESC) AS dept_rank,\n           DENSE_RANK() OVER (PARTITION BY dept ORDER BY salary DESC) AS dept_dense_rank\n    FROM employees\n)\nSELECT * FROM windowed;"
+      },
+      "oracle": {
+        "supported": false,
+        "notes": "Oracle does not support the SQL standard WINDOW clause. Each window function requires its own full OVER (...) specification. The optimizer may internally recognize and share window computation for identical OVER clauses, but the syntax still requires repetition.",
+        "syntax": "-- Must repeat OVER for each function:\nSELECT\n    name, dept, salary,\n    RANK()       OVER (PARTITION BY dept ORDER BY salary DESC) AS dept_rank,\n    DENSE_RANK() OVER (PARTITION BY dept ORDER BY salary DESC) AS dept_dense_rank,\n    AVG(salary)  OVER (PARTITION BY dept ORDER BY salary DESC) AS dept_avg\nFROM employees;\n\n-- Factor with a subquery to avoid repeating columns:\nSELECT name, dept, salary, dept_rank, dept_avg\nFROM (\n    SELECT name, dept, salary,\n           RANK() OVER (PARTITION BY dept ORDER BY salary DESC) AS dept_rank,\n           AVG(salary) OVER (PARTITION BY dept) AS dept_avg\n    FROM employees\n);"
+      },
+      "sqlite": {
+        "supported": true,
+        "since": "3.28.0",
+        "notes": "WINDOW clause supported since SQLite 3.28.0 (2019-04-16). Standard syntax — named windows can be defined and referenced, and they can be extended (but not overridden) in the referencing OVER clause.",
+        "syntax": "SELECT\n    name, dept, salary,\n    RANK()      OVER w AS dept_rank,\n    AVG(salary) OVER w AS dept_avg\nFROM employees\nWINDOW w AS (PARTITION BY dept ORDER BY salary DESC);\n\n-- Multiple named windows:\nSELECT\n    name,\n    ROW_NUMBER() OVER full_order AS overall_rn,\n    ROW_NUMBER() OVER dept_order AS dept_rn\nFROM employees\nWINDOW\n    full_order AS (ORDER BY salary DESC),\n    dept_order AS (PARTITION BY dept ORDER BY salary DESC);"
+      }
+    },
+    "details": "The WINDOW clause is part of the SQL standard and is supported by PostgreSQL (8.4+), MySQL (8.0+), and SQLite (3.28.0+). SQL Server and Oracle omit it entirely — both require repeating the full OVER() specification for every window function. The practical impact is significant: a query with five window functions all sharing the same partition/order must duplicate that definition five times in SQL Server and Oracle. PostgreSQL supports named window inheritance — one named window can build on another — which MySQL and SQLite do not support. Even without the WINDOW clause, SQL Server and Oracle's optimizers typically recognize identical OVER() clauses and compute the window only once in the execution plan."
   }
 }
