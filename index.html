@@ -131,6 +131,8 @@
             margin-bottom: 10px;
             cursor: pointer;
             color: #3498db;
+            text-decoration: none;
+            display: block;
         }
         .example:hover {
             text-decoration: underline;
@@ -180,10 +182,10 @@
     
     <div class="examples">
         <h2>Popular SQL Commands</h2>
-        <div class="example" onclick="searchCommand('SELECT')">SELECT</div>
-        <div class="example" onclick="searchCommand('MERGE')">MERGE</div>
-        <div class="example" onclick="searchCommand('PIVOT')">PIVOT</div>
-        <div class="example" onclick="searchCommand('STRING AGG')">STRING AGG</div>
+        <a class="example" href="?q=SELECT" onclick="searchCommand('SELECT'); return false;">SELECT</a>
+        <a class="example" href="?q=MERGE" onclick="searchCommand('MERGE'); return false;">MERGE</a>
+        <a class="example" href="?q=PIVOT" onclick="searchCommand('PIVOT'); return false;">PIVOT</a>
+        <a class="example" href="?q=STRING+AGG" onclick="searchCommand('STRING AGG'); return false;">STRING AGG</a>
     </div>
     
     <div class="search-container">
