@@ -3489,5 +3489,348 @@
       }
     },
     "details": "The critical portability trap is NULL handling: MySQL and Oracle return NULL if any argument is NULL; PostgreSQL and SQL Server 2022 ignore NULLs and return the greatest/least non-NULL value. When porting between engines, wrap arguments in COALESCE/NVL/ISNULL to normalize NULL behavior. SQL Server only gained GREATEST/LEAST in 2022 — the VALUES subquery pattern (SELECT MAX(v) FROM (VALUES (a),(b),(c)) t(v)) is the cleanest pre-2022 workaround and is also the correct SQLite workaround. SQLite is the only engine in the compatibility matrix with no support."
+  },
+  "generated columns": {
+    "description": "Columns whose values are automatically computed from an expression over other columns in the same row. The database maintains the value rather than the application. Also called computed columns or virtual columns.",
+    "syntax": "-- SQL standard (MySQL 5.7+, PostgreSQL 12+):\nCREATE TABLE products (\n    price     DECIMAL(10,2),\n    tax_rate  DECIMAL(4,3),\n    total     DECIMAL(10,2) GENERATED ALWAYS AS (price * (1 + tax_rate)) STORED\n);",
+    "category": "DDL",
+    "slug": "generated-columns",
+    "compatibility": {
+      "mysql": {
+        "supported": true,
+        "since": "5.7",
+        "notes": "Two modes: VIRTUAL (computed on read, no storage) and STORED (computed on write, stored on disk). VIRTUAL is the default. Generated columns cannot reference other generated columns, use subqueries, or call non-deterministic functions. Can be indexed only if STORED (or as a functional index in MySQL 8.0).",
+        "syntax": "CREATE TABLE products (\n    price      DECIMAL(10,2),\n    quantity   INT,\n    subtotal   DECIMAL(10,2) GENERATED ALWAYS AS (price * quantity) VIRTUAL,\n    subtotal_s DECIMAL(10,2) GENERATED ALWAYS AS (price * quantity) STORED\n);\n\n-- Index on STORED generated column:\nCREATE INDEX idx_subtotal ON products (subtotal_s);\n\n-- Add generated column to existing table:\nALTER TABLE products\n    ADD COLUMN tax DECIMAL(10,2) GENERATED ALWAYS AS (price * 0.1) STORED;"
+      },
+      "postgresql": {
+        "supported": true,
+        "since": "12",
+        "notes": "PostgreSQL 12 added GENERATED ALWAYS AS (...) STORED. Only STORED generated columns are supported — there is no VIRTUAL mode. The expression may reference other base columns but not other generated columns. Can be indexed normally. Prior to PG 12, use a trigger or a view to achieve similar results.",
+        "syntax": "CREATE TABLE products (\n    price    NUMERIC(10,2),\n    quantity INTEGER,\n    subtotal NUMERIC(10,2) GENERATED ALWAYS AS (price * quantity) STORED\n);\n\n-- Index on generated column (works like any other column):\nCREATE INDEX idx_subtotal ON products (subtotal);\n\n-- Cannot INSERT/UPDATE a generated column directly:\nINSERT INTO products (price, quantity) VALUES (9.99, 5);\n-- subtotal is automatically 49.95"
+      },
+      "sqlserver": {
+        "supported": true,
+        "since": "2000",
+        "notes": "Called computed columns. Two modes: PERSISTED (stored) and non-persisted (virtual). Syntax uses AS expression rather than GENERATED ALWAYS AS. Persisted computed columns can be indexed and included in foreign keys. Non-deterministic expressions are allowed in non-persisted columns but not in persisted ones.",
+        "syntax": "CREATE TABLE products (\n    price      DECIMAL(10,2),\n    quantity   INT,\n    subtotal   AS (price * quantity),              -- virtual\n    subtotal_p AS (price * quantity) PERSISTED     -- stored\n);\n\n-- Index requires PERSISTED for non-simple expressions:\nCREATE INDEX idx_subtotal ON products (subtotal_p);\n\n-- Add to existing table:\nALTER TABLE products\n    ADD tax AS (price * 0.1) PERSISTED;"
+      },
+      "oracle": {
+        "supported": true,
+        "since": "11g",
+        "notes": "Called virtual columns. Syntax uses GENERATED ALWAYS AS (...) VIRTUAL. Only VIRTUAL mode (no STORED equivalent). Virtual columns cannot be stored physically but can be indexed (Oracle creates the index on the derived values). Cannot reference other virtual columns.",
+        "syntax": "CREATE TABLE products (\n    price    NUMBER(10,2),\n    quantity NUMBER,\n    subtotal NUMBER(10,2) GENERATED ALWAYS AS (price * quantity) VIRTUAL\n);\n\n-- Index on virtual column:\nCREATE INDEX idx_subtotal ON products (subtotal);\n\n-- Simplified syntax (VIRTUAL is default/only option):\nCREATE TABLE products (\n    price    NUMBER(10,2),\n    quantity NUMBER,\n    subtotal AS (price * quantity)\n);"
+      },
+      "sqlite": {
+        "supported": true,
+        "since": "3.31.0",
+        "notes": "Both VIRTUAL and STORED modes supported since 3.31.0 (2020-01-22). VIRTUAL is the default. Expression must be deterministic. Generated columns cannot be used as part of the PRIMARY KEY. Cannot be indexed unless STORED.",
+        "syntax": "CREATE TABLE products (\n    price    REAL,\n    quantity INTEGER,\n    subtotal REAL GENERATED ALWAYS AS (price * quantity) VIRTUAL,\n    subtotal_s REAL GENERATED ALWAYS AS (price * quantity) STORED\n);\n\n-- Shorthand (AS without GENERATED ALWAYS):\nCREATE TABLE products (\n    price    REAL,\n    quantity INTEGER,\n    subtotal REAL AS (price * quantity)\n);"
+      }
+    },
+    "details": "Generated column terminology differs by engine: MySQL and PostgreSQL use GENERATED ALWAYS AS, SQL Server uses AS (computed column), Oracle uses VIRTUAL column. The STORED vs VIRTUAL split is roughly universal but PostgreSQL only supports STORED — there is no VIRTUAL mode. SQL Server's PERSISTED keyword maps to STORED. All engines allow indexing stored/persisted generated columns; only SQL Server and PostgreSQL allow indexing virtual/non-persisted ones as functional indexes. None allow referencing other generated columns in the expression."
+  },
+  "materialized view": {
+    "description": "A view whose result set is physically stored on disk and can be refreshed on demand or automatically. Trades storage and staleness for query speed — avoids recomputing expensive aggregations on every query.",
+    "syntax": "-- PostgreSQL:\nCREATE MATERIALIZED VIEW monthly_sales AS\nSELECT date_trunc('month', order_date) AS month,\n       SUM(amount) AS total\nFROM orders\nGROUP BY 1;\n\nREFRESH MATERIALIZED VIEW monthly_sales;",
+    "category": "DDL",
+    "slug": "materialized-view",
+    "compatibility": {
+      "mysql": {
+        "supported": false,
+        "notes": "MySQL has no native materialized view. Common workarounds: (1) a regular table populated by a scheduled event or stored procedure; (2) a STORED table populated by a trigger on the source table. MariaDB does not have materialized views either.",
+        "syntax": "-- Workaround: populate a summary table via event:\nCREATE TABLE monthly_sales_cache (\n    month DATE PRIMARY KEY,\n    total DECIMAL(15,2)\n);\n\nCREATE EVENT refresh_monthly_sales\n    ON SCHEDULE EVERY 1 HOUR\n    DO\n    BEGIN\n        TRUNCATE TABLE monthly_sales_cache;\n        INSERT INTO monthly_sales_cache\n        SELECT DATE_FORMAT(order_date,'%Y-%m-01'), SUM(amount)\n        FROM orders\n        GROUP BY 1;\n    END;"
+      },
+      "postgresql": {
+        "supported": true,
+        "since": "9.3",
+        "notes": "REFRESH MATERIALIZED VIEW rebuilds the view from scratch (locks table during refresh by default). REFRESH MATERIALIZED VIEW CONCURRENTLY (requires a UNIQUE index) allows concurrent reads during refresh. No automatic refresh — use pg_cron, a trigger, or an external scheduler. Can be indexed like a regular table.",
+        "syntax": "CREATE MATERIALIZED VIEW monthly_sales AS\nSELECT date_trunc('month', order_date) AS month,\n       SUM(amount)                      AS total\nFROM orders\nGROUP BY 1\nWITH DATA;  -- populate immediately (default)\n\n-- Without initial data:\nCREATE MATERIALIZED VIEW monthly_sales AS ... WITH NO DATA;\n\n-- Refresh (blocking):\nREFRESH MATERIALIZED VIEW monthly_sales;\n\n-- Refresh without locking reads (requires unique index):\nCREATE UNIQUE INDEX ON monthly_sales (month);\nREFRESH MATERIALIZED VIEW CONCURRENTLY monthly_sales;\n\n-- Drop:\nDROP MATERIALIZED VIEW monthly_sales;"
+      },
+      "sqlserver": {
+        "supported": true,
+        "since": "2000",
+        "notes": "Called indexed views. Create a regular view, then add a UNIQUE CLUSTERED INDEX — SQL Server automatically maintains the stored result on DML changes (synchronous, not on-demand). Requires the view to be created WITH SCHEMABINDING and imposes restrictions: no subqueries, no OUTER JOINs (Enterprise Edition relaxes some), no non-deterministic functions. The optimizer can use indexed views automatically (Enterprise) or with NOEXPAND hint (all editions).",
+        "syntax": "-- Step 1: create view with SCHEMABINDING:\nCREATE VIEW dbo.monthly_sales\nWITH SCHEMABINDING AS\nSELECT\n    DATEADD(MONTH, DATEDIFF(MONTH, 0, order_date), 0) AS month,\n    SUM(amount)  AS total,\n    COUNT_BIG(*) AS cnt   -- required by indexed view rules\nFROM dbo.orders\nGROUP BY DATEADD(MONTH, DATEDIFF(MONTH, 0, order_date), 0);\n\n-- Step 2: add unique clustered index to materialize:\nCREATE UNIQUE CLUSTERED INDEX idx_mv ON dbo.monthly_sales (month);\n\n-- SQL Server auto-maintains the index on INSERT/UPDATE/DELETE.\n-- No manual REFRESH needed or available."
+      },
+      "oracle": {
+        "supported": true,
+        "since": "8i",
+        "notes": "Full-featured materialized views with multiple refresh modes: COMPLETE (full recompute), FAST (incremental via materialized view logs), and FORCE (FAST if possible, else COMPLETE). Refresh can be ON COMMIT (synchronous) or ON DEMAND. The query rewrite feature lets Oracle's optimizer automatically use a materialized view instead of the base tables when it detects a matching pattern.",
+        "syntax": "-- On-demand complete refresh:\nCREATE MATERIALIZED VIEW monthly_sales\nBUILD IMMEDIATE\nREFRESH COMPLETE ON DEMAND AS\nSELECT TRUNC(order_date,'MM') AS month, SUM(amount) AS total\nFROM orders\nGROUP BY TRUNC(order_date,'MM');\n\nEXEC DBMS_MVIEW.REFRESH('monthly_sales');\n\n-- Fast (incremental) refresh requires a log on the base table:\nCREATE MATERIALIZED VIEW LOG ON orders\nWITH ROWID, SEQUENCE (order_date, amount)\nINCLUDING NEW VALUES;\n\nCREATE MATERIALIZED VIEW monthly_sales\nREFRESH FAST ON COMMIT AS ...;\n\n-- Automatic query rewrite (Enterprise):\nCREATE MATERIALIZED VIEW monthly_sales\n    ENABLE QUERY REWRITE AS ...;"
+      },
+      "sqlite": {
+        "supported": false,
+        "notes": "SQLite has no materialized view support. The standard workaround is to create a regular table and populate it manually or via a trigger.",
+        "syntax": "-- Workaround: populate a summary table:\nCREATE TABLE monthly_sales_cache (\n    month TEXT PRIMARY KEY,\n    total REAL\n);\n\n-- Refresh manually:\nDELETE FROM monthly_sales_cache;\nINSERT INTO monthly_sales_cache\nSELECT strftime('%Y-%m', order_date), SUM(amount)\nFROM orders\nGROUP BY strftime('%Y-%m', order_date);"
+      }
+    },
+    "details": "The concept is consistent but implementations vary enormously. SQL Server's indexed views are automatically maintained on every DML — no REFRESH command exists. Oracle supports incremental (FAST) refresh via materialized view logs, avoiding full recomputes. PostgreSQL's REFRESH is always a full recompute; CONCURRENTLY mode avoids locking but needs a unique index. MySQL has no native support at all. Oracle's query rewrite feature is unique: the optimizer can transparently substitute the materialized view for the base tables in unmodified queries."
+  },
+  "temporary tables": {
+    "description": "Tables that exist only for the duration of a session or transaction and are automatically dropped when that session ends. Used to stage intermediate results without polluting the permanent schema.",
+    "syntax": "-- Standard SQL:\nCREATE TEMPORARY TABLE temp_results (\n    id      INT,\n    result  VARCHAR(255)\n);\n\nINSERT INTO temp_results SELECT id, compute(val) FROM source;\nSELECT * FROM temp_results;",
+    "category": "DDL",
+    "slug": "temp-tables",
+    "compatibility": {
+      "mysql": {
+        "supported": true,
+        "since": "3.23",
+        "notes": "CREATE TEMPORARY TABLE creates a session-scoped table dropped automatically at session end. Temp tables are invisible to other sessions (each session gets its own private copy even if they use the same name). Cannot be referenced twice in the same query (MySQL limitation). Temp tables appear in information_schema and SHOW TABLES for the current session.",
+        "syntax": "CREATE TEMPORARY TABLE tmp_active_users (\n    id       INT,\n    username VARCHAR(100)\n);\n\nINSERT INTO tmp_active_users\nSELECT id, username FROM users WHERE active = 1;\n\nSELECT * FROM tmp_active_users;\n\n-- Dropped automatically at session end;\n-- or drop explicitly:\nDROP TEMPORARY TABLE tmp_active_users;"
+      },
+      "postgresql": {
+        "supported": true,
+        "since": "6.0",
+        "notes": "CREATE TEMPORARY TABLE (or TEMP TABLE). Default lifetime is session; ON COMMIT DROP makes it transaction-scoped; ON COMMIT DELETE ROWS keeps the table structure but truncates it at each commit. PostgreSQL creates temp tables in a per-session temporary schema (pg_temp_NNN) that is searched automatically. Global temporary tables are not supported (each session gets its own isolated table). UNLOGGED tables are a related alternative for fast but non-crash-safe permanent tables.",
+        "syntax": "-- Session-scoped (default):\nCREATE TEMP TABLE tmp_active_users (\n    id       INT,\n    username TEXT\n);\n\n-- Transaction-scoped (dropped on COMMIT/ROLLBACK):\nCREATE TEMP TABLE tmp_work (\n    val INT\n) ON COMMIT DROP;\n\n-- Keep structure, truncate on commit:\nCREATE TEMP TABLE tmp_batch (\n    val INT\n) ON COMMIT DELETE ROWS;\n\n-- From query:\nCREATE TEMP TABLE tmp_summary AS\nSELECT dept, SUM(salary) FROM employees GROUP BY dept;"
+      },
+      "sqlserver": {
+        "supported": true,
+        "since": "6.5",
+        "notes": "Two kinds: local temp tables (#table) are session-scoped and private; global temp tables (##table) are shared across sessions and dropped when the last referencing session closes. Temp tables are physically stored in tempdb. Table variables (@table) are an alternative with different scoping and statistics behavior. Temp tables support indexes and statistics; table variables have limited statistics and no column indexes.",
+        "syntax": "-- Local temp table (session-private):\nCREATE TABLE #tmp_active_users (\n    id       INT,\n    username NVARCHAR(100)\n);\n\nINSERT INTO #tmp_active_users\nSELECT id, username FROM users WHERE active = 1;\n\nSELECT * FROM #tmp_active_users;\nDROP TABLE IF EXISTS #tmp_active_users;\n\n-- Global temp table (cross-session):\nCREATE TABLE ##shared_work (\n    val INT\n);\n\n-- Table variable (alternative, no DDL needed):\nDECLARE @results TABLE (id INT, val NVARCHAR(100));\nINSERT INTO @results VALUES (1,'a');"
+      },
+      "oracle": {
+        "supported": true,
+        "since": "8i",
+        "notes": "Oracle uses Global Temporary Tables (GTTs): the table structure is permanent (visible in all_tables) but each session's data is private. Data lifetime is either ON COMMIT DELETE ROWS (transaction-scoped, default) or ON COMMIT PRESERVE ROWS (session-scoped). GTTs are created once and reused across sessions — no CREATE per-session. Oracle 18c added private temporary tables (CREATE PRIVATE TEMPORARY TABLE) which exist only for the session duration like other engines.",
+        "syntax": "-- Global temporary table (structure persists, data is private):\nCREATE GLOBAL TEMPORARY TABLE tmp_active_users (\n    id       NUMBER,\n    username VARCHAR2(100)\n) ON COMMIT PRESERVE ROWS;  -- session-scoped data\n\n-- Transaction-scoped data:\nCREATE GLOBAL TEMPORARY TABLE tmp_batch (\n    val NUMBER\n) ON COMMIT DELETE ROWS;    -- default\n\n-- Private temporary table (18c+, session-scoped structure):\nCREATE PRIVATE TEMPORARY TABLE ora$ptt_work (\n    id NUMBER\n) ON COMMIT DROP DEFINITION;\n\nINSERT INTO tmp_active_users SELECT id, username FROM users WHERE active=1;\nSELECT * FROM tmp_active_users;"
+      },
+      "sqlite": {
+        "supported": true,
+        "since": "1.0",
+        "notes": "CREATE TEMPORARY TABLE (or TEMP TABLE) creates a table in the temp database, which is session-scoped and stored in a separate temp file (or in memory). Temp tables are not visible to other database connections. Dropped automatically when the connection closes.",
+        "syntax": "CREATE TEMPORARY TABLE tmp_active_users (\n    id       INTEGER,\n    username TEXT\n);\n\nINSERT INTO tmp_active_users\nSELECT id, username FROM users WHERE active = 1;\n\nSELECT * FROM tmp_active_users;\n\n-- Explicit drop:\nDROP TABLE IF EXISTS tmp_active_users;\n\n-- In-memory temp table (default connection is :memory:):\n-- All tables are implicitly temp when connection is :memory:"
+      }
+    },
+    "details": "The biggest portability gap is Oracle: it uses Global Temporary Tables where the structure is a permanent schema object shared across sessions — only the data is private. Every other engine creates the temp table structure per-session. SQL Server is unique in having two tiers: session-private (#table) and cross-session global (##table). SQL Server's table variable (@table) is a common alternative but behaves differently from temp tables regarding statistics, transactions, and scope. The ON COMMIT behavior clause (DROP vs DELETE ROWS vs PRESERVE ROWS) is supported in PostgreSQL and Oracle but not MySQL, SQL Server, or SQLite."
+  },
+  "percentile functions": {
+    "description": "Compute percentile values within a distribution. PERCENTILE_CONT returns an interpolated value; PERCENTILE_DISC returns an actual value from the dataset. Used for medians, quartiles, and statistical analysis.",
+    "syntax": "-- SQL standard (ordered-set aggregate):\nSELECT\n    PERCENTILE_CONT(0.5) WITHIN GROUP (ORDER BY salary) AS median_salary,\n    PERCENTILE_DISC(0.5) WITHIN GROUP (ORDER BY salary) AS median_disc\nFROM employees;",
+    "category": "Functions",
+    "slug": "percentile",
+    "compatibility": {
+      "mysql": {
+        "supported": false,
+        "notes": "No PERCENTILE_CONT or PERCENTILE_DISC aggregate functions. Common workarounds: use a window function approach with ROW_NUMBER() and COUNT(*), or (MySQL 8.0+) use the window function versions of percentile approximation. NTILE(100) produces percentile buckets, not values.",
+        "syntax": "-- Workaround: median via ROW_NUMBER (MySQL 8.0+):\nWITH ranked AS (\n    SELECT salary,\n           ROW_NUMBER() OVER (ORDER BY salary) AS rn,\n           COUNT(*) OVER ()                    AS cnt\n    FROM employees\n)\nSELECT AVG(salary) AS median\nFROM ranked\nWHERE rn IN (FLOOR((cnt+1)/2), CEIL((cnt+1)/2));\n\n-- Approximate median via AVG on middle rows:\nSELECT AVG(salary) AS approx_median\nFROM (\n    SELECT salary\n    FROM employees\n    ORDER BY salary\n    LIMIT 2 - (SELECT COUNT(*) FROM employees) MOD 2\n    OFFSET (SELECT (COUNT(*) - 1) / 2 FROM employees)\n) sub;"
+      },
+      "postgresql": {
+        "supported": true,
+        "since": "9.4",
+        "notes": "Both PERCENTILE_CONT and PERCENTILE_DISC are supported as ordered-set aggregate functions using the WITHIN GROUP (ORDER BY ...) syntax. Also available as window functions via FILTER clause. The array form PERCENTILE_CONT(ARRAY[0.25, 0.5, 0.75]) computes multiple percentiles in a single pass. Works on numeric and interval types.",
+        "syntax": "-- Median (continuous interpolation):\nSELECT\n    PERCENTILE_CONT(0.5) WITHIN GROUP (ORDER BY salary) AS median_salary\nFROM employees;\n\n-- Median (actual dataset value):\nSELECT\n    PERCENTILE_DISC(0.5) WITHIN GROUP (ORDER BY salary) AS median_salary\nFROM employees;\n\n-- Multiple percentiles in one pass:\nSELECT\n    PERCENTILE_CONT(ARRAY[0.25, 0.5, 0.75])\n        WITHIN GROUP (ORDER BY salary) AS quartiles\nFROM employees;\n\n-- Per-group:\nSELECT dept,\n       PERCENTILE_CONT(0.5) WITHIN GROUP (ORDER BY salary) AS median\nFROM employees\nGROUP BY dept;"
+      },
+      "sqlserver": {
+        "supported": true,
+        "since": "2012",
+        "notes": "SQL Server implements PERCENTILE_CONT and PERCENTILE_DISC as window functions (with OVER clause), not as aggregate functions. This means they always require an OVER clause and are computed per-row — to get a single value per group, use a subquery or DISTINCT on the result. The WITHIN GROUP clause is NOT used in SQL Server's syntax.",
+        "syntax": "-- SQL Server uses OVER, not aggregate form:\nSELECT DISTINCT dept,\n    PERCENTILE_CONT(0.5) WITHIN GROUP (ORDER BY salary)\n        OVER (PARTITION BY dept) AS median_salary,\n    PERCENTILE_DISC(0.5) WITHIN GROUP (ORDER BY salary)\n        OVER (PARTITION BY dept) AS median_disc\nFROM employees;\n\n-- Note: result is repeated per row; DISTINCT collapses them:\nSELECT dept, p50\nFROM (\n    SELECT dept,\n           PERCENTILE_CONT(0.5) WITHIN GROUP (ORDER BY salary)\n               OVER (PARTITION BY dept) AS p50\n    FROM employees\n) t\nGROUP BY dept, p50;"
+      },
+      "oracle": {
+        "supported": true,
+        "since": "8.1.6",
+        "notes": "Oracle supports both the aggregate form (WITHIN GROUP, no OVER clause) and the analytic/window function form (WITHIN GROUP + OVER clause). The aggregate form returns one row per group; the analytic form computes the percentile and returns it for every row in the partition. Supports numeric and datetime ORDER BY expressions.",
+        "syntax": "-- Aggregate form (one result per group):\nSELECT dept,\n    PERCENTILE_CONT(0.5) WITHIN GROUP (ORDER BY salary) AS median_salary,\n    PERCENTILE_DISC(0.5) WITHIN GROUP (ORDER BY salary) AS median_disc\nFROM employees\nGROUP BY dept;\n\n-- Analytic form (result per row):\nSELECT dept, salary,\n    PERCENTILE_CONT(0.5) WITHIN GROUP (ORDER BY salary)\n        OVER (PARTITION BY dept) AS dept_median\nFROM employees;"
+      },
+      "sqlite": {
+        "supported": false,
+        "notes": "No PERCENTILE_CONT or PERCENTILE_DISC. Use the ROW_NUMBER window function workaround to compute a median. For grouped medians, a CTE is typically clearest.",
+        "syntax": "-- Median workaround using ROW_NUMBER (SQLite 3.25+):\nWITH ranked AS (\n    SELECT salary,\n           ROW_NUMBER() OVER (ORDER BY salary) AS rn,\n           COUNT(*) OVER ()                    AS cnt\n    FROM employees\n)\nSELECT AVG(CAST(salary AS REAL)) AS median\nFROM ranked\nWHERE rn IN ((cnt+1)/2, (cnt+2)/2);\n\n-- Per-department median:\nWITH ranked AS (\n    SELECT dept, salary,\n           ROW_NUMBER() OVER (PARTITION BY dept ORDER BY salary) AS rn,\n           COUNT(*)     OVER (PARTITION BY dept)                 AS cnt\n    FROM employees\n)\nSELECT dept, AVG(CAST(salary AS REAL)) AS median\nFROM ranked\nWHERE rn IN ((cnt+1)/2, (cnt+2)/2)\nGROUP BY dept;"
+      }
+    },
+    "details": "PERCENTILE_CONT vs PERCENTILE_DISC: CONT returns an interpolated value (e.g., the average of the two middle values for an even dataset), DISC returns the closest actual value in the dataset. For an even-count dataset, CONT(0.5) returns the average of rows n/2 and n/2+1; DISC(0.5) returns the value at row n/2. The biggest syntax divergence is SQL Server: it implements these as window functions requiring an OVER clause, while the SQL standard and Oracle define an aggregate form using only WITHIN GROUP. MySQL and SQLite have no native support; the ROW_NUMBER workaround is the portable fallback."
+  },
+  "any / all": {
+    "description": "Subquery comparison operators. ANY (or SOME) returns true if the comparison holds for at least one value in the subquery result. ALL returns true only if the comparison holds for every value. Semantically related to EXISTS and IN but more flexible with comparison operators.",
+    "syntax": "-- ANY: true if salary > any value returned\nSELECT name FROM employees\nWHERE salary > ANY (\n    SELECT salary FROM employees WHERE dept = 'Sales'\n);\n\n-- ALL: true only if salary > every value returned\nSELECT name FROM employees\nWHERE salary > ALL (\n    SELECT salary FROM employees WHERE dept = 'Interns'\n);",
+    "category": "Query Techniques",
+    "slug": "any-all",
+    "compatibility": {
+      "mysql": {
+        "supported": true,
+        "since": "4.1",
+        "notes": "Both ANY and ALL supported since 4.1. SOME is an alias for ANY. Works with =, <>, <, <=, >, >= operators. = ANY(...) is equivalent to IN(...). <> ALL(...) is equivalent to NOT IN(...). If the subquery returns an empty result, ANY returns false and ALL returns true (vacuous truth). NULL in the subquery results causes the same NULL-propagation issues as IN.",
+        "syntax": "-- ANY (true if any value matches):\nSELECT name FROM employees\nWHERE salary > ANY (SELECT salary FROM employees WHERE dept = 'Sales');\n\n-- ALL (true if all values match):\nSELECT name FROM employees\nWHERE salary > ALL (SELECT salary FROM employees WHERE dept = 'Interns');\n\n-- = ANY is equivalent to IN:\nSELECT * FROM products\nWHERE category_id = ANY (SELECT id FROM categories WHERE active = 1);\n-- same as: WHERE category_id IN (SELECT id FROM categories WHERE active = 1)\n\n-- <> ALL is equivalent to NOT IN:\nSELECT * FROM orders\nWHERE status <> ALL (SELECT status FROM cancelled_statuses);"
+      },
+      "postgresql": {
+        "supported": true,
+        "since": "6.0",
+        "notes": "Full ANY / ALL / SOME support with all comparison operators. PostgreSQL additionally supports ANY and ALL against arrays (not just subqueries): WHERE val = ANY(ARRAY[1,2,3]) is a common idiom. Array form is often more concise than IN() for literal lists.",
+        "syntax": "-- Subquery form:\nSELECT name FROM employees\nWHERE salary > ANY (SELECT salary FROM employees WHERE dept = 'Sales');\n\n-- Array form (PostgreSQL extension):\nSELECT * FROM products\nWHERE category_id = ANY(ARRAY[1, 2, 3]);\n\nSELECT * FROM orders\nWHERE status <> ALL(ARRAY['cancelled', 'refunded']);\n\n-- Useful for parameterized queries:\n-- WHERE tag_id = ANY($1::int[])  (pass an array parameter)"
+      },
+      "sqlserver": {
+        "supported": true,
+        "since": "6.5",
+        "notes": "ANY and ALL supported but rarely used in practice. SOME is also accepted as an alias for ANY. SQL Server developers typically use IN / NOT IN / EXISTS patterns instead, which the optimizer handles equivalently. The array form (ANY(ARRAY[...])) is not supported — only the subquery form.",
+        "syntax": "-- ANY with subquery:\nSELECT name FROM employees\nWHERE salary > ANY (SELECT salary FROM employees WHERE dept = 'Sales');\n\n-- ALL with subquery:\nSELECT name FROM employees\nWHERE salary > ALL (SELECT salary FROM employees WHERE dept = 'Interns');\n\n-- More common SQL Server idiom (equivalent):\nSELECT name FROM employees\nWHERE salary > (SELECT MIN(salary) FROM employees WHERE dept = 'Interns');\n-- (MIN achieves the same as > ALL; MAX achieves the same as > ANY)"
+      },
+      "oracle": {
+        "supported": true,
+        "since": "7",
+        "notes": "ANY and ALL supported with all comparison operators. SOME accepted as alias for ANY. Scalar subquery optimization applies. Like SQL Server, Oracle developers typically use IN / EXISTS / aggregate subquery patterns in practice, but ANY / ALL are fully valid.",
+        "syntax": "-- ANY:\nSELECT name FROM employees\nWHERE salary > ANY (SELECT salary FROM employees WHERE dept = 'Sales');\n\n-- ALL:\nSELECT name FROM employees\nWHERE salary > ALL (SELECT salary FROM employees WHERE dept = 'Interns');\n\n-- Equivalent using aggregate:\nSELECT name FROM employees\nWHERE salary > (SELECT MAX(salary) FROM employees WHERE dept = 'Interns');\n-- (MAX(x) = x > ALL subquery; MIN(x) = x > ANY subquery)"
+      },
+      "sqlite": {
+        "supported": false,
+        "notes": "ANY and ALL operators are not supported. Use IN, NOT IN, EXISTS, or subqueries with MIN/MAX aggregates as equivalents.",
+        "syntax": "-- Instead of > ANY(subquery), use > MIN(...):\nSELECT name FROM employees\nWHERE salary > (SELECT MIN(salary) FROM employees WHERE dept = 'Sales');\n\n-- Instead of > ALL(subquery), use > MAX(...):\nSELECT name FROM employees\nWHERE salary > (SELECT MAX(salary) FROM employees WHERE dept = 'Interns');\n\n-- Instead of = ANY, use IN:\nSELECT * FROM products\nWHERE category_id IN (SELECT id FROM categories WHERE active = 1);"
+      }
+    },
+    "details": "= ANY(subquery) is exactly equivalent to IN(subquery); <> ALL(subquery) is equivalent to NOT IN(subquery). These relationships are useful for remembering the semantics. The practical mnemonic for choosing between ANY and ALL: ANY behaves like OR (at least one must match); ALL behaves like AND (every one must match). PostgreSQL extends ANY/ALL to work on arrays, which is a common and idiomatic PostgreSQL pattern not found elsewhere. SQLite is the only engine with no support — use MIN/MAX aggregate subqueries as the portable fallback."
+  },
+  "correlated subquery": {
+    "description": "A subquery that references columns from the outer query. The subquery is re-evaluated once per row of the outer query, creating a row-by-row dependency. Powerful but potentially slow on large datasets — often replaceable with a JOIN or window function.",
+    "syntax": "-- Find employees earning more than their department average:\nSELECT name, dept, salary\nFROM employees e_outer\nWHERE salary > (\n    SELECT AVG(salary)\n    FROM employees e_inner\n    WHERE e_inner.dept = e_outer.dept\n);",
+    "category": "Query Techniques",
+    "slug": "correlated-subquery",
+    "compatibility": {
+      "mysql": {
+        "supported": true,
+        "since": "4.1",
+        "notes": "Correlated subqueries supported since 4.1. MySQL historically had poor optimization of correlated subqueries (particularly NOT IN / NOT EXISTS patterns), materializing the outer loop inefficiently. MySQL 8.0 significantly improved the optimizer with hash semi-join and anti-join transformations. For large tables, rewriting as a JOIN or using a CTE is often much faster in MySQL.",
+        "syntax": "-- Above-average salary per dept:\nSELECT name, dept, salary\nFROM employees e\nWHERE salary > (\n    SELECT AVG(salary)\n    FROM employees\n    WHERE dept = e.dept\n);\n\n-- Correlated EXISTS (efficient anti-join pattern):\nSELECT name FROM customers c\nWHERE EXISTS (\n    SELECT 1 FROM orders o\n    WHERE o.customer_id = c.id\n      AND o.created_at > DATE_SUB(NOW(), INTERVAL 30 DAY)\n);\n\n-- Equivalent JOIN (often faster in older MySQL):\nSELECT c.name\nFROM customers c\nJOIN orders o ON o.customer_id = c.id\n    AND o.created_at > DATE_SUB(NOW(), INTERVAL 30 DAY)\nGROUP BY c.id, c.name;"
+      },
+      "postgresql": {
+        "supported": true,
+        "since": "6.0",
+        "notes": "Fully supported. PostgreSQL's optimizer can decorrelate many correlated subqueries automatically, converting them to hash joins or merge joins. EXISTS and NOT EXISTS correlated subqueries are well-optimized. LATERAL joins (PostgreSQL 9.3+) are often a cleaner and more performant alternative for correlated subqueries in the FROM clause.",
+        "syntax": "-- Above-average salary per dept:\nSELECT name, dept, salary\nFROM employees e\nWHERE salary > (\n    SELECT AVG(salary)\n    FROM employees\n    WHERE dept = e.dept\n);\n\n-- LATERAL alternative (often cleaner):\nSELECT e.name, e.dept, e.salary, dept_avg.avg_salary\nFROM employees e\nCROSS JOIN LATERAL (\n    SELECT AVG(salary) AS avg_salary\n    FROM employees\n    WHERE dept = e.dept\n) dept_avg\nWHERE e.salary > dept_avg.avg_salary;\n\n-- Window function alternative (usually fastest):\nSELECT name, dept, salary\nFROM (\n    SELECT name, dept, salary,\n           AVG(salary) OVER (PARTITION BY dept) AS dept_avg\n    FROM employees\n) t\nWHERE salary > dept_avg;"
+      },
+      "sqlserver": {
+        "supported": true,
+        "since": "6.5",
+        "notes": "Fully supported. SQL Server's optimizer generally handles correlated subqueries well, transforming them into apply or join operations internally. APPLY (CROSS APPLY / OUTER APPLY) is the SQL Server equivalent of LATERAL and is often preferred for complex correlated logic in the FROM clause.",
+        "syntax": "-- Correlated subquery:\nSELECT name, dept, salary\nFROM employees e\nWHERE salary > (\n    SELECT AVG(salary)\n    FROM employees\n    WHERE dept = e.dept\n);\n\n-- CROSS APPLY alternative:\nSELECT e.name, e.dept, e.salary, da.avg_salary\nFROM employees e\nCROSS APPLY (\n    SELECT AVG(salary) AS avg_salary\n    FROM employees\n    WHERE dept = e.dept\n) da\nWHERE e.salary > da.avg_salary;\n\n-- Window function (often optimal):\nSELECT name, dept, salary FROM (\n    SELECT name, dept, salary,\n           AVG(salary) OVER (PARTITION BY dept) AS dept_avg\n    FROM employees\n) t WHERE salary > dept_avg;"
+      },
+      "oracle": {
+        "supported": true,
+        "since": "7",
+        "notes": "Fully supported. Oracle's cost-based optimizer (CBO) can decorrelate subqueries. The LATERAL keyword (Oracle 12c+) and CROSS APPLY / OUTER APPLY (also 12c+) provide alternatives. Correlated subqueries in SELECT list, WHERE, and HAVING are all valid.",
+        "syntax": "-- Correlated subquery:\nSELECT name, dept, salary\nFROM employees e_outer\nWHERE salary > (\n    SELECT AVG(salary)\n    FROM employees\n    WHERE dept = e_outer.dept\n);\n\n-- LATERAL alternative (12c+):\nSELECT e.name, e.dept, e.salary, da.avg_salary\nFROM employees e,\nLATERAL (\n    SELECT AVG(salary) AS avg_salary\n    FROM employees\n    WHERE dept = e.dept\n) da\nWHERE e.salary > da.avg_salary;\n\n-- Correlated in SELECT list:\nSELECT name,\n    (SELECT dept_name FROM departments WHERE id = e.dept_id) AS dept_name\nFROM employees e;"
+      },
+      "sqlite": {
+        "supported": true,
+        "since": "3.0",
+        "notes": "Correlated subqueries supported. SQLite does not decorrelate them automatically — each row triggers a subquery execution, so performance degrades on large datasets. Rewriting as a JOIN (SQLite 3.8.3+ with improved query planner) or a window function (3.25+) is strongly recommended for production queries over large tables.",
+        "syntax": "-- Correlated subquery:\nSELECT name, dept, salary\nFROM employees e\nWHERE salary > (\n    SELECT AVG(salary)\n    FROM employees\n    WHERE dept = e.dept\n);\n\n-- Window function alternative (3.25+, better performance):\nSELECT name, dept, salary FROM (\n    SELECT name, dept, salary,\n           AVG(salary) OVER (PARTITION BY dept) AS dept_avg\n    FROM employees\n) WHERE salary > dept_avg;"
+      }
+    },
+    "details": "A correlated subquery is logically re-executed once per outer row, making it O(n) on the outer table — the classic performance risk. All engines can optimize common patterns (the query plan may show a hash join or semi-join rather than a nested loop), but the optimization is engine-specific and not guaranteed. The most reliable performance fix is rewriting as a window function (supported everywhere in post-2012 engines), which processes the aggregation in a single pass. LATERAL (PostgreSQL 9.3, Oracle 12c) and CROSS APPLY (SQL Server, Oracle 12c) are more expressive alternatives for complex correlated FROM-clause logic."
+  },
+  "values clause": {
+    "description": "Construct an inline table from literal values without referencing a persistent table. Useful for multi-row inserts, testing, and constructing ad-hoc result sets to join against.",
+    "syntax": "-- Inline table of literal values:\nSELECT *\nFROM (VALUES (1, 'Alice'), (2, 'Bob'), (3, 'Carol')) AS t(id, name);\n\n-- Multi-row INSERT:\nINSERT INTO colors (id, name)\nVALUES (1, 'red'), (2, 'green'), (3, 'blue');",
+    "category": "Query Techniques",
+    "slug": "values-clause",
+    "compatibility": {
+      "mysql": {
+        "supported": true,
+        "since": "8.0.19",
+        "notes": "Multi-row INSERT VALUES has been supported since early MySQL versions. The TABLE and VALUES statement as a standalone query (VALUES ROW(...), ROW(...)) was added in MySQL 8.0.19, providing an inline table construct. Prior to 8.0.19, use UNION ALL of SELECT literals to simulate an inline table.",
+        "syntax": "-- Multi-row INSERT (supported since early versions):\nINSERT INTO colors (id, name)\nVALUES (1, 'red'), (2, 'green'), (3, 'blue');\n\n-- Standalone VALUES statement (8.0.19+):\nVALUES ROW(1, 'Alice'), ROW(2, 'Bob');\n\n-- Inline table via derived query (pre-8.0.19 workaround):\nSELECT *\nFROM (\n    SELECT 1 AS id, 'Alice' AS name UNION ALL\n    SELECT 2, 'Bob'               UNION ALL\n    SELECT 3, 'Carol'\n) AS t;\n\n-- JOIN against inline values:\nSELECT p.*, v.label\nFROM products p\nJOIN (VALUES ROW(1,'small'), ROW(2,'medium'), ROW(3,'large')) AS v(id,label)\n    ON p.size_id = v.id;"
+      },
+      "postgresql": {
+        "supported": true,
+        "since": "8.2",
+        "notes": "VALUES is a full first-class relation since PostgreSQL 8.2 — it can appear anywhere a table or subquery can: in FROM, CTE, UNION, INSERT, etc. Column names in the alias are required when the VALUES clause is used as a subquery or CTE. Row type is inferred from the first row; explicit casts may be needed for ambiguous literals.",
+        "syntax": "-- Inline table:\nSELECT *\nFROM (VALUES (1, 'Alice'), (2, 'Bob')) AS t(id, name);\n\n-- CTE using VALUES:\nWITH priority_map(level, label) AS (\n    VALUES (1, 'low'), (2, 'medium'), (3, 'high')\n)\nSELECT o.id, pm.label\nFROM orders o\nJOIN priority_map pm ON pm.level = o.priority;\n\n-- UNION with VALUES:\nSELECT id, name FROM customers\nUNION ALL\nVALUES (0, 'Anonymous');\n\n-- Multi-row INSERT:\nINSERT INTO colors (id, name)\nVALUES (1, 'red'), (2, 'green'), (3, 'blue');"
+      },
+      "sqlserver": {
+        "supported": true,
+        "since": "2008",
+        "notes": "VALUES as an inline table constructor available since SQL Server 2008. Syntax requires an alias with column names. Often used for multi-row inserts and lookup tables in CTEs. Cannot exceed 1000 rows in a single VALUES constructor.",
+        "syntax": "-- Inline table:\nSELECT *\nFROM (VALUES (1, 'Alice'), (2, 'Bob'), (3, 'Carol')) AS t(id, name);\n\n-- JOIN against inline values:\nSELECT p.*, v.label\nFROM products p\nJOIN (VALUES (1,'S'),(2,'M'),(3,'L')) AS v(size_id, label)\n    ON p.size_id = v.size_id;\n\n-- CTE with VALUES:\nWITH codes(code, description) AS (\n    VALUES ('A','Active'),('I','Inactive'),('P','Pending')\n)\nSELECT u.name, c.description\nFROM users u\nJOIN codes c ON u.status = c.code;\n\n-- Multi-row INSERT:\nINSERT INTO colors (id, name)\nVALUES (1,'red'),(2,'green'),(3,'blue');"
+      },
+      "oracle": {
+        "supported": false,
+        "notes": "Oracle does not support a VALUES clause as a standalone table constructor in SELECT queries. Multi-row INSERT is supported via INSERT ALL or INSERT with a SELECT from DUAL for a single row. For an inline lookup table, use a UNION ALL SELECT from DUAL, or a collection type with TABLE().",
+        "syntax": "-- Single-row INSERT (Oracle standard):\nINSERT INTO colors (id, name) VALUES (1, 'red');\n\n-- Multi-row INSERT via INSERT ALL:\nINSERT ALL\n    INTO colors (id, name) VALUES (1, 'red')\n    INTO colors (id, name) VALUES (2, 'green')\n    INTO colors (id, name) VALUES (3, 'blue')\nSELECT 1 FROM DUAL;\n\n-- Inline table workaround (UNION ALL from DUAL):\nSELECT *\nFROM (\n    SELECT 1 AS id, 'Alice' AS name FROM DUAL UNION ALL\n    SELECT 2,       'Bob'            FROM DUAL UNION ALL\n    SELECT 3,       'Carol'          FROM DUAL\n) t;"
+      },
+      "sqlite": {
+        "supported": true,
+        "since": "3.8.3",
+        "notes": "VALUES as a table-value constructor in SELECT/FROM supported since SQLite 3.8.3. Supports alias with column names. Fully usable in CTEs, FROM clauses, and UNION.",
+        "syntax": "-- Inline table:\nSELECT *\nFROM (VALUES (1, 'Alice'), (2, 'Bob')) AS t(id, name);\n\n-- CTE with VALUES:\nWITH priority(level, label) AS (\n    VALUES (1,'low'),(2,'medium'),(3,'high')\n)\nSELECT * FROM priority;\n\n-- Multi-row INSERT:\nINSERT INTO colors (id, name)\nVALUES (1,'red'),(2,'green'),(3,'blue');"
+      }
+    },
+    "details": "Multi-row INSERT VALUES (syntax: INSERT INTO t VALUES (r1), (r2), ...) is broadly supported across all engines. The more interesting case is VALUES as a standalone table constructor usable in SELECT, FROM, CTEs, and JOINs — this works in PostgreSQL (8.2+), SQL Server (2008+), SQLite (3.8.3+), and MySQL (8.0.19+ with ROW() wrapper). Oracle is the outlier: it has no VALUES table constructor and requires UNION ALL of SELECT ... FROM DUAL as the workaround. The MySQL VALUES ROW() syntax differs from all other engines — other engines use plain VALUES (row), (row) without the ROW() keyword."
+  },
+  "partial / filtered index": {
+    "description": "An index that covers only a subset of rows, defined by a WHERE condition. Produces smaller, faster indexes by excluding rows that are never queried via that index path.",
+    "syntax": "-- PostgreSQL:\nCREATE INDEX idx_active_users\n    ON users (email)\n    WHERE active = true;\n\n-- SQL Server:\nCREATE INDEX idx_pending_orders\n    ON orders (created_at)\n    WHERE status = 'pending';",
+    "category": "Indexes & Search",
+    "slug": "partial-index",
+    "compatibility": {
+      "mysql": {
+        "supported": false,
+        "notes": "MySQL does not support partial or filtered indexes with a WHERE clause. The workaround is to use a generated (computed) column that returns NULL for excluded rows, then add an index — NULL values are not stored in MySQL's B-tree indexes, achieving a similar effect. Functional indexes (MySQL 8.0+) are also an option for expression-based selectivity.",
+        "syntax": "-- Workaround: generated column + index (NULLs not indexed):\nALTER TABLE users\n    ADD COLUMN active_email VARCHAR(255)\n        GENERATED ALWAYS AS (IF(active = 1, email, NULL)) VIRTUAL;\n\nCREATE INDEX idx_active_email ON users (active_email);\n\n-- Now a query for active users can use the index:\nSELECT * FROM users WHERE active_email = 'alice@example.com';\n-- This is equivalent to: WHERE active = 1 AND email = 'alice@example.com'"
+      },
+      "postgresql": {
+        "supported": true,
+        "since": "7.2",
+        "notes": "WHERE clause on CREATE INDEX supported since PostgreSQL 7.2. The partial index is only used by queries whose WHERE clause is compatible with (implies) the index predicate. Works with B-tree, GiST, GIN, and BRIN index types. Extremely useful for sparse conditions (e.g., only ~5% of rows are active).",
+        "syntax": "-- Index only on active users:\nCREATE INDEX idx_active_users_email\n    ON users (email)\n    WHERE active = true;\n\n-- Index only on unprocessed rows:\nCREATE INDEX idx_pending_orders\n    ON orders (created_at)\n    WHERE status = 'pending';\n\n-- Unique partial index (common pattern: allow multiple NULLs but enforce\n-- uniqueness among non-NULL values):\nCREATE UNIQUE INDEX idx_unique_active_username\n    ON users (username)\n    WHERE active = true;\n\n-- Compound column + partial:\nCREATE INDEX idx_recent_errors\n    ON events (user_id, occurred_at)\n    WHERE event_type = 'error' AND occurred_at > NOW() - INTERVAL '90 days';"
+      },
+      "sqlserver": {
+        "supported": true,
+        "since": "2008",
+        "notes": "Called filtered indexes. WHERE clause on CREATE INDEX supported since SQL Server 2008. The filtered index is considered by the optimizer when the query's WHERE clause is compatible with the filter predicate. Statistics are also maintained only for the filtered rows, improving cardinality estimation. Cannot use non-deterministic functions or reference computed columns in the filter.",
+        "syntax": "-- Filtered index on pending orders only:\nCREATE INDEX idx_pending_orders\n    ON orders (created_at)\n    WHERE status = 'pending';\n\n-- Filtered unique index:\nCREATE UNIQUE INDEX idx_unique_active_email\n    ON users (email)\n    WHERE is_deleted = 0;\n\n-- Filtered index on non-NULL column (reduce index size):\nCREATE INDEX idx_orders_promo\n    ON orders (promo_code)\n    WHERE promo_code IS NOT NULL;"
+      },
+      "oracle": {
+        "supported": false,
+        "notes": "Oracle does not support a WHERE clause on CREATE INDEX directly. However, Oracle does not index NULL values in a standard B-tree index — a common workaround is to create a function-based index that returns NULL for rows to exclude. Bitmap indexes can also achieve selective indexing. Oracle 21c introduced the concept of invisible indexes and more advanced filtering via expression indexes.",
+        "syntax": "-- Workaround: function-based index returning NULL for excluded rows:\n-- Index only active users (active=1):\nCREATE INDEX idx_active_users\n    ON users (CASE WHEN active = 1 THEN email END);\n\n-- Query must match the expression to use the index:\nSELECT * FROM users\nWHERE CASE WHEN active = 1 THEN email END = 'alice@example.com';\n\n-- More practical: filter via NOT NULL expression:\nCREATE INDEX idx_pending\n    ON orders (CASE WHEN status = 'PENDING' THEN order_id END);"
+      },
+      "sqlite": {
+        "supported": true,
+        "since": "3.8.9",
+        "notes": "Partial indexes with a WHERE clause supported since SQLite 3.8.9 (2015-03-09). The query's WHERE clause must imply the index predicate for the optimizer to use it. Works with all SQLite column types.",
+        "syntax": "-- Partial index on active users:\nCREATE INDEX idx_active_users\n    ON users (email)\n    WHERE active = 1;\n\n-- Unique partial index:\nCREATE UNIQUE INDEX idx_unique_active_username\n    ON users (username)\n    WHERE active = 1;\n\n-- Index on non-NULL values only:\nCREATE INDEX idx_tagged_posts\n    ON posts (tag)\n    WHERE tag IS NOT NULL;"
+      }
+    },
+    "details": "Partial indexes are one of the highest-impact indexing tools available: if 5% of rows match the filter condition, the index is 95% smaller, fits in cache, and updates are faster. PostgreSQL (7.2+), SQL Server (2008+), and SQLite (3.8.9+) have direct WHERE clause support on CREATE INDEX. MySQL and Oracle do not — MySQL's workaround uses generated columns (since NULL values are not indexed); Oracle uses function-based indexes returning NULL for excluded rows. A unique partial index is a particularly powerful pattern: it enforces uniqueness only within the matching subset (e.g., unique email among active users only), which is impossible to express with a regular unique constraint."
+  },
+  "savepoint": {
+    "description": "A named marker within a transaction to which you can partially roll back without aborting the entire transaction. Enables nested or selective error recovery inside a larger unit of work.",
+    "syntax": "BEGIN;\n\nINSERT INTO orders (customer_id, total) VALUES (1, 99.99);\nSAVEPOINT after_order;\n\nINSERT INTO order_items (order_id, product_id) VALUES (101, 9);\n-- If this fails:\nROLLBACK TO SAVEPOINT after_order;\n\n-- Order insert is still intact; continue or commit:\nCOMMIT;",
+    "category": "Transactions",
+    "slug": "savepoint",
+    "compatibility": {
+      "mysql": {
+        "supported": true,
+        "since": "4.0.14",
+        "notes": "SAVEPOINT, ROLLBACK TO SAVEPOINT, and RELEASE SAVEPOINT supported for InnoDB tables since MySQL 4.0.14. Not available for MyISAM (which has no transaction support). Savepoints are session-scoped and discarded on COMMIT or full ROLLBACK. Nested savepoints with the same name replace the previous one.",
+        "syntax": "START TRANSACTION;\n\nINSERT INTO orders (customer_id, total) VALUES (1, 99.99);\nSAVEPOINT sp1;\n\nINSERT INTO order_items (order_id, product_id) VALUES (101, 9);\n\n-- Partial rollback:\nROLLBACK TO SAVEPOINT sp1;\n-- order_items INSERT is undone; orders INSERT remains\n\n-- Release savepoint (optional, removes the savepoint marker):\nRELEASE SAVEPOINT sp1;\n\nCOMMIT;"
+      },
+      "postgresql": {
+        "supported": true,
+        "since": "8.0",
+        "notes": "SAVEPOINT, ROLLBACK TO SAVEPOINT, and RELEASE SAVEPOINT fully supported. PostgreSQL also uses savepoints internally to implement subtransactions. In PostgreSQL, any error inside a transaction puts it into an error state that blocks further commands — ROLLBACK TO SAVEPOINT is the only way to recover a usable transaction state after an error without aborting everything. This makes savepoints especially important in PostgreSQL for error handling inside application code.",
+        "syntax": "BEGIN;\n\nINSERT INTO orders (customer_id, total) VALUES (1, 99.99);\nSAVEPOINT after_order;\n\nINSERT INTO order_items (order_id, product_id) VALUES (101, 9);\n-- Suppose this raises an error:\nROLLBACK TO SAVEPOINT after_order;\n-- Transaction is now in a clean state; the error is cleared\n\nINSERT INTO order_items (order_id, product_id) VALUES (101, 10);\n-- Try a different item\n\nCOMMIT;\n\n-- Release (optional, frees the savepoint name):\nRELEASE SAVEPOINT after_order;"
+      },
+      "sqlserver": {
+        "supported": true,
+        "since": "6.5",
+        "notes": "SAVE TRANSACTION (note: SAVE, not SAVEPOINT) creates a savepoint. ROLLBACK TRANSACTION <name> rolls back to the savepoint without ending the transaction. SAVE TRANSACTION does not support a full RELEASE equivalent. Nested BEGIN TRANSACTION increments @@TRANCOUNT but the outermost COMMIT is the only one that actually commits — inner COMMITs decrement @@TRANCOUNT only.",
+        "syntax": "BEGIN TRANSACTION;\n\nINSERT INTO orders (customer_id, total) VALUES (1, 99.99);\nSAVE TRANSACTION after_order;  -- SQL Server uses SAVE TRANSACTION\n\nINSERT INTO order_items (order_id, product_id) VALUES (101, 9);\n\n-- Partial rollback:\nROLLBACK TRANSACTION after_order;\n-- order_items insert is undone; orders insert remains\n\n-- Note: can also use shorthand:\n-- SAVE TRAN sp1 / ROLLBACK TRAN sp1\n\nCOMMIT TRANSACTION;"
+      },
+      "oracle": {
+        "supported": true,
+        "since": "7",
+        "notes": "SAVEPOINT and ROLLBACK TO SAVEPOINT supported. Oracle auto-starts transactions (no explicit BEGIN needed — the first DML statement starts a transaction). RELEASE SAVEPOINT is not supported in Oracle — savepoints are implicitly released on COMMIT. Oracle's autonomous transactions (PRAGMA AUTONOMOUS_TRANSACTION) are a related but distinct concept.",
+        "syntax": "-- No explicit BEGIN in Oracle:\nINSERT INTO orders (customer_id, total) VALUES (1, 99.99);\nSAVEPOINT after_order;\n\nINSERT INTO order_items (order_id, product_id) VALUES (101, 9);\n\n-- Partial rollback:\nROLLBACK TO SAVEPOINT after_order;\n-- order_items insert rolled back; orders insert intact\n\nCOMMIT;\n-- Savepoint is implicitly released on COMMIT"
+      },
+      "sqlite": {
+        "supported": true,
+        "since": "3.6.8",
+        "notes": "SAVEPOINT, ROLLBACK TO, and RELEASE supported since SQLite 3.6.8. SQLite's SAVEPOINT also doubles as a BEGIN — nesting SAVEPOINTs creates subtransactions. RELEASE is equivalent to committing the savepoint's work into the outer transaction (like COMMIT for the savepoint). Rolling back to a savepoint and then RELEASEing it is not the same as canceling it — RELEASE after ROLLBACK TO simply removes the savepoint marker.",
+        "syntax": "BEGIN;\n\nINSERT INTO orders (customer_id, total) VALUES (1, 99.99);\nSAVEPOINT after_order;\n\nINSERT INTO order_items (order_id, product_id) VALUES (101, 9);\n\n-- Partial rollback:\nROLLBACK TO after_order;\n\n-- Release (removes the savepoint marker, merges into outer transaction):\nRELEASE after_order;\n\nCOMMIT;\n\n-- SQLite SAVEPOINT can also nest:\nSAVEPOINT outer;\n    INSERT INTO t VALUES (1);\n    SAVEPOINT inner;\n        INSERT INTO t VALUES (2);\n    RELEASE inner;  -- commits inner work into outer\nROLLBACK TO outer;  -- undoes everything including inner"
+      }
+    },
+    "details": "The SQL standard keyword is SAVEPOINT; SQL Server uses SAVE TRANSACTION instead. RELEASE SAVEPOINT is supported in MySQL, PostgreSQL, and SQLite, but not in Oracle (implicit release on COMMIT) or SQL Server (no equivalent). PostgreSQL's behavior makes savepoints especially critical in application code: any unhandled error puts the transaction into an aborted state that rejects all further commands — ROLLBACK TO SAVEPOINT is the escape hatch that clears the error without losing the entire transaction. SQLite's SAVEPOINT is unique in that it can replace BEGIN entirely and supports arbitrary nesting."
   }
 }
