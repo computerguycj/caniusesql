@@ -122,7 +122,7 @@
             padding: 20px;
             border-radius: 8px;
             box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-            margin-bottom: 30px;
+            margin-top: 30px;
         }
         .examples h2 {
             margin-top: 0;
@@ -205,14 +205,6 @@
 <body>
     <h1>SQL Command Compatibility Checker</h1>
     
-    <div class="examples">
-        <h2>Popular SQL Commands</h2>
-        <a class="example" href="?q=SELECT" onclick="searchCommand('SELECT'); return false;">SELECT</a>
-        <a class="example" href="?q=MERGE" onclick="searchCommand('MERGE'); return false;">MERGE</a>
-        <a class="example" href="?q=PIVOT" onclick="searchCommand('PIVOT'); return false;">PIVOT</a>
-        <a class="example" href="?q=STRING+AGG" onclick="searchCommand('STRING AGG'); return false;">STRING AGG</a>
-    </div>
-    
     <div class="search-container">
         <input type="text" id="commandSearch" placeholder="Enter SQL command (e.g., MERGE, WITH, JSON_TABLE)">
         <button onclick="searchCommand()">Search</button>
@@ -253,6 +245,19 @@
     </div>
 
     <div id="detailView" style="display: none;" class="detail-view">
+    </div>
+
+    <div class="search-container" style="margin-top: 30px;">
+        <input type="text" id="commandSearchBottom" placeholder="Enter SQL command (e.g., MERGE, WITH, JSON_TABLE)" onkeypress="if(event.key==='Enter') searchFromBottom()">
+        <button onclick="searchFromBottom()">Search</button>
+    </div>
+
+    <div class="examples">
+        <h2>Popular SQL Commands</h2>
+        <a class="example" href="?q=SELECT" onclick="searchCommand('SELECT'); return false;">SELECT</a>
+        <a class="example" href="?q=MERGE" onclick="searchCommand('MERGE'); return false;">MERGE</a>
+        <a class="example" href="?q=PIVOT" onclick="searchCommand('PIVOT'); return false;">PIVOT</a>
+        <a class="example" href="?q=STRING+AGG" onclick="searchCommand('STRING AGG'); return false;">STRING AGG</a>
     </div>
 
     <div class="all-commands" id="allCommands" style="display: none;">
@@ -456,6 +461,14 @@
                 searchCommand();
             }
         });
+
+        // Search from bottom bar — syncs value up to primary input then searches
+        function searchFromBottom() {
+            const val = document.getElementById('commandSearchBottom').value.trim();
+            if (!val) return;
+            document.getElementById('commandSearch').value = val;
+            searchCommand(val);
+        }
 
         // Render all commands as crawlable links
         function renderCommandIndex(data) {
