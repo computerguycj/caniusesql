@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SQL Command Compatibility Checker</title>
+    <link rel="sitemap" type="application/xml" href="/sitemap.xml">
     <style>
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
@@ -175,6 +176,30 @@
             color: #e74c3c;
             border: 1px solid #e74c3c;
         }
+        .all-commands {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            margin-top: 40px;
+        }
+        .all-commands h2 {
+            margin-top: 0;
+            color: #2c3e50;
+        }
+        .command-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        .command-list a {
+            color: #3498db;
+            text-decoration: none;
+            font-size: 14px;
+        }
+        .command-list a:hover {
+            text-decoration: underline;
+        }
     </style>
 </head>
 <body>
@@ -228,6 +253,11 @@
     </div>
 
     <div id="detailView" style="display: none;" class="detail-view">
+    </div>
+
+    <div class="all-commands" id="allCommands" style="display: none;">
+        <h2>All SQL Commands</h2>
+        <div class="command-list" id="commandList"></div>
     </div>
 
     <script>
@@ -427,12 +457,31 @@
             }
         });
 
+        // Render all commands as crawlable links
+        function renderCommandIndex(data) {
+            const list = document.getElementById('commandList');
+            const section = document.getElementById('allCommands');
+            const links = Object.keys(data).map(key => {
+                const a = document.createElement('a');
+                a.href = '?q=' + encodeURIComponent(key);
+                a.textContent = key.toUpperCase();
+                a.onclick = function(e) {
+                    e.preventDefault();
+                    searchCommand(key);
+                };
+                return a;
+            });
+            links.forEach(a => list.appendChild(a));
+            section.style.display = 'block';
+        }
+
         // Load data then initialize search from URL when page loads
         document.addEventListener('DOMContentLoaded', function() {
             fetch('data.json')
                 .then(r => r.json())
                 .then(data => {
                     sqlDatabase = data;
+                    renderCommandIndex(data);
                     initializeFromURL();
                 });
         });
