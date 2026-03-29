@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SQL Command Compatibility Checker</title>
+    <title>Can I Use SQL? | SQL Compatibility Checker</title>
+    <meta name="description" content="Check SQL command compatibility across MySQL, PostgreSQL, SQL Server, Oracle, and SQLite. Find out which databases support SELECT, MERGE, PIVOT, CTEs, window functions, and more.">
     <link rel="sitemap" type="application/xml" href="/sitemap.xml">
     <style>
         body {
@@ -288,8 +289,9 @@
                 document.getElementById('commandSearch').value = command;
             }
             
-            // Update URL with search query
+        // Update URL with search query
             updateURL(searchInput);
+            updateMeta(searchInput);
             
             // Get selected database systems
             const selectedDatabases = {
@@ -433,6 +435,21 @@
         function getQueryParameter(name) {
             const urlParams = new URLSearchParams(window.location.search);
             return urlParams.get(name);
+        }
+
+        // Update <title> and <meta description> for the current command
+        function updateMeta(query) {
+            const foundCommand = sqlDatabase && Object.keys(sqlDatabase).find(cmd => cmd.toLowerCase() === query.toLowerCase());
+            if (foundCommand) {
+                const desc = sqlDatabase[foundCommand].description;
+                document.title = foundCommand.toUpperCase() + ' SQL Compatibility | MySQL, PostgreSQL, SQL Server, Oracle, SQLite';
+                document.querySelector('meta[name="description"]').setAttribute('content',
+                    foundCommand.toUpperCase() + ': ' + desc + ' Check support across MySQL, PostgreSQL, SQL Server, Oracle, and SQLite.');
+            } else {
+                document.title = 'Can I Use SQL? | SQL Compatibility Checker';
+                document.querySelector('meta[name="description"]').setAttribute('content',
+                    'Check SQL command compatibility across MySQL, PostgreSQL, SQL Server, Oracle, and SQLite. Find out which databases support SELECT, MERGE, PIVOT, CTEs, window functions, and more.');
+            }
         }
 
         // Function to update URL with search query
