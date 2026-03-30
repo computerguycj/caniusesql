@@ -2,556 +2,667 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://caniusesql.com/</loc>
+    <lastmod>2026-03-30</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://caniusesql.com/?q=with%20(common%20table%20expressions)</loc>
+    <loc>https://caniusesql.com/f/with-cte</loc>
+    <lastmod>2026-03-30</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://caniusesql.com/?q=merge</loc>
+    <loc>https://caniusesql.com/f/merge</loc>
+    <lastmod>2026-03-30</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://caniusesql.com/?q=json_table</loc>
+    <loc>https://caniusesql.com/f/json-table</loc>
+    <lastmod>2026-03-30</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://caniusesql.com/?q=window%20functions</loc>
+    <loc>https://caniusesql.com/f/window-functions</loc>
+    <lastmod>2026-03-30</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://caniusesql.com/?q=pivot</loc>
+    <loc>https://caniusesql.com/f/pivot</loc>
+    <lastmod>2026-03-30</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://caniusesql.com/?q=full%20text%20search</loc>
+    <loc>https://caniusesql.com/f/full-text-search</loc>
+    <lastmod>2026-03-30</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://caniusesql.com/?q=recursive%20cte</loc>
+    <loc>https://caniusesql.com/f/recursive-cte</loc>
+    <lastmod>2026-03-30</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://caniusesql.com/?q=upsert</loc>
+    <loc>https://caniusesql.com/f/upsert</loc>
+    <lastmod>2026-03-30</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://caniusesql.com/?q=select</loc>
+    <loc>https://caniusesql.com/f/select</loc>
+    <lastmod>2026-03-30</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://caniusesql.com/?q=insert</loc>
+    <loc>https://caniusesql.com/f/insert</loc>
+    <lastmod>2026-03-30</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://caniusesql.com/?q=update</loc>
+    <loc>https://caniusesql.com/f/update</loc>
+    <lastmod>2026-03-30</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://caniusesql.com/?q=delete</loc>
+    <loc>https://caniusesql.com/f/delete</loc>
+    <lastmod>2026-03-30</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://caniusesql.com/?q=create%20table</loc>
+    <loc>https://caniusesql.com/f/create-table</loc>
+    <lastmod>2026-03-30</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://caniusesql.com/?q=alter%20table</loc>
+    <loc>https://caniusesql.com/f/alter-table</loc>
+    <lastmod>2026-03-30</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://caniusesql.com/?q=drop%20table</loc>
+    <loc>https://caniusesql.com/f/drop-table</loc>
+    <lastmod>2026-03-30</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://caniusesql.com/?q=set%20operations</loc>
+    <loc>https://caniusesql.com/f/set-operations</loc>
+    <lastmod>2026-03-30</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://caniusesql.com/?q=group%20by</loc>
+    <loc>https://caniusesql.com/f/group-by</loc>
+    <lastmod>2026-03-30</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://caniusesql.com/?q=order%20by</loc>
+    <loc>https://caniusesql.com/f/order-by</loc>
+    <lastmod>2026-03-30</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://caniusesql.com/?q=distinct</loc>
+    <loc>https://caniusesql.com/f/distinct</loc>
+    <lastmod>2026-03-30</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://caniusesql.com/?q=transactions</loc>
+    <loc>https://caniusesql.com/f/transactions</loc>
+    <lastmod>2026-03-30</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://caniusesql.com/?q=string%20agg</loc>
+    <loc>https://caniusesql.com/f/string-agg</loc>
+    <lastmod>2026-03-30</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://caniusesql.com/?q=lateral</loc>
+    <loc>https://caniusesql.com/f/lateral</loc>
+    <lastmod>2026-03-30</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://caniusesql.com/?q=comments</loc>
+    <loc>https://caniusesql.com/f/comments</loc>
+    <lastmod>2026-03-30</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://caniusesql.com/?q=join</loc>
+    <loc>https://caniusesql.com/f/join</loc>
+    <lastmod>2026-03-30</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://caniusesql.com/?q=inner%20join</loc>
+    <loc>https://caniusesql.com/f/inner-join</loc>
+    <lastmod>2026-03-30</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://caniusesql.com/?q=left%20join</loc>
+    <loc>https://caniusesql.com/f/left-join</loc>
+    <lastmod>2026-03-30</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://caniusesql.com/?q=right%20join</loc>
+    <loc>https://caniusesql.com/f/right-join</loc>
+    <lastmod>2026-03-30</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://caniusesql.com/?q=full%20outer%20join</loc>
+    <loc>https://caniusesql.com/f/full-outer-join</loc>
+    <lastmod>2026-03-30</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://caniusesql.com/?q=cross%20join</loc>
+    <loc>https://caniusesql.com/f/cross-join</loc>
+    <lastmod>2026-03-30</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://caniusesql.com/?q=create%20index</loc>
+    <loc>https://caniusesql.com/f/create-index</loc>
+    <lastmod>2026-03-30</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://caniusesql.com/?q=create%20view</loc>
+    <loc>https://caniusesql.com/f/create-view</loc>
+    <lastmod>2026-03-30</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://caniusesql.com/?q=case%20when</loc>
+    <loc>https://caniusesql.com/f/case-when</loc>
+    <lastmod>2026-03-30</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://caniusesql.com/?q=coalesce</loc>
+    <loc>https://caniusesql.com/f/coalesce</loc>
+    <lastmod>2026-03-30</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://caniusesql.com/?q=cast</loc>
+    <loc>https://caniusesql.com/f/cast</loc>
+    <lastmod>2026-03-30</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://caniusesql.com/?q=truncate</loc>
+    <loc>https://caniusesql.com/f/truncate</loc>
+    <lastmod>2026-03-30</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://caniusesql.com/?q=like</loc>
+    <loc>https://caniusesql.com/f/like</loc>
+    <lastmod>2026-03-30</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://caniusesql.com/?q=subquery</loc>
+    <loc>https://caniusesql.com/f/subquery</loc>
+    <lastmod>2026-03-30</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://caniusesql.com/?q=trigger</loc>
+    <loc>https://caniusesql.com/f/trigger</loc>
+    <lastmod>2026-03-30</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://caniusesql.com/?q=stored%20procedure</loc>
+    <loc>https://caniusesql.com/f/stored-procedure</loc>
+    <lastmod>2026-03-30</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://caniusesql.com/?q=explain</loc>
+    <loc>https://caniusesql.com/f/explain</loc>
+    <lastmod>2026-03-30</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://caniusesql.com/?q=listen%2Fnotify</loc>
+    <loc>https://caniusesql.com/f/listen-notify</loc>
+    <lastmod>2026-03-30</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://caniusesql.com/?q=generate_series</loc>
+    <loc>https://caniusesql.com/f/generate-series</loc>
+    <lastmod>2026-03-30</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://caniusesql.com/?q=returning</loc>
+    <loc>https://caniusesql.com/f/returning</loc>
+    <lastmod>2026-03-30</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://caniusesql.com/?q=exclusion%20constraints</loc>
+    <loc>https://caniusesql.com/f/exclusion-constraints</loc>
+    <lastmod>2026-03-30</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://caniusesql.com/?q=range%20types</loc>
+    <loc>https://caniusesql.com/f/range-types</loc>
+    <lastmod>2026-03-30</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://caniusesql.com/?q=filter%20(aggregate)</loc>
+    <loc>https://caniusesql.com/f/filter-aggregate</loc>
+    <lastmod>2026-03-30</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://caniusesql.com/?q=within%20group</loc>
+    <loc>https://caniusesql.com/f/within-group</loc>
+    <lastmod>2026-03-30</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://caniusesql.com/?q=row-level%20security</loc>
+    <loc>https://caniusesql.com/f/row-level-security</loc>
+    <lastmod>2026-03-30</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://caniusesql.com/?q=tablesample</loc>
+    <loc>https://caniusesql.com/f/tablesample</loc>
+    <lastmod>2026-03-30</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://caniusesql.com/?q=concat</loc>
+    <loc>https://caniusesql.com/f/concat</loc>
+    <lastmod>2026-03-30</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://caniusesql.com/?q=substring</loc>
+    <loc>https://caniusesql.com/f/substring</loc>
+    <lastmod>2026-03-30</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://caniusesql.com/?q=trim</loc>
+    <loc>https://caniusesql.com/f/trim</loc>
+    <lastmod>2026-03-30</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://caniusesql.com/?q=length</loc>
+    <loc>https://caniusesql.com/f/length</loc>
+    <lastmod>2026-03-30</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://caniusesql.com/?q=upper%20%2F%20lower</loc>
+    <loc>https://caniusesql.com/f/upper-lower</loc>
+    <lastmod>2026-03-30</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://caniusesql.com/?q=replace</loc>
+    <loc>https://caniusesql.com/f/replace</loc>
+    <lastmod>2026-03-30</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://caniusesql.com/?q=current%20timestamp</loc>
+    <loc>https://caniusesql.com/f/current-timestamp</loc>
+    <lastmod>2026-03-30</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://caniusesql.com/?q=date%20trunc</loc>
+    <loc>https://caniusesql.com/f/date-trunc</loc>
+    <lastmod>2026-03-30</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://caniusesql.com/?q=extract%20%2F%20datepart</loc>
+    <loc>https://caniusesql.com/f/extract-datepart</loc>
+    <lastmod>2026-03-30</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://caniusesql.com/?q=having</loc>
+    <loc>https://caniusesql.com/f/having</loc>
+    <lastmod>2026-03-30</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://caniusesql.com/?q=exists</loc>
+    <loc>https://caniusesql.com/f/exists</loc>
+    <lastmod>2026-03-30</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://caniusesql.com/?q=is%20null%20%2F%20is%20not%20null</loc>
+    <loc>https://caniusesql.com/f/is-null</loc>
+    <lastmod>2026-03-30</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://caniusesql.com/?q=row_number</loc>
+    <loc>https://caniusesql.com/f/row-number</loc>
+    <lastmod>2026-03-30</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://caniusesql.com/?q=lag%20%2F%20lead</loc>
+    <loc>https://caniusesql.com/f/lag-lead</loc>
+    <lastmod>2026-03-30</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://caniusesql.com/?q=charindex%20%2F%20instr%20%2F%20position</loc>
+    <loc>https://caniusesql.com/f/string-search</loc>
+    <lastmod>2026-03-30</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://caniusesql.com/?q=regex</loc>
+    <loc>https://caniusesql.com/f/regex</loc>
+    <lastmod>2026-03-30</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://caniusesql.com/?q=date%20add%20%2F%20interval%20arithmetic</loc>
+    <loc>https://caniusesql.com/f/date-add</loc>
+    <lastmod>2026-03-30</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://caniusesql.com/?q=date%20format</loc>
+    <loc>https://caniusesql.com/f/date-format</loc>
+    <lastmod>2026-03-30</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://caniusesql.com/?q=datediff</loc>
+    <loc>https://caniusesql.com/f/datediff</loc>
+    <lastmod>2026-03-30</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://caniusesql.com/?q=primary%20key</loc>
+    <loc>https://caniusesql.com/f/primary-key</loc>
+    <lastmod>2026-03-30</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://caniusesql.com/?q=foreign%20key</loc>
+    <loc>https://caniusesql.com/f/foreign-key</loc>
+    <lastmod>2026-03-30</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://caniusesql.com/?q=check%20constraint</loc>
+    <loc>https://caniusesql.com/f/check-constraint</loc>
+    <lastmod>2026-03-30</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://caniusesql.com/?q=unique%20constraint</loc>
+    <loc>https://caniusesql.com/f/unique-constraint</loc>
+    <lastmod>2026-03-30</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://caniusesql.com/?q=default%20value</loc>
+    <loc>https://caniusesql.com/f/default-value</loc>
+    <lastmod>2026-03-30</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://caniusesql.com/?q=not%20null</loc>
+    <loc>https://caniusesql.com/f/not-null</loc>
+    <lastmod>2026-03-30</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://caniusesql.com/?q=in%20%2F%20not%20in</loc>
+    <loc>https://caniusesql.com/f/in-not-in</loc>
+    <lastmod>2026-03-30</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://caniusesql.com/?q=between</loc>
+    <loc>https://caniusesql.com/f/between</loc>
+    <lastmod>2026-03-30</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://caniusesql.com/?q=limit%20%2F%20top%20%2F%20fetch%20first</loc>
+    <loc>https://caniusesql.com/f/limit-top</loc>
+    <lastmod>2026-03-30</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://caniusesql.com/?q=rank%20%2F%20dense_rank</loc>
+    <loc>https://caniusesql.com/f/rank-dense-rank</loc>
+    <lastmod>2026-03-30</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://caniusesql.com/?q=first_value%20%2F%20last_value</loc>
+    <loc>https://caniusesql.com/f/first-last-value</loc>
+    <lastmod>2026-03-30</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://caniusesql.com/?q=ntile</loc>
+    <loc>https://caniusesql.com/f/ntile</loc>
+    <lastmod>2026-03-30</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://caniusesql.com/?q=window%20frame%20(rows%2Frange)</loc>
+    <loc>https://caniusesql.com/f/window-frame</loc>
+    <lastmod>2026-03-30</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://caniusesql.com/?q=json%20extract</loc>
+    <loc>https://caniusesql.com/f/json-extract</loc>
+    <lastmod>2026-03-30</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://caniusesql.com/?q=json_agg%20%2F%20json_arrayagg</loc>
+    <loc>https://caniusesql.com/f/json-agg</loc>
+    <lastmod>2026-03-30</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://caniusesql.com/?q=json%20operators%20(-%3E%20%2F%20-%3E%3E)</loc>
+    <loc>https://caniusesql.com/f/json-operators</loc>
+    <lastmod>2026-03-30</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://caniusesql.com/?q=rollup</loc>
+    <loc>https://caniusesql.com/f/rollup</loc>
+    <lastmod>2026-03-30</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://caniusesql.com/?q=cube</loc>
+    <loc>https://caniusesql.com/f/cube</loc>
+    <lastmod>2026-03-30</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://caniusesql.com/?q=grouping%20sets</loc>
+    <loc>https://caniusesql.com/f/grouping-sets</loc>
+    <lastmod>2026-03-30</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://caniusesql.com/?q=count%20%2F%20sum%20%2F%20avg%20%2F%20min%20%2F%20max</loc>
+    <loc>https://caniusesql.com/f/basic-aggregates</loc>
+    <lastmod>2026-03-30</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://caniusesql.com/?q=sequence%20%2F%20autoincrement</loc>
+    <loc>https://caniusesql.com/f/sequence-autoincrement</loc>
+    <lastmod>2026-03-30</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://caniusesql.com/?q=nullif</loc>
+    <loc>https://caniusesql.com/f/nullif</loc>
+    <lastmod>2026-03-30</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://caniusesql.com/?q=greatest%20%2F%20least</loc>
+    <loc>https://caniusesql.com/f/greatest-least</loc>
+    <lastmod>2026-03-30</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://caniusesql.com/?q=generated%20columns</loc>
+    <loc>https://caniusesql.com/f/generated-columns</loc>
+    <lastmod>2026-03-30</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://caniusesql.com/?q=materialized%20view</loc>
+    <loc>https://caniusesql.com/f/materialized-view</loc>
+    <lastmod>2026-03-30</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://caniusesql.com/?q=temporary%20tables</loc>
+    <loc>https://caniusesql.com/f/temp-tables</loc>
+    <lastmod>2026-03-30</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://caniusesql.com/?q=percentile%20functions</loc>
+    <loc>https://caniusesql.com/f/percentile</loc>
+    <lastmod>2026-03-30</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://caniusesql.com/?q=any%20%2F%20all</loc>
+    <loc>https://caniusesql.com/f/any-all</loc>
+    <lastmod>2026-03-30</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://caniusesql.com/?q=correlated%20subquery</loc>
+    <loc>https://caniusesql.com/f/correlated-subquery</loc>
+    <lastmod>2026-03-30</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://caniusesql.com/?q=values%20clause</loc>
+    <loc>https://caniusesql.com/f/values-clause</loc>
+    <lastmod>2026-03-30</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://caniusesql.com/?q=partial%20%2F%20filtered%20index</loc>
+    <loc>https://caniusesql.com/f/partial-index</loc>
+    <lastmod>2026-03-30</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://caniusesql.com/?q=savepoint</loc>
+    <loc>https://caniusesql.com/f/savepoint</loc>
+    <lastmod>2026-03-30</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://caniusesql.com/?q=copy%20%2F%20bulk%20load</loc>
+    <loc>https://caniusesql.com/f/copy-bulk-load</loc>
+    <lastmod>2026-03-30</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://caniusesql.com/?q=iif%20%2F%20decode%20%2F%20conditional%20shorthand</loc>
+    <loc>https://caniusesql.com/f/iif-decode</loc>
+    <lastmod>2026-03-30</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://caniusesql.com/?q=string%20split%20%2F%20string%20to%20rows</loc>
+    <loc>https://caniusesql.com/f/string-split</loc>
+    <lastmod>2026-03-30</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://caniusesql.com/?q=json%20modify%20%2F%20json%20set</loc>
+    <loc>https://caniusesql.com/f/json-modify</loc>
+    <lastmod>2026-03-30</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://caniusesql.com/?q=array%20data%20type</loc>
+    <loc>https://caniusesql.com/f/array-types</loc>
+    <lastmod>2026-03-30</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://caniusesql.com/?q=unpivot</loc>
+    <loc>https://caniusesql.com/f/unpivot</loc>
+    <lastmod>2026-03-30</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://caniusesql.com/?q=insert%20into%20select</loc>
+    <loc>https://caniusesql.com/f/insert-select</loc>
+    <lastmod>2026-03-30</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://caniusesql.com/?q=create%20schema</loc>
+    <loc>https://caniusesql.com/f/create-schema</loc>
+    <lastmod>2026-03-30</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://caniusesql.com/?q=collation%20and%20character%20sets</loc>
+    <loc>https://caniusesql.com/f/collation</loc>
+    <lastmod>2026-03-30</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://caniusesql.com/?q=named%20window%20clause</loc>
+    <loc>https://caniusesql.com/f/window-clause</loc>
+    <lastmod>2026-03-30</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>

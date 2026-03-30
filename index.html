@@ -265,10 +265,10 @@
 
     <div class="examples">
         <h2>Popular SQL Commands</h2>
-        <a class="example" href="?q=SELECT" onclick="searchCommand('SELECT'); return false;">SELECT</a>
-        <a class="example" href="?q=MERGE" onclick="searchCommand('MERGE'); return false;">MERGE</a>
-        <a class="example" href="?q=PIVOT" onclick="searchCommand('PIVOT'); return false;">PIVOT</a>
-        <a class="example" href="?q=STRING+AGG" onclick="searchCommand('STRING AGG'); return false;">STRING AGG</a>
+        <a class="example" href="/f/select" onclick="searchCommand('SELECT'); return false;">SELECT</a>
+        <a class="example" href="/f/merge" onclick="searchCommand('MERGE'); return false;">MERGE</a>
+        <a class="example" href="/f/pivot" onclick="searchCommand('PIVOT'); return false;">PIVOT</a>
+        <a class="example" href="/f/string-agg" onclick="searchCommand('STRING AGG'); return false;">STRING AGG</a>
     </div>
 
     <div class="all-commands" id="allCommands" style="display: none;">
@@ -452,10 +452,12 @@
             const foundCommand = sqlDatabase && Object.keys(sqlDatabase).find(cmd => cmd.toLowerCase() === query.toLowerCase());
             let title, desc, url;
             if (foundCommand) {
-                const commandDesc = sqlDatabase[foundCommand].description;
+                const entry = sqlDatabase[foundCommand];
+                const commandDesc = entry.description;
                 title = foundCommand.toUpperCase() + ' SQL Compatibility | MySQL, PostgreSQL, SQL Server, Oracle, SQLite';
                 desc = foundCommand.toUpperCase() + ': ' + commandDesc + ' Check support across MySQL, PostgreSQL, SQL Server, Oracle, and SQLite.';
-                url = 'https://caniusesql.com/?q=' + encodeURIComponent(foundCommand);
+                const slug = entry && entry.slug;
+                url = slug ? 'https://caniusesql.com/f/' + slug : 'https://caniusesql.com';
             } else {
                 title = 'Can I Use SQL? | SQL Compatibility Checker';
                 desc = 'Check SQL command compatibility across MySQL, PostgreSQL, SQL Server, Oracle, and SQLite. Find out which databases support SELECT, MERGE, PIVOT, CTEs, window functions, and more.';
@@ -470,19 +472,38 @@
             document.querySelector('meta[name="twitter:description"]').setAttribute('content', desc);
         }
 
-        // Function to update URL with search query
+        // Function to update URL with slug-based path
         function updateURL(query) {
-            const url = new URL(window.location);
-            if (query && query.trim()) {
-                url.searchParams.set('q', query.trim());
-            } else {
-                url.searchParams.delete('q');
+            const foundCommand = sqlDatabase && Object.keys(sqlDatabase).find(
+                cmd => cmd.toLowerCase() === (query || '').toLowerCase()
+            );
+            if (foundCommand && sqlDatabase[foundCommand].slug) {
+                window.history.replaceState({}, '', '/f/' + sqlDatabase[foundCommand].slug);
+            } else if (!query || !query.trim()) {
+                window.history.replaceState({}, '', '/');
             }
-            window.history.replaceState({}, '', url);
         }
 
         // Function to initialize search from URL on page load
         function initializeFromURL() {
+            // Primary: path-based /f/slug
+            const pathMatch = window.location.pathname.match(/^\/f\/([^/]+)$/);
+            if (pathMatch) {
+                try {
+                    const slug = decodeURIComponent(pathMatch[1]);
+                    const foundCommand = sqlDatabase && Object.keys(sqlDatabase).find(
+                        cmd => sqlDatabase[cmd].slug === slug
+                    );
+                    if (foundCommand) {
+                        document.getElementById('commandSearch').value = foundCommand;
+                        searchCommand(foundCommand);
+                        return;
+                    }
+                } catch (e) {
+                    // Skip malformed slug
+                }
+            }
+            // Fallback: legacy ?q= param - getQueryParameter reads the legacy ?q= param, and searchCommand (which calls updateURL) performs a client-side history.replaceState to update the slug URL without a network redirect (soft redirect)
             const queryParam = getQueryParameter('q');
             if (queryParam) {
                 document.getElementById('commandSearch').value = queryParam;
@@ -511,7 +532,7 @@
             const section = document.getElementById('allCommands');
             const links = Object.keys(data).map(key => {
                 const a = document.createElement('a');
-                a.href = '?q=' + encodeURIComponent(key);
+                a.href = '/f/' + data[key].slug;
                 a.textContent = key.toUpperCase();
                 a.onclick = function(e) {
                     e.preventDefault();
