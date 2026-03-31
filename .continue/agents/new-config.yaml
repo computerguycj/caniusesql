@@ -1,0 +1,12 @@
+name: Local Qwen-Coder via Ollama
+version: 1.0.0
+schema: v1
+
+models:
+  - name: qwen-coder
+    provider: ollama
+    model: qwen3-coder:30b-a3b-q4_K_M
+    # optional roles; 'chat' is enough to start
+    roles:
+      - chat
+      - edit

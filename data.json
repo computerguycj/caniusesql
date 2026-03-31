@@ -4579,5 +4579,699 @@
       }
     },
     "details": "QUALIFY is a non-standard extension supported natively in Teradata, BigQuery, Snowflake, DuckDB, and Databricks — but not in any of the five engines covered here. Its appeal is readability: it removes the need to wrap a windowed query in a subquery just to filter on the window result. The standard-portable workaround is consistent across all engines: place the window expression in a CTE or subquery, then filter in an outer WHERE clause. Example: WITH ranked AS (SELECT *, ROW_NUMBER() OVER (PARTITION BY grp ORDER BY col) AS rn FROM t) SELECT * FROM ranked WHERE rn = 1. Some engines (PostgreSQL, SQL Server) allow referencing a window function alias in WHERE if wrapped in a subquery, but not in the same query level where it is defined."
+  },
+  "natural join / using": {
+    "description": "Join syntax that matches columns by name automatically (NATURAL JOIN) or by an explicit shared column list (JOIN ... USING), avoiding repeated column references.",
+    "syntax": "-- USING\nSELECT * FROM orders\nJOIN customers USING (customer_id);\n\n-- NATURAL JOIN\nSELECT * FROM orders\nNATURAL JOIN customers;",
+    "category": "Joins",
+    "slug": "natural-join",
+    "compatibility": {
+      "mysql": {
+        "supported": true,
+        "since": "5.0",
+        "notes": "Both NATURAL JOIN and USING are supported. NATURAL JOIN matches all columns with identical names; USING matches on the specified list. The joined column appears once in SELECT *.",
+        "syntax": "SELECT * FROM orders JOIN customers USING (customer_id);\nSELECT * FROM orders NATURAL JOIN customers;"
+      },
+      "postgresql": {
+        "supported": true,
+        "since": "7.4",
+        "notes": "Full support for both. USING produces a merged column in the output; NATURAL JOIN is effectively shorthand for USING all common column names.",
+        "syntax": "SELECT * FROM orders JOIN customers USING (customer_id);\nSELECT * FROM orders NATURAL JOIN customers;"
+      },
+      "sqlserver": {
+        "supported": false,
+        "notes": "Neither NATURAL JOIN nor USING is supported. Use explicit ON clauses. This is a deliberate omission — Microsoft considers NATURAL JOIN ambiguity-prone."
+      },
+      "oracle": {
+        "supported": true,
+        "since": "9i",
+        "notes": "Both NATURAL JOIN and USING supported. A known gotcha: NATURAL JOIN silently breaks if a column with a matching name is added to either table later.",
+        "syntax": "SELECT * FROM orders JOIN customers USING (customer_id);\nSELECT * FROM orders NATURAL JOIN customers;"
+      },
+      "sqlite": {
+        "supported": true,
+        "since": "3.0.0",
+        "notes": "NATURAL JOIN and USING are both supported. NATURAL JOIN is parsed but its behavior on ambiguous schemas can be unpredictable — USING is the safer choice.",
+        "syntax": "SELECT * FROM orders JOIN customers USING (customer_id);"
+      }
+    },
+    "details": "SQL Server is the only engine here that rejects both NATURAL JOIN and USING entirely, requiring explicit ON syntax. NATURAL JOIN is universally considered risky in production schemas: any future column added to either table with a name matching a column in the other table silently changes join behavior. USING is safer since the join column is explicit, but it still produces a single merged output column (not two), which can surprise applications expecting column aliases. For maximum portability and least-surprise semantics, ON is recommended for production code."
+  },
+
+  "fetch first / offset-fetch": {
+    "description": "Standard SQL syntax for skipping a number of rows and limiting the result set size, used for pagination.",
+    "syntax": "SELECT * FROM t\nORDER BY id\nOFFSET 20 ROWS\nFETCH NEXT 10 ROWS ONLY;",
+    "category": "Query Techniques",
+    "slug": "offset-fetch",
+    "compatibility": {
+      "mysql": {
+        "supported": true,
+        "since": "8.0",
+        "notes": "OFFSET/FETCH FIRST syntax added in 8.0 as an alias for LIMIT/OFFSET. The original LIMIT n OFFSET m syntax remains available and is more common in practice.",
+        "syntax": "-- Standard (8.0+):\nSELECT * FROM t ORDER BY id\nOFFSET 20 ROWS FETCH NEXT 10 ROWS ONLY;\n-- Traditional:\nSELECT * FROM t ORDER BY id LIMIT 10 OFFSET 20;"
+      },
+      "postgresql": {
+        "supported": true,
+        "since": "8.4",
+        "notes": "Full OFFSET/FETCH FIRST support since 8.4. LIMIT/OFFSET also remains available. FETCH FIRST n ROWS WITH TIES requires PostgreSQL 13+.",
+        "syntax": "SELECT * FROM t ORDER BY id\nOFFSET 20 ROWS FETCH NEXT 10 ROWS ONLY;"
+      },
+      "sqlserver": {
+        "supported": true,
+        "since": "2012",
+        "notes": "OFFSET/FETCH ONLY is the standard SQL Server pagination syntax since 2012. Requires an ORDER BY clause — omitting it is a syntax error. TOP N is the older alternative but does not support offset.",
+        "syntax": "SELECT * FROM t ORDER BY id\nOFFSET 20 ROWS FETCH NEXT 10 ROWS ONLY;"
+      },
+      "oracle": {
+        "supported": true,
+        "since": "12c",
+        "notes": "OFFSET/FETCH added in Oracle 12c. Prior versions required the ROWNUM pseudo-column or ROW_NUMBER() window function wrapped in a subquery.",
+        "syntax": "-- 12c+:\nSELECT * FROM t ORDER BY id\nOFFSET 20 ROWS FETCH NEXT 10 ROWS ONLY;\n-- Pre-12c:\nSELECT * FROM (SELECT t.*, ROWNUM rn FROM (SELECT * FROM t ORDER BY id) t WHERE ROWNUM <= 30) WHERE rn > 20;"
+      },
+      "sqlite": {
+        "supported": true,
+        "since": "3.25.0",
+        "notes": "OFFSET/FETCH FIRST syntax added in 3.25.0. The traditional LIMIT/OFFSET form has been available since very early SQLite versions.",
+        "syntax": "SELECT * FROM t ORDER BY id\nOFFSET 20 ROWS FETCH NEXT 10 ROWS ONLY;"
+      }
+    },
+    "details": "OFFSET/FETCH is the ISO SQL standard pagination syntax and is now supported across all five engines, though it arrived late in MySQL (8.0), Oracle (12c), and SQLite (3.25.0). For broad compatibility, the LIMIT/OFFSET form works in MySQL, PostgreSQL, and SQLite but not in SQL Server or Oracle. SQL Server's TOP N predates OFFSET/FETCH but cannot paginate (no offset). Oracle's pre-12c ROWNUM pattern is notorious for requiring double-nested subqueries and is a common source of bugs. A key performance note: OFFSET-based pagination degrades at large offsets because the engine must scan and discard rows — keyset pagination (WHERE id > last_seen_id) is more efficient for deep pages."
+  },
+
+  "with ties": {
+    "description": "An extension to FETCH FIRST / LIMIT that includes additional rows that tie on the last ORDER BY value rather than cutting them off arbitrarily.",
+    "syntax": "SELECT * FROM t\nORDER BY score DESC\nFETCH FIRST 3 ROWS WITH TIES;",
+    "category": "Query Techniques",
+    "slug": "with-ties",
+    "compatibility": {
+      "mysql": {
+        "supported": false,
+        "notes": "WITH TIES is not supported. Workaround: use RANK() in a subquery and filter WHERE rnk <= n."
+      },
+      "postgresql": {
+        "supported": true,
+        "since": "13",
+        "notes": "FETCH FIRST n ROWS WITH TIES added in PostgreSQL 13.",
+        "syntax": "SELECT * FROM leaderboard\nORDER BY score DESC\nFETCH FIRST 3 ROWS WITH TIES;"
+      },
+      "sqlserver": {
+        "supported": true,
+        "since": "2008",
+        "notes": "Supported via SELECT TOP n WITH TIES. Requires an ORDER BY clause.",
+        "syntax": "SELECT TOP 3 WITH TIES *\nFROM leaderboard\nORDER BY score DESC;"
+      },
+      "oracle": {
+        "supported": true,
+        "since": "12c",
+        "notes": "Supported in the FETCH FIRST syntax introduced in 12c.",
+        "syntax": "SELECT * FROM leaderboard\nORDER BY score DESC\nFETCH FIRST 3 ROWS WITH TIES;"
+      },
+      "sqlite": {
+        "supported": false,
+        "notes": "WITH TIES is not supported. Use a RANK() window function in a subquery as a workaround."
+      }
+    },
+    "details": "WITH TIES is handy for leaderboards and ranking queries where arbitrary tie-breaking at the boundary is undesirable. SQL Server's TOP n WITH TIES syntax predates the standard FETCH FIRST form. PostgreSQL added it relatively late (13). MySQL and SQLite both lack it entirely — the portable workaround is consistent across all engines: wrap with RANK() OVER (ORDER BY col) and filter WHERE rnk <= n in an outer query. Note that WITH TIES can return more rows than n — an important consideration for pagination or when a caller assumes a fixed row count."
+  },
+
+  "lateral flatten": {
+    "description": "Expanding an array or JSON array column into multiple rows using a lateral (correlated) join, common in analytical SQL dialects.",
+    "syntax": "-- PostgreSQL\nSELECT t.id, elem\nFROM t,\nLATERAL jsonb_array_elements_text(t.tags) AS elem;",
+    "category": "JSON",
+    "slug": "lateral-flatten",
+    "compatibility": {
+      "mysql": {
+        "supported": true,
+        "since": "8.0",
+        "notes": "No FLATTEN function. Use JSON_TABLE to shred a JSON array into rows — it is the closest equivalent.",
+        "syntax": "SELECT t.id, jt.tag\nFROM t,\nJSON_TABLE(t.tags, '$[*]' COLUMNS (tag VARCHAR(100) PATH '$')) jt;"
+      },
+      "postgresql": {
+        "supported": true,
+        "since": "9.3",
+        "notes": "Use json_array_elements() or jsonb_array_elements() as a set-returning function in a LATERAL join. For native arrays, use UNNEST().",
+        "syntax": "-- JSON array:\nSELECT t.id, elem\nFROM t, LATERAL jsonb_array_elements_text(t.tags) AS elem;\n\n-- Native array column:\nSELECT t.id, unnested\nFROM t, UNNEST(t.tags_array) AS unnested;"
+      },
+      "sqlserver": {
+        "supported": true,
+        "since": "2016",
+        "notes": "Use OPENJSON() with CROSS APPLY. No dedicated FLATTEN; OPENJSON shreds a JSON string into rows.",
+        "syntax": "SELECT t.id, j.value\nFROM t\nCROSS APPLY OPENJSON(t.tags) AS j;"
+      },
+      "oracle": {
+        "supported": true,
+        "since": "12c",
+        "notes": "Use JSON_TABLE (12c+) to expand JSON arrays. For nested tables (Oracle collection types), use TABLE() in a CROSS JOIN.",
+        "syntax": "SELECT t.id, jt.tag\nFROM t,\nJSON_TABLE(t.tags, '$[*]' COLUMNS (tag VARCHAR2(100) PATH '$')) jt;"
+      },
+      "sqlite": {
+        "supported": true,
+        "since": "3.38.0",
+        "notes": "json_each() and json_tree() are table-valued functions that shred JSON arrays into rows.",
+        "syntax": "SELECT t.id, e.value\nFROM t, json_each(t.tags) e;"
+      }
+    },
+    "details": "LATERAL FLATTEN is a Snowflake/DuckDB/BigQuery-native term, but every engine here has an equivalent mechanism under a different name. PostgreSQL's unnest() (native arrays) and jsonb_array_elements() (JSON arrays) are the most ergonomic. SQL Server's OPENJSON and Oracle/MySQL's JSON_TABLE share a more verbose column-definition syntax inherited from the SQL/JSON standard. SQLite's json_each() is clean and compact. The fundamental pattern is the same everywhere: a set-returning (table-valued) function is cross-joined laterally to the source row, producing one output row per array element. Performance note: these operations can be expensive on large JSON payloads; storing arrays as normalized rows is still preferable for high-frequency queries."
+  },
+
+  "format / to_char": {
+    "description": "Formatting a date, number, or other value as a string according to a format pattern.",
+    "syntax": "-- PostgreSQL / Oracle\nSELECT TO_CHAR(order_date, 'YYYY-MM-DD') FROM orders;\n\n-- SQL Server\nSELECT FORMAT(order_date, 'yyyy-MM-dd') FROM orders;",
+    "category": "Functions",
+    "slug": "format-to-char",
+    "compatibility": {
+      "mysql": {
+        "supported": true,
+        "since": "5.0",
+        "notes": "DATE_FORMAT() for date/datetime values; FORMAT() for numbers (adds thousands separator). No unified TO_CHAR equivalent.",
+        "syntax": "SELECT DATE_FORMAT(order_date, '%Y-%m-%d') FROM orders;\nSELECT FORMAT(1234567.89, 2);  -- '1,234,567.89'"
+      },
+      "postgresql": {
+        "supported": true,
+        "since": "7.4",
+        "notes": "TO_CHAR() handles dates, timestamps, numbers, and intervals with a rich pattern language. TO_DATE() and TO_NUMBER() are the inverse functions.",
+        "syntax": "SELECT TO_CHAR(order_date, 'YYYY-MM-DD') FROM orders;\nSELECT TO_CHAR(1234567.89, 'FM999,999,990.00');"
+      },
+      "sqlserver": {
+        "supported": true,
+        "since": "2012",
+        "notes": "FORMAT() added in 2012 using .NET format strings. CONVERT() with a style code is the older approach and works on all versions. FORMAT() is convenient but notably slower than CONVERT() at scale.",
+        "syntax": "SELECT FORMAT(order_date, 'yyyy-MM-dd') FROM orders;\nSELECT FORMAT(1234567.89, 'N2');  -- '1,234,567.89'\n-- Older CONVERT style:\nSELECT CONVERT(VARCHAR, order_date, 23);  -- 'yyyy-mm-dd'"
+      },
+      "oracle": {
+        "supported": true,
+        "since": "7",
+        "notes": "TO_CHAR() is the standard for both dates and numbers. NLS session parameters can affect output; use explicit format masks to ensure consistency.",
+        "syntax": "SELECT TO_CHAR(order_date, 'YYYY-MM-DD') FROM orders;\nSELECT TO_CHAR(1234567.89, '999,999,990.00') FROM dual;"
+      },
+      "sqlite": {
+        "supported": true,
+        "since": "3.0.0",
+        "notes": "strftime() handles date formatting. For numeric formatting, use printf() / format(), available since 3.38.0.",
+        "syntax": "SELECT strftime('%Y-%m-%d', order_date) FROM orders;\nSELECT printf('%.2f', 1234.5);  -- '1234.50'"
+      }
+    },
+    "details": "Date and number formatting is one of the most fragmented areas across SQL engines. PostgreSQL and Oracle share TO_CHAR() with similar (but not identical) pattern languages — Oracle's format tokens are case-sensitive in some contexts; PostgreSQL is case-insensitive. SQL Server's FORMAT() uses .NET composite format strings, which are powerful but measurably slower than CONVERT() for high-volume queries. MySQL splits the concern: DATE_FORMAT() for dates, FORMAT() for numbers. SQLite uses Unix-style strftime() for dates and printf() for numbers. For cross-engine portability, CAST(value AS VARCHAR/TEXT) plus application-layer formatting is often simpler than maintaining five different format strings."
+  },
+
+  "uuid / gen_random_uuid": {
+    "description": "Generating a universally unique identifier (UUID/GUID) within a SQL query or default expression.",
+    "syntax": "-- PostgreSQL\nSELECT gen_random_uuid();\n\n-- SQL Server\nSELECT NEWID();",
+    "category": "Functions",
+    "slug": "uuid",
+    "compatibility": {
+      "mysql": {
+        "supported": true,
+        "since": "5.0",
+        "notes": "UUID() returns a v1 UUID (time-based). UUID_TO_BIN() and BIN_TO_UUID() added in 8.0 for compact 16-byte binary storage. No native UUID column type; store as CHAR(36) or BINARY(16).",
+        "syntax": "SELECT UUID();\n-- Efficient binary storage (8.0+):\nINSERT INTO t (id) VALUES (UUID_TO_BIN(UUID(), 1));"
+      },
+      "postgresql": {
+        "supported": true,
+        "since": "8.3",
+        "notes": "gen_random_uuid() (v4, cryptographically random) is built-in since PG 13; earlier versions require the pgcrypto extension. Native UUID column type available.",
+        "syntax": "SELECT gen_random_uuid();\nCREATE TABLE t (id UUID DEFAULT gen_random_uuid() PRIMARY KEY);"
+      },
+      "sqlserver": {
+        "supported": true,
+        "since": "2000",
+        "notes": "NEWID() generates a random GUID. NEWSEQUENTIALID() generates sequential GUIDs suitable as clustered index keys (reduces page splits). Native UNIQUEIDENTIFIER column type.",
+        "syntax": "SELECT NEWID();\nCREATE TABLE t (id UNIQUEIDENTIFIER DEFAULT NEWID() PRIMARY KEY);"
+      },
+      "oracle": {
+        "supported": true,
+        "since": "8i",
+        "notes": "SYS_GUID() returns a 16-byte RAW value, not a formatted UUID string. Extra formatting is required to produce the standard hyphenated form.",
+        "syntax": "SELECT SYS_GUID() FROM dual;\n-- Hyphenated format:\nSELECT REGEXP_REPLACE(LOWER(RAWTOHEX(SYS_GUID())),\n  '([a-f0-9]{8})([a-f0-9]{4})([a-f0-9]{4})([a-f0-9]{4})([a-f0-9]{12})',\n  '\\1-\\2-\\3-\\4-\\5') FROM dual;"
+      },
+      "sqlite": {
+        "supported": false,
+        "notes": "No built-in UUID function. Common workaround: use the application layer to generate and insert UUIDs, or construct via lower(hex(randomblob(16))) with string manipulation."
+      }
+    },
+    "details": "UUID generation is available in all five engines but with different ergonomics. PostgreSQL's gen_random_uuid() and SQL Server's NEWID() are the most convenient — both return a formatted UUID string and work natively as column defaults. Oracle's SYS_GUID() returns raw bytes, requiring extra formatting to match the standard 8-4-4-4-12 hyphenated representation. MySQL lacks a native UUID column type, making efficient storage a deliberate decision (BINARY(16) with UUID_TO_BIN is recommended over CHAR(36) for index performance). SQLite has no built-in function at all. A common architecture note: random UUIDs (v4) as clustered primary keys cause index fragmentation in SQL Server — use NEWSEQUENTIALID() or ULID-style values instead."
+  },
+
+  "math functions (floor / ceil / round / abs)": {
+    "description": "Core numeric functions for rounding, truncating, and taking the absolute value of numeric expressions.",
+    "syntax": "SELECT\n  FLOOR(4.7),\n  CEIL(4.2),\n  ROUND(4.567, 2),\n  ABS(-42);",
+    "category": "Functions",
+    "slug": "math-functions",
+    "compatibility": {
+      "mysql": {
+        "supported": true,
+        "since": "5.0",
+        "notes": "FLOOR, CEILING (or CEIL), ROUND, ABS all available. ROUND uses half-away-from-zero. TRUNCATE(n, d) truncates without rounding.",
+        "syntax": "SELECT FLOOR(4.7), CEILING(4.2), ROUND(4.565, 2), ABS(-42), TRUNCATE(4.789, 2);"
+      },
+      "postgresql": {
+        "supported": true,
+        "since": "7.4",
+        "notes": "FLOOR, CEIL/CEILING, ROUND, ABS all standard. ROUND on the NUMERIC type uses banker's rounding (round half to even); on float it rounds half away from zero. TRUNC() truncates.",
+        "syntax": "SELECT FLOOR(4.7), CEIL(4.2), ROUND(4.565, 2), ABS(-42), TRUNC(4.789, 2);"
+      },
+      "sqlserver": {
+        "supported": true,
+        "since": "2000",
+        "notes": "FLOOR, CEILING, ROUND, ABS available. ROUND(n, d, 1) with a third argument of 1 truncates instead of rounding. No TRUNC function.",
+        "syntax": "SELECT FLOOR(4.7), CEILING(4.2), ROUND(4.565, 2), ABS(-42);\n-- Truncate via ROUND third arg:\nSELECT ROUND(4.789, 2, 1);"
+      },
+      "oracle": {
+        "supported": true,
+        "since": "7",
+        "notes": "FLOOR, CEIL, ROUND, ABS available. TRUNC(n, d) truncates. ROUND uses half-away-from-zero.",
+        "syntax": "SELECT FLOOR(4.7), CEIL(4.2), ROUND(4.565, 2), ABS(-42), TRUNC(4.789, 2) FROM dual;"
+      },
+      "sqlite": {
+        "supported": true,
+        "since": "3.0.0",
+        "notes": "ROUND and ABS built-in since the beginning. FLOOR and CEIL added in 3.35.0. No TRUNC; use CAST(n AS INT) or ROUND(n - 0.5) as a workaround for positive values.",
+        "syntax": "SELECT FLOOR(4.7), CEIL(4.2), ROUND(4.567, 2), ABS(-42);"
+      }
+    },
+    "details": "The core four (FLOOR, CEIL/CEILING, ROUND, ABS) work across all five engines with only minor spelling differences. The most significant behavioral difference is ROUND: PostgreSQL uses banker's rounding (round half to even) for the NUMERIC type, meaning ROUND(2.5) = 2 and ROUND(3.5) = 4, while all other engines use half-away-from-zero (ROUND(2.5) = 3). This is a silent correctness trap when migrating financial calculations to PostgreSQL. Truncation is also inconsistent: PostgreSQL and Oracle have TRUNC(), MySQL has TRUNCATE(), SQL Server uses ROUND(n, d, 1), and SQLite requires a workaround. CEILING vs CEIL: all engines accept at least one spelling; PostgreSQL, MySQL, and SQL Server accept both."
+  },
+
+  "string padding (lpad / rpad)": {
+    "description": "Padding a string to a specified length by prepending (LPAD) or appending (RPAD) a fill character.",
+    "syntax": "SELECT LPAD('42', 6, '0');  -- '000042'\nSELECT RPAD('hi', 5, '.');  -- 'hi...'",
+    "category": "Functions",
+    "slug": "string-padding",
+    "compatibility": {
+      "mysql": {
+        "supported": true,
+        "since": "5.0",
+        "notes": "LPAD and RPAD are both built-in. If the string is longer than the target length, the result is silently truncated to that length.",
+        "syntax": "SELECT LPAD('42', 6, '0');    -- '000042'\nSELECT RPAD('hello', 8, '-'); -- 'hello---'"
+      },
+      "postgresql": {
+        "supported": true,
+        "since": "7.4",
+        "notes": "LPAD and RPAD are built-in. The fill string defaults to a space if omitted. If the input is longer than length, the result is truncated from the right.",
+        "syntax": "SELECT LPAD('42', 6, '0');    -- '000042'\nSELECT RPAD('hello', 8, '-'); -- 'hello---'"
+      },
+      "sqlserver": {
+        "supported": false,
+        "notes": "No native LPAD or RPAD. Standard workarounds use RIGHT/LEFT with REPLICATE.",
+        "syntax": "-- LPAD equivalent:\nSELECT RIGHT(REPLICATE('0', 6) + '42', 6);   -- '000042'\n-- RPAD equivalent:\nSELECT LEFT('hello' + REPLICATE('-', 8), 8);  -- 'hello---'"
+      },
+      "oracle": {
+        "supported": true,
+        "since": "7",
+        "notes": "LPAD and RPAD are standard Oracle string functions, available in SQL and PL/SQL.",
+        "syntax": "SELECT LPAD('42', 6, '0') FROM dual;    -- '000042'\nSELECT RPAD('hello', 8, '-') FROM dual; -- 'hello---'"
+      },
+      "sqlite": {
+        "supported": false,
+        "notes": "No native LPAD or RPAD. Use printf() / format() for left-zero-padding integers. General string padding requires application-side logic or a custom UDF.",
+        "syntax": "-- Zero-pad integer:\nSELECT printf('%06d', 42);  -- '000042'"
+      }
+    },
+    "details": "LPAD and RPAD are available in MySQL, PostgreSQL, and Oracle but absent in SQL Server and SQLite. SQL Server's REPLICATE-based pattern is verbose but reliable and worth encapsulating in a scalar function if used frequently. SQLite's printf('%0Nd', value) handles numeric zero-padding cleanly but there is no general-purpose string-padding path without a custom UDF. A subtle shared behavior in MySQL and PostgreSQL: if the source string is already longer than the target length, it is silently truncated to that length — data loss that can go unnoticed if the target length is set too small."
+  },
+
+  "enum type": {
+    "description": "A column type that restricts values to a predefined set of named string constants, enforced at the database level.",
+    "syntax": "-- MySQL\nCREATE TABLE orders (\n  status ENUM('pending', 'shipped', 'delivered')\n);",
+    "category": "Data Types",
+    "slug": "enum-type",
+    "compatibility": {
+      "mysql": {
+        "supported": true,
+        "since": "5.0",
+        "notes": "ENUM is a native column type. Values are stored as integers internally (1-indexed position). Adding values requires ALTER TABLE. Comparing ENUM values uses integer order, not lexicographic.",
+        "syntax": "CREATE TABLE orders (\n  status ENUM('pending', 'shipped', 'delivered') NOT NULL\n);\nSELECT * FROM orders WHERE status = 'shipped';"
+      },
+      "postgresql": {
+        "supported": true,
+        "since": "8.3",
+        "notes": "CREATE TYPE ... AS ENUM creates a reusable named type. Values can be added with ALTER TYPE ... ADD VALUE but cannot be removed. Enum ordering reflects declaration order, not alphabetical.",
+        "syntax": "CREATE TYPE order_status AS ENUM ('pending', 'shipped', 'delivered');\nCREATE TABLE orders (status order_status NOT NULL);\n-- Add a value:\nALTER TYPE order_status ADD VALUE 'cancelled';"
+      },
+      "sqlserver": {
+        "supported": false,
+        "notes": "No native ENUM type. Use a CHECK constraint or a foreign key to a lookup table.",
+        "syntax": "CREATE TABLE orders (\n  status VARCHAR(20) NOT NULL\n    CHECK (status IN ('pending', 'shipped', 'delivered'))\n);"
+      },
+      "oracle": {
+        "supported": false,
+        "notes": "No native ENUM type. Use a CHECK constraint or a lookup table with a foreign key.",
+        "syntax": "CREATE TABLE orders (\n  status VARCHAR2(20) NOT NULL\n    CHECK (status IN ('pending', 'shipped', 'delivered'))\n);"
+      },
+      "sqlite": {
+        "supported": false,
+        "notes": "No native ENUM type. Use a CHECK constraint to restrict allowed values.",
+        "syntax": "CREATE TABLE orders (\n  status TEXT NOT NULL\n    CHECK (status IN ('pending', 'shipped', 'delivered'))\n);"
+      }
+    },
+    "details": "MySQL and PostgreSQL have native ENUM support; SQL Server, Oracle, and SQLite do not, relying on CHECK constraints or lookup tables. The two native implementations differ significantly: MySQL stores ENUMs as integers internally, so values sort by declaration position rather than alphabetically, and reordering values is a breaking schema change. PostgreSQL's named CREATE TYPE approach is more maintainable — the type is reusable across tables and extensible. A key limitation in PostgreSQL: enum values cannot be removed or renamed after creation without dropping and recreating the type. For teams targeting multiple engines, CHECK constraints or a lookup table with a foreign key are the portable alternatives, with the lookup-table approach offering easier value set changes over time."
+  },
+
+  "interval type": {
+    "description": "A data type representing a span of time (e.g., '3 days', '2 hours 30 minutes') that can be stored, compared, and used in date arithmetic.",
+    "syntax": "-- PostgreSQL\nSELECT NOW() + INTERVAL '3 days';\nSELECT INTERVAL '2 hours 30 minutes';",
+    "category": "Data Types",
+    "slug": "interval-type",
+    "compatibility": {
+      "mysql": {
+        "supported": true,
+        "since": "5.0",
+        "notes": "INTERVAL is a keyword used in date arithmetic expressions but is not a storable column type. Store durations as INT (seconds) or separate numeric columns.",
+        "syntax": "-- Date arithmetic only:\nSELECT DATE_ADD(order_date, INTERVAL 7 DAY) FROM orders;\nSELECT NOW() + INTERVAL '3' HOUR;"
+      },
+      "postgresql": {
+        "supported": true,
+        "since": "7.4",
+        "notes": "INTERVAL is a fully storable column type. Supports ISO 8601 and verbose input formats. Arithmetic with timestamp/date produces and consumes INTERVAL values natively.",
+        "syntax": "CREATE TABLE sla (response_target INTERVAL NOT NULL);\nINSERT INTO sla VALUES (INTERVAL '4 hours');\nSELECT created_at + response_target FROM sla;"
+      },
+      "sqlserver": {
+        "supported": false,
+        "notes": "No INTERVAL type or keyword. Date arithmetic uses DATEADD() and DATEDIFF() functions. Durations must be stored as numeric columns.",
+        "syntax": "SELECT DATEADD(DAY, 7, order_date) FROM orders;\nSELECT DATEDIFF(HOUR, start_time, end_time) FROM events;"
+      },
+      "oracle": {
+        "supported": true,
+        "since": "9i",
+        "notes": "Two storable interval types: INTERVAL YEAR TO MONTH and INTERVAL DAY TO SECOND. They are not interchangeable and cannot be mixed in arithmetic.",
+        "syntax": "CREATE TABLE sla (\n  response_target INTERVAL DAY TO SECOND NOT NULL\n);\nINSERT INTO sla VALUES (INTERVAL '0 04:00:00' DAY TO SECOND);\nSELECT order_date + INTERVAL '7' DAY FROM orders;"
+      },
+      "sqlite": {
+        "supported": false,
+        "notes": "No INTERVAL type. Date arithmetic uses the date()/datetime() functions with modifier strings like '+7 days'. Store intervals as integer seconds or text.",
+        "syntax": "SELECT date(order_date, '+7 days') FROM orders;\nSELECT datetime('now', '-3 hours');"
+      }
+    },
+    "details": "PostgreSQL has the most complete INTERVAL implementation — it is a first-class storable type with rich literal syntax and seamless arithmetic with timestamps. Oracle's two-type split (YEAR TO MONTH vs DAY TO SECOND) reflects the genuine semantic problem that a month is not a fixed number of days; the two types cannot be mixed in arithmetic. MySQL uses INTERVAL only as an arithmetic keyword, not a storable type — a frequently missed distinction. SQL Server and SQLite have no interval concept at all; developers store durations as integers and compute with DATEADD/DATEDIFF or SQLite's string modifier functions. The lack of a storable interval type in three of five engines makes this a portability challenge for applications that need to persist duration values such as SLAs, scheduling windows, or rate limit windows."
+  },
+  "boolean type": {
+    "description": "A native data type representing a true/false value, stored and queried without numeric or string proxies.",
+    "syntax": "CREATE TABLE flags (\n  is_active BOOLEAN NOT NULL DEFAULT TRUE\n);",
+    "category": "Data Types",
+    "slug": "boolean-type",
+    "compatibility": {
+      "mysql": {
+        "supported": true,
+        "since": "5.0",
+        "notes": "BOOLEAN and BOOL are aliases for TINYINT(1). Values are stored as 0/1; TRUE and FALSE are just aliases for 1 and 0. Comparisons like WHERE is_active = TRUE work but WHERE is_active IS TRUE does not.",
+        "syntax": "CREATE TABLE flags (is_active BOOLEAN NOT NULL DEFAULT TRUE);\n-- Stored as TINYINT(1):\nSELECT * FROM flags WHERE is_active = 1;\nSELECT * FROM flags WHERE is_active = TRUE; -- same thing"
+      },
+      "postgresql": {
+        "supported": true,
+        "since": "7.4",
+        "notes": "True native BOOLEAN type. Accepts 'true', 'false', 't', 'f', 'yes', 'no', '1', '0' as input literals. IS TRUE / IS FALSE predicates work correctly and handle NULLs distinctly.",
+        "syntax": "CREATE TABLE flags (is_active BOOLEAN NOT NULL DEFAULT TRUE);\nSELECT * FROM flags WHERE is_active;\nSELECT * FROM flags WHERE is_active IS TRUE;"
+      },
+      "sqlserver": {
+        "supported": false,
+        "notes": "No BOOLEAN or BOOL type. Use BIT (0, 1, or NULL). BIT columns cannot be used directly in WHERE without comparison: WHERE is_active = 1, not WHERE is_active.",
+        "syntax": "CREATE TABLE flags (is_active BIT NOT NULL DEFAULT 1);\nSELECT * FROM flags WHERE is_active = 1;"
+      },
+      "oracle": {
+        "supported": true,
+        "since": "23c",
+        "notes": "Native BOOLEAN column type added in Oracle 23c. In earlier versions, use NUMBER(1) with a CHECK(col IN (0,1)) or CHAR(1) with CHECK(col IN ('Y','N')). PL/SQL has always had a BOOLEAN type but it was not usable in SQL or as a column type prior to 23c.",
+        "syntax": "-- Oracle 23c+:\nCREATE TABLE flags (is_active BOOLEAN NOT NULL DEFAULT TRUE);\n-- Pre-23c:\nCREATE TABLE flags (is_active NUMBER(1) DEFAULT 1 CHECK (is_active IN (0,1)));"
+      },
+      "sqlite": {
+        "supported": true,
+        "since": "3.0.0",
+        "notes": "SQLite has no separate BOOLEAN storage class — values are stored as integers 0 and 1. The keywords TRUE and FALSE are recognized as integer literals 1 and 0 since SQLite 3.23.0.",
+        "syntax": "CREATE TABLE flags (is_active INTEGER NOT NULL DEFAULT 1);\n-- TRUE/FALSE literals (3.23.0+):\nSELECT * FROM flags WHERE is_active = TRUE;"
+      }
+    },
+    "details": "Only PostgreSQL has a true, fully-featured BOOLEAN type. MySQL's BOOLEAN is transparently TINYINT(1), which means any integer value can be inserted, not just 0 and 1, and IS TRUE / IS FALSE predicates behave differently than in PostgreSQL. SQL Server's BIT is the closest equivalent but cannot be used as a standalone expression in WHERE — it always requires an explicit comparison operator. Oracle only gained a SQL-level BOOLEAN column type in 23c; before that, PL/SQL had BOOLEAN but it was unusable in DDL or plain SQL queries, forcing teams to use numeric or character proxies. When writing cross-engine code, the safest portable pattern is a SMALLINT or TINYINT column constrained to 0 and 1 with a CHECK constraint, compared with = 1 / = 0."
+  },
+
+  "uuid type": {
+    "description": "A native 128-bit column type for storing universally unique identifiers, distinct from storing UUIDs as plain strings.",
+    "syntax": "-- PostgreSQL\nCREATE TABLE t (\n  id UUID PRIMARY KEY DEFAULT gen_random_uuid()\n);",
+    "category": "Data Types",
+    "slug": "uuid-type",
+    "compatibility": {
+      "mysql": {
+        "supported": false,
+        "notes": "No native UUID column type. Common options: CHAR(36) for human-readable storage, or BINARY(16) with UUID_TO_BIN() / BIN_TO_UUID() (8.0+) for efficient indexed storage. BINARY(16) is strongly preferred for primary keys.",
+        "syntax": "-- Efficient storage (8.0+):\nCREATE TABLE t (\n  id BINARY(16) DEFAULT (UUID_TO_BIN(UUID(), 1)) PRIMARY KEY\n);\nSELECT BIN_TO_UUID(id) FROM t;"
+      },
+      "postgresql": {
+        "supported": true,
+        "since": "8.3",
+        "notes": "Native UUID type stores 16 bytes internally (no hyphen overhead). Displays as the standard 8-4-4-4-12 hyphenated string. Supports equality, indexing, and default expressions with gen_random_uuid().",
+        "syntax": "CREATE TABLE t (\n  id UUID PRIMARY KEY DEFAULT gen_random_uuid()\n);\nSELECT * FROM t WHERE id = 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11';"
+      },
+      "sqlserver": {
+        "supported": true,
+        "since": "2000",
+        "notes": "UNIQUEIDENTIFIER is the native 16-byte UUID type. Supports NEWID() and NEWSEQUENTIALID() as defaults. Note: SQL Server stores bytes in a mixed-endian order that differs from RFC 4122, which affects cross-platform comparisons.",
+        "syntax": "CREATE TABLE t (\n  id UNIQUEIDENTIFIER DEFAULT NEWID() PRIMARY KEY\n);\nSELECT * FROM t WHERE id = 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11';"
+      },
+      "oracle": {
+        "supported": false,
+        "notes": "No native UUID column type. SYS_GUID() returns RAW(16), and RAW(16) is the conventional storage type for UUIDs. The standard hyphenated format requires manual conversion.",
+        "syntax": "CREATE TABLE t (\n  id RAW(16) DEFAULT SYS_GUID() PRIMARY KEY\n);\n-- Retrieve as formatted string:\nSELECT LOWER(REGEXP_REPLACE(RAWTOHEX(id),\n  '([A-F0-9]{8})([A-F0-9]{4})([A-F0-9]{4})([A-F0-9]{4})([A-F0-9]{12})',\n  '\\1-\\2-\\3-\\4-\\5')) FROM t;"
+      },
+      "sqlite": {
+        "supported": false,
+        "notes": "No native UUID type. Store as TEXT (36-char hyphenated string) or BLOB (16 bytes). TEXT is more portable; BLOB is more space-efficient.",
+        "syntax": "CREATE TABLE t (\n  id TEXT PRIMARY KEY\n);\n-- Application generates and inserts the UUID string"
+      }
+    },
+    "details": "PostgreSQL and SQL Server are the only engines with a true native UUID column type that stores 16 bytes internally and handles formatting transparently. MySQL requires a deliberate choice between CHAR(36) (readable, wasteful) and BINARY(16) (efficient but requires conversion functions on read/write). Oracle's RAW(16) is functional but the formatting overhead is significant. A critical SQL Server gotcha: UNIQUEIDENTIFIER byte order is not standard RFC 4122 — the first three components are stored in little-endian order, which causes the displayed string to differ from what other systems would show for the same 16 bytes. This matters when exchanging UUIDs with non-SQL-Server systems. For random (v4) UUIDs as clustered primary keys in SQL Server, prefer NEWSEQUENTIALID() to avoid index fragmentation."
+  },
+
+  "covering index / include columns": {
+    "description": "An index that contains all columns needed to satisfy a query, allowing the engine to return results from the index alone without accessing the base table.",
+    "syntax": "-- SQL Server / PostgreSQL\nCREATE INDEX idx_orders_cover\nON orders (customer_id)\nINCLUDE (order_date, total);",
+    "category": "Indexes & Search",
+    "slug": "covering-index",
+    "compatibility": {
+      "mysql": {
+        "supported": true,
+        "since": "5.0",
+        "notes": "InnoDB supports covering indexes implicitly — any index that contains all required columns satisfies the query from the index (an 'index-only scan'). No INCLUDE syntax; simply add the extra columns to the index key. The primary key is always appended to secondary index leaf nodes in InnoDB.",
+        "syntax": "CREATE INDEX idx_cover ON orders (customer_id, order_date, total);\n-- All three columns are key columns (no INCLUDE syntax)"
+      },
+      "postgresql": {
+        "supported": true,
+        "since": "11",
+        "notes": "INCLUDE clause added in PG 11 for non-key columns in B-tree indexes. Non-key columns are stored only in leaf pages and cannot be used in index conditions, but satisfy column lookups without a heap fetch.",
+        "syntax": "CREATE INDEX idx_orders_cover\nON orders (customer_id)\nINCLUDE (order_date, total);"
+      },
+      "sqlserver": {
+        "supported": true,
+        "since": "2005",
+        "notes": "INCLUDE columns are added to the leaf level of the index only. This is more space-efficient than adding them as key columns and avoids the 900-byte key size limit. Covering indexes with INCLUDE are a core SQL Server tuning technique.",
+        "syntax": "CREATE NONCLUSTERED INDEX idx_orders_cover\nON orders (customer_id)\nINCLUDE (order_date, total);"
+      },
+      "oracle": {
+        "supported": true,
+        "since": "8i",
+        "notes": "Oracle achieves covering index behavior differently: an index-organized table (IOT) stores all data in the index structure. For secondary indexes, adding extra columns to the key achieves the same read effect. No INCLUDE syntax — all indexed columns are key columns.",
+        "syntax": "-- Add extra columns to key (no INCLUDE):\nCREATE INDEX idx_cover ON orders (customer_id, order_date, total);\n-- Or use a function-based/invisible index strategy"
+      },
+      "sqlite": {
+        "supported": true,
+        "since": "3.38.0",
+        "notes": "SQLite added INCLUDE column support in 3.38.0 (2022). Prior to that, covering index behavior was achievable only by including extra columns as key columns.",
+        "syntax": "CREATE INDEX idx_orders_cover\nON orders (customer_id)\nINCLUDE (order_date, total);"
+      }
+    },
+    "details": "Covering indexes are one of the most impactful query tuning tools available — eliminating the table lookup (heap fetch / row fetch) for selective queries can reduce I/O by an order of magnitude. The INCLUDE syntax (PostgreSQL, SQL Server, SQLite) is preferable to adding columns to the key because non-key columns don't affect key ordering or the index key size limit, and they consume space only in leaf nodes. MySQL and Oracle achieve the same effect by including extra columns in the key, but this makes those columns part of the sort order and counts against key size limits. In SQL Server, the query optimizer will flag 'missing index' hints that suggest INCLUDE columns — these are worth reviewing but should not be applied blindly without considering index maintenance overhead."
+  },
+
+  "index visibility / disable": {
+    "description": "Making an index invisible or disabled so the query optimizer ignores it, without dropping it — useful for testing the impact of index removal.",
+    "syntax": "-- MySQL\nALTER TABLE t ALTER INDEX idx INVISIBLE;\n\n-- SQL Server\nALTER INDEX idx ON t DISABLE;",
+    "category": "Indexes & Search",
+    "slug": "index-visibility",
+    "compatibility": {
+      "mysql": {
+        "supported": true,
+        "since": "8.0",
+        "notes": "INVISIBLE indexes are maintained by the engine on write but ignored by the optimizer on read. Useful for safely testing index removal. Can be toggled with ALTER TABLE t ALTER INDEX idx VISIBLE.",
+        "syntax": "-- Make invisible:\nALTER TABLE orders ALTER INDEX idx_customer INVISIBLE;\n-- Restore:\nALTER TABLE orders ALTER INDEX idx_customer VISIBLE;\n-- Force optimizer to use invisible indexes (session-level):\nSET SESSION optimizer_switch = 'use_invisible_indexes=on';"
+      },
+      "postgresql": {
+        "supported": false,
+        "notes": "No native index visibility toggle. The closest equivalent is enabling/disabling an index via the enable_indexscan / enable_indexonlyscan planner parameters at session scope, or using pg_index.indisvalid. There is no single-index disable command."
+      },
+      "sqlserver": {
+        "supported": true,
+        "since": "2005",
+        "notes": "ALTER INDEX idx ON t DISABLE stops the optimizer from using the index and stops maintaining it on writes. REBUILD re-enables it. Note: a disabled clustered index makes the table inaccessible until rebuilt.",
+        "syntax": "-- Disable:\nALTER INDEX idx_customer ON dbo.orders DISABLE;\n-- Re-enable:\nALTER INDEX idx_customer ON dbo.orders REBUILD;"
+      },
+      "oracle": {
+        "supported": true,
+        "since": "8i",
+        "notes": "ALTER INDEX idx UNUSABLE marks it unusable — the optimizer ignores it and DML does not maintain it. ALTER INDEX idx REBUILD restores it. Invisible indexes (optimizer ignores, writes maintained) added in Oracle 11g.",
+        "syntax": "-- Unusable (not maintained):\nALTER INDEX idx_customer UNUSABLE;\n-- Invisible (maintained but optimizer ignores):\nALTER INDEX idx_customer INVISIBLE;\n-- Rebuild:\nALTER INDEX idx_customer REBUILD;"
+      },
+      "sqlite": {
+        "supported": false,
+        "notes": "No index disable or visibility feature. The only option is to drop the index and recreate it."
+      }
+    },
+    "details": "Index visibility/disable is a valuable operational tool for testing whether an index is actually being used before committing to dropping it. MySQL's INVISIBLE and Oracle's INVISIBLE (11g+) are the closest equivalents — the index stays current on writes but is hidden from the optimizer, making the test safe and reversible without an index rebuild cost. SQL Server's DISABLE is more destructive: the index is no longer maintained on DML, meaning a REBUILD is required to bring it back (not just a metadata toggle), and disabling a clustered index takes the table offline. PostgreSQL has no single-index disable command — session-level planner knobs or index hints via extensions are the workarounds. For high-traffic tables, MySQL's INVISIBLE approach is the least risky way to validate index removal in production."
+  },
+
+  "isolation levels": {
+    "description": "Transaction isolation levels control how and when changes made by one transaction become visible to others, balancing consistency against concurrency.",
+    "syntax": "SET TRANSACTION ISOLATION LEVEL READ COMMITTED;\nBEGIN;\n-- statements\nCOMMIT;",
+    "category": "Transactions",
+    "slug": "isolation-levels",
+    "compatibility": {
+      "mysql": {
+        "supported": true,
+        "since": "5.0",
+        "notes": "InnoDB supports all four standard levels: READ UNCOMMITTED, READ COMMITTED, REPEATABLE READ, SERIALIZABLE. Default is REPEATABLE READ, which is higher than most other engines. Uses MVCC; REPEATABLE READ prevents phantom reads for consistent reads but not for locking reads.",
+        "syntax": "SET SESSION TRANSACTION ISOLATION LEVEL READ COMMITTED;\nSELECT @@transaction_isolation;  -- check current level"
+      },
+      "postgresql": {
+        "supported": true,
+        "since": "7.4",
+        "notes": "Supports READ COMMITTED (default), REPEATABLE READ, and SERIALIZABLE. READ UNCOMMITTED is accepted as syntax but behaves as READ COMMITTED. PostgreSQL's SERIALIZABLE uses SSI (Serializable Snapshot Isolation), the strongest and most correct implementation.",
+        "syntax": "BEGIN TRANSACTION ISOLATION LEVEL REPEATABLE READ;\n-- statements\nCOMMIT;"
+      },
+      "sqlserver": {
+        "supported": true,
+        "since": "2000",
+        "notes": "Supports all four standard levels plus two snapshot-based levels: SNAPSHOT (statement-level MVCC) and READ_COMMITTED_SNAPSHOT (row versioning for default READ COMMITTED). RCSI is enabled at the database level and changes the default READ COMMITTED behavior engine-wide.",
+        "syntax": "SET TRANSACTION ISOLATION LEVEL SNAPSHOT;\nBEGIN TRAN;\n-- statements\nCOMMIT;\n-- Or enable RCSI:\nALTER DATABASE mydb SET READ_COMMITTED_SNAPSHOT ON;"
+      },
+      "oracle": {
+        "supported": true,
+        "since": "7",
+        "notes": "Supports READ COMMITTED (default) and SERIALIZABLE. READ UNCOMMITTED and REPEATABLE READ are not available — Oracle's MVCC architecture means dirty reads are structurally prevented. SERIALIZABLE uses snapshot isolation at transaction start.",
+        "syntax": "SET TRANSACTION ISOLATION LEVEL SERIALIZABLE;\n-- Or at session level:\nALTER SESSION SET ISOLATION_LEVEL = SERIALIZABLE;"
+      },
+      "sqlite": {
+        "supported": true,
+        "since": "3.0.0",
+        "notes": "SQLite supports DEFERRED, IMMEDIATE, and EXCLUSIVE transaction modes rather than the standard four ISO levels. WAL mode provides snapshot isolation for readers. Effectively READ COMMITTED or SERIALIZABLE depending on WAL mode and transaction type.",
+        "syntax": "BEGIN DEFERRED;     -- default: read locks deferred\nBEGIN IMMEDIATE;   -- write lock acquired immediately\nBEGIN EXCLUSIVE;   -- exclusive lock, no other readers in non-WAL"
+      }
+    },
+    "details": "The four ISO levels (READ UNCOMMITTED, READ COMMITTED, REPEATABLE READ, SERIALIZABLE) are defined in the SQL standard but implemented very differently across engines. Oracle doesn't implement READ UNCOMMITTED or REPEATABLE READ at all — its MVCC architecture makes dirty reads impossible by design, and its SERIALIZABLE is actually snapshot isolation (which can still have write skew anomalies under the formal definition). PostgreSQL's SERIALIZABLE (SSI) is the most theoretically correct implementation among these five engines. MySQL's default REPEATABLE READ is stricter than most other engines default, which surprises developers coming from PostgreSQL (READ COMMITTED). SQL Server's READ_COMMITTED_SNAPSHOT changes the entire database's default isolation behavior when enabled — a setting that's often enabled silently by ORM frameworks during database creation. SQLite's transaction modes don't map cleanly to ISO levels; WAL mode is the key configuration that unlocks concurrent reads during a write transaction."
+  },
+
+  "deadlock handling": {
+    "description": "How each engine detects and resolves deadlocks — circular lock dependencies between transactions — and what the application must do in response.",
+    "syntax": "-- SQL Server: one transaction is automatically chosen as victim\n-- Application must catch error 1205 and retry",
+    "category": "Transactions",
+    "slug": "deadlock-handling",
+    "compatibility": {
+      "mysql": {
+        "supported": true,
+        "since": "5.0",
+        "notes": "InnoDB automatically detects deadlocks and rolls back the transaction with the least undo work (the 'cheaper' victim). Error code 1213 (ER_LOCK_DEADLOCK). The application must catch this and retry the transaction.",
+        "syntax": "-- Application retry pattern:\n-- Catch error 1213, then re-execute the full transaction\nSHOW ENGINE INNODB STATUS;  -- inspect recent deadlock detail"
+      },
+      "postgresql": {
+        "supported": true,
+        "since": "7.4",
+        "notes": "PostgreSQL detects deadlocks using a wait-for graph checked after a configurable lock_timeout or deadlock_timeout (default 1 second). One transaction is chosen as victim and receives error code 40P01. The application must catch and retry.",
+        "syntax": "-- Set deadlock detection interval:\nSET deadlock_timeout = '500ms';\n-- Application catches SQLSTATE 40P01 and retries"
+      },
+      "sqlserver": {
+        "supported": true,
+        "since": "2000",
+        "notes": "Deadlock monitor runs every 5 seconds by default (escalating to 100ms when deadlocks are detected). Victim is chosen by lowest deadlock priority, then cheapest rollback. Error 1205. Use SET DEADLOCK_PRIORITY to influence victim selection.",
+        "syntax": "SET DEADLOCK_PRIORITY LOW;  -- make this session prefer to be victim\n-- Catch error 1205 in application and retry\n-- Trace flag 1222 or Extended Events for deadlock graph logging"
+      },
+      "oracle": {
+        "supported": true,
+        "since": "7",
+        "notes": "Oracle detects deadlocks and immediately rolls back only the statement that caused the deadlock (not the entire transaction). ORA-00060 is raised. The transaction remains open and the application can choose to commit, roll back further, or retry the statement.",
+        "syntax": "-- Catch ORA-00060\n-- Oracle rolls back only the deadlocking statement\n-- Application decides whether to retry the statement or rollback the transaction"
+      },
+      "sqlite": {
+        "supported": true,
+        "since": "3.0.0",
+        "notes": "SQLite's locking model (database-level write lock) makes traditional row-level deadlocks impossible. SQLITE_BUSY (error 5) is returned when a write lock cannot be acquired. Use busy_timeout to configure how long to wait before returning SQLITE_BUSY.",
+        "syntax": "-- Set busy timeout:\nPRAGMA busy_timeout = 5000;  -- wait up to 5 seconds\n-- Or handle SQLITE_BUSY (error 5) in application"
+      }
+    },
+    "details": "All five engines detect and resolve deadlocks automatically, but the scope of rollback differs critically. MySQL, PostgreSQL, and SQL Server roll back the entire victim transaction — the application must re-execute from the beginning. Oracle only rolls back the individual deadlocking statement, leaving the transaction open; this gives the application finer control but also means it can silently continue in an inconsistent state if not handled carefully. Deadlock avoidance strategies are consistent across engines: always acquire locks in the same order across transactions, keep transactions short, use appropriate index coverage to reduce lock range, and consider optimistic locking (version columns) as an alternative to pessimistic row locks for read-heavy workloads. In SQL Server, Extended Events or the system_health session captures deadlock graphs automatically — reviewing these is the first step in resolving recurring deadlocks."
+  },
+
+  "vacuum / analyze": {
+    "description": "Maintenance operations that reclaim storage from dead rows (VACUUM) and update query planner statistics (ANALYZE), keeping performance stable over time.",
+    "syntax": "-- PostgreSQL\nVACUUM ANALYZE orders;",
+    "category": "Administration",
+    "slug": "vacuum-analyze",
+    "compatibility": {
+      "mysql": {
+        "supported": true,
+        "since": "5.0",
+        "notes": "OPTIMIZE TABLE reclaims space from deleted rows in InnoDB and MyISAM. ANALYZE TABLE updates index statistics used by the optimizer. Both can be run online (non-blocking) in InnoDB since 5.6. No VACUUM keyword.",
+        "syntax": "ANALYZE TABLE orders;          -- update statistics\nOPTIMIZE TABLE orders;         -- reclaim space (rebuilds table)\nCHECK TABLE orders;            -- verify integrity"
+      },
+      "postgresql": {
+        "supported": true,
+        "since": "7.4",
+        "notes": "VACUUM reclaims storage from dead tuples created by MVCC updates/deletes. VACUUM FULL rewrites the table (locks table, reclaims more space). ANALYZE updates planner statistics. Autovacuum runs both automatically. VACUUM FREEZE prevents transaction ID wraparound.",
+        "syntax": "VACUUM orders;              -- reclaim dead tuples, non-blocking\nVACUUM FULL orders;         -- full rewrite, exclusive lock\nANALYZE orders;             -- update statistics only\nVACUUM ANALYZE orders;      -- both at once\nVACUUM FREEZE orders;       -- also freeze old tuples"
+      },
+      "sqlserver": {
+        "supported": true,
+        "since": "2000",
+        "notes": "No VACUUM equivalent — SQL Server uses a separate background thread for ghost record cleanup. UPDATE STATISTICS or sp_updatestats updates query planner statistics. DBCC SHRINKFILE / SHRINKDATABASE reclaims space (use sparingly — causes fragmentation). REBUILD INDEX is the primary defragmentation tool.",
+        "syntax": "UPDATE STATISTICS dbo.orders;           -- update stats for one table\nEXEC sp_updatestats;                    -- update all stale stats\nALTER INDEX ALL ON dbo.orders REBUILD;  -- rebuild all indexes (defrag + stats)\nALTER INDEX ALL ON dbo.orders REORGANIZE; -- online, lighter defrag"
+      },
+      "oracle": {
+        "supported": true,
+        "since": "7",
+        "notes": "Oracle uses UNDO segments rather than dead tuple storage, so no VACUUM equivalent is needed. DBMS_STATS.GATHER_TABLE_STATS updates optimizer statistics. Segment shrink (ALTER TABLE ... SHRINK SPACE) reclaims space below the high-water mark.",
+        "syntax": "EXEC DBMS_STATS.GATHER_TABLE_STATS('schema', 'ORDERS');  -- update stats\nALTER TABLE orders SHRINK SPACE;                          -- reclaim space\nALTER TABLE orders MOVE;                                  -- rebuild segment"
+      },
+      "sqlite": {
+        "supported": true,
+        "since": "3.0.0",
+        "notes": "VACUUM rewrites the entire database file to reclaim space from deleted rows and reduce fragmentation. ANALYZE updates statistics in the sqlite_stat tables used by the query planner. Both are manual operations; no auto-vacuum by default (can be enabled with PRAGMA auto_vacuum).",
+        "syntax": "VACUUM;                         -- rewrite entire db file\nANALYZE;                        -- update query planner stats\nPRAGMA auto_vacuum = INCREMENTAL; -- enable incremental auto-vacuum"
+      }
+    },
+    "details": "PostgreSQL is unique in requiring explicit vacuuming as a consequence of its MVCC model — dead tuples from updated and deleted rows accumulate and must be reclaimed, and transaction ID wraparound will eventually corrupt the database if VACUUM FREEZE is not run. Autovacuum handles this automatically in typical workloads but should be monitored. MySQL and SQL Server handle dead row cleanup internally (InnoDB purge thread, SQL Server ghost cleanup), making OPTIMIZE TABLE / SHRINK operations rarely necessary and sometimes counterproductive. Oracle's UNDO-segment architecture means old row versions never accumulate in the table itself. Statistics maintenance (ANALYZE / UPDATE STATISTICS / GATHER_TABLE_STATS) is important on all engines — stale statistics are one of the most common causes of sudden query plan regressions, particularly after large bulk loads."
+  },
+
+  "query hints / optimizer hints": {
+    "description": "Directives embedded in a SQL statement that instruct the query optimizer to use a specific join order, index, or execution strategy.",
+    "syntax": "-- SQL Server\nSELECT * FROM orders WITH (INDEX(idx_customer))\nWHERE customer_id = 42;\n\n-- MySQL\nSELECT * FROM orders USE INDEX (idx_customer)\nWHERE customer_id = 42;",
+    "category": "Query Techniques",
+    "slug": "query-hints",
+    "compatibility": {
+      "mysql": {
+        "supported": true,
+        "since": "5.0",
+        "notes": "Index hints: USE INDEX, FORCE INDEX, IGNORE INDEX in the FROM clause. Optimizer hints (/*+ ... */ comment syntax) added in 8.0, including JOIN_ORDER, NO_MERGE, MAX_EXECUTION_TIME, and more.",
+        "syntax": "-- Index hint:\nSELECT * FROM orders USE INDEX (idx_customer) WHERE customer_id = 42;\nSELECT * FROM orders FORCE INDEX (idx_customer) WHERE customer_id = 42;\n-- Optimizer hint (8.0+):\nSELECT /*+ NO_INDEX_MERGE(orders) */ * FROM orders WHERE customer_id = 42;"
+      },
+      "postgresql": {
+        "supported": true,
+        "since": "7.4",
+        "notes": "No dedicated hint syntax. Hints are applied indirectly via session-level planner configuration: enable_indexscan, enable_seqscan, enable_hashjoin, etc. The pg_hint_plan extension provides Oracle/SQL Server-style inline hints and is widely used in production.",
+        "syntax": "-- Session-level planner toggle:\nSET enable_seqscan = off;\nSELECT * FROM orders WHERE customer_id = 42;\nSET enable_seqscan = on;\n-- With pg_hint_plan extension:\nSELECT /*+ IndexScan(orders idx_customer) */ * FROM orders WHERE customer_id = 42;"
+      },
+      "sqlserver": {
+        "supported": true,
+        "since": "2000",
+        "notes": "Rich hint vocabulary: table hints (WITH (NOLOCK), WITH (INDEX(...))), join hints (LOOP, HASH, MERGE in FROM clause), and query hints (OPTION clause: OPTION (RECOMPILE), OPTION (MAXDOP 1), OPTION (HASH JOIN)). NOLOCK is commonly overused — it produces dirty reads.",
+        "syntax": "-- Index hint:\nSELECT * FROM orders WITH (INDEX(idx_customer)) WHERE customer_id = 42;\n-- Query hints:\nSELECT * FROM orders WHERE customer_id = 42\n  OPTION (RECOMPILE);\nSELECT * FROM orders o JOIN customers c ON o.customer_id = c.id\n  OPTION (HASH JOIN, MAXDOP 4);"
+      },
+      "oracle": {
+        "supported": true,
+        "since": "7",
+        "notes": "Hints use the /*+ ... */ comment syntax. Extensive vocabulary including INDEX, NO_INDEX, FULL, LEADING, USE_NL, USE_HASH, PARALLEL, APPEND, and many more. Oracle's hint system is the most mature and granular among these engines.",
+        "syntax": "SELECT /*+ INDEX(o idx_customer) */ *\nFROM orders o WHERE customer_id = 42;\n\nSELECT /*+ LEADING(c o) USE_NL(o) */ o.*\nFROM customers c JOIN orders o ON c.id = o.customer_id\nWHERE c.tier = 'gold';"
+      },
+      "sqlite": {
+        "supported": false,
+        "notes": "No query hint syntax. The INDEXED BY clause forces use of a named index but is not a general-purpose hint system. Use EXPLAIN QUERY PLAN to inspect the chosen strategy.",
+        "syntax": "-- INDEXED BY (forces specific index, not a general hint):\nSELECT * FROM orders INDEXED BY idx_customer WHERE customer_id = 42;\n-- Inspect plan:\nEXPLAIN QUERY PLAN SELECT * FROM orders WHERE customer_id = 42;"
+      }
+    },
+    "details": "Query hints are a last resort — the right response to a bad query plan is usually better statistics, updated indexes, or a query rewrite. That said, hints are invaluable when a known-good plan is being abandoned due to stale stats or parameter sniffing. Oracle and SQL Server have the most mature hint systems with the widest vocabulary. PostgreSQL deliberately omits inline hints to keep the optimizer honest, but the pg_hint_plan extension fills the gap for production use. MySQL's FORCE INDEX is deceptively aggressive — it tells the optimizer to use that index or do a full table scan, with no middle ground. SQL Server's WITH (NOLOCK) is the most commonly misused hint: it eliminates lock waits at the cost of dirty reads, phantom reads, and even rows appearing twice or not at all during a scan — not appropriate for financial or transactional queries."
   }
 }

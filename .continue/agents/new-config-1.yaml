@@ -1,0 +1,12 @@
+name: Local DeepSeek via Ollama
+version: 1.0.0
+schema: v1
+
+models:
+  - name: deepseek-coder
+    provider: ollama
+    model: deepseek-coder-v2:lite
+    # optional roles; 'chat' is enough to start
+    roles:
+      - chat
+      - edit
