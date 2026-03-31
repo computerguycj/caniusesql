@@ -4207,5 +4207,377 @@
       }
     },
     "details": "The WINDOW clause is part of the SQL standard and is supported by PostgreSQL (8.4+), MySQL (8.0+), and SQLite (3.28.0+). SQL Server and Oracle omit it entirely — both require repeating the full OVER() specification for every window function. The practical impact is significant: a query with five window functions all sharing the same partition/order must duplicate that definition five times in SQL Server and Oracle. PostgreSQL supports named window inheritance — one named window can build on another — which MySQL and SQLite do not support. Even without the WINDOW clause, SQL Server and Oracle's optimizers typically recognize identical OVER() clauses and compute the window only once in the execution plan."
+  },
+  "try / catch / error handling": {
+    "description": "Structured error handling that traps runtime exceptions within a SQL block and routes execution to a handler.",
+    "syntax": "BEGIN TRY\n  -- risky statement\nEND TRY\nBEGIN CATCH\n  -- handle error\nEND CATCH;",
+    "category": "Programmability",
+    "slug": "try-catch",
+    "compatibility": {
+      "mysql": {
+        "supported": true,
+        "since": "5.5",
+        "notes": "Uses DECLARE ... HANDLER syntax inside stored procedures/functions; no bare TRY/CATCH block outside a routine.",
+        "syntax": "DECLARE CONTINUE HANDLER FOR SQLEXCEPTION\n  BEGIN\n    GET DIAGNOSTICS CONDITION 1 @msg = MESSAGE_TEXT;\n  END;"
+      },
+      "postgresql": {
+        "supported": true,
+        "since": "8.0",
+        "notes": "BEGIN/EXCEPTION block is available inside PL/pgSQL functions and DO blocks only; not in plain SQL.",
+        "syntax": "DO $$\nBEGIN\n  -- risky\nEXCEPTION WHEN others THEN\n  RAISE NOTICE 'error: %', SQLERRM;\nEND;\n$$;"
+      },
+      "sqlserver": {
+        "supported": true,
+        "since": "2005",
+        "notes": "TRY/CATCH works in ad-hoc batches, procedures, and triggers. Use ERROR_MESSAGE(), ERROR_NUMBER() inside the CATCH block.",
+        "syntax": "BEGIN TRY\n  INSERT INTO t VALUES (1);\nEND TRY\nBEGIN CATCH\n  PRINT ERROR_MESSAGE();\nEND CATCH;"
+      },
+      "oracle": {
+        "supported": true,
+        "since": "7",
+        "notes": "PL/SQL EXCEPTION section is part of every block (anonymous or named). Uses named exception types or WHEN OTHERS.",
+        "syntax": "BEGIN\n  INSERT INTO t VALUES (1);\nEXCEPTION\n  WHEN DUP_VAL_ON_INDEX THEN\n    DBMS_OUTPUT.PUT_LINE('duplicate');\n  WHEN OTHERS THEN\n    DBMS_OUTPUT.PUT_LINE(SQLERRM);\nEND;"
+      },
+      "sqlite": {
+        "supported": false,
+        "notes": "No procedural error-handling blocks. Applications must inspect return codes via the host language API."
+      }
+    },
+    "details": "Structured error handling is universally available but the syntax varies significantly. SQL Server's TRY/CATCH is the closest to a general-purpose mechanism because it works in plain batch scripts; the others require a procedural language context (PL/pgSQL, PL/SQL, MySQL stored routines). In PostgreSQL, RAISE EXCEPTION re-throws; in Oracle, RAISE re-raises the current exception. All engines except SQLite expose error code and message via engine-specific functions (SQLERRM, ERROR_MESSAGE(), etc.). A common portability trap: SQL Server's TRY/CATCH does not catch compile-time errors or certain severity-20+ errors; use XACT_STATE() to check transaction validity inside the CATCH block."
+  },
+  "cursor": {
+    "description": "A database object that lets procedural code iterate over a result set one row at a time.",
+    "syntax": "DECLARE cur CURSOR FOR SELECT col FROM t;\nOPEN cur;\nFETCH NEXT FROM cur INTO @val;\nCLOSE cur;\nDEALLOCATE cur;",
+    "category": "Programmability",
+    "slug": "cursor",
+    "compatibility": {
+      "mysql": {
+        "supported": true,
+        "since": "5.0",
+        "notes": "Cursors are supported inside stored procedures and functions only. Must be declared before handlers and other variables.",
+        "syntax": "DECLARE cur CURSOR FOR SELECT id FROM t;\nDECLARE CONTINUE HANDLER FOR NOT FOUND SET done = 1;\nOPEN cur;\nread_loop: LOOP\n  FETCH cur INTO v_id;\n  IF done THEN LEAVE read_loop; END IF;\nEND LOOP;\nCLOSE cur;"
+      },
+      "postgresql": {
+        "supported": true,
+        "since": "7.4",
+        "notes": "PL/pgSQL cursors support FOR UPDATE and scrollable variants. Can also be opened with OPEN cur FOR EXECUTE for dynamic SQL.",
+        "syntax": "DECLARE\n  cur CURSOR FOR SELECT id FROM t;\n  v_id INT;\nBEGIN\n  OPEN cur;\n  LOOP\n    FETCH cur INTO v_id;\n    EXIT WHEN NOT FOUND;\n  END LOOP;\n  CLOSE cur;\nEND;"
+      },
+      "sqlserver": {
+        "supported": true,
+        "since": "1992",
+        "notes": "Supports STATIC, KEYSET, DYNAMIC, and FAST_FORWARD cursor types. FAST_FORWARD is the most performant for forward-only read-only use.",
+        "syntax": "DECLARE cur CURSOR FAST_FORWARD FOR\n  SELECT id FROM t;\nOPEN cur;\nFETCH NEXT FROM cur INTO @id;\nWHILE @@FETCH_STATUS = 0\nBEGIN\n  FETCH NEXT FROM cur INTO @id;\nEND;\nCLOSE cur;\nDEALLOCATE cur;"
+      },
+      "oracle": {
+        "supported": true,
+        "since": "7",
+        "notes": "Oracle supports implicit cursors (FOR loop shorthand) and explicit cursors. REF CURSOR allows passing cursors as parameters.",
+        "syntax": "DECLARE\n  CURSOR cur IS SELECT id FROM t;\n  v_id t.id%TYPE;\nBEGIN\n  OPEN cur;\n  LOOP\n    FETCH cur INTO v_id;\n    EXIT WHEN cur%NOTFOUND;\n  END LOOP;\n  CLOSE cur;\nEND;"
+      },
+      "sqlite": {
+        "supported": false,
+        "notes": "No server-side cursor support. Row-by-row iteration must be handled by the application via the sqlite3 step/reset API."
+      }
+    },
+    "details": "Cursors are widely supported in stored procedural code but are generally considered an anti-pattern for bulk work — set-based operations are almost always faster. SQL Server is particularly sensitive: even FAST_FORWARD cursors introduce significant per-row overhead vs. a single UPDATE or INSERT...SELECT. Oracle's implicit cursor FOR loop (`FOR rec IN (SELECT ...) LOOP`) is idiomatic and often the most readable option when row-by-row logic is unavoidable. PostgreSQL allows cursors to be returned to the client via `refcursor`, enabling result-set streaming from a function. In MySQL, cursor scope is limited to stored routines; the NOT FOUND handler pattern is the standard termination idiom."
+  },
+  "dynamic SQL": {
+    "description": "Constructing and executing a SQL statement as a string at runtime, allowing the query structure to vary based on input.",
+    "syntax": "-- SQL Server / T-SQL\nEXEC sp_executesql N'SELECT * FROM ' + @tbl;",
+    "category": "Programmability",
+    "slug": "dynamic-sql",
+    "compatibility": {
+      "mysql": {
+        "supported": true,
+        "since": "5.0",
+        "notes": "PREPARE/EXECUTE/DEALLOCATE PREPARE syntax works inside stored routines and at the session level. Parameterized via USING.",
+        "syntax": "SET @sql = CONCAT('SELECT * FROM ', tbl_name);\nPREPARE stmt FROM @sql;\nEXECUTE stmt USING @param;\nDEALLOCATE PREPARE stmt;"
+      },
+      "postgresql": {
+        "supported": true,
+        "since": "7.4",
+        "notes": "EXECUTE inside PL/pgSQL runs dynamic SQL. USING clause passes parameters safely. format() with %I/%L helps prevent injection.",
+        "syntax": "DO $$\nDECLARE sql TEXT;\nBEGIN\n  sql := format('SELECT * FROM %I WHERE id = %L', tbl, val);\n  EXECUTE sql;\nEND;\n$$;"
+      },
+      "sqlserver": {
+        "supported": true,
+        "since": "2005",
+        "notes": "sp_executesql is preferred over EXEC(@sql) because it supports parameterization and plan reuse. Always use sp_executesql for user-supplied values.",
+        "syntax": "DECLARE @sql NVARCHAR(MAX) = N'SELECT * FROM dbo.Orders WHERE id = @id';\nEXEC sp_executesql @sql, N'@id INT', @id = 42;"
+      },
+      "oracle": {
+        "supported": true,
+        "since": "8i",
+        "notes": "EXECUTE IMMEDIATE is the standard PL/SQL mechanism. DBMS_SQL package provides a lower-level cursor API for cases where column count is unknown at compile time.",
+        "syntax": "DECLARE\n  sql_str VARCHAR2(200);\nBEGIN\n  sql_str := 'UPDATE orders SET status = :1 WHERE id = :2';\n  EXECUTE IMMEDIATE sql_str USING 'closed', 99;\nEND;"
+      },
+      "sqlite": {
+        "supported": false,
+        "notes": "No server-side dynamic SQL. The application layer must construct and submit statements via the sqlite3 C API or a driver."
+      }
+    },
+    "details": "Dynamic SQL is a necessary evil for cases like pivot columns, table-name parameters, or optional filter clauses. The biggest portability concern is SQL injection: always use parameterized queries (USING / sp_executesql parameters / EXECUTE IMMEDIATE USING) rather than string concatenation with user input. PostgreSQL's format() function with %I (identifier quoting) and %L (literal quoting) is particularly ergonomic. SQL Server's sp_executesql additionally enables plan caching since the parameterized template is stable across calls. Oracle's DBMS_SQL package is needed when the number or types of output columns are unknown at compile time — otherwise EXECUTE IMMEDIATE is simpler. MySQL's PREPARE/EXECUTE works at the session level without a stored procedure, which is unique among these engines."
+  },
+  "user-defined functions": {
+    "description": "Named, reusable routines that accept parameters, compute a value, and return a scalar or table result.",
+    "syntax": "CREATE FUNCTION fn_name(param type)\nRETURNS return_type\nAS\n  -- body\n;",
+    "category": "Programmability",
+    "slug": "user-defined-functions",
+    "compatibility": {
+      "mysql": {
+        "supported": true,
+        "since": "5.0",
+        "notes": "Scalar functions only (no table-valued UDFs in native SQL). DETERMINISTIC / NO SQL / READS SQL DATA characteristics affect optimizer behavior.",
+        "syntax": "CREATE FUNCTION add_tax(price DECIMAL(10,2))\nRETURNS DECIMAL(10,2)\nDETERMINISTIC\nRETURN price * 1.1;"
+      },
+      "postgresql": {
+        "supported": true,
+        "since": "6.5",
+        "notes": "Supports scalar and set-returning (RETURNS TABLE / RETURNS SETOF) functions. LANGUAGE can be sql, plpgsql, python, c, and more.",
+        "syntax": "CREATE FUNCTION add_tax(price NUMERIC)\nRETURNS NUMERIC\nLANGUAGE sql\nIMMUTABLE AS $$\n  SELECT price * 1.1;\n$$;"
+      },
+      "sqlserver": {
+        "supported": true,
+        "since": "2000",
+        "notes": "Three types: scalar, inline table-valued (ITVF), and multi-statement table-valued (MSTVF). ITVFs are strongly preferred over MSTVFs for performance.",
+        "syntax": "CREATE FUNCTION dbo.add_tax(@price DECIMAL(10,2))\nRETURNS DECIMAL(10,2)\nAS\nBEGIN\n  RETURN @price * 1.1;\nEND;"
+      },
+      "oracle": {
+        "supported": true,
+        "since": "7",
+        "notes": "Functions can use PIPELINED RETURN to stream table results row by row. DETERMINISTIC hint improves optimizer reuse.",
+        "syntax": "CREATE FUNCTION add_tax(price NUMBER)\nRETURN NUMBER\nDETERMINISTIC\nAS\nBEGIN\n  RETURN price * 1.1;\nEND;"
+      },
+      "sqlite": {
+        "supported": true,
+        "since": "3.0.0",
+        "notes": "UDFs must be registered at the connection level via the application API (e.g., sqlite3_create_function in C, or conn.create_function() in Python). No CREATE FUNCTION DDL.",
+        "syntax": "-- Python example\nconn.create_function('add_tax', 1, lambda p: p * 1.1)\n-- Then use in SQL:\nSELECT add_tax(price) FROM products;"
+      }
+    },
+    "details": "UDFs are supported everywhere but vary widely in capability and performance characteristics. SQL Server scalar UDFs are infamous for row-by-row execution that defeats parallelism — inline table-valued functions (single SELECT, no BEGIN/END) are the idiomatic replacement for scalar logic that operates on sets. PostgreSQL's function overloading (same name, different argument types) is unique among the five engines. Oracle PIPELINED functions allow lazy evaluation of large result sets. MySQL's lack of table-valued UDFs means pivoting or multi-row generation requires stored procedures or workarounds. SQLite's approach — registering functions in the host language rather than via DDL — is architecturally different and means UDFs don't persist across connections unless re-registered."
+  },
+  "IF NOT EXISTS / IF EXISTS (conditional DDL)": {
+    "description": "Modifiers on DDL statements that suppress errors when an object already exists (or does not exist), enabling idempotent schema scripts.",
+    "syntax": "CREATE TABLE IF NOT EXISTS t (id INT);\nDROP TABLE IF EXISTS t;",
+    "category": "DDL",
+    "slug": "conditional-ddl",
+    "compatibility": {
+      "mysql": {
+        "supported": true,
+        "since": "5.0",
+        "notes": "IF NOT EXISTS on CREATE TABLE, CREATE INDEX, CREATE DATABASE, CREATE SCHEMA. IF EXISTS on DROP TABLE, DROP INDEX, ALTER TABLE DROP COLUMN (8.0+).",
+        "syntax": "CREATE TABLE IF NOT EXISTS orders (id INT PRIMARY KEY);\nDROP TABLE IF EXISTS orders;"
+      },
+      "postgresql": {
+        "supported": true,
+        "since": "9.1",
+        "notes": "IF NOT EXISTS added for CREATE TABLE in 9.1, CREATE INDEX in 9.5, CREATE SCHEMA in 9.3. IF EXISTS on DROP widely available. ALTER TABLE ... DROP COLUMN IF EXISTS since 9.0.",
+        "syntax": "CREATE TABLE IF NOT EXISTS orders (id INT PRIMARY KEY);\nCREATE INDEX IF NOT EXISTS idx_orders_id ON orders(id);\nDROP TABLE IF EXISTS orders;"
+      },
+      "sqlserver": {
+        "supported": true,
+        "since": "2016",
+        "notes": "DROP TABLE IF EXISTS, DROP INDEX IF EXISTS added in 2016. CREATE TABLE IF NOT EXISTS is not supported — use IF NOT EXISTS (SELECT 1 FROM sys.tables ...) workaround or OBJECT_ID() check.",
+        "syntax": "DROP TABLE IF EXISTS dbo.orders;\n-- Create workaround:\nIF OBJECT_ID('dbo.orders','U') IS NULL\n  CREATE TABLE dbo.orders (id INT PRIMARY KEY);"
+      },
+      "oracle": {
+        "supported": true,
+        "since": "23c",
+        "notes": "IF EXISTS and IF NOT EXISTS on CREATE/DROP TABLE/INDEX added in Oracle 23c. On earlier versions, use PL/SQL exception handling (WHEN OBJ_ALREADY_EXISTS / WHEN NO_DATA_FOUND) as a workaround.",
+        "syntax": "-- Oracle 23c+\nCREATE TABLE IF NOT EXISTS orders (id NUMBER PRIMARY KEY);\nDROP TABLE IF EXISTS orders;\n-- Pre-23c workaround:\nBEGIN\n  EXECUTE IMMEDIATE 'CREATE TABLE orders (id NUMBER)';\nEXCEPTION WHEN OTHERS THEN NULL;\nEND;"
+      },
+      "sqlite": {
+        "supported": true,
+        "since": "3.0.0",
+        "notes": "CREATE TABLE IF NOT EXISTS and DROP TABLE IF EXISTS are fully supported. CREATE INDEX IF NOT EXISTS since 3.3.7.",
+        "syntax": "CREATE TABLE IF NOT EXISTS orders (id INTEGER PRIMARY KEY);\nDROP TABLE IF EXISTS orders;"
+      }
+    },
+    "details": "Conditional DDL is essential for migration scripts and deployment idempotency. PostgreSQL and MySQL have the most complete coverage across object types. SQL Server was the laggard — DROP...IF EXISTS arrived in 2016, but CREATE TABLE IF NOT EXISTS still doesn't exist natively, making the OBJECT_ID() guard the standard idiom. Oracle 23c finally added the syntax but it's very recent, so any code targeting older Oracle versions needs the PL/SQL exception-swallowing pattern. SQLite's support is consistent and well-established. A subtle trap: CREATE OR REPLACE (available in PostgreSQL, Oracle, and partially MySQL) is a related but distinct concept — it replaces an existing object rather than silently skipping creation."
+  },
+  "table partitioning": {
+    "description": "Dividing a large table into smaller physical segments (partitions) based on a column value, improving query performance and maintenance operations.",
+    "syntax": "-- Declarative range partitioning\nCREATE TABLE orders (\n  id INT,\n  order_date DATE\n) PARTITION BY RANGE (order_date);",
+    "category": "Administration",
+    "slug": "table-partitioning",
+    "compatibility": {
+      "mysql": {
+        "supported": true,
+        "since": "5.1",
+        "notes": "Supports RANGE, LIST, HASH, and KEY partitioning. All partitions must live in the same schema. Foreign keys referencing partitioned tables are not supported.",
+        "syntax": "CREATE TABLE orders (\n  id INT,\n  order_date DATE\n)\nPARTITION BY RANGE (YEAR(order_date)) (\n  PARTITION p2022 VALUES LESS THAN (2023),\n  PARTITION p2023 VALUES LESS THAN (2024),\n  PARTITION pmax  VALUES LESS THAN MAXVALUE\n);"
+      },
+      "postgresql": {
+        "supported": true,
+        "since": "10",
+        "notes": "Declarative partitioning (PARTITION BY RANGE/LIST/HASH) added in PG 10. Earlier versions required trigger-based inheritance partitioning. Each partition is a real child table.",
+        "syntax": "CREATE TABLE orders (\n  id INT,\n  order_date DATE\n) PARTITION BY RANGE (order_date);\n\nCREATE TABLE orders_2023\n  PARTITION OF orders\n  FOR VALUES FROM ('2023-01-01') TO ('2024-01-01');"
+      },
+      "sqlserver": {
+        "supported": true,
+        "since": "2005",
+        "notes": "Requires creating a PARTITION FUNCTION and PARTITION SCHEME before the table. Partitioning is an Enterprise Edition feature (Standard Edition has limited support since 2016 SP1).",
+        "syntax": "CREATE PARTITION FUNCTION pf_date (DATE)\n  AS RANGE RIGHT FOR VALUES ('2023-01-01', '2024-01-01');\n\nCREATE PARTITION SCHEME ps_date\n  AS PARTITION pf_date ALL TO ([PRIMARY]);\n\nCREATE TABLE orders (\n  id INT,\n  order_date DATE\n) ON ps_date(order_date);"
+      },
+      "oracle": {
+        "supported": true,
+        "since": "8i",
+        "notes": "One of the most mature partitioning implementations. Supports RANGE, LIST, HASH, COMPOSITE (range-hash, range-list), INTERVAL, and REFERENCE partitioning. Requires the Partitioning option.",
+        "syntax": "CREATE TABLE orders (\n  id NUMBER,\n  order_date DATE\n)\nPARTITION BY RANGE (order_date)\nINTERVAL (NUMTOYMINTERVAL(1, 'YEAR')) (\n  PARTITION p_before_2023 VALUES LESS THAN (DATE '2023-01-01')\n);"
+      },
+      "sqlite": {
+        "supported": false,
+        "notes": "No native table partitioning. The common workaround is to use separate tables per partition and combine them with views or UNION ALL queries."
+      }
+    },
+    "details": "Partitioning is a mature feature in Oracle and SQL Server, reasonably capable in MySQL and PostgreSQL, and absent in SQLite. Key differences: Oracle's INTERVAL partitioning auto-creates new partitions as data arrives — the other engines require explicit partition management. SQL Server's two-step PARTITION FUNCTION + SCHEME approach is verbose but separates the partitioning logic from the storage layout. PostgreSQL's declarative partitioning since version 10 is clean but foreign keys referencing the parent partitioned table were only fully supported from PG 12. Partition pruning — the optimizer skipping irrelevant partitions — requires that the partition key appear in the WHERE clause; always verify with EXPLAIN. Common pitfalls: MySQL's restriction on foreign keys on partitioned tables, and the fact that a `SELECT *` on the parent in PostgreSQL returns rows from all partitions transparently."
+  },
+  "rename table / column": {
+    "description": "Changing the name of an existing table or column without recreating the object.",
+    "syntax": "-- Table\nALTER TABLE old_name RENAME TO new_name;\n-- Column\nALTER TABLE t RENAME COLUMN old_col TO new_col;",
+    "category": "DDL",
+    "slug": "rename-table",
+    "compatibility": {
+      "mysql": {
+        "supported": true,
+        "since": "5.0",
+        "notes": "RENAME TABLE (table) since 5.0. RENAME COLUMN (column) added in 8.0. On older versions use CHANGE col old_col new_col col_definition.",
+        "syntax": "RENAME TABLE old_name TO new_name;\n-- Column (8.0+):\nALTER TABLE t RENAME COLUMN old_col TO new_col;\n-- Column (pre-8.0):\nALTER TABLE t CHANGE old_col new_col INT NOT NULL;"
+      },
+      "postgresql": {
+        "supported": true,
+        "since": "7.4",
+        "notes": "Both RENAME TABLE and RENAME COLUMN are via ALTER TABLE. Renaming updates pg_class/pg_attribute metadata instantly with no table rewrite.",
+        "syntax": "ALTER TABLE old_name RENAME TO new_name;\nALTER TABLE t RENAME COLUMN old_col TO new_col;"
+      },
+      "sqlserver": {
+        "supported": true,
+        "since": "2000",
+        "notes": "Uses sp_rename system procedure rather than ALTER TABLE syntax. Views, procedures, and other objects that reference the old name are not automatically updated.",
+        "syntax": "-- Table:\nEXEC sp_rename 'old_name', 'new_name';\n-- Column:\nEXEC sp_rename 'dbo.t.old_col', 'new_col', 'COLUMN';"
+      },
+      "oracle": {
+        "supported": true,
+        "since": "9i",
+        "notes": "RENAME (table) is standalone DDL; column rename via ALTER TABLE RENAME COLUMN added in Oracle 9i. Dependent objects (views, procedures) are invalidated and must be recompiled.",
+        "syntax": "RENAME old_name TO new_name;\nALTER TABLE t RENAME COLUMN old_col TO new_col;"
+      },
+      "sqlite": {
+        "supported": true,
+        "since": "3.25.0",
+        "notes": "ALTER TABLE RENAME TO (table rename) has been available since very early SQLite. RENAME COLUMN was added in 3.25.0 (2018). Views and triggers referencing the old column name are updated automatically.",
+        "syntax": "ALTER TABLE old_name RENAME TO new_name;\nALTER TABLE t RENAME COLUMN old_col TO new_col;"
+      }
+    },
+    "details": "Table and column renaming is universally supported but the syntax diverges meaningfully. SQL Server's sp_rename is the odd one out — it's a procedure call, not DDL syntax, and critically it does not update references in views, stored procedures, or computed columns. Always run sp_depends or search sys.sql_modules after renaming in SQL Server. Oracle invalidates dependent objects on rename but will revalidate automatically the next time they are accessed if the new name resolves. MySQL's CHANGE syntax for pre-8.0 column renames requires repeating the full column definition, making it error-prone. PostgreSQL and SQLite have the cleanest behavior: standard ALTER TABLE syntax, no object rewrite, and (SQLite 3.25+) automatic reference updates in views and triggers."
+  },
+  "multi-table update / delete": {
+    "description": "Modifying or deleting rows in one table based on a join condition with one or more other tables in a single DML statement.",
+    "syntax": "-- MySQL style\nUPDATE t1\nJOIN t2 ON t1.id = t2.id\nSET t1.col = t2.val\nWHERE t2.flag = 1;",
+    "category": "DML",
+    "slug": "multi-table-dml",
+    "compatibility": {
+      "mysql": {
+        "supported": true,
+        "since": "4.0",
+        "notes": "Multi-table UPDATE and DELETE with explicit JOIN syntax are native. Only the target table's rows are modified; joining tables are read-only in the statement.",
+        "syntax": "UPDATE orders o\nJOIN customers c ON o.customer_id = c.id\nSET o.priority = 'high'\nWHERE c.tier = 'gold';\n\nDELETE o\nFROM orders o\nJOIN customers c ON o.customer_id = c.id\nWHERE c.active = 0;"
+      },
+      "postgresql": {
+        "supported": true,
+        "since": "7.2",
+        "notes": "Uses UPDATE ... FROM and DELETE ... USING syntax. The target table appears once; joined tables are in the FROM/USING clause.",
+        "syntax": "UPDATE orders o\nSET priority = 'high'\nFROM customers c\nWHERE o.customer_id = c.id\n  AND c.tier = 'gold';\n\nDELETE FROM orders o\nUSING customers c\nWHERE o.customer_id = c.id\n  AND c.active = false;"
+      },
+      "sqlserver": {
+        "supported": true,
+        "since": "2000",
+        "notes": "UPDATE ... FROM and DELETE with FROM clause. Can also use MERGE for upsert-style multi-table DML. The aliased target table in FROM is the idiomatic form.",
+        "syntax": "UPDATE o\nSET o.priority = 'high'\nFROM orders o\nJOIN customers c ON o.customer_id = c.id\nWHERE c.tier = 'gold';\n\nDELETE o\nFROM orders o\nJOIN customers c ON o.customer_id = c.id\nWHERE c.active = 0;"
+      },
+      "oracle": {
+        "supported": true,
+        "since": "9i",
+        "notes": "Oracle does not support UPDATE...JOIN directly. Use a correlated subquery, a CTE with MERGE, or update an inline view (if the view is key-preserved).",
+        "syntax": "-- Correlated subquery:\nUPDATE orders o\nSET o.priority = 'high'\nWHERE EXISTS (\n  SELECT 1 FROM customers c\n  WHERE c.id = o.customer_id\n    AND c.tier = 'gold'\n);\n\n-- Key-preserved inline view:\nUPDATE (\n  SELECT o.priority, c.tier\n  FROM orders o JOIN customers c ON o.customer_id = c.id\n) v\nSET v.priority = 'high'\nWHERE v.tier = 'gold';"
+      },
+      "sqlite": {
+        "supported": true,
+        "since": "3.33.0",
+        "notes": "UPDATE FROM syntax added in 3.33.0 (2020). DELETE with correlated subquery has always been available; DELETE...FROM is not supported — use WHERE EXISTS or WHERE id IN (subquery).",
+        "syntax": "-- UPDATE FROM (3.33.0+):\nUPDATE orders\nSET priority = 'high'\nFROM customers\nWHERE orders.customer_id = customers.id\n  AND customers.tier = 'gold';\n\n-- DELETE via subquery:\nDELETE FROM orders\nWHERE customer_id IN (\n  SELECT id FROM customers WHERE active = 0\n);"
+      }
+    },
+    "details": "This is one of the more fragmented areas across engines. MySQL's explicit JOIN in UPDATE/DELETE is intuitive but non-standard. PostgreSQL and SQL Server both use FROM/USING clauses, but differ in where the target table appears. Oracle is the most restrictive: no JOIN in UPDATE at all — correlated subqueries or the inline-view trick are the workarounds, and the inline-view approach requires the join to be key-preserved (Oracle must be able to prove which base-table row to update). SQLite gained UPDATE FROM relatively recently (3.33.0); scripts targeting older SQLite deployments need the subquery form. Cross-engine portability is best achieved with correlated subqueries (UPDATE t SET col = (SELECT ...) WHERE EXISTS (...)), which work on all five engines."
+  },
+  "output / returning into variable": {
+    "description": "Capturing values from rows affected by an INSERT, UPDATE, or DELETE into a variable or result set within the same statement.",
+    "syntax": "-- SQL Server\nINSERT INTO t (col)\nOUTPUT inserted.id\nVALUES ('x');",
+    "category": "DML",
+    "slug": "output-into-variable",
+    "compatibility": {
+      "mysql": {
+        "supported": true,
+        "since": "5.0",
+        "notes": "No OUTPUT/RETURNING clause. Use LAST_INSERT_ID() after INSERT to retrieve the auto-increment key. Multi-row capture requires triggers or application logic.",
+        "syntax": "INSERT INTO orders (item) VALUES ('widget');\nSELECT LAST_INSERT_ID() AS new_id;"
+      },
+      "postgresql": {
+        "supported": true,
+        "since": "8.2",
+        "notes": "RETURNING clause on INSERT, UPDATE, and DELETE returns a full result set. Works in plain SQL and inside PL/pgSQL with SELECT INTO or FOR loop.",
+        "syntax": "INSERT INTO orders (item)\nVALUES ('widget')\nRETURNING id, created_at;\n\n-- Capture into variable in PL/pgSQL:\nINSERT INTO orders (item)\nVALUES ('widget')\nRETURNING id INTO v_id;"
+      },
+      "sqlserver": {
+        "supported": true,
+        "since": "2005",
+        "notes": "OUTPUT clause on INSERT, UPDATE, DELETE, and MERGE. Can write to a table variable (OUTPUT INTO @tbl) or return rows to the client. Exposes inserted and deleted virtual tables.",
+        "syntax": "-- Capture into table variable:\nDECLARE @ids TABLE (id INT);\nINSERT INTO orders (item)\nOUTPUT inserted.id INTO @ids\nVALUES ('widget');\nSELECT * FROM @ids;\n\n-- Return to client:\nUPDATE orders SET status = 'closed'\nOUTPUT inserted.id, deleted.status\nWHERE status = 'open';"
+      },
+      "oracle": {
+        "supported": true,
+        "since": "8i",
+        "notes": "RETURNING...INTO in PL/SQL captures scalar or collection values from INSERT/UPDATE/DELETE. For bulk operations use RETURNING BULK COLLECT INTO.",
+        "syntax": "DECLARE v_id NUMBER;\nBEGIN\n  INSERT INTO orders (item)\n  VALUES ('widget')\n  RETURNING id INTO v_id;\n  DBMS_OUTPUT.PUT_LINE('new id: ' || v_id);\nEND;"
+      },
+      "sqlite": {
+        "supported": true,
+        "since": "3.35.0",
+        "notes": "RETURNING clause on INSERT, UPDATE, and DELETE added in 3.35.0 (2021). Returns a result set; no direct INTO variable support in SQL.",
+        "syntax": "INSERT INTO orders (item)\nVALUES ('widget')\nRETURNING id, created_at;\n\nDELETE FROM orders WHERE status = 'old'\nRETURNING id;"
+      }
+    },
+    "details": "Capturing DML output inline is invaluable for audit logging, chained operations, and avoiding a second SELECT round-trip. PostgreSQL and SQLite share the RETURNING syntax and semantics. SQL Server's OUTPUT clause is the most powerful: it can route output to a table variable via OUTPUT INTO, enabling buffered multi-step operations, and it exposes both the pre-change (deleted) and post-change (inserted) images in a single UPDATE statement. Oracle's RETURNING INTO is PL/SQL only — it doesn't work in plain SQL scripts. MySQL has no equivalent clause at all; LAST_INSERT_ID() covers only the auto-increment key case, not arbitrary column values or UPDATE/DELETE captures. SQLite's RETURNING is recent (2021); target SQLite version carefully if deploying to embedded contexts."
+  },
+  "qualify": {
+    "description": "A post-aggregation filter clause for window functions, analogous to HAVING for aggregate functions, avoiding the need for a subquery.",
+    "syntax": "SELECT col, ROW_NUMBER() OVER (PARTITION BY grp ORDER BY col)\nFROM t\nQUALIFY ROW_NUMBER() OVER (PARTITION BY grp ORDER BY col) = 1;",
+    "category": "Query Techniques",
+    "slug": "qualify",
+    "compatibility": {
+      "mysql": {
+        "supported": false,
+        "notes": "No QUALIFY clause. Use a subquery or CTE to filter on window function results."
+      },
+      "postgresql": {
+        "supported": false,
+        "notes": "No QUALIFY clause. Standard workaround is a subquery or CTE: wrap the windowed query and apply WHERE on the outer query."
+      },
+      "sqlserver": {
+        "supported": false,
+        "notes": "No QUALIFY clause. Use a subquery or CTE with a WHERE filter on the window function column alias."
+      },
+      "oracle": {
+        "supported": false,
+        "notes": "No QUALIFY clause as of Oracle 21c. Use an inline view or CTE."
+      },
+      "sqlite": {
+        "supported": false,
+        "notes": "No QUALIFY clause. Use a subquery or CTE."
+      }
+    },
+    "details": "QUALIFY is a non-standard extension supported natively in Teradata, BigQuery, Snowflake, DuckDB, and Databricks — but not in any of the five engines covered here. Its appeal is readability: it removes the need to wrap a windowed query in a subquery just to filter on the window result. The standard-portable workaround is consistent across all engines: place the window expression in a CTE or subquery, then filter in an outer WHERE clause. Example: WITH ranked AS (SELECT *, ROW_NUMBER() OVER (PARTITION BY grp ORDER BY col) AS rn FROM t) SELECT * FROM ranked WHERE rn = 1. Some engines (PostgreSQL, SQL Server) allow referencing a window function alias in WHERE if wrapped in a subquery, but not in the same query level where it is defined."
   }
 }
