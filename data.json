@@ -5273,5 +5273,371 @@
       }
     },
     "details": "Query hints are a last resort — the right response to a bad query plan is usually better statistics, updated indexes, or a query rewrite. That said, hints are invaluable when a known-good plan is being abandoned due to stale stats or parameter sniffing. Oracle and SQL Server have the most mature hint systems with the widest vocabulary. PostgreSQL deliberately omits inline hints to keep the optimizer honest, but the pg_hint_plan extension fills the gap for production use. MySQL's FORCE INDEX is deceptively aggressive — it tells the optimizer to use that index or do a full table scan, with no middle ground. SQL Server's WITH (NOLOCK) is the most commonly misused hint: it eliminates lock waits at the cost of dirty reads, phantom reads, and even rows appearing twice or not at all during a scan — not appropriate for financial or transactional queries."
+  },
+  "NULLS ORDERING": {
+    "description": "Specifies the ordering of NULL values in an SQL query.",
+    "syntax": "SELECT * FROM table_name ORDER BY column_name NULLS FIRST;",
+    "category": "Syntax",
+    "slug": "nulls-ordering",
+    "compatibility": {
+      "mysql": { 
+        "supported": false,
+        "notes": "MySQL does not support NULLS FIRST/LAST in ORDER BY. You can use ISNULL(col) (returns 1/0) or col IS NULL in CASE to control position."
+      },
+      "postgresql": { 
+        "supported": true, 
+        "since": "9.5", 
+        "notes": "", 
+        "syntax": "SELECT * FROM table_name ORDER BY column_name NULLS FIRST;" 
+      },
+      "sqlserver": { 
+        "supported": false, 
+        "notes": "SQL Server does not support NULLS FIRST/LAST in ORDER BY. To get a similar effect, you can use a CASE expression: ORDER BY CASE WHEN column_name IS NULL THEN 0 ELSE 1 END, column_name ASC;"
+      },
+      "oracle": { 
+        "supported": true, 
+        "since": "12c", 
+        "notes": "", 
+        "syntax": "SELECT * FROM table_name ORDER BY column_name NULLS FIRST;" 
+      },
+      "sqlite": { 
+        "supported": false, 
+        "notes": "SQLite does not support NULLS FIRST/LAST in ORDER BY. You can use ISNULL(col) (returns 1/0) or col IS NULL in CASE to control position."
+      }
+    },
+    "details": "NULLS FIRST and NULLS LAST provide control over the handling of NULL values in sorting, which can differ across databases."
+  },
+  "EXPRESSION INDEX": {
+    "description": "Function-based indexes allow indexing on expressions.",
+    "syntax": "CREATE INDEX idx_expression ON table_name(LOWER(email));",
+    "category": "Indexes & Search",
+    "slug": "expression-index",
+    "compatibility": {
+      "mysql": { 
+        "supported": true, 
+        "since": "8.0.13",
+        "notes": "If you run MySQL < 8.0.13: use a generated column (VIRTUAL or STORED) and index that column.",
+        "syntax": "CREATE INDEX idx_expression ON table_name(LOWER(email));",
+        "source": "https://stackoverflow.com/questions/60965017/how-to-create-upper-functional-index-in-mysql",
+        "retrieved": "3/31/2026",
+        "license": "null"
+      },
+      "postgresql": { 
+        "supported": true, 
+        "since": "9.3", 
+        "notes": "", 
+        "syntax": "CREATE INDEX idx_expression ON table_name(LOWER(email));" 
+      },
+      "sqlserver": { 
+        "supported": false, 
+        "notes": "SQL Server does not support function-based indexes."
+      },
+      "oracle": { 
+        "supported": true, 
+        "since": "12c", 
+        "notes": "", 
+        "syntax": "CREATE INDEX idx_expression ON table_name(LOWER(email));" 
+      },
+      "sqlite": { 
+        "supported": false, 
+        "notes": "SQLite does not support function-based indexes."
+      }
+    },
+    "details": "Function-based indexes can significantly improve query performance for specific types of searches."
+  },
+  "SELECT INTO": {
+    "description": "A shorthand for creating a new table from the result of a SELECT statement.",
+    "syntax": "SELECT column1, column2 INTO new_table FROM old_table;",
+    "category": "DML",
+    "slug": "select-into",
+    "compatibility": {
+      "mysql": { 
+        "supported": true, 
+        "since": "8.0", 
+        "notes": "", 
+        "syntax": "SELECT column1, column2 INTO new_table FROM old_table;" 
+      },
+      "postgresql": { 
+        "supported": false, 
+        "notes": "SELECT ... INTO new_table is supported by PostgreSQL SQL, but it's recommended to use CREATE TABLE ... AS (standard-compliant) or INSERT INTO ... SELECT for clarity and compatibility, especially when writing PL/pgSQL code."
+      },
+      "sqlserver": { 
+        "supported": true, 
+        "since": "2016", 
+        "notes": "", 
+        "syntax": "SELECT column1, column2 INTO new_table FROM old_table;" 
+      },
+      "oracle": { 
+        "supported": false, 
+        "notes": "Oracle does not support the SQL-Server style SELECT ... INTO new_table shorthand — use CREATE TABLE ... AS SELECT ... or INSERT INTO ... SELECT ... instead."
+      },
+      "sqlite": { 
+        "supported": true, 
+        "since": "3.6.5", 
+        "notes": "", 
+        "syntax": "SELECT column1, column2 INTO new_table FROM old_table;" 
+      }
+    },
+    "details": "This syntax is a convenient way to duplicate the structure and data of an existing table into a new one."
+  },
+  "DATE PARSING": {
+    "description": "Functions for parsing strings into dates.",
+    "syntax": "SELECT STR_TO_DATE('2023-10-01', '%Y-%m-%d');",
+    "category": "Functions",
+    "slug": "date-parsing",
+    "compatibility": {
+      "mysql": { 
+        "supported": true, 
+        "since": "8.0", 
+        "notes": "", 
+        "syntax": "SELECT STR_TO_DATE('2023-10-01', '%Y-%m-%d');" 
+      },
+      "postgresql": { 
+        "supported": true, 
+        "since": "9.4", 
+        "notes": "", 
+        "syntax": "SELECT TO_DATE('2023-10-01', 'YYYY-MM-DD');" 
+      },
+      "sqlserver": { 
+        "supported": true, 
+        "since": "2016", 
+        "notes": "", 
+        "syntax": "SELECT CONVERT(DATETIME, '2023-10-01', 120);" 
+      },
+      "oracle": { 
+        "supported": true, 
+        "since": "12c", 
+        "notes": "", 
+        "syntax": "SELECT TO_DATE('2023-10-01', 'YYYY-MM-DD') FROM DUAL;" 
+      },
+      "sqlite": { 
+        "supported": false, 
+        "notes": "SQLite does not have a direct function for this."
+      }
+    },
+    "details": "These functions are crucial for data migration and compatibility across different SQL databases."
+  },
+  "ANTI-JOIN": {
+    "description": "The NOT EXISTS pattern or LEFT JOIN ... IS NULL form for a performance advantage.",
+    "syntax": "SELECT * FROM table1 WHERE NOT EXISTS (SELECT 1 FROM table2 WHERE table2.column = table1.column);",
+    "category": "Joins",
+    "slug": "anti-join",
+    "compatibility": {
+      "mysql": { 
+        "supported": true, 
+        "since": "8.0", 
+        "notes": "", 
+        "syntax": "SELECT * FROM table1 WHERE NOT EXISTS (SELECT 1 FROM table2 WHERE table2.column = table1.column);" 
+      },
+      "postgresql": { 
+        "supported": true, 
+        "since": "9.5", 
+        "notes": "", 
+        "syntax": "SELECT * FROM table1 LEFT JOIN table2 ON table1.column = table2.column WHERE table2.column IS NULL;" 
+      },
+      "sqlserver": { 
+        "supported": true, 
+        "since": "2017", 
+        "notes": "", 
+        "syntax": "SELECT * FROM table1 WHERE NOT EXISTS (SELECT 1 FROM table2 WHERE table2.column = table1.column);" 
+      },
+      "oracle": { 
+        "supported": true, 
+        "since": "12c", 
+        "notes": "", 
+        "syntax": "SELECT * FROM table1 MINUS SELECT * FROM table2;" 
+      },
+      "sqlite": { 
+        "supported": false,
+        "notes": "SQLite does not support NOT EXISTS in this way." 
+      }
+    },
+    "details": "Anti-joins can be a powerful tool for optimizing performance by reducing the number of rows scanned."
+  },
+  "REGEXP REPLACE": {
+    "description": "A function to replace substrings based on regex patterns.",
+    "syntax": "SELECT REGEXP_REPLACE(string, pattern, replacement);",
+    "category": "Functions",
+    "slug": "regexp-replace",
+    "compatibility": {
+      "mysql": { 
+        "supported": false, 
+        "notes": "MySQL does not support REGEXP_REPLACE." 
+      },
+      "postgresql": { 
+        "supported": true, 
+        "since": "9.1", 
+        "notes": "", 
+        "syntax": "SELECT REGEXP_REPLACE(string, pattern, replacement);" 
+      },
+      "sqlserver": { 
+        "supported": false, 
+        "notes": "SQL Server does not support REGEXP_REPLACE." 
+      },
+      "oracle": { 
+        "supported": true, 
+        "since": "12c", 
+        "notes": "", 
+        "syntax": "SELECT REGEXP_REPLACE(string, pattern, replacement) FROM dual;" 
+      },
+      "sqlite": { 
+        "supported": false, 
+        "notes": "SQLite does not support REGEXP_REPLACE."
+      }
+    },
+    "details": "This function is useful for text manipulation and data cleaning. However, support for it varies widely across SQL databases, with some lacking native regex replacement capabilities. Perhaps the ones that don't support it have played the 'I used regex to solve my problem; now I have two problems' game and rightly decided against supporting it."
+  },
+  "NUMERIC TYPES": {
+    "description": "Precision differences between numeric types in SQL databases.",
+    "syntax": "",
+    "category": "Data Types",
+    "slug": "numeric-types",
+    "compatibility": {
+      "mysql": { 
+        "supported": true, 
+        "since": "8.0", 
+        "notes": "MySQL supports standard numeric types with varying precision defaults.", 
+        "syntax": "" 
+      },
+      "postgresql": { 
+        "supported": true, 
+        "since": "9.1", 
+        "notes": "PostgreSQL has precise control over numeric type precision and scale.", 
+        "syntax": "" },
+      "sqlserver": { 
+        "supported": true, 
+        "since": "2016", 
+        "notes": "SQL Server supports a range of numeric types with user-definable precision.", 
+        "syntax": "" 
+      },
+      "oracle": { 
+        "supported": true, 
+        "since": "12c", 
+        "notes": "Oracle has flexible support for various numeric types and can handle high precision arithmetic.", 
+        "syntax": "" 
+      },
+      "sqlite": { 
+        "supported": false, 
+        "since": "3.6.5", 
+        "notes": "SQLite does not support the full range of numeric types found in other databases.", 
+        "syntax": "" 
+      }
+    },
+    "details": "Understanding the differences in how numeric data is handled across different SQL engines can prevent silent data loss or precision issues."
+  },
+  "TEXT TYPES": {
+    "description": "Character string handling in SQL, including VARCHAR and TEXT types.",
+    "syntax": "",
+    "category": "Data Types",
+    "slug": "text-types",
+    "compatibility": {
+      "mysql": { 
+        "supported": true, 
+        "since": "8.0", 
+        "notes": "MySQL supports standard character types with varying maximum lengths.", 
+        "syntax": "" 
+      },
+      "postgresql": { 
+        "supported": true, 
+        "since": "9.1", 
+        "notes": "PostgreSQL has a rich set of text handling capabilities including VARCHAR and TEXT types.", 
+        "syntax": "" 
+      },
+      "sqlserver": { 
+        "supported": true, 
+        "since": "2016", 
+        "notes": "SQL Server supports character types with user-definable maximum lengths and Unicode support.", 
+        "syntax": "" 
+      },
+      "oracle": { 
+        "supported": true, 
+        "since": "12c", 
+        "notes": "Oracle has flexible text handling capabilities including VARCHAR2 and NVARCHAR2 types.", 
+        "syntax": "" 
+      },
+      "sqlite": { 
+        "supported": false, 
+        "since": "3.6.5", 
+        "notes": "SQLite does not support the full range of character types found in other databases.", 
+        "syntax": "" 
+      }
+    },
+    "details": "Understanding the differences in how text data is handled across different SQL engines can help developers choose the right tool for their specific needs."
+  },
+  "GRANT / REVOKE": {
+    "description": "Basic permission management commands.",
+    "syntax": "",
+    "category": "Administration",
+    "slug": "grant-revoke",
+    "compatibility": {
+      "mysql": { 
+        "supported": true, 
+        "since": "8.0", 
+        "notes": "MySQL supports GRANT and REVOKE for managing user permissions.", 
+        "syntax": "" 
+      },
+      "postgresql": { 
+        "supported": false, 
+        "notes": "PostgreSQL uses a different model for granting roles and revoking privileges.", 
+        "syntax": "" 
+      },
+      "sqlserver": { 
+        "supported": true, 
+        "since": "2016", 
+        "notes": "SQL Server supports GRANT and REVOKE for managing user permissions.", 
+        "syntax": "" 
+      },
+      "oracle": { 
+        "supported": false, 
+        "notes": "Oracle has a different model for granting and revoking privileges through roles.", 
+        "syntax": "" 
+      },
+      "sqlite": { 
+        "supported": true, 
+        "since": "3.6.5", 
+        "notes": "SQLite supports GRANT and REVOKE for managing user permissions.", 
+        "syntax": "" 
+      }
+    },
+    "details": "Understanding how to manage access control is crucial for database security and administration."
+  },
+  "INFORMATION SCHEMA": {
+    "description": "The INFORMATION_SCHEMA or equivalent system catalogs for introspection.",
+    "syntax": "",
+    "category": "Administration",
+    "slug": "information-schema",
+    "compatibility": {
+      "mysql": { 
+        "supported": true, 
+        "since": "8.0", 
+        "notes": "MySQL uses the INFORMATION_SCHEMA for metadata introspection.", 
+        "syntax": "" 
+      },
+      "postgresql": { 
+        "supported": true, 
+        "since": "9.1", 
+        "notes": "PostgreSQL uses system catalogs like pg_tables and information_schema for metadata.", 
+        "syntax": "" 
+      },
+      "sqlserver": { 
+        "supported": true, 
+        "since": "2016", 
+        "notes": "SQL Server uses the INFORMATION_SCHEMA and sys.tables for metadata introspection.", 
+        "syntax": "" 
+      },
+      "oracle": { 
+        "supported": true, 
+        "since": "12c", 
+        "notes": "Oracle uses system catalogs like ALL_TABLES for metadata introspection.", 
+        "syntax": "" 
+      },
+      "sqlite": { 
+        "supported": true, 
+        "since": "3.6.5", 
+        "notes": "SQLite uses the sqlite_master table for metadata introspection.", 
+        "syntax": "" 
+      }
+    },
+    "details": "Understanding the available tables and columns in a database is crucial for building tools that rely on metadata."
   }
 }
