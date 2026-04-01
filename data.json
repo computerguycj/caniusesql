@@ -87,9 +87,9 @@
       },
       "postgresql": {
         "supported": true,
-        "since": "9.3",
-        "notes": "Use jsonb_path_query",
-        "syntax": "SELECT \n  j->>'name' AS name,\n  (j->>'age')::int AS age\nFROM tbl,\nLATERAL jsonb_array_elements(json_col->'people') AS arr(j);"
+        "since": "17",
+        "notes": "Native JSON_TABLE support added in PostgreSQL 17. Prior versions use jsonb_to_recordset() or lateral jsonb_array_elements() as workarounds.",
+        "syntax": "SELECT jt.*\nFROM tbl,\nJSON_TABLE(json_col, '$[*]' COLUMNS (\n  name TEXT PATH '$.name',\n  age  INT  PATH '$.age'\n)) AS jt;"
       },
       "sqlserver": {
         "supported": true,
@@ -5461,8 +5461,10 @@
     "slug": "regexp-replace",
     "compatibility": {
       "mysql": { 
-        "supported": false, 
-        "notes": "MySQL does not support REGEXP_REPLACE." 
+        "supported": true,
+        "since": "8.0",
+        "notes": "REGEXP_REPLACE() added in MySQL 8.0.",
+        "syntax": "SELECT REGEXP_REPLACE(string, pattern, replacement);"
       },
       "postgresql": { 
         "supported": true, 
@@ -5517,10 +5519,10 @@
         "syntax": "" 
       },
       "sqlite": { 
-        "supported": false, 
-        "since": "3.6.5", 
-        "notes": "SQLite does not support the full range of numeric types found in other databases.", 
-        "syntax": "" 
+        "supported": true,
+        "since": "3.0",
+        "notes": "SQLite supports INTEGER and REAL storage classes natively. It uses type affinity rather than strict enforcement — NUMERIC affinity will attempt to store values as integer or real.",
+        "syntax": ""
       }
     },
     "details": "Understanding the differences in how numeric data is handled across different SQL engines can prevent silent data loss or precision issues."
@@ -5556,10 +5558,10 @@
         "syntax": "" 
       },
       "sqlite": { 
-        "supported": false, 
-        "since": "3.6.5", 
-        "notes": "SQLite does not support the full range of character types found in other databases.", 
-        "syntax": "" 
+        "supported": true,
+        "since": "3.0",
+        "notes": "TEXT is one of SQLite's five native storage classes and is widely used. SQLite uses dynamic typing — column types are affinities, not strict constraints.",
+        "syntax": ""
       }
     },
     "details": "Understanding the differences in how text data is handled across different SQL engines can help developers choose the right tool for their specific needs."
@@ -5577,7 +5579,8 @@
         "syntax": "" 
       },
       "postgresql": { 
-        "supported": false, 
+        "supported": true,
+        "since": "7.0",
         "notes": "PostgreSQL uses a different model for granting roles and revoking privileges.", 
         "syntax": "" 
       },
@@ -5588,8 +5591,9 @@
         "syntax": "" 
       },
       "oracle": { 
-        "supported": false, 
-        "notes": "Oracle has a different model for granting and revoking privileges through roles.", 
+        "supported": true,
+        "since": "7",
+        "notes": "Oracle's permission model is built on GRANT and REVOKE. Privileges are granted directly or via roles.",
         "syntax": "" 
       },
       "sqlite": { 
@@ -5609,8 +5613,8 @@
     "compatibility": {
       "mysql": { 
         "supported": true, 
-        "since": "8.0", 
-        "notes": "MySQL uses the INFORMATION_SCHEMA for metadata introspection.", 
+        "since": "5.0", 
+        "notes": "MySQL has supported INFORMATION_SCHEMA since 5.0.",
         "syntax": "" 
       },
       "postgresql": { 
@@ -5621,8 +5625,8 @@
       },
       "sqlserver": { 
         "supported": true, 
-        "since": "2016", 
-        "notes": "SQL Server uses the INFORMATION_SCHEMA and sys.tables for metadata introspection.", 
+        "since": "2000",
+        "notes": "SQL Server has supported INFORMATION_SCHEMA since SQL Server 2000, alongside sys.tables and other catalog views.",
         "syntax": "" 
       },
       "oracle": { 
