@@ -282,29 +282,25 @@
         let sqlDatabase = null;
 
         // Search for a command
-        function searchCommand(command) {
-            // Use the passed command or get from input
+        function searchCommand(command, replace = false) {
             const searchInput = command || document.getElementById('commandSearch').value.trim().toLowerCase();
             function escapeHTML(str) {
                 return str.replace(/&/g, "&amp;")
-                          .replace(/</g, "&lt;")
-                          .replace(/>/g, "&gt;")
-                          .replace(/\"/g, "&quot;")
-                          .replace(/'/g, "&#39;")
-                          .replace(/\//g, "&#x2F;");
+                        .replace(/</g, "&lt;")
+                        .replace(/>/g, "&gt;")
+                        .replace(/\"/g, "&quot;")
+                        .replace(/'/g, "&#39;")
+                        .replace(/\//g, "&#x2F;");
             }
             if (!searchInput) return;
-            
-            // If command is passed, update the search box
+
             if (command) {
                 document.getElementById('commandSearch').value = command;
             }
-            
-        // Update URL with search query
-            updateURL(searchInput);
+
+            updateURL(searchInput, replace);
             updateMeta(searchInput);
-            
-            // Get selected database systems
+
             const selectedDatabases = {
                 mysql: document.getElementById('mysql').checked,
                 postgresql: document.getElementById('postgresql').checked,
@@ -312,15 +308,13 @@
                 oracle: document.getElementById('oracle').checked,
                 sqlite: document.getElementById('sqlite').checked
             };
-            
-            // Find the command
+
             const foundCommand = Object.keys(sqlDatabase).find(cmd => cmd.toLowerCase() === searchInput.toLowerCase());
             const resultContainer = document.getElementById('resultContainer');
-            
+
             if (foundCommand) {
                 const commandData = sqlDatabase[foundCommand];
-                
-                // Build result table
+
                 let resultHTML = `
                     <h2>Compatibility for "${foundCommand.toUpperCase()}"</h2>
                     <p>${commandData.description}</p>
@@ -335,15 +329,15 @@
                         </thead>
                         <tbody>
                 `;
-                
+
                 for (const [db, checked] of Object.entries(selectedDatabases)) {
                     if (!checked) continue;
-                    
+
                     const dbInfo = commandData.compatibility[db];
                     const supportClass = dbInfo.supported ? 'supported' : 'not-supported';
                     const supportText = dbInfo.supported ? 'Supported' : 'Not Supported';
                     const versionText = dbInfo.since || '-';
-                    
+
                     resultHTML += `
                         <tr>
                             <td>${db.charAt(0).toUpperCase() + db.slice(1)}</td>
@@ -353,37 +347,36 @@
                         </tr>
                     `;
                 }
-                
+
                 resultHTML += `
                         </tbody>
                     </table>
                     <button onclick="showDetails('${foundCommand}')" style="margin-top: 20px;">View Details</button>
                 `;
-                
+
                 resultContainer.innerHTML = resultHTML;
             } else {
-                // Search for similar commands
-                const similarCommands = Object.keys(sqlDatabase).filter(cmd => 
-                    cmd.toLowerCase().includes(searchInput.toLowerCase()) || 
+                const similarCommands = Object.keys(sqlDatabase).filter(cmd =>
+                    cmd.toLowerCase().includes(searchInput.toLowerCase()) ||
                     searchInput.toLowerCase().includes(cmd.toLowerCase())
                 );
-                
+
                 if (similarCommands.length > 0) {
                     let resultHTML = `
                         <div class="result-message">
                             <p>No exact match found for "${escapeHTML(searchInput)}". Did you mean:</p>
                             <ul>
                     `;
-                    
+
                     similarCommands.forEach(cmd => {
                         resultHTML += `<li><a href="#" onclick="searchCommand('${cmd}'); return false;">${cmd.toUpperCase()}</a></li>`;
                     });
-                    
+
                     resultHTML += `
                             </ul>
                         </div>
                     `;
-                    
+
                     resultContainer.innerHTML = resultHTML;
                 } else {
                     resultContainer.innerHTML = `
@@ -476,20 +469,20 @@
         }
 
         // Function to update URL with slug-based path
-        function updateURL(query) {
+        function updateURL(query, replace = false) {
             const foundCommand = sqlDatabase && Object.keys(sqlDatabase).find(
                 cmd => cmd.toLowerCase() === (query || '').toLowerCase()
             );
+            const method = replace ? 'replaceState' : 'pushState';
             if (foundCommand && sqlDatabase[foundCommand].slug) {
-                window.history.replaceState({}, '', '/f/' + sqlDatabase[foundCommand].slug);
+                window.history[method]({}, '', '/f/' + sqlDatabase[foundCommand].slug);
             } else if (!query || !query.trim()) {
-                window.history.replaceState({}, '', '/');
+                window.history[method]({}, '', '/');
             }
         }
 
         // Function to initialize search from URL on page load
         function initializeFromURL() {
-            // Primary: path-based /f/slug
             const pathMatch = window.location.pathname.match(/^\/f\/([^/]+)$/);
             if (pathMatch) {
                 try {
@@ -499,18 +492,15 @@
                     );
                     if (foundCommand) {
                         document.getElementById('commandSearch').value = foundCommand;
-                        searchCommand(foundCommand);
+                        searchCommand(foundCommand, true);
                         return;
                     }
-                } catch (e) {
-                    // Skip malformed slug
-                }
+                } catch (e) {}
             }
-            // Fallback: legacy ?q= param - getQueryParameter reads the legacy ?q= param, and searchCommand (which calls updateURL) performs a client-side history.replaceState to update the slug URL without a network redirect (soft redirect)
             const queryParam = getQueryParameter('q');
             if (queryParam) {
                 document.getElementById('commandSearch').value = queryParam;
-                searchCommand(queryParam);
+                searchCommand(queryParam, true);
             }
         }
 
