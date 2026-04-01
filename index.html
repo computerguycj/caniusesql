@@ -539,7 +539,7 @@
 
         // Load data then initialize search from URL when page loads
         document.addEventListener('DOMContentLoaded', function() {
-            fetch('data.json')
+            fetch('data.json?v=2')
                 .then(r => r.json())
                 .then(data => {
                     sqlDatabase = data;
