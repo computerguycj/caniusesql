@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>JSON MODIFY / JSON SET SQL Compatibility | MySQL, PostgreSQL, SQL Server, Oracle, SQLite</title>
+  <meta name="description" content="JSON MODIFY / JSON SET: Update, insert, or delete values within a JSON document stored in a column, returning the modified JSON. Avoids deserializing the entire document in application code just to change one field. Check support across MySQL, PostgreSQL, SQL Server, Oracle, and SQLite.">
+  <meta property="og:site_name" content="Can I Use SQL?">
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="https://www.caniusesql.com/f/json-modify">
+  <meta property="og:title" content="JSON MODIFY / JSON SET SQL Compatibility | MySQL, PostgreSQL, SQL Server, Oracle, SQLite">
+  <meta property="og:description" content="JSON MODIFY / JSON SET: Update, insert, or delete values within a JSON document stored in a column, returning the modified JSON. Avoids deserializing the entire document in application code just to change one field. Check support across MySQL, PostgreSQL, SQL Server, Oracle, and SQLite.">
+  <meta property="og:image" content="https://www.caniusesql.com/og-image.png?v=5">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="JSON MODIFY / JSON SET SQL Compatibility | MySQL, PostgreSQL, SQL Server, Oracle, SQLite">
+  <meta name="twitter:description" content="JSON MODIFY / JSON SET: Update, insert, or delete values within a JSON document stored in a column, returning the modified JSON. Avoids deserializing the entire document in application code just to change one field. Check support across MySQL, PostgreSQL, SQL Server, Oracle, and SQLite.">
+  <meta name="twitter:image" content="https://www.caniusesql.com/og-image.png?v=5">
+  <link rel="sitemap" type="application/xml" href="/sitemap.xml">
+  <link rel="canonical" href="https://www.caniusesql.com/f/json-modify">
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen,
+                   Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+      line-height: 1.6;
+      color: #333;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+      background-color: #f5f7fa;
+    }
+    a { color: #3498db; }
+    .site-header {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 24px;
+      flex-wrap: wrap;
+    }
+    .home-link {
+      text-decoration: none;
+      color: #3498db;
+      font-size: 15px;
+      white-space: nowrap;
+    }
+    .home-link:hover { text-decoration: underline; }
+    h1 {
+      color: #2c3e50;
+      margin: 0;
+      font-size: 1.8rem;
+    }
+    h2 { color: #2c3e50; margin-top: 32px; }
+    h4 { color: #2c3e50; margin: 16px 0 4px; }
+    .category-badge {
+      display: inline-block;
+      padding: 3px 10px;
+      background: #eaf3fb;
+      color: #2980b9;
+      border: 1px solid #aed6f1;
+      border-radius: 12px;
+      font-size: 13px;
+      margin-left: 8px;
+      vertical-align: middle;
+    }
+    .command-desc {
+      font-size: 1.05rem;
+      color: #555;
+      margin-bottom: 24px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background-color: white;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    th, td {
+      text-align: left;
+      padding: 12px 15px;
+      border-bottom: 1px solid #ddd;
+    }
+    th { background-color: #3498db; color: white; }
+    tr:last-child td { border-bottom: none; }
+    tr:hover { background-color: #f5f5f5; }
+    .supported     { color: #27ae60; font-weight: bold; }
+    .not-supported { color: #e74c3c; }
+    .notes         { font-size: 14px; color: #7f8c8d; }
+    .syntax {
+      background-color: #f8f9fa;
+      padding: 15px;
+      border-radius: 4px;
+      border-left: 4px solid #3498db;
+      font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+      font-size: 14px;
+      white-space: pre-wrap;
+      margin: 8px 0 16px;
+      overflow-x: auto;
+    }
+    .version-badge {
+      display: inline-block;
+      padding: 3px 8px;
+      border-radius: 4px;
+      font-size: 14px;
+      margin: 0 4px 6px 0;
+    }
+    .version-supported {
+      background-color: #e6f7ee;
+      color: #27ae60;
+      border: 1px solid #27ae60;
+    }
+    .version-not-supported {
+      background-color: #fde8e8;
+      color: #e74c3c;
+      border: 1px solid #e74c3c;
+    }
+    .search-cta {
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      padding: 20px 24px;
+      margin-top: 40px;
+      text-align: center;
+      font-size: 1rem;
+    }
+    .search-cta a {
+      font-weight: 600;
+      text-decoration: none;
+    }
+    .search-cta a:hover { text-decoration: underline; }
+    .per-db-section {
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      padding: 20px 24px;
+      margin-top: 8px;
+    }
+    .detail-block {
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      padding: 20px 24px;
+      margin-top: 8px;
+    }
+  </style>
+</head>
+<body>
+
+  <header class="site-header">
+    <a href="/" class="home-link">← Can I Use SQL?</a>
+    <h1>JSON MODIFY / JSON SET<span class="category-badge">JSON</span></h1>
+  </header>
+
+  <p class="command-desc">Update, insert, or delete values within a JSON document stored in a column, returning the modified JSON. Avoids deserializing the entire document in application code just to change one field.</p>
+
+  <h2>Compatibility</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Database System</th>
+        <th>Support Status</th>
+        <th>Since Version</th>
+        <th>Notes</th>
+      </tr>
+    </thead>
+    <tbody>
+          <tr>
+            <td>MySQL</td>
+            <td class="supported">✓ Supported</td>
+            <td>5.7.8</td>
+            <td class="notes">Three distinct functions with different insert/update semantics: JSON_SET inserts or replaces (upsert). JSON_INSERT inserts only if the key does not exist. JSON_REPLACE replaces only if the key already exists. JSON_REMOVE deletes a path. All return a new JSON document; the source column is not modified in-place — use UPDATE ... SET col = JSON_SET(col, ...) to persist changes.</td>
+          </tr>
+          <tr>
+            <td>PostgreSQL</td>
+            <td class="supported">✓ Supported</td>
+            <td>9.5</td>
+            <td class="notes">No single JSON_SET function. Instead, the || (concatenation) operator merges/overwrites top-level keys on jsonb. For deep updates, jsonb_set(target, path_array, new_value) (9.5+) modifies a nested key. jsonb_set_lax() (14+) adds NULL-handling options. jsonb_insert() (9.6+) inserts into arrays at a specific position. jsonb_strip_nulls() removes null-valued keys. The #- operator removes a key by path.</td>
+          </tr>
+          <tr>
+            <td>SQL Server</td>
+            <td class="supported">✓ Supported</td>
+            <td>2016</td>
+            <td class="notes">JSON_MODIFY(expression, path, new_value) is the single function for all mutations. Setting new_value to NULL removes the key (or sets it to JSON null — use JSON_MODIFY(col, 'lax $.key', NULL) to force removal). Supports append mode for arrays: JSON_MODIFY(col, 'append $.tags', 'featured'). JSON_MODIFY can be chained/nested to modify multiple paths. Returns NVARCHAR.</td>
+          </tr>
+          <tr>
+            <td>Oracle</td>
+            <td class="supported">✓ Supported</td>
+            <td>21c</td>
+            <td class="notes">JSON_TRANSFORM (Oracle 21c+) is the primary function for modifying JSON documents with a dedicated mini-language of operations: SET, INSERT, REPLACE, APPEND, REMOVE, RENAME, KEEP, COPY, MOVE, SORT, FLATTEN. Prior to 21c, JSON modification required extracting values, modifying in application code, and updating the column. Oracle 12c/18c had no in-database JSON mutation functions.</td>
+          </tr>
+          <tr>
+            <td>SQLite</td>
+            <td class="supported">✓ Supported</td>
+            <td>3.9.0</td>
+            <td class="notes">json_set(json, path, value, ...) (upsert), json_insert(json, path, value, ...) (insert only), json_replace(json, path, value, ...) (replace only), and json_remove(json, path, ...) follow the same insert/replace/upsert semantics as MySQL. All available since SQLite 3.9.0. Multiple paths can be modified in a single call. Returns a new JSON string; must be used in an UPDATE to persist.</td>
+          </tr>
+    </tbody>
+  </table>
+
+  <h2>Details</h2>
+  <div class="detail-block">
+    <p style="margin:0">MySQL and SQLite share the same three-function split (JSON_SET/json_set for upsert, JSON_INSERT/json_insert for insert-only, JSON_REPLACE/json_replace for replace-only) — the most orthogonal API. SQL Server's JSON_MODIFY is a single function that covers all cases including array append, but requires chaining for multiple updates. PostgreSQL has no JSON_SET — it uses the || operator for top-level merges and jsonb_set() for nested updates; the #- operator and - operator handle removal. Oracle had no JSON mutation functions at all until 21c's JSON_TRANSFORM, which introduces a mini-language rather than function arguments. In all engines, these functions return a new JSON value — they do not modify in place; an UPDATE statement is required to persist changes.</p>
+  </div>
+
+  <h2>Standard Syntax</h2>
+  <div class="syntax">-- SQL Server:
+SELECT JSON_MODIFY(data, '$.status', 'active') AS updated
+FROM users;
+
+-- MySQL:
+SELECT JSON_SET(data, '$.status', 'active') AS updated
+FROM users;
+
+-- PostgreSQL:
+SELECT data || '{&quot;status&quot;: &quot;active&quot;}' AS updated
+FROM users;</div>
+
+  <h2>Version Support</h2>
+  <div style="margin-top: 8px;">
+    <span class="version-badge version-supported">MySQL: Since 5.7.8</span>
+    <span class="version-badge version-supported">PostgreSQL: Since 9.5</span>
+    <span class="version-badge version-supported">SQL Server: Since 2016</span>
+    <span class="version-badge version-supported">Oracle: Since 21c</span>
+    <span class="version-badge version-supported">SQLite: Since 3.9.0</span>
+    
+  </div>
+
+  <h2>Per-Database Syntax &amp; Notes</h2>
+  <div class="per-db-section">
+        <h4>MySQL</h4>
+        <p class="notes">Three distinct functions with different insert/update semantics: JSON_SET inserts or replaces (upsert). JSON_INSERT inserts only if the key does not exist. JSON_REPLACE replaces only if the key already exists. JSON_REMOVE deletes a path. All return a new JSON document; the source column is not modified in-place — use UPDATE ... SET col = JSON_SET(col, ...) to persist changes.</p>
+        <div class="syntax">-- JSON_SET (upsert a value):
+UPDATE users
+SET data = JSON_SET(data, '$.status', 'active')
+WHERE id = 1;
+
+-- JSON_INSERT (add only if key absent):
+UPDATE users
+SET data = JSON_INSERT(data, '$.created_at', NOW())
+WHERE id = 1;
+
+-- JSON_REPLACE (update only if key exists):
+UPDATE users
+SET data = JSON_REPLACE(data, '$.status', 'inactive')
+WHERE id = 1;
+
+-- JSON_REMOVE (delete a key):
+UPDATE users
+SET data = JSON_REMOVE(data, '$.temp_token')
+WHERE id = 1;
+
+-- Modify nested path:
+UPDATE users
+SET data = JSON_SET(data, '$.address.city', 'Portland')
+WHERE id = 1;
+
+-- Append to array:
+UPDATE posts
+SET data = JSON_ARRAY_APPEND(data, '$.tags', 'featured')
+WHERE id = 42;</div>
+        <h4>PostgreSQL</h4>
+        <p class="notes">No single JSON_SET function. Instead, the || (concatenation) operator merges/overwrites top-level keys on jsonb. For deep updates, jsonb_set(target, path_array, new_value) (9.5+) modifies a nested key. jsonb_set_lax() (14+) adds NULL-handling options. jsonb_insert() (9.6+) inserts into arrays at a specific position. jsonb_strip_nulls() removes null-valued keys. The #- operator removes a key by path.</p>
+        <div class="syntax">-- Top-level key upsert (|| operator):
+UPDATE users
+SET data = data || '{&quot;status&quot;: &quot;active&quot;}'::jsonb
+WHERE id = 1;
+
+-- Deep nested update (jsonb_set):
+UPDATE users
+SET data = jsonb_set(data, '{address,city}', '&quot;Portland&quot;')
+WHERE id = 1;
+
+-- Insert into array at position:
+UPDATE posts
+SET data = jsonb_insert(data, '{tags,0}', '&quot;featured&quot;')
+WHERE id = 42;
+
+-- Remove a key (top-level):
+UPDATE users
+SET data = data - 'temp_token'
+WHERE id = 1;
+
+-- Remove a nested key (#- operator):
+UPDATE users
+SET data = data #- '{address,zip}'
+WHERE id = 1;</div>
+        <h4>SQL Server</h4>
+        <p class="notes">JSON_MODIFY(expression, path, new_value) is the single function for all mutations. Setting new_value to NULL removes the key (or sets it to JSON null — use JSON_MODIFY(col, 'lax $.key', NULL) to force removal). Supports append mode for arrays: JSON_MODIFY(col, 'append $.tags', 'featured'). JSON_MODIFY can be chained/nested to modify multiple paths. Returns NVARCHAR.</p>
+        <div class="syntax">-- Set a value:
+UPDATE users
+SET data = JSON_MODIFY(data, '$.status', 'active')
+WHERE id = 1;
+
+-- Remove a key (set to SQL NULL, not JSON null):
+UPDATE users
+SET data = JSON_MODIFY(data, '$.temp_token', NULL)
+WHERE id = 1;
+
+-- Append to array:
+UPDATE posts
+SET data = JSON_MODIFY(data, 'append $.tags', 'featured')
+WHERE id = 42;
+
+-- Chain multiple modifications:
+UPDATE users
+SET data = JSON_MODIFY(
+               JSON_MODIFY(data, '$.status', 'active'),
+               '$.updated_at', GETDATE()
+           )
+WHERE id = 1;
+
+-- Nested path:
+UPDATE users
+SET data = JSON_MODIFY(data, '$.address.city', 'Portland')
+WHERE id = 1;</div>
+        <h4>Oracle</h4>
+        <p class="notes">JSON_TRANSFORM (Oracle 21c+) is the primary function for modifying JSON documents with a dedicated mini-language of operations: SET, INSERT, REPLACE, APPEND, REMOVE, RENAME, KEEP, COPY, MOVE, SORT, FLATTEN. Prior to 21c, JSON modification required extracting values, modifying in application code, and updating the column. Oracle 12c/18c had no in-database JSON mutation functions.</p>
+        <div class="syntax">-- JSON_TRANSFORM (21c+):
+UPDATE users
+SET data = JSON_TRANSFORM(
+    data,
+    SET '$.status' = 'active',
+    SET '$.updated_at' = SYSTIMESTAMP
+)
+WHERE id = 1;
+
+-- Remove a key:
+UPDATE users
+SET data = JSON_TRANSFORM(data, REMOVE '$.temp_token')
+WHERE id = 1;
+
+-- Append to array:
+UPDATE posts
+SET data = JSON_TRANSFORM(data, APPEND '$.tags' = 'featured')
+WHERE id = 42;
+
+-- Pre-21c workaround (extract, modify, reserialize):
+-- Must be done in application code or a PL/SQL procedure.</div>
+        <h4>SQLite</h4>
+        <p class="notes">json_set(json, path, value, ...) (upsert), json_insert(json, path, value, ...) (insert only), json_replace(json, path, value, ...) (replace only), and json_remove(json, path, ...) follow the same insert/replace/upsert semantics as MySQL. All available since SQLite 3.9.0. Multiple paths can be modified in a single call. Returns a new JSON string; must be used in an UPDATE to persist.</p>
+        <div class="syntax">-- json_set (upsert):
+UPDATE users
+SET data = json_set(data, '$.status', 'active')
+WHERE id = 1;
+
+-- json_remove:
+UPDATE users
+SET data = json_remove(data, '$.temp_token')
+WHERE id = 1;
+
+-- Multiple paths in one call:
+UPDATE users
+SET data = json_set(data,
+    '$.status', 'active',
+    '$.updated_at', datetime('now')
+)
+WHERE id = 1;
+
+-- json_insert (add only if absent):
+UPDATE users
+SET data = json_insert(data, '$.created_at', datetime('now'))
+WHERE id = 1;</div>
+  </div>
+
+  <div class="search-cta">
+    <p style="margin:0">Looking for another SQL command?
+      <a href="/">Search all SQL commands →</a>
+    </p>
+  </div>
+
+</body>
+</html>

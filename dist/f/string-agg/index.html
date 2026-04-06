@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>STRING AGG SQL Compatibility | MySQL, PostgreSQL, SQL Server, Oracle, SQLite</title>
+  <meta name="description" content="STRING AGG: Concatenates strings separated by a specified separator. In PostgreSQL, this is STRING_AGG; in MySQL and SQLite, use GROUP_CONCAT; in Oracle, use LISTAGG; and in SQL Server, use STRING_AGG (since 2017). Syntax and features may differ between databases. Check support across MySQL, PostgreSQL, SQL Server, Oracle, and SQLite.">
+  <meta property="og:site_name" content="Can I Use SQL?">
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="https://www.caniusesql.com/f/string-agg">
+  <meta property="og:title" content="STRING AGG SQL Compatibility | MySQL, PostgreSQL, SQL Server, Oracle, SQLite">
+  <meta property="og:description" content="STRING AGG: Concatenates strings separated by a specified separator. In PostgreSQL, this is STRING_AGG; in MySQL and SQLite, use GROUP_CONCAT; in Oracle, use LISTAGG; and in SQL Server, use STRING_AGG (since 2017). Syntax and features may differ between databases. Check support across MySQL, PostgreSQL, SQL Server, Oracle, and SQLite.">
+  <meta property="og:image" content="https://www.caniusesql.com/og-image.png?v=5">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="STRING AGG SQL Compatibility | MySQL, PostgreSQL, SQL Server, Oracle, SQLite">
+  <meta name="twitter:description" content="STRING AGG: Concatenates strings separated by a specified separator. In PostgreSQL, this is STRING_AGG; in MySQL and SQLite, use GROUP_CONCAT; in Oracle, use LISTAGG; and in SQL Server, use STRING_AGG (since 2017). Syntax and features may differ between databases. Check support across MySQL, PostgreSQL, SQL Server, Oracle, and SQLite.">
+  <meta name="twitter:image" content="https://www.caniusesql.com/og-image.png?v=5">
+  <link rel="sitemap" type="application/xml" href="/sitemap.xml">
+  <link rel="canonical" href="https://www.caniusesql.com/f/string-agg">
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen,
+                   Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+      line-height: 1.6;
+      color: #333;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+      background-color: #f5f7fa;
+    }
+    a { color: #3498db; }
+    .site-header {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 24px;
+      flex-wrap: wrap;
+    }
+    .home-link {
+      text-decoration: none;
+      color: #3498db;
+      font-size: 15px;
+      white-space: nowrap;
+    }
+    .home-link:hover { text-decoration: underline; }
+    h1 {
+      color: #2c3e50;
+      margin: 0;
+      font-size: 1.8rem;
+    }
+    h2 { color: #2c3e50; margin-top: 32px; }
+    h4 { color: #2c3e50; margin: 16px 0 4px; }
+    .category-badge {
+      display: inline-block;
+      padding: 3px 10px;
+      background: #eaf3fb;
+      color: #2980b9;
+      border: 1px solid #aed6f1;
+      border-radius: 12px;
+      font-size: 13px;
+      margin-left: 8px;
+      vertical-align: middle;
+    }
+    .command-desc {
+      font-size: 1.05rem;
+      color: #555;
+      margin-bottom: 24px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background-color: white;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    th, td {
+      text-align: left;
+      padding: 12px 15px;
+      border-bottom: 1px solid #ddd;
+    }
+    th { background-color: #3498db; color: white; }
+    tr:last-child td { border-bottom: none; }
+    tr:hover { background-color: #f5f5f5; }
+    .supported     { color: #27ae60; font-weight: bold; }
+    .not-supported { color: #e74c3c; }
+    .notes         { font-size: 14px; color: #7f8c8d; }
+    .syntax {
+      background-color: #f8f9fa;
+      padding: 15px;
+      border-radius: 4px;
+      border-left: 4px solid #3498db;
+      font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+      font-size: 14px;
+      white-space: pre-wrap;
+      margin: 8px 0 16px;
+      overflow-x: auto;
+    }
+    .version-badge {
+      display: inline-block;
+      padding: 3px 8px;
+      border-radius: 4px;
+      font-size: 14px;
+      margin: 0 4px 6px 0;
+    }
+    .version-supported {
+      background-color: #e6f7ee;
+      color: #27ae60;
+      border: 1px solid #27ae60;
+    }
+    .version-not-supported {
+      background-color: #fde8e8;
+      color: #e74c3c;
+      border: 1px solid #e74c3c;
+    }
+    .search-cta {
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      padding: 20px 24px;
+      margin-top: 40px;
+      text-align: center;
+      font-size: 1rem;
+    }
+    .search-cta a {
+      font-weight: 600;
+      text-decoration: none;
+    }
+    .search-cta a:hover { text-decoration: underline; }
+    .per-db-section {
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      padding: 20px 24px;
+      margin-top: 8px;
+    }
+    .detail-block {
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      padding: 20px 24px;
+      margin-top: 8px;
+    }
+  </style>
+</head>
+<body>
+
+  <header class="site-header">
+    <a href="/" class="home-link">← Can I Use SQL?</a>
+    <h1>STRING AGG<span class="category-badge">Functions</span></h1>
+  </header>
+
+  <p class="command-desc">Concatenates strings separated by a specified separator. In PostgreSQL, this is STRING_AGG; in MySQL and SQLite, use GROUP_CONCAT; in Oracle, use LISTAGG; and in SQL Server, use STRING_AGG (since 2017). Syntax and features may differ between databases.</p>
+
+  <h2>Compatibility</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Database System</th>
+        <th>Support Status</th>
+        <th>Since Version</th>
+        <th>Notes</th>
+      </tr>
+    </thead>
+    <tbody>
+          <tr>
+            <td>MySQL</td>
+            <td class="supported">✓ Supported</td>
+            <td>8.0</td>
+            <td class="notes">Implemented through equivalent GROUP_CONCAT function; default separator is comma</td>
+          </tr>
+          <tr>
+            <td>PostgreSQL</td>
+            <td class="supported">✓ Supported</td>
+            <td>9.0</td>
+            <td class="notes">Supports ORDER BY inside aggregation</td>
+          </tr>
+          <tr>
+            <td>SQL Server</td>
+            <td class="supported">✓ Supported</td>
+            <td>2017 (v14.x)</td>
+            <td class="notes">Native support; clean syntax</td>
+          </tr>
+          <tr>
+            <td>Oracle</td>
+            <td class="supported">✓ Supported</td>
+            <td>11g Release 2 (11.2)</td>
+            <td class="notes">NOTE: Implemented through equivalent LISTAGG function; supports ordering</td>
+          </tr>
+          <tr>
+            <td>SQLite</td>
+            <td class="supported">✓ Supported</td>
+            <td>3.44.0 (released Nov 2023)</td>
+            <td class="notes">Alias added for compatibility with other databases; implemented as alias for GROUP_CONCAT</td>
+          </tr>
+    </tbody>
+  </table>
+
+  <h2>Details</h2>
+  <div class="detail-block">
+    <p style="margin:0">The PostgreSQL STRING_AGG() function is an aggregate function that concatenates a list of strings and places a separator between them. It does not add the separator at the end of the string.</p>
+  </div>
+
+  <h2>Standard Syntax</h2>
+  <div class="syntax">-- PostgreSQL syntax:
+STRING_AGG ( expression, separator [order_by_clause] );</div>
+
+  <h2>Version Support</h2>
+  <div style="margin-top: 8px;">
+    <span class="version-badge version-supported">MySQL: Since 8.0</span>
+    <span class="version-badge version-supported">PostgreSQL: Since 9.0</span>
+    <span class="version-badge version-supported">SQL Server: Since 2017 (v14.x)</span>
+    <span class="version-badge version-supported">Oracle: Since 11g Release 2 (11.2)</span>
+    <span class="version-badge version-supported">SQLite: Since 3.44.0 (released Nov 2023)</span>
+    
+  </div>
+
+  <h2>Per-Database Syntax &amp; Notes</h2>
+  <div class="per-db-section">
+  </div>
+
+  <div class="search-cta">
+    <p style="margin:0">Looking for another SQL command?
+      <a href="/">Search all SQL commands →</a>
+    </p>
+  </div>
+
+</body>
+</html>

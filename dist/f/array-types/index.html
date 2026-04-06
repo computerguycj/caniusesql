@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ARRAY DATA TYPE SQL Compatibility | MySQL, PostgreSQL, SQL Server, Oracle, SQLite</title>
+  <meta name="description" content="ARRAY DATA TYPE: A column type that stores an ordered list of values of a uniform type within a single cell. Eliminates the need for a child table for simple multi-value attributes, at the cost of normalization. Check support across MySQL, PostgreSQL, SQL Server, Oracle, and SQLite.">
+  <meta property="og:site_name" content="Can I Use SQL?">
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="https://www.caniusesql.com/f/array-types">
+  <meta property="og:title" content="ARRAY DATA TYPE SQL Compatibility | MySQL, PostgreSQL, SQL Server, Oracle, SQLite">
+  <meta property="og:description" content="ARRAY DATA TYPE: A column type that stores an ordered list of values of a uniform type within a single cell. Eliminates the need for a child table for simple multi-value attributes, at the cost of normalization. Check support across MySQL, PostgreSQL, SQL Server, Oracle, and SQLite.">
+  <meta property="og:image" content="https://www.caniusesql.com/og-image.png?v=5">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="ARRAY DATA TYPE SQL Compatibility | MySQL, PostgreSQL, SQL Server, Oracle, SQLite">
+  <meta name="twitter:description" content="ARRAY DATA TYPE: A column type that stores an ordered list of values of a uniform type within a single cell. Eliminates the need for a child table for simple multi-value attributes, at the cost of normalization. Check support across MySQL, PostgreSQL, SQL Server, Oracle, and SQLite.">
+  <meta name="twitter:image" content="https://www.caniusesql.com/og-image.png?v=5">
+  <link rel="sitemap" type="application/xml" href="/sitemap.xml">
+  <link rel="canonical" href="https://www.caniusesql.com/f/array-types">
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen,
+                   Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+      line-height: 1.6;
+      color: #333;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+      background-color: #f5f7fa;
+    }
+    a { color: #3498db; }
+    .site-header {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 24px;
+      flex-wrap: wrap;
+    }
+    .home-link {
+      text-decoration: none;
+      color: #3498db;
+      font-size: 15px;
+      white-space: nowrap;
+    }
+    .home-link:hover { text-decoration: underline; }
+    h1 {
+      color: #2c3e50;
+      margin: 0;
+      font-size: 1.8rem;
+    }
+    h2 { color: #2c3e50; margin-top: 32px; }
+    h4 { color: #2c3e50; margin: 16px 0 4px; }
+    .category-badge {
+      display: inline-block;
+      padding: 3px 10px;
+      background: #eaf3fb;
+      color: #2980b9;
+      border: 1px solid #aed6f1;
+      border-radius: 12px;
+      font-size: 13px;
+      margin-left: 8px;
+      vertical-align: middle;
+    }
+    .command-desc {
+      font-size: 1.05rem;
+      color: #555;
+      margin-bottom: 24px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background-color: white;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    th, td {
+      text-align: left;
+      padding: 12px 15px;
+      border-bottom: 1px solid #ddd;
+    }
+    th { background-color: #3498db; color: white; }
+    tr:last-child td { border-bottom: none; }
+    tr:hover { background-color: #f5f5f5; }
+    .supported     { color: #27ae60; font-weight: bold; }
+    .not-supported { color: #e74c3c; }
+    .notes         { font-size: 14px; color: #7f8c8d; }
+    .syntax {
+      background-color: #f8f9fa;
+      padding: 15px;
+      border-radius: 4px;
+      border-left: 4px solid #3498db;
+      font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+      font-size: 14px;
+      white-space: pre-wrap;
+      margin: 8px 0 16px;
+      overflow-x: auto;
+    }
+    .version-badge {
+      display: inline-block;
+      padding: 3px 8px;
+      border-radius: 4px;
+      font-size: 14px;
+      margin: 0 4px 6px 0;
+    }
+    .version-supported {
+      background-color: #e6f7ee;
+      color: #27ae60;
+      border: 1px solid #27ae60;
+    }
+    .version-not-supported {
+      background-color: #fde8e8;
+      color: #e74c3c;
+      border: 1px solid #e74c3c;
+    }
+    .search-cta {
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      padding: 20px 24px;
+      margin-top: 40px;
+      text-align: center;
+      font-size: 1rem;
+    }
+    .search-cta a {
+      font-weight: 600;
+      text-decoration: none;
+    }
+    .search-cta a:hover { text-decoration: underline; }
+    .per-db-section {
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      padding: 20px 24px;
+      margin-top: 8px;
+    }
+    .detail-block {
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      padding: 20px 24px;
+      margin-top: 8px;
+    }
+  </style>
+</head>
+<body>
+
+  <header class="site-header">
+    <a href="/" class="home-link">← Can I Use SQL?</a>
+    <h1>ARRAY DATA TYPE<span class="category-badge">Data Types</span></h1>
+  </header>
+
+  <p class="command-desc">A column type that stores an ordered list of values of a uniform type within a single cell. Eliminates the need for a child table for simple multi-value attributes, at the cost of normalization.</p>
+
+  <h2>Compatibility</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Database System</th>
+        <th>Support Status</th>
+        <th>Since Version</th>
+        <th>Notes</th>
+      </tr>
+    </thead>
+    <tbody>
+          <tr>
+            <td>MySQL</td>
+            <td class="not-supported">✗ Not Supported</td>
+            <td>—</td>
+            <td class="notes">MySQL has no native array data type. Common alternatives: (1) a normalized child table (preferred); (2) a JSON column storing a JSON array; (3) a comma-separated string (discouraged — hard to query). The JSON approach gives the most array-like functionality with json_contains(), json_extract(), and json_array_append().</td>
+          </tr>
+          <tr>
+            <td>PostgreSQL</td>
+            <td class="supported">✓ Supported</td>
+            <td>7.1</td>
+            <td class="notes">First-class array type for every base type: integer[], text[], boolean[], numeric[], timestamptz[], etc. Arrays are zero-indexed in the C tradition internally but one-indexed in SQL access (arr[1] is the first element). Multidimensional arrays supported. GIN indexes enable fast containment queries (@&gt;, &amp;&amp;). unnest() expands an array to rows. array_agg() is the inverse — collapses rows into an array.</td>
+          </tr>
+          <tr>
+            <td>SQL Server</td>
+            <td class="not-supported">✗ Not Supported</td>
+            <td>—</td>
+            <td class="notes">SQL Server has no native array type. Alternatives: (1) a normalized child table; (2) a JSON column (SQL Server 2016+); (3) a delimited string with STRING_SPLIT; (4) an XML column with nodes() querying.</td>
+          </tr>
+          <tr>
+            <td>Oracle</td>
+            <td class="supported">✓ Supported</td>
+            <td>8i</td>
+            <td class="notes">Oracle supports arrays through VARRAY (variable-size array with a fixed maximum) and nested tables (unbounded, stored out-of-line). Both require defining a named type. The SQL/JSON path operators (12c+) on JSON columns are commonly preferred over VARRAY for flexible multi-value storage in modern Oracle. VARRAYs are stored inline in the row; nested tables require a separate storage clause.</td>
+          </tr>
+          <tr>
+            <td>SQLite</td>
+            <td class="not-supported">✗ Not Supported</td>
+            <td>—</td>
+            <td class="notes">SQLite has no native array type. SQLite's flexible type system (type affinity) means you can store a JSON array in any TEXT column. The json_each() function provides array iteration. For simple cases, a comma-separated string with json_each on a JSON conversion is the lightest workaround.</td>
+          </tr>
+    </tbody>
+  </table>
+
+  <h2>Details</h2>
+  <div class="detail-block">
+    <p style="margin:0">PostgreSQL is the only engine with a true native array type supporting arbitrary element types, multidimensional arrays, GIN indexes for fast containment queries, and a rich function library (array_agg, unnest, array_append, @&gt;, &amp;&amp;). Oracle has arrays via VARRAY and nested tables but they require DDL type definitions and have storage complexities that make JSON columns a more common modern choice. MySQL, SQL Server, and SQLite all lack native arrays — the JSON column workaround is the most ergonomic alternative in all three, especially since JSON array operators (JSON_CONTAINS in MySQL, OPENJSON in SQL Server, json_each in SQLite) are reasonably capable.</p>
+  </div>
+
+  <h2>Standard Syntax</h2>
+  <div class="syntax">-- PostgreSQL:
+CREATE TABLE products (
+    id       SERIAL PRIMARY KEY,
+    tags     TEXT[],
+    scores   INTEGER[]
+);
+
+INSERT INTO products (tags, scores)
+VALUES (ARRAY['featured','sale'], ARRAY[4,5,3]);</div>
+
+  <h2>Version Support</h2>
+  <div style="margin-top: 8px;">
+    <span class="version-badge version-not-supported">MySQL: Not supported</span>
+    <span class="version-badge version-supported">PostgreSQL: Since 7.1</span>
+    <span class="version-badge version-not-supported">SQL Server: Not supported</span>
+    <span class="version-badge version-supported">Oracle: Since 8i</span>
+    <span class="version-badge version-not-supported">SQLite: Not supported</span>
+    
+  </div>
+
+  <h2>Per-Database Syntax &amp; Notes</h2>
+  <div class="per-db-section">
+        <h4>MySQL</h4>
+        <p class="notes">MySQL has no native array data type. Common alternatives: (1) a normalized child table (preferred); (2) a JSON column storing a JSON array; (3) a comma-separated string (discouraged — hard to query). The JSON approach gives the most array-like functionality with json_contains(), json_extract(), and json_array_append().</p>
+        <div class="syntax">-- JSON array alternative:
+CREATE TABLE products (
+    id   INT PRIMARY KEY AUTO_INCREMENT,
+    tags JSON
+);
+
+INSERT INTO products (tags) VALUES (JSON_ARRAY('featured','sale'));
+
+SELECT * FROM products
+WHERE JSON_CONTAINS(tags, JSON_QUOTE('featured'));
+
+-- Append to array:
+UPDATE products
+SET tags = JSON_ARRAY_APPEND(tags, '$', 'new-tag')
+WHERE id = 1;</div>
+        <h4>PostgreSQL</h4>
+        <p class="notes">First-class array type for every base type: integer[], text[], boolean[], numeric[], timestamptz[], etc. Arrays are zero-indexed in the C tradition internally but one-indexed in SQL access (arr[1] is the first element). Multidimensional arrays supported. GIN indexes enable fast containment queries (@&gt;, &amp;&amp;). unnest() expands an array to rows. array_agg() is the inverse — collapses rows into an array.</p>
+        <div class="syntax">CREATE TABLE products (
+    id     SERIAL PRIMARY KEY,
+    tags   TEXT[],
+    scores INTEGER[]
+);
+
+INSERT INTO products (tags, scores)
+VALUES (ARRAY['featured','sale'], ARRAY[4,5,3]);
+
+-- Index access (1-based):
+SELECT tags[1] AS first_tag FROM products;
+
+-- Containment: rows where tags includes 'featured':
+SELECT * FROM products WHERE tags @&gt; ARRAY['featured'];
+
+-- Overlap: any tag in common:
+SELECT * FROM products WHERE tags &amp;&amp; ARRAY['sale','new'];
+
+-- Expand to rows:
+SELECT id, unnest(tags) AS tag FROM products;
+
+-- GIN index for fast containment:
+CREATE INDEX idx_tags ON products USING GIN (tags);
+
+-- Array functions:
+SELECT array_length(tags, 1),
+       array_append(tags, 'clearance'),
+       array_remove(tags, 'sale')
+FROM products;</div>
+        <h4>SQL Server</h4>
+        <p class="notes">SQL Server has no native array type. Alternatives: (1) a normalized child table; (2) a JSON column (SQL Server 2016+); (3) a delimited string with STRING_SPLIT; (4) an XML column with nodes() querying.</p>
+        <div class="syntax">-- JSON array alternative (2016+):
+ALTER TABLE products ADD tags NVARCHAR(MAX);
+
+UPDATE products
+SET tags = JSON_MODIFY(tags, 'append $', 'featured')
+WHERE id = 1;
+
+SELECT p.id, s.value AS tag
+FROM products p
+CROSS APPLY STRING_SPLIT(
+    (SELECT STRING_AGG(value,',') FROM OPENJSON(p.tags)), ','
+) s;
+
+-- XML alternative:
+SELECT t.c.value('.','NVARCHAR(50)') AS tag
+FROM products p
+CROSS APPLY (
+    SELECT CAST('&lt;t&gt;' + REPLACE(p.tags_csv,',','&lt;/t&gt;&lt;t&gt;') + '&lt;/t&gt;' AS XML)
+) x(xml_val)
+CROSS APPLY xml_val.nodes('/t') t(c);</div>
+        <h4>Oracle</h4>
+        <p class="notes">Oracle supports arrays through VARRAY (variable-size array with a fixed maximum) and nested tables (unbounded, stored out-of-line). Both require defining a named type. The SQL/JSON path operators (12c+) on JSON columns are commonly preferred over VARRAY for flexible multi-value storage in modern Oracle. VARRAYs are stored inline in the row; nested tables require a separate storage clause.</p>
+        <div class="syntax">-- Define a VARRAY type:
+CREATE TYPE tag_array AS VARRAY(20) OF VARCHAR2(50);
+
+-- Use it in a table:
+CREATE TABLE products (
+    id   NUMBER PRIMARY KEY,
+    tags tag_array
+);
+
+INSERT INTO products VALUES (1, tag_array('featured','sale'));
+
+-- Query: unnest via TABLE():
+SELECT p.id, t.COLUMN_VALUE AS tag
+FROM products p,
+TABLE(p.tags) t
+WHERE t.COLUMN_VALUE = 'featured';
+
+-- Nested table (unbounded, out-of-line storage):
+CREATE TYPE tag_table AS TABLE OF VARCHAR2(50);</div>
+        <h4>SQLite</h4>
+        <p class="notes">SQLite has no native array type. SQLite's flexible type system (type affinity) means you can store a JSON array in any TEXT column. The json_each() function provides array iteration. For simple cases, a comma-separated string with json_each on a JSON conversion is the lightest workaround.</p>
+        <div class="syntax">-- JSON array in a TEXT column:
+CREATE TABLE products (
+    id   INTEGER PRIMARY KEY,
+    tags TEXT  -- store as JSON array string
+);
+
+INSERT INTO products (tags) VALUES ('[&quot;featured&quot;,&quot;sale&quot;]');
+
+-- Query elements:
+SELECT p.id, j.value AS tag
+FROM products p,
+json_each(p.tags) j
+WHERE j.value = 'featured';
+
+-- Append to array:
+UPDATE products
+SET tags = json_insert(tags, '$[#]', 'clearance')
+WHERE id = 1;</div>
+  </div>
+
+  <div class="search-cta">
+    <p style="margin:0">Looking for another SQL command?
+      <a href="/">Search all SQL commands →</a>
+    </p>
+  </div>
+
+</body>
+</html>

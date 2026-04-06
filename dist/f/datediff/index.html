@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DATEDIFF SQL Compatibility | MySQL, PostgreSQL, SQL Server, Oracle, SQLite</title>
+  <meta name="description" content="DATEDIFF: Calculate the difference between two date or timestamp values, returning an integer count of a specified unit (days, months, etc.) or an interval. Check support across MySQL, PostgreSQL, SQL Server, Oracle, and SQLite.">
+  <meta property="og:site_name" content="Can I Use SQL?">
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="https://www.caniusesql.com/f/datediff">
+  <meta property="og:title" content="DATEDIFF SQL Compatibility | MySQL, PostgreSQL, SQL Server, Oracle, SQLite">
+  <meta property="og:description" content="DATEDIFF: Calculate the difference between two date or timestamp values, returning an integer count of a specified unit (days, months, etc.) or an interval. Check support across MySQL, PostgreSQL, SQL Server, Oracle, and SQLite.">
+  <meta property="og:image" content="https://www.caniusesql.com/og-image.png?v=5">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="DATEDIFF SQL Compatibility | MySQL, PostgreSQL, SQL Server, Oracle, SQLite">
+  <meta name="twitter:description" content="DATEDIFF: Calculate the difference between two date or timestamp values, returning an integer count of a specified unit (days, months, etc.) or an interval. Check support across MySQL, PostgreSQL, SQL Server, Oracle, and SQLite.">
+  <meta name="twitter:image" content="https://www.caniusesql.com/og-image.png?v=5">
+  <link rel="sitemap" type="application/xml" href="/sitemap.xml">
+  <link rel="canonical" href="https://www.caniusesql.com/f/datediff">
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen,
+                   Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+      line-height: 1.6;
+      color: #333;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+      background-color: #f5f7fa;
+    }
+    a { color: #3498db; }
+    .site-header {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 24px;
+      flex-wrap: wrap;
+    }
+    .home-link {
+      text-decoration: none;
+      color: #3498db;
+      font-size: 15px;
+      white-space: nowrap;
+    }
+    .home-link:hover { text-decoration: underline; }
+    h1 {
+      color: #2c3e50;
+      margin: 0;
+      font-size: 1.8rem;
+    }
+    h2 { color: #2c3e50; margin-top: 32px; }
+    h4 { color: #2c3e50; margin: 16px 0 4px; }
+    .category-badge {
+      display: inline-block;
+      padding: 3px 10px;
+      background: #eaf3fb;
+      color: #2980b9;
+      border: 1px solid #aed6f1;
+      border-radius: 12px;
+      font-size: 13px;
+      margin-left: 8px;
+      vertical-align: middle;
+    }
+    .command-desc {
+      font-size: 1.05rem;
+      color: #555;
+      margin-bottom: 24px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background-color: white;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    th, td {
+      text-align: left;
+      padding: 12px 15px;
+      border-bottom: 1px solid #ddd;
+    }
+    th { background-color: #3498db; color: white; }
+    tr:last-child td { border-bottom: none; }
+    tr:hover { background-color: #f5f5f5; }
+    .supported     { color: #27ae60; font-weight: bold; }
+    .not-supported { color: #e74c3c; }
+    .notes         { font-size: 14px; color: #7f8c8d; }
+    .syntax {
+      background-color: #f8f9fa;
+      padding: 15px;
+      border-radius: 4px;
+      border-left: 4px solid #3498db;
+      font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+      font-size: 14px;
+      white-space: pre-wrap;
+      margin: 8px 0 16px;
+      overflow-x: auto;
+    }
+    .version-badge {
+      display: inline-block;
+      padding: 3px 8px;
+      border-radius: 4px;
+      font-size: 14px;
+      margin: 0 4px 6px 0;
+    }
+    .version-supported {
+      background-color: #e6f7ee;
+      color: #27ae60;
+      border: 1px solid #27ae60;
+    }
+    .version-not-supported {
+      background-color: #fde8e8;
+      color: #e74c3c;
+      border: 1px solid #e74c3c;
+    }
+    .search-cta {
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      padding: 20px 24px;
+      margin-top: 40px;
+      text-align: center;
+      font-size: 1rem;
+    }
+    .search-cta a {
+      font-weight: 600;
+      text-decoration: none;
+    }
+    .search-cta a:hover { text-decoration: underline; }
+    .per-db-section {
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      padding: 20px 24px;
+      margin-top: 8px;
+    }
+    .detail-block {
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      padding: 20px 24px;
+      margin-top: 8px;
+    }
+  </style>
+</head>
+<body>
+
+  <header class="site-header">
+    <a href="/" class="home-link">← Can I Use SQL?</a>
+    <h1>DATEDIFF<span class="category-badge">Functions</span></h1>
+  </header>
+
+  <p class="command-desc">Calculate the difference between two date or timestamp values, returning an integer count of a specified unit (days, months, etc.) or an interval.</p>
+
+  <h2>Compatibility</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Database System</th>
+        <th>Support Status</th>
+        <th>Since Version</th>
+        <th>Notes</th>
+      </tr>
+    </thead>
+    <tbody>
+          <tr>
+            <td>MySQL</td>
+            <td class="supported">✓ Supported</td>
+            <td>all</td>
+            <td class="notes">DATEDIFF(end, start) returns integer days only — no unit argument. For other units use TIMESTAMPDIFF(unit, start, end). Units: MICROSECOND, SECOND, MINUTE, HOUR, DAY, WEEK, MONTH, QUARTER, YEAR. Note argument order is reversed between DATEDIFF and TIMESTAMPDIFF.</td>
+          </tr>
+          <tr>
+            <td>PostgreSQL</td>
+            <td class="supported">✓ Supported</td>
+            <td>all</td>
+            <td class="notes">No DATEDIFF function. Use subtraction: date2 - date1 returns integer days for DATE types, INTERVAL for TIMESTAMP types. EXTRACT(epoch FROM ts2 - ts1) converts interval to seconds. AGE(ts2, ts1) returns human-readable interval.</td>
+          </tr>
+          <tr>
+            <td>SQL Server</td>
+            <td class="supported">✓ Supported</td>
+            <td>all</td>
+            <td class="notes">DATEDIFF(unit, start, end) with explicit unit. Units: year, quarter, month, week, day, hour, minute, second, millisecond, microsecond, nanosecond. Counts boundary crossings, not exact elapsed time — DATEDIFF(year, '2023-12-31', '2024-01-01') returns 1.</td>
+          </tr>
+          <tr>
+            <td>Oracle</td>
+            <td class="supported">✓ Supported</td>
+            <td>all</td>
+            <td class="notes">No DATEDIFF function. DATE subtraction returns fractional days (a NUMBER). MONTHS_BETWEEN(d1, d2) returns fractional months. For hours/minutes, multiply day difference by 24 or 1440.</td>
+          </tr>
+          <tr>
+            <td>SQLite</td>
+            <td class="supported">✓ Supported</td>
+            <td>all</td>
+            <td class="notes">No DATEDIFF function. Use julianday() subtraction for day differences. julianday() converts any date/timestamp to a floating-point Julian day number, so subtraction gives fractional days.</td>
+          </tr>
+    </tbody>
+  </table>
+
+  <h2>Details</h2>
+  <div class="detail-block">
+    <p style="margin:0">SQL Server's DATEDIFF counts boundary crossings, not elapsed time — a well-known gotcha (Dec 31 → Jan 1 = 1 year difference). PostgreSQL's subtraction of DATE columns returns an integer directly, which is the cleanest syntax. Oracle and SQLite both require workarounds (MONTHS_BETWEEN / julianday). MySQL's DATEDIFF is days-only; TIMESTAMPDIFF is needed for other units.</p>
+  </div>
+
+  <h2>Standard Syntax</h2>
+  <div class="syntax">-- SQL Server / MySQL:
+DATEDIFF(unit, start_date, end_date)
+
+-- PostgreSQL:
+end_date - start_date  -- returns integer days for dates</div>
+
+  <h2>Version Support</h2>
+  <div style="margin-top: 8px;">
+    <span class="version-badge version-supported">MySQL: Since all</span>
+    <span class="version-badge version-supported">PostgreSQL: Since all</span>
+    <span class="version-badge version-supported">SQL Server: Since all</span>
+    <span class="version-badge version-supported">Oracle: Since all</span>
+    <span class="version-badge version-supported">SQLite: Since all</span>
+    
+  </div>
+
+  <h2>Per-Database Syntax &amp; Notes</h2>
+  <div class="per-db-section">
+        <h4>MySQL</h4>
+        <p class="notes">DATEDIFF(end, start) returns integer days only — no unit argument. For other units use TIMESTAMPDIFF(unit, start, end). Units: MICROSECOND, SECOND, MINUTE, HOUR, DAY, WEEK, MONTH, QUARTER, YEAR. Note argument order is reversed between DATEDIFF and TIMESTAMPDIFF.</p>
+        <div class="syntax">SELECT DATEDIFF('2024-03-15', '2024-01-01');              -- 74 (days)
+SELECT TIMESTAMPDIFF(MONTH, '2024-01-01', '2024-03-15');  -- 2
+SELECT TIMESTAMPDIFF(HOUR,  '2024-01-01', NOW());         -- hours since Jan 1</div>
+        <h4>PostgreSQL</h4>
+        <p class="notes">No DATEDIFF function. Use subtraction: date2 - date1 returns integer days for DATE types, INTERVAL for TIMESTAMP types. EXTRACT(epoch FROM ts2 - ts1) converts interval to seconds. AGE(ts2, ts1) returns human-readable interval.</p>
+        <div class="syntax">SELECT '2024-03-15'::date - '2024-01-01'::date;          -- 74 (integer days)
+SELECT AGE('2024-03-15'::date, '2024-01-01'::date);      -- 2 mons 14 days
+SELECT EXTRACT(epoch FROM NOW() - '2024-01-01'::date);   -- seconds
+SELECT EXTRACT(day FROM '2024-03-15'::date - '2024-01-01'::date);</div>
+        <h4>SQL Server</h4>
+        <p class="notes">DATEDIFF(unit, start, end) with explicit unit. Units: year, quarter, month, week, day, hour, minute, second, millisecond, microsecond, nanosecond. Counts boundary crossings, not exact elapsed time — DATEDIFF(year, '2023-12-31', '2024-01-01') returns 1.</p>
+        <div class="syntax">SELECT DATEDIFF(day,   '2024-01-01', '2024-03-15');  -- 74
+SELECT DATEDIFF(month, '2024-01-01', '2024-03-15');  -- 2
+SELECT DATEDIFF(year,  '2023-12-31', '2024-01-01');  -- 1 (boundary crossing!)
+SELECT DATEDIFF(hour,  '2024-01-01', GETDATE());</div>
+        <h4>Oracle</h4>
+        <p class="notes">No DATEDIFF function. DATE subtraction returns fractional days (a NUMBER). MONTHS_BETWEEN(d1, d2) returns fractional months. For hours/minutes, multiply day difference by 24 or 1440.</p>
+        <div class="syntax">SELECT SYSDATE - DATE '2024-01-01'               FROM DUAL; -- fractional days
+SELECT MONTHS_BETWEEN(DATE '2024-03-15', DATE '2024-01-01') FROM DUAL; -- 2.45...
+SELECT TRUNC(SYSDATE - DATE '2024-01-01')        FROM DUAL; -- whole days
+SELECT (SYSDATE - DATE '2024-01-01') * 24        FROM DUAL; -- hours</div>
+        <h4>SQLite</h4>
+        <p class="notes">No DATEDIFF function. Use julianday() subtraction for day differences. julianday() converts any date/timestamp to a floating-point Julian day number, so subtraction gives fractional days.</p>
+        <div class="syntax">SELECT julianday('2024-03-15') - julianday('2024-01-01');  -- 74.0
+SELECT CAST(julianday('now') - julianday('2024-01-01') AS INTEGER);  -- whole days
+-- Hours:
+SELECT (julianday('now') - julianday('2024-01-01')) * 24;</div>
+  </div>
+
+  <div class="search-cta">
+    <p style="margin:0">Looking for another SQL command?
+      <a href="/">Search all SQL commands →</a>
+    </p>
+  </div>
+
+</body>
+</html>

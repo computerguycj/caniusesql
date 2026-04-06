@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CUBE SQL Compatibility | MySQL, PostgreSQL, SQL Server, Oracle, SQLite</title>
+  <meta name="description" content="CUBE: An extension of GROUP BY ROLLUP that generates subtotals for every possible combination of the specified columns, not just hierarchical rollups. Produces 2^n grouping combinations for n columns. Check support across MySQL, PostgreSQL, SQL Server, Oracle, and SQLite.">
+  <meta property="og:site_name" content="Can I Use SQL?">
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="https://www.caniusesql.com/f/cube">
+  <meta property="og:title" content="CUBE SQL Compatibility | MySQL, PostgreSQL, SQL Server, Oracle, SQLite">
+  <meta property="og:description" content="CUBE: An extension of GROUP BY ROLLUP that generates subtotals for every possible combination of the specified columns, not just hierarchical rollups. Produces 2^n grouping combinations for n columns. Check support across MySQL, PostgreSQL, SQL Server, Oracle, and SQLite.">
+  <meta property="og:image" content="https://www.caniusesql.com/og-image.png?v=5">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="CUBE SQL Compatibility | MySQL, PostgreSQL, SQL Server, Oracle, SQLite">
+  <meta name="twitter:description" content="CUBE: An extension of GROUP BY ROLLUP that generates subtotals for every possible combination of the specified columns, not just hierarchical rollups. Produces 2^n grouping combinations for n columns. Check support across MySQL, PostgreSQL, SQL Server, Oracle, and SQLite.">
+  <meta name="twitter:image" content="https://www.caniusesql.com/og-image.png?v=5">
+  <link rel="sitemap" type="application/xml" href="/sitemap.xml">
+  <link rel="canonical" href="https://www.caniusesql.com/f/cube">
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen,
+                   Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+      line-height: 1.6;
+      color: #333;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+      background-color: #f5f7fa;
+    }
+    a { color: #3498db; }
+    .site-header {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 24px;
+      flex-wrap: wrap;
+    }
+    .home-link {
+      text-decoration: none;
+      color: #3498db;
+      font-size: 15px;
+      white-space: nowrap;
+    }
+    .home-link:hover { text-decoration: underline; }
+    h1 {
+      color: #2c3e50;
+      margin: 0;
+      font-size: 1.8rem;
+    }
+    h2 { color: #2c3e50; margin-top: 32px; }
+    h4 { color: #2c3e50; margin: 16px 0 4px; }
+    .category-badge {
+      display: inline-block;
+      padding: 3px 10px;
+      background: #eaf3fb;
+      color: #2980b9;
+      border: 1px solid #aed6f1;
+      border-radius: 12px;
+      font-size: 13px;
+      margin-left: 8px;
+      vertical-align: middle;
+    }
+    .command-desc {
+      font-size: 1.05rem;
+      color: #555;
+      margin-bottom: 24px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background-color: white;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    th, td {
+      text-align: left;
+      padding: 12px 15px;
+      border-bottom: 1px solid #ddd;
+    }
+    th { background-color: #3498db; color: white; }
+    tr:last-child td { border-bottom: none; }
+    tr:hover { background-color: #f5f5f5; }
+    .supported     { color: #27ae60; font-weight: bold; }
+    .not-supported { color: #e74c3c; }
+    .notes         { font-size: 14px; color: #7f8c8d; }
+    .syntax {
+      background-color: #f8f9fa;
+      padding: 15px;
+      border-radius: 4px;
+      border-left: 4px solid #3498db;
+      font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+      font-size: 14px;
+      white-space: pre-wrap;
+      margin: 8px 0 16px;
+      overflow-x: auto;
+    }
+    .version-badge {
+      display: inline-block;
+      padding: 3px 8px;
+      border-radius: 4px;
+      font-size: 14px;
+      margin: 0 4px 6px 0;
+    }
+    .version-supported {
+      background-color: #e6f7ee;
+      color: #27ae60;
+      border: 1px solid #27ae60;
+    }
+    .version-not-supported {
+      background-color: #fde8e8;
+      color: #e74c3c;
+      border: 1px solid #e74c3c;
+    }
+    .search-cta {
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      padding: 20px 24px;
+      margin-top: 40px;
+      text-align: center;
+      font-size: 1rem;
+    }
+    .search-cta a {
+      font-weight: 600;
+      text-decoration: none;
+    }
+    .search-cta a:hover { text-decoration: underline; }
+    .per-db-section {
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      padding: 20px 24px;
+      margin-top: 8px;
+    }
+    .detail-block {
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      padding: 20px 24px;
+      margin-top: 8px;
+    }
+  </style>
+</head>
+<body>
+
+  <header class="site-header">
+    <a href="/" class="home-link">← Can I Use SQL?</a>
+    <h1>CUBE<span class="category-badge">Query Techniques</span></h1>
+  </header>
+
+  <p class="command-desc">An extension of GROUP BY ROLLUP that generates subtotals for every possible combination of the specified columns, not just hierarchical rollups. Produces 2^n grouping combinations for n columns.</p>
+
+  <h2>Compatibility</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Database System</th>
+        <th>Support Status</th>
+        <th>Since Version</th>
+        <th>Notes</th>
+      </tr>
+    </thead>
+    <tbody>
+          <tr>
+            <td>MySQL</td>
+            <td class="not-supported">✗ Not Supported</td>
+            <td>—</td>
+            <td class="notes">CUBE is not supported. MySQL only supports ROLLUP via GROUP BY ... WITH ROLLUP or GROUP BY ROLLUP(...) syntax. Workaround: use UNION ALL to manually union each combination, or use GROUPING SETS-style UNION ALL queries.</td>
+          </tr>
+          <tr>
+            <td>PostgreSQL</td>
+            <td class="supported">✓ Supported</td>
+            <td>9.5</td>
+            <td class="notes">Standard GROUP BY CUBE(...) syntax. GROUPING(col) available to identify which rollup-generated NULL rows represent which grouping level. For 3 columns, CUBE generates 8 grouping combinations (2^3). Can be mixed with ROLLUP and GROUPING SETS.</td>
+          </tr>
+          <tr>
+            <td>SQL Server</td>
+            <td class="supported">✓ Supported</td>
+            <td>2008</td>
+            <td class="notes">Standard GROUP BY CUBE(...) syntax. GROUPING(col) and GROUPING_ID() available. For very wide CUBE operations, consider breaking into GROUPING SETS for more control over which combinations are generated.</td>
+          </tr>
+          <tr>
+            <td>Oracle</td>
+            <td class="supported">✓ Supported</td>
+            <td>8i</td>
+            <td class="notes">Standard GROUP BY CUBE(...) syntax since Oracle 8i. GROUPING() and GROUPING_ID() supported. Can be combined with ROLLUP and GROUPING SETS in a single GROUP BY clause.</td>
+          </tr>
+          <tr>
+            <td>SQLite</td>
+            <td class="not-supported">✗ Not Supported</td>
+            <td>—</td>
+            <td class="notes">CUBE is not supported. Workaround: enumerate all 2^n combinations manually using UNION ALL.</td>
+          </tr>
+    </tbody>
+  </table>
+
+  <h2>Details</h2>
+  <div class="detail-block">
+    <p style="margin:0">CUBE(a, b) generates 4 groupings: (a,b), (a), (b), and (). CUBE(a, b, c) generates 8. The result set grows exponentially with column count — be cautious with high-cardinality columns. GROUPING SETS is a more surgical alternative when you only need specific combinations rather than all of them. MySQL has no CUBE support whatsoever; SQLite has neither CUBE nor ROLLUP. The COALESCE-on-NULL pattern for labeling totals is portable but breaks if the column can contain genuine NULLs — use GROUPING() for correctness.</p>
+  </div>
+
+  <h2>Standard Syntax</h2>
+  <div class="syntax">SELECT region, product, SUM(sales) AS total_sales
+FROM orders
+GROUP BY CUBE(region, product);
+-- Produces: (region,product), (region), (product), and () grand total</div>
+
+  <h2>Version Support</h2>
+  <div style="margin-top: 8px;">
+    <span class="version-badge version-not-supported">MySQL: Not supported</span>
+    <span class="version-badge version-supported">PostgreSQL: Since 9.5</span>
+    <span class="version-badge version-supported">SQL Server: Since 2008</span>
+    <span class="version-badge version-supported">Oracle: Since 8i</span>
+    <span class="version-badge version-not-supported">SQLite: Not supported</span>
+    
+  </div>
+
+  <h2>Per-Database Syntax &amp; Notes</h2>
+  <div class="per-db-section">
+        <h4>MySQL</h4>
+        <p class="notes">CUBE is not supported. MySQL only supports ROLLUP via GROUP BY ... WITH ROLLUP or GROUP BY ROLLUP(...) syntax. Workaround: use UNION ALL to manually union each combination, or use GROUPING SETS-style UNION ALL queries.</p>
+        <div class="syntax">-- Workaround with UNION ALL for 2 dimensions:
+SELECT region, product, SUM(sales) AS total
+FROM orders GROUP BY region, product
+UNION ALL
+SELECT region, NULL, SUM(sales)
+FROM orders GROUP BY region
+UNION ALL
+SELECT NULL, product, SUM(sales)
+FROM orders GROUP BY product
+UNION ALL
+SELECT NULL, NULL, SUM(sales)
+FROM orders;</div>
+        <h4>PostgreSQL</h4>
+        <p class="notes">Standard GROUP BY CUBE(...) syntax. GROUPING(col) available to identify which rollup-generated NULL rows represent which grouping level. For 3 columns, CUBE generates 8 grouping combinations (2^3). Can be mixed with ROLLUP and GROUPING SETS.</p>
+        <div class="syntax">SELECT region, product, SUM(sales) AS total_sales
+FROM orders
+GROUP BY CUBE(region, product);
+
+-- Label the grouping rows:
+SELECT
+  COALESCE(region,  'All Regions')   AS region,
+  COALESCE(product, 'All Products')  AS product,
+  SUM(sales)                         AS total_sales,
+  GROUPING(region)                   AS is_region_total,
+  GROUPING(product)                  AS is_product_total
+FROM orders
+GROUP BY CUBE(region, product);</div>
+        <h4>SQL Server</h4>
+        <p class="notes">Standard GROUP BY CUBE(...) syntax. GROUPING(col) and GROUPING_ID() available. For very wide CUBE operations, consider breaking into GROUPING SETS for more control over which combinations are generated.</p>
+        <div class="syntax">SELECT region, product, SUM(sales) AS total_sales
+FROM orders
+GROUP BY CUBE(region, product);
+
+-- GROUPING_ID returns a bitmap of which cols are aggregated:
+SELECT region, product,
+       SUM(sales)                     AS total_sales,
+       GROUPING_ID(region, product)   AS grouping_level
+FROM orders
+GROUP BY CUBE(region, product);</div>
+        <h4>Oracle</h4>
+        <p class="notes">Standard GROUP BY CUBE(...) syntax since Oracle 8i. GROUPING() and GROUPING_ID() supported. Can be combined with ROLLUP and GROUPING SETS in a single GROUP BY clause.</p>
+        <div class="syntax">SELECT region, product, SUM(sales) AS total_sales
+FROM orders
+GROUP BY CUBE(region, product);
+
+-- With GROUPING:
+SELECT
+  DECODE(GROUPING(region),  1, 'All', region)  AS region,
+  DECODE(GROUPING(product), 1, 'All', product) AS product,
+  SUM(sales) AS total_sales
+FROM orders
+GROUP BY CUBE(region, product);</div>
+        <h4>SQLite</h4>
+        <p class="notes">CUBE is not supported. Workaround: enumerate all 2^n combinations manually using UNION ALL.</p>
+        <div class="syntax">-- Manual CUBE workaround (2 dimensions = 4 queries):
+SELECT region, product, SUM(sales) AS total
+FROM orders GROUP BY region, product
+UNION ALL
+SELECT region, NULL, SUM(sales)
+FROM orders GROUP BY region
+UNION ALL
+SELECT NULL, product, SUM(sales)
+FROM orders GROUP BY product
+UNION ALL
+SELECT NULL, NULL, SUM(sales)
+FROM orders;</div>
+  </div>
+
+  <div class="search-cta">
+    <p style="margin:0">Looking for another SQL command?
+      <a href="/">Search all SQL commands →</a>
+    </p>
+  </div>
+
+</body>
+</html>

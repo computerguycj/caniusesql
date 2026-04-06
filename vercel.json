@@ -1,10 +1,6 @@
 {
-  "rewrites": [
-    {
-      "source": "/(.*)",
-      "destination": "/index.html"
-    }
-  ],
+  "buildCommand": "node generate.js",
+  "outputDirectory": "dist",
   "headers": [
     {
       "source": "/data.json",

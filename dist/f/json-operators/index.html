@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>JSON OPERATORS (-&gt; / -&gt;&gt;) SQL Compatibility | MySQL, PostgreSQL, SQL Server, Oracle, SQLite</title>
+  <meta name="description" content="JSON OPERATORS (-&gt; / -&gt;&gt;): Shorthand operators for navigating JSON document structure. -&gt; extracts a JSON value; -&gt;&gt; extracts a text (unquoted) value. Availability and exact semantics vary significantly by engine. Check support across MySQL, PostgreSQL, SQL Server, Oracle, and SQLite.">
+  <meta property="og:site_name" content="Can I Use SQL?">
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="https://www.caniusesql.com/f/json-operators">
+  <meta property="og:title" content="JSON OPERATORS (-&gt; / -&gt;&gt;) SQL Compatibility | MySQL, PostgreSQL, SQL Server, Oracle, SQLite">
+  <meta property="og:description" content="JSON OPERATORS (-&gt; / -&gt;&gt;): Shorthand operators for navigating JSON document structure. -&gt; extracts a JSON value; -&gt;&gt; extracts a text (unquoted) value. Availability and exact semantics vary significantly by engine. Check support across MySQL, PostgreSQL, SQL Server, Oracle, and SQLite.">
+  <meta property="og:image" content="https://www.caniusesql.com/og-image.png?v=5">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="JSON OPERATORS (-&gt; / -&gt;&gt;) SQL Compatibility | MySQL, PostgreSQL, SQL Server, Oracle, SQLite">
+  <meta name="twitter:description" content="JSON OPERATORS (-&gt; / -&gt;&gt;): Shorthand operators for navigating JSON document structure. -&gt; extracts a JSON value; -&gt;&gt; extracts a text (unquoted) value. Availability and exact semantics vary significantly by engine. Check support across MySQL, PostgreSQL, SQL Server, Oracle, and SQLite.">
+  <meta name="twitter:image" content="https://www.caniusesql.com/og-image.png?v=5">
+  <link rel="sitemap" type="application/xml" href="/sitemap.xml">
+  <link rel="canonical" href="https://www.caniusesql.com/f/json-operators">
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen,
+                   Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+      line-height: 1.6;
+      color: #333;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+      background-color: #f5f7fa;
+    }
+    a { color: #3498db; }
+    .site-header {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 24px;
+      flex-wrap: wrap;
+    }
+    .home-link {
+      text-decoration: none;
+      color: #3498db;
+      font-size: 15px;
+      white-space: nowrap;
+    }
+    .home-link:hover { text-decoration: underline; }
+    h1 {
+      color: #2c3e50;
+      margin: 0;
+      font-size: 1.8rem;
+    }
+    h2 { color: #2c3e50; margin-top: 32px; }
+    h4 { color: #2c3e50; margin: 16px 0 4px; }
+    .category-badge {
+      display: inline-block;
+      padding: 3px 10px;
+      background: #eaf3fb;
+      color: #2980b9;
+      border: 1px solid #aed6f1;
+      border-radius: 12px;
+      font-size: 13px;
+      margin-left: 8px;
+      vertical-align: middle;
+    }
+    .command-desc {
+      font-size: 1.05rem;
+      color: #555;
+      margin-bottom: 24px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background-color: white;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    th, td {
+      text-align: left;
+      padding: 12px 15px;
+      border-bottom: 1px solid #ddd;
+    }
+    th { background-color: #3498db; color: white; }
+    tr:last-child td { border-bottom: none; }
+    tr:hover { background-color: #f5f5f5; }
+    .supported     { color: #27ae60; font-weight: bold; }
+    .not-supported { color: #e74c3c; }
+    .notes         { font-size: 14px; color: #7f8c8d; }
+    .syntax {
+      background-color: #f8f9fa;
+      padding: 15px;
+      border-radius: 4px;
+      border-left: 4px solid #3498db;
+      font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+      font-size: 14px;
+      white-space: pre-wrap;
+      margin: 8px 0 16px;
+      overflow-x: auto;
+    }
+    .version-badge {
+      display: inline-block;
+      padding: 3px 8px;
+      border-radius: 4px;
+      font-size: 14px;
+      margin: 0 4px 6px 0;
+    }
+    .version-supported {
+      background-color: #e6f7ee;
+      color: #27ae60;
+      border: 1px solid #27ae60;
+    }
+    .version-not-supported {
+      background-color: #fde8e8;
+      color: #e74c3c;
+      border: 1px solid #e74c3c;
+    }
+    .search-cta {
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      padding: 20px 24px;
+      margin-top: 40px;
+      text-align: center;
+      font-size: 1rem;
+    }
+    .search-cta a {
+      font-weight: 600;
+      text-decoration: none;
+    }
+    .search-cta a:hover { text-decoration: underline; }
+    .per-db-section {
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      padding: 20px 24px;
+      margin-top: 8px;
+    }
+    .detail-block {
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      padding: 20px 24px;
+      margin-top: 8px;
+    }
+  </style>
+</head>
+<body>
+
+  <header class="site-header">
+    <a href="/" class="home-link">← Can I Use SQL?</a>
+    <h1>JSON OPERATORS (-&gt; / -&gt;&gt;)<span class="category-badge">JSON</span></h1>
+  </header>
+
+  <p class="command-desc">Shorthand operators for navigating JSON document structure. -&gt; extracts a JSON value; -&gt;&gt; extracts a text (unquoted) value. Availability and exact semantics vary significantly by engine.</p>
+
+  <h2>Compatibility</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Database System</th>
+        <th>Support Status</th>
+        <th>Since Version</th>
+        <th>Notes</th>
+      </tr>
+    </thead>
+    <tbody>
+          <tr>
+            <td>MySQL</td>
+            <td class="supported">✓ Supported</td>
+            <td>5.7.8</td>
+            <td class="notes">col-&gt;'$.path' is shorthand for JSON_EXTRACT(col, '$.path') and returns a JSON-encoded value (strings include surrounding quotes). col-&gt;&gt;'$.path' is shorthand for JSON_UNQUOTE(JSON_EXTRACT(col, '$.path')) and returns unquoted text. Path expressions must include the $ root prefix.</td>
+          </tr>
+          <tr>
+            <td>PostgreSQL</td>
+            <td class="supported">✓ Supported</td>
+            <td>9.3</td>
+            <td class="notes">Richest operator set of any engine. -&gt; extracts a JSON/JSONB value by key (or array index). -&gt;&gt; extracts as text. #&gt; extracts by path array (JSON result); #&gt;&gt; extracts by path array (text result). jsonb columns additionally support @&gt; (contains), &lt;@ (contained by), ? (key exists), ?| (any key exists), ?&amp; (all keys exist) — all indexable with GIN. The json type supports -&gt; and -&gt;&gt; but not the containment operators.</td>
+          </tr>
+          <tr>
+            <td>SQL Server</td>
+            <td class="not-supported">✗ Not Supported</td>
+            <td>—</td>
+            <td class="notes">No -&gt; or -&gt;&gt; operators. All JSON access is through functions: JSON_VALUE() for scalars and JSON_QUERY() for objects/arrays. Path expressions are string arguments to functions, not operators. There is no operator-based path syntax.</td>
+          </tr>
+          <tr>
+            <td>Oracle</td>
+            <td class="not-supported">✗ Not Supported</td>
+            <td>—</td>
+            <td class="notes">No -&gt; or -&gt;&gt; operators in standard SQL access. All access uses JSON_VALUE() and JSON_QUERY() functions with path string arguments. Oracle 21c introduced a native JSON data type with dot-notation access (col.key.subkey), but this only applies to columns declared as JSON type, not VARCHAR2/CLOB with JSON content.</td>
+          </tr>
+          <tr>
+            <td>SQLite</td>
+            <td class="supported">✓ Supported</td>
+            <td>3.38.0</td>
+            <td class="notes">-&gt; and -&gt;&gt; operators added in SQLite 3.38.0 (2022-02-22). SQLite's -&gt;&gt; always returns an SQL value (text, integer, real, or NULL) — it never returns a JSON-encoded string, which differs from MySQL's -&gt; behavior. For SQLite &lt; 3.38.0, use json_extract() exclusively.</td>
+          </tr>
+    </tbody>
+  </table>
+
+  <h2>Details</h2>
+  <div class="detail-block">
+    <p style="margin:0">PostgreSQL has the most complete operator set: -&gt;, -&gt;&gt;, #&gt;, #&gt;&gt; for extraction plus @&gt;, &lt;@, ?, ?|, ?&amp; for containment and key existence on jsonb (all GIN-indexable). MySQL and SQLite share -&gt; / -&gt;&gt; but with a key difference: MySQL's -&gt;&gt; returns JSON_UNQUOTE output (text) while SQLite's -&gt;&gt; returns a native SQL type directly. SQL Server and Oracle have no operators at all — only functions. Note that MySQL's path expressions require the $ prefix (data-&gt;&gt;'$.name') while PostgreSQL's do not (data-&gt;&gt;'name').</p>
+  </div>
+
+  <h2>Standard Syntax</h2>
+  <div class="syntax">-- PostgreSQL (json/jsonb):
+SELECT data-&gt;'address'       AS address_json,
+       data-&gt;&gt;'name'         AS name_text,
+       data#&gt;'{addr,city}'   AS city_json,
+       data#&gt;&gt;'{addr,city}'  AS city_text
+FROM users;
+
+-- MySQL:
+SELECT data-&gt;'$.name'   AS name_json,
+       data-&gt;&gt;'$.name'  AS name_text
+FROM users;</div>
+
+  <h2>Version Support</h2>
+  <div style="margin-top: 8px;">
+    <span class="version-badge version-supported">MySQL: Since 5.7.8</span>
+    <span class="version-badge version-supported">PostgreSQL: Since 9.3</span>
+    <span class="version-badge version-not-supported">SQL Server: Not supported</span>
+    <span class="version-badge version-not-supported">Oracle: Not supported</span>
+    <span class="version-badge version-supported">SQLite: Since 3.38.0</span>
+    
+  </div>
+
+  <h2>Per-Database Syntax &amp; Notes</h2>
+  <div class="per-db-section">
+        <h4>MySQL</h4>
+        <p class="notes">col-&gt;'$.path' is shorthand for JSON_EXTRACT(col, '$.path') and returns a JSON-encoded value (strings include surrounding quotes). col-&gt;&gt;'$.path' is shorthand for JSON_UNQUOTE(JSON_EXTRACT(col, '$.path')) and returns unquoted text. Path expressions must include the $ root prefix.</p>
+        <div class="syntax">-- -&gt; returns JSON-encoded value (quoted strings):
+SELECT data-&gt;'$.name'       AS name_with_quotes
+FROM users;
+-- Result: &quot;Alice&quot;
+
+-- -&gt;&gt; returns unquoted text:
+SELECT data-&gt;&gt;'$.name'      AS name_plain
+FROM users;
+-- Result: Alice
+
+-- Nested:
+SELECT data-&gt;'$.address.city'  AS city_json,
+       data-&gt;&gt;'$.address.city' AS city_text
+FROM users;
+
+-- In WHERE:
+SELECT * FROM users WHERE data-&gt;&gt;'$.active' = 'true';</div>
+        <h4>PostgreSQL</h4>
+        <p class="notes">Richest operator set of any engine. -&gt; extracts a JSON/JSONB value by key (or array index). -&gt;&gt; extracts as text. #&gt; extracts by path array (JSON result); #&gt;&gt; extracts by path array (text result). jsonb columns additionally support @&gt; (contains), &lt;@ (contained by), ? (key exists), ?| (any key exists), ?&amp; (all keys exist) — all indexable with GIN. The json type supports -&gt; and -&gt;&gt; but not the containment operators.</p>
+        <div class="syntax">-- Key extraction:
+SELECT data-&gt;'name'             AS name_json,
+       data-&gt;&gt;'name'            AS name_text
+FROM users;
+
+-- Array index:
+SELECT data-&gt;'tags'-&gt;0          AS first_tag_json,
+       data-&gt;'tags'-&gt;&gt;0         AS first_tag_text
+FROM posts;
+
+-- Nested path (path array):
+SELECT data#&gt;'{address,city}'   AS city_json,
+       data#&gt;&gt;'{address,city}'  AS city_text
+FROM users;
+
+-- jsonb containment / existence:
+SELECT * FROM users WHERE data @&gt; '{&quot;role&quot;:&quot;admin&quot;}';
+SELECT * FROM users WHERE data ? 'email';
+SELECT * FROM users WHERE data ?| ARRAY['admin','superuser'];</div>
+        <h4>SQL Server</h4>
+        <p class="notes">No -&gt; or -&gt;&gt; operators. All JSON access is through functions: JSON_VALUE() for scalars and JSON_QUERY() for objects/arrays. Path expressions are string arguments to functions, not operators. There is no operator-based path syntax.</p>
+        <div class="syntax">-- Must use functions instead of operators:
+SELECT JSON_VALUE(data, '$.name')        AS name,
+       JSON_QUERY(data, '$.address')      AS address_obj
+FROM users;
+
+-- No shorthand; every access needs the full function call:
+SELECT JSON_VALUE(data, '$.address.city') AS city
+FROM users
+WHERE JSON_VALUE(data, '$.active') = 'true';</div>
+        <h4>Oracle</h4>
+        <p class="notes">No -&gt; or -&gt;&gt; operators in standard SQL access. All access uses JSON_VALUE() and JSON_QUERY() functions with path string arguments. Oracle 21c introduced a native JSON data type with dot-notation access (col.key.subkey), but this only applies to columns declared as JSON type, not VARCHAR2/CLOB with JSON content.</p>
+        <div class="syntax">-- Function-based access only:
+SELECT JSON_VALUE(data, '$.name')    AS name,
+       JSON_QUERY(data, '$.address')  AS address_obj
+FROM users;
+
+-- Oracle 21c dot notation (JSON type columns only):
+SELECT u.data.name.string(),
+       u.data.address.city.string()
+FROM users u;</div>
+        <h4>SQLite</h4>
+        <p class="notes">-&gt; and -&gt;&gt; operators added in SQLite 3.38.0 (2022-02-22). SQLite's -&gt;&gt; always returns an SQL value (text, integer, real, or NULL) — it never returns a JSON-encoded string, which differs from MySQL's -&gt; behavior. For SQLite &lt; 3.38.0, use json_extract() exclusively.</p>
+        <div class="syntax">-- -&gt; returns JSON encoding:
+SELECT data-&gt;'name'          AS name_json
+FROM users;
+-- Result: &quot;Alice&quot; (with quotes)
+
+-- -&gt;&gt; returns SQL value:
+SELECT data-&gt;&gt;'name'         AS name_text
+FROM users;
+-- Result: Alice (no quotes)
+
+-- Chained:
+SELECT data-&gt;'address'-&gt;&gt;'city'  AS city
+FROM users;
+
+-- Fallback for older SQLite:
+SELECT json_extract(data, '$.name') AS name
+FROM users;</div>
+  </div>
+
+  <div class="search-cta">
+    <p style="margin:0">Looking for another SQL command?
+      <a href="/">Search all SQL commands →</a>
+    </p>
+  </div>
+
+</body>
+</html>

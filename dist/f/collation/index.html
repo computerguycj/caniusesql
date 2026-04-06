@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>COLLATION AND CHARACTER SETS SQL Compatibility | MySQL, PostgreSQL, SQL Server, Oracle, SQLite</title>
+  <meta name="description" content="COLLATION AND CHARACTER SETS: Collation defines the rules for comparing and sorting string data — which characters are equal, how case and accents are handled, and sort order. Character set (charset) defines which characters can be stored. Together they determine string behavior throughout the engine. Check support across MySQL, PostgreSQL, SQL Server, Oracle, and SQLite.">
+  <meta property="og:site_name" content="Can I Use SQL?">
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="https://www.caniusesql.com/f/collation">
+  <meta property="og:title" content="COLLATION AND CHARACTER SETS SQL Compatibility | MySQL, PostgreSQL, SQL Server, Oracle, SQLite">
+  <meta property="og:description" content="COLLATION AND CHARACTER SETS: Collation defines the rules for comparing and sorting string data — which characters are equal, how case and accents are handled, and sort order. Character set (charset) defines which characters can be stored. Together they determine string behavior throughout the engine. Check support across MySQL, PostgreSQL, SQL Server, Oracle, and SQLite.">
+  <meta property="og:image" content="https://www.caniusesql.com/og-image.png?v=5">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="COLLATION AND CHARACTER SETS SQL Compatibility | MySQL, PostgreSQL, SQL Server, Oracle, SQLite">
+  <meta name="twitter:description" content="COLLATION AND CHARACTER SETS: Collation defines the rules for comparing and sorting string data — which characters are equal, how case and accents are handled, and sort order. Character set (charset) defines which characters can be stored. Together they determine string behavior throughout the engine. Check support across MySQL, PostgreSQL, SQL Server, Oracle, and SQLite.">
+  <meta name="twitter:image" content="https://www.caniusesql.com/og-image.png?v=5">
+  <link rel="sitemap" type="application/xml" href="/sitemap.xml">
+  <link rel="canonical" href="https://www.caniusesql.com/f/collation">
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen,
+                   Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+      line-height: 1.6;
+      color: #333;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+      background-color: #f5f7fa;
+    }
+    a { color: #3498db; }
+    .site-header {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 24px;
+      flex-wrap: wrap;
+    }
+    .home-link {
+      text-decoration: none;
+      color: #3498db;
+      font-size: 15px;
+      white-space: nowrap;
+    }
+    .home-link:hover { text-decoration: underline; }
+    h1 {
+      color: #2c3e50;
+      margin: 0;
+      font-size: 1.8rem;
+    }
+    h2 { color: #2c3e50; margin-top: 32px; }
+    h4 { color: #2c3e50; margin: 16px 0 4px; }
+    .category-badge {
+      display: inline-block;
+      padding: 3px 10px;
+      background: #eaf3fb;
+      color: #2980b9;
+      border: 1px solid #aed6f1;
+      border-radius: 12px;
+      font-size: 13px;
+      margin-left: 8px;
+      vertical-align: middle;
+    }
+    .command-desc {
+      font-size: 1.05rem;
+      color: #555;
+      margin-bottom: 24px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background-color: white;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    th, td {
+      text-align: left;
+      padding: 12px 15px;
+      border-bottom: 1px solid #ddd;
+    }
+    th { background-color: #3498db; color: white; }
+    tr:last-child td { border-bottom: none; }
+    tr:hover { background-color: #f5f5f5; }
+    .supported     { color: #27ae60; font-weight: bold; }
+    .not-supported { color: #e74c3c; }
+    .notes         { font-size: 14px; color: #7f8c8d; }
+    .syntax {
+      background-color: #f8f9fa;
+      padding: 15px;
+      border-radius: 4px;
+      border-left: 4px solid #3498db;
+      font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+      font-size: 14px;
+      white-space: pre-wrap;
+      margin: 8px 0 16px;
+      overflow-x: auto;
+    }
+    .version-badge {
+      display: inline-block;
+      padding: 3px 8px;
+      border-radius: 4px;
+      font-size: 14px;
+      margin: 0 4px 6px 0;
+    }
+    .version-supported {
+      background-color: #e6f7ee;
+      color: #27ae60;
+      border: 1px solid #27ae60;
+    }
+    .version-not-supported {
+      background-color: #fde8e8;
+      color: #e74c3c;
+      border: 1px solid #e74c3c;
+    }
+    .search-cta {
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      padding: 20px 24px;
+      margin-top: 40px;
+      text-align: center;
+      font-size: 1rem;
+    }
+    .search-cta a {
+      font-weight: 600;
+      text-decoration: none;
+    }
+    .search-cta a:hover { text-decoration: underline; }
+    .per-db-section {
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      padding: 20px 24px;
+      margin-top: 8px;
+    }
+    .detail-block {
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      padding: 20px 24px;
+      margin-top: 8px;
+    }
+  </style>
+</head>
+<body>
+
+  <header class="site-header">
+    <a href="/" class="home-link">← Can I Use SQL?</a>
+    <h1>COLLATION AND CHARACTER SETS<span class="category-badge">Administration</span></h1>
+  </header>
+
+  <p class="command-desc">Collation defines the rules for comparing and sorting string data — which characters are equal, how case and accents are handled, and sort order. Character set (charset) defines which characters can be stored. Together they determine string behavior throughout the engine.</p>
+
+  <h2>Compatibility</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Database System</th>
+        <th>Support Status</th>
+        <th>Since Version</th>
+        <th>Notes</th>
+      </tr>
+    </thead>
+    <tbody>
+          <tr>
+            <td>MySQL</td>
+            <td class="supported">✓ Supported</td>
+            <td>4.1</td>
+            <td class="notes">Character set and collation are separate but related settings. Character set determines storable characters (utf8mb4 is the recommended charset — note utf8 in MySQL is a misleading alias for a 3-byte subset that cannot store 4-byte Unicode like emoji; use utf8mb4). Collation determines sort/comparison rules. Can be set at server, database, table, and column level. utf8mb4_unicode_ci is case-insensitive and accent-insensitive; utf8mb4_bin is binary (case-sensitive, byte-by-byte). Collation mismatches between joined columns cause the 'Illegal mix of collations' error.</td>
+          </tr>
+          <tr>
+            <td>PostgreSQL</td>
+            <td class="supported">✓ Supported</td>
+            <td>9.1</td>
+            <td class="notes">PostgreSQL collation support uses the underlying OS locale (libc provider) or the ICU library (ICU provider, recommended for cross-platform consistency since PostgreSQL 10). Database-level collation is set at CREATE DATABASE and cannot be changed afterward. Column-level COLLATE overrides apply to comparisons, ORDER BY, and indexes. The C collation is byte-order (equivalent to POSIX, fastest, no locale rules). ICU deterministic=false collations (15+) allow accent/case-insensitive indexes.</td>
+          </tr>
+          <tr>
+            <td>SQL Server</td>
+            <td class="supported">✓ Supported</td>
+            <td>7.0</td>
+            <td class="notes">Collation names in SQL Server encode multiple attributes: locale (Latin1_General), case sensitivity (CI = case-insensitive, CS = case-sensitive), accent sensitivity (AI = accent-insensitive, AS = accent-sensitive), and optionally width and kana sensitivity. The default collation for a SQL Server installation is set at setup time and affects system databases. SQL_* collations are legacy; Windows collations (Latin1_General_*) and BIN2 (binary) are current. Collation conflicts between tempdb and user databases are a common source of errors.</td>
+          </tr>
+          <tr>
+            <td>Oracle</td>
+            <td class="supported">✓ Supported</td>
+            <td>12c</td>
+            <td class="notes">Oracle's collation support has evolved significantly. Pre-12c: NLS_SORT and NLS_COMP session parameters control sort order and comparison behavior. 12c+: column-level COLLATE clause added. 21c+: enhanced Unicode collation with BINARY_AI (accent-insensitive), BINARY_CI (case-insensitive). The database character set (AL32UTF8 = Unicode) is set at creation and cannot be changed. NLS_SORT=BINARY_CI + NLS_COMP=LINGUISTIC enables case-insensitive comparisons globally.</td>
+          </tr>
+          <tr>
+            <td>SQLite</td>
+            <td class="supported">✓ Supported</td>
+            <td>3.0</td>
+            <td class="notes">SQLite has three built-in collations: BINARY (default, case-sensitive byte comparison), NOCASE (case-insensitive for ASCII A-Z only, not Unicode), and RTRIM (BINARY with trailing spaces ignored). Custom collations can be registered at runtime via the application layer (e.g., sqlite3_create_collation() in C, or driver-level in Python/Go). No ICU or Unicode-aware case folding built in — for full Unicode case-insensitive search, register a custom collation or use LOWER().</td>
+          </tr>
+    </tbody>
+  </table>
+
+  <h2>Details</h2>
+  <div class="detail-block">
+    <p style="margin:0">The single most common collation-related bug: MySQL's utf8 charset is NOT full Unicode (it's a 3-byte subset that silently truncates 4-byte characters like emoji). Always use utf8mb4. In SQL Server, collation mismatches between columns in a JOIN produce 'cannot resolve collation conflict' errors — most commonly hit when joining against #temp tables in tempdb (which uses the server collation). PostgreSQL's ICU-based collations (10+) are recommended over libc collations for cross-platform consistency, particularly for case-insensitive and accent-insensitive indexes (deterministic=false, PG 15+). SQLite's NOCASE is ASCII-only — it does not fold Unicode characters and will not treat 'é' and 'E' as equal.</p>
+  </div>
+
+  <h2>Standard Syntax</h2>
+  <div class="syntax">-- Column-level collation:
+CREATE TABLE users (
+    username VARCHAR(100) COLLATE Latin1_General_CI_AS,  -- SQL Server
+    email    VARCHAR(100) COLLATE utf8mb4_unicode_ci      -- MySQL
+);
+
+-- Case-insensitive search (collation-dependent):
+SELECT * FROM users WHERE username = 'Alice'; -- may match 'alice', 'ALICE'</div>
+
+  <h2>Version Support</h2>
+  <div style="margin-top: 8px;">
+    <span class="version-badge version-supported">MySQL: Since 4.1</span>
+    <span class="version-badge version-supported">PostgreSQL: Since 9.1</span>
+    <span class="version-badge version-supported">SQL Server: Since 7.0</span>
+    <span class="version-badge version-supported">Oracle: Since 12c</span>
+    <span class="version-badge version-supported">SQLite: Since 3.0</span>
+    
+  </div>
+
+  <h2>Per-Database Syntax &amp; Notes</h2>
+  <div class="per-db-section">
+        <h4>MySQL</h4>
+        <p class="notes">Character set and collation are separate but related settings. Character set determines storable characters (utf8mb4 is the recommended charset — note utf8 in MySQL is a misleading alias for a 3-byte subset that cannot store 4-byte Unicode like emoji; use utf8mb4). Collation determines sort/comparison rules. Can be set at server, database, table, and column level. utf8mb4_unicode_ci is case-insensitive and accent-insensitive; utf8mb4_bin is binary (case-sensitive, byte-by-byte). Collation mismatches between joined columns cause the 'Illegal mix of collations' error.</p>
+        <div class="syntax">-- Server default (my.cnf):
+-- character-set-server = utf8mb4
+-- collation-server = utf8mb4_unicode_ci
+
+-- Database level:
+CREATE DATABASE myapp
+    CHARACTER SET utf8mb4
+    COLLATE utf8mb4_unicode_ci;
+
+-- Table level:
+CREATE TABLE users (
+    username VARCHAR(100)
+) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- Column level:
+CREATE TABLE products (
+    name VARCHAR(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+    sku  VARCHAR(50)  CHARACTER SET utf8mb4 COLLATE utf8mb4_bin
+);
+
+-- Ad-hoc comparison:
+SELECT * FROM users
+WHERE username = 'alice' COLLATE utf8mb4_bin;  -- force case-sensitive
+
+-- List available collations:
+SHOW COLLATION WHERE Charset = 'utf8mb4';</div>
+        <h4>PostgreSQL</h4>
+        <p class="notes">PostgreSQL collation support uses the underlying OS locale (libc provider) or the ICU library (ICU provider, recommended for cross-platform consistency since PostgreSQL 10). Database-level collation is set at CREATE DATABASE and cannot be changed afterward. Column-level COLLATE overrides apply to comparisons, ORDER BY, and indexes. The C collation is byte-order (equivalent to POSIX, fastest, no locale rules). ICU deterministic=false collations (15+) allow accent/case-insensitive indexes.</p>
+        <div class="syntax">-- Database with specific collation:
+CREATE DATABASE myapp
+    ENCODING 'UTF8'
+    LC_COLLATE 'en_US.UTF-8'
+    LC_CTYPE   'en_US.UTF-8'
+    TEMPLATE template0;
+
+-- Column collation:
+CREATE TABLE users (
+    username TEXT COLLATE &quot;en-US-x-icu&quot;,  -- ICU
+    email    TEXT COLLATE &quot;C&quot;             -- byte order
+);
+
+-- Ad-hoc comparison with explicit collation:
+SELECT * FROM users
+WHERE username = 'alice' COLLATE &quot;case_insensitive&quot;;
+
+-- Case-insensitive collation (PG 12+ with ICU):
+CREATE COLLATION case_insensitive (
+    provider = icu,
+    locale = 'und-u-ks-level2',
+    deterministic = false
+);
+
+-- List collations:
+SELECT * FROM pg_collation;</div>
+        <h4>SQL Server</h4>
+        <p class="notes">Collation names in SQL Server encode multiple attributes: locale (Latin1_General), case sensitivity (CI = case-insensitive, CS = case-sensitive), accent sensitivity (AI = accent-insensitive, AS = accent-sensitive), and optionally width and kana sensitivity. The default collation for a SQL Server installation is set at setup time and affects system databases. SQL_* collations are legacy; Windows collations (Latin1_General_*) and BIN2 (binary) are current. Collation conflicts between tempdb and user databases are a common source of errors.</p>
+        <div class="syntax">-- Server/database collation:
+CREATE DATABASE myapp
+    COLLATE Latin1_General_CI_AS;
+
+-- Column collation:
+CREATE TABLE users (
+    username NVARCHAR(100) COLLATE Latin1_General_CI_AS,
+    sku      VARCHAR(50)   COLLATE Latin1_General_CS_AS  -- case-sensitive
+);
+
+-- Ad-hoc collation in query:
+SELECT * FROM users
+WHERE username = N'alice' COLLATE Latin1_General_CS_AS;
+
+-- Accent-insensitive:
+SELECT * FROM users
+WHERE username = N'cafe' COLLATE Latin1_General_CI_AI;
+-- Matches: cafe, café, CAFE, CAFÉ
+
+-- List available collations:
+SELECT * FROM fn_helpcollations();
+
+-- Check database collation:
+SELECT DATABASEPROPERTYEX(DB_NAME(), 'Collation');</div>
+        <h4>Oracle</h4>
+        <p class="notes">Oracle's collation support has evolved significantly. Pre-12c: NLS_SORT and NLS_COMP session parameters control sort order and comparison behavior. 12c+: column-level COLLATE clause added. 21c+: enhanced Unicode collation with BINARY_AI (accent-insensitive), BINARY_CI (case-insensitive). The database character set (AL32UTF8 = Unicode) is set at creation and cannot be changed. NLS_SORT=BINARY_CI + NLS_COMP=LINGUISTIC enables case-insensitive comparisons globally.</p>
+        <div class="syntax">-- Database character set (set at CREATE DATABASE, not changeable):
+-- AL32UTF8 is the recommended Unicode character set.
+
+-- Session-level collation control (pre-12c approach):
+ALTER SESSION SET NLS_SORT = 'BINARY_CI';  -- case-insensitive sort
+ALTER SESSION SET NLS_COMP = 'LINGUISTIC'; -- use NLS_SORT for comparisons
+
+-- Column-level COLLATE (12c+):
+CREATE TABLE users (
+    username VARCHAR2(100) COLLATE BINARY_CI,  -- case-insensitive
+    sku      VARCHAR2(50)  COLLATE BINARY       -- binary (default)
+);
+
+-- Ad-hoc:
+SELECT * FROM users
+WHERE NLSSORT(username,'NLS_SORT=BINARY_CI') = NLSSORT('alice','NLS_SORT=BINARY_CI');
+
+-- Check NLS settings:
+SELECT * FROM NLS_DATABASE_PARAMETERS
+WHERE PARAMETER IN ('NLS_CHARACTERSET','NLS_SORT','NLS_COMP');</div>
+        <h4>SQLite</h4>
+        <p class="notes">SQLite has three built-in collations: BINARY (default, case-sensitive byte comparison), NOCASE (case-insensitive for ASCII A-Z only, not Unicode), and RTRIM (BINARY with trailing spaces ignored). Custom collations can be registered at runtime via the application layer (e.g., sqlite3_create_collation() in C, or driver-level in Python/Go). No ICU or Unicode-aware case folding built in — for full Unicode case-insensitive search, register a custom collation or use LOWER().</p>
+        <div class="syntax">-- Column with NOCASE collation:
+CREATE TABLE users (
+    username TEXT COLLATE NOCASE,  -- ASCII case-insensitive
+    email    TEXT COLLATE BINARY   -- default, case-sensitive
+);
+
+-- NOCASE in a query:
+SELECT * FROM users
+WHERE username = 'alice' COLLATE NOCASE;
+-- Matches: alice, Alice, ALICE (ASCII only)
+
+-- Index respects collation:
+CREATE INDEX idx_username ON users (username COLLATE NOCASE);
+
+-- LOWER() workaround for Unicode case-insensitivity:
+SELECT * FROM users
+WHERE LOWER(username) = LOWER('Ünïcödé');
+
+-- List collations:
+PRAGMA collation_list;</div>
+  </div>
+
+  <div class="search-cta">
+    <p style="margin:0">Looking for another SQL command?
+      <a href="/">Search all SQL commands →</a>
+    </p>
+  </div>
+
+</body>
+</html>

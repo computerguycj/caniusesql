@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TEMPORARY TABLES SQL Compatibility | MySQL, PostgreSQL, SQL Server, Oracle, SQLite</title>
+  <meta name="description" content="TEMPORARY TABLES: Tables that exist only for the duration of a session or transaction and are automatically dropped when that session ends. Used to stage intermediate results without polluting the permanent schema. Check support across MySQL, PostgreSQL, SQL Server, Oracle, and SQLite.">
+  <meta property="og:site_name" content="Can I Use SQL?">
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="https://www.caniusesql.com/f/temp-tables">
+  <meta property="og:title" content="TEMPORARY TABLES SQL Compatibility | MySQL, PostgreSQL, SQL Server, Oracle, SQLite">
+  <meta property="og:description" content="TEMPORARY TABLES: Tables that exist only for the duration of a session or transaction and are automatically dropped when that session ends. Used to stage intermediate results without polluting the permanent schema. Check support across MySQL, PostgreSQL, SQL Server, Oracle, and SQLite.">
+  <meta property="og:image" content="https://www.caniusesql.com/og-image.png?v=5">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="TEMPORARY TABLES SQL Compatibility | MySQL, PostgreSQL, SQL Server, Oracle, SQLite">
+  <meta name="twitter:description" content="TEMPORARY TABLES: Tables that exist only for the duration of a session or transaction and are automatically dropped when that session ends. Used to stage intermediate results without polluting the permanent schema. Check support across MySQL, PostgreSQL, SQL Server, Oracle, and SQLite.">
+  <meta name="twitter:image" content="https://www.caniusesql.com/og-image.png?v=5">
+  <link rel="sitemap" type="application/xml" href="/sitemap.xml">
+  <link rel="canonical" href="https://www.caniusesql.com/f/temp-tables">
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen,
+                   Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+      line-height: 1.6;
+      color: #333;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+      background-color: #f5f7fa;
+    }
+    a { color: #3498db; }
+    .site-header {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 24px;
+      flex-wrap: wrap;
+    }
+    .home-link {
+      text-decoration: none;
+      color: #3498db;
+      font-size: 15px;
+      white-space: nowrap;
+    }
+    .home-link:hover { text-decoration: underline; }
+    h1 {
+      color: #2c3e50;
+      margin: 0;
+      font-size: 1.8rem;
+    }
+    h2 { color: #2c3e50; margin-top: 32px; }
+    h4 { color: #2c3e50; margin: 16px 0 4px; }
+    .category-badge {
+      display: inline-block;
+      padding: 3px 10px;
+      background: #eaf3fb;
+      color: #2980b9;
+      border: 1px solid #aed6f1;
+      border-radius: 12px;
+      font-size: 13px;
+      margin-left: 8px;
+      vertical-align: middle;
+    }
+    .command-desc {
+      font-size: 1.05rem;
+      color: #555;
+      margin-bottom: 24px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background-color: white;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    th, td {
+      text-align: left;
+      padding: 12px 15px;
+      border-bottom: 1px solid #ddd;
+    }
+    th { background-color: #3498db; color: white; }
+    tr:last-child td { border-bottom: none; }
+    tr:hover { background-color: #f5f5f5; }
+    .supported     { color: #27ae60; font-weight: bold; }
+    .not-supported { color: #e74c3c; }
+    .notes         { font-size: 14px; color: #7f8c8d; }
+    .syntax {
+      background-color: #f8f9fa;
+      padding: 15px;
+      border-radius: 4px;
+      border-left: 4px solid #3498db;
+      font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+      font-size: 14px;
+      white-space: pre-wrap;
+      margin: 8px 0 16px;
+      overflow-x: auto;
+    }
+    .version-badge {
+      display: inline-block;
+      padding: 3px 8px;
+      border-radius: 4px;
+      font-size: 14px;
+      margin: 0 4px 6px 0;
+    }
+    .version-supported {
+      background-color: #e6f7ee;
+      color: #27ae60;
+      border: 1px solid #27ae60;
+    }
+    .version-not-supported {
+      background-color: #fde8e8;
+      color: #e74c3c;
+      border: 1px solid #e74c3c;
+    }
+    .search-cta {
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      padding: 20px 24px;
+      margin-top: 40px;
+      text-align: center;
+      font-size: 1rem;
+    }
+    .search-cta a {
+      font-weight: 600;
+      text-decoration: none;
+    }
+    .search-cta a:hover { text-decoration: underline; }
+    .per-db-section {
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      padding: 20px 24px;
+      margin-top: 8px;
+    }
+    .detail-block {
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      padding: 20px 24px;
+      margin-top: 8px;
+    }
+  </style>
+</head>
+<body>
+
+  <header class="site-header">
+    <a href="/" class="home-link">← Can I Use SQL?</a>
+    <h1>TEMPORARY TABLES<span class="category-badge">DDL</span></h1>
+  </header>
+
+  <p class="command-desc">Tables that exist only for the duration of a session or transaction and are automatically dropped when that session ends. Used to stage intermediate results without polluting the permanent schema.</p>
+
+  <h2>Compatibility</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Database System</th>
+        <th>Support Status</th>
+        <th>Since Version</th>
+        <th>Notes</th>
+      </tr>
+    </thead>
+    <tbody>
+          <tr>
+            <td>MySQL</td>
+            <td class="supported">✓ Supported</td>
+            <td>3.23</td>
+            <td class="notes">CREATE TEMPORARY TABLE creates a session-scoped table dropped automatically at session end. Temp tables are invisible to other sessions (each session gets its own private copy even if they use the same name). Cannot be referenced twice in the same query (MySQL limitation). Temp tables appear in information_schema and SHOW TABLES for the current session.</td>
+          </tr>
+          <tr>
+            <td>PostgreSQL</td>
+            <td class="supported">✓ Supported</td>
+            <td>6.0</td>
+            <td class="notes">CREATE TEMPORARY TABLE (or TEMP TABLE). Default lifetime is session; ON COMMIT DROP makes it transaction-scoped; ON COMMIT DELETE ROWS keeps the table structure but truncates it at each commit. PostgreSQL creates temp tables in a per-session temporary schema (pg_temp_NNN) that is searched automatically. Global temporary tables are not supported (each session gets its own isolated table). UNLOGGED tables are a related alternative for fast but non-crash-safe permanent tables.</td>
+          </tr>
+          <tr>
+            <td>SQL Server</td>
+            <td class="supported">✓ Supported</td>
+            <td>6.5</td>
+            <td class="notes">Two kinds: local temp tables (#table) are session-scoped and private; global temp tables (##table) are shared across sessions and dropped when the last referencing session closes. Temp tables are physically stored in tempdb. Table variables (@table) are an alternative with different scoping and statistics behavior. Temp tables support indexes and statistics; table variables have limited statistics and no column indexes.</td>
+          </tr>
+          <tr>
+            <td>Oracle</td>
+            <td class="supported">✓ Supported</td>
+            <td>8i</td>
+            <td class="notes">Oracle uses Global Temporary Tables (GTTs): the table structure is permanent (visible in all_tables) but each session's data is private. Data lifetime is either ON COMMIT DELETE ROWS (transaction-scoped, default) or ON COMMIT PRESERVE ROWS (session-scoped). GTTs are created once and reused across sessions — no CREATE per-session. Oracle 18c added private temporary tables (CREATE PRIVATE TEMPORARY TABLE) which exist only for the session duration like other engines.</td>
+          </tr>
+          <tr>
+            <td>SQLite</td>
+            <td class="supported">✓ Supported</td>
+            <td>1.0</td>
+            <td class="notes">CREATE TEMPORARY TABLE (or TEMP TABLE) creates a table in the temp database, which is session-scoped and stored in a separate temp file (or in memory). Temp tables are not visible to other database connections. Dropped automatically when the connection closes.</td>
+          </tr>
+    </tbody>
+  </table>
+
+  <h2>Details</h2>
+  <div class="detail-block">
+    <p style="margin:0">The biggest portability gap is Oracle: it uses Global Temporary Tables where the structure is a permanent schema object shared across sessions — only the data is private. Every other engine creates the temp table structure per-session. SQL Server is unique in having two tiers: session-private (#table) and cross-session global (##table). SQL Server's table variable (@table) is a common alternative but behaves differently from temp tables regarding statistics, transactions, and scope. The ON COMMIT behavior clause (DROP vs DELETE ROWS vs PRESERVE ROWS) is supported in PostgreSQL and Oracle but not MySQL, SQL Server, or SQLite.</p>
+  </div>
+
+  <h2>Standard Syntax</h2>
+  <div class="syntax">-- Standard SQL:
+CREATE TEMPORARY TABLE temp_results (
+    id      INT,
+    result  VARCHAR(255)
+);
+
+INSERT INTO temp_results SELECT id, compute(val) FROM source;
+SELECT * FROM temp_results;</div>
+
+  <h2>Version Support</h2>
+  <div style="margin-top: 8px;">
+    <span class="version-badge version-supported">MySQL: Since 3.23</span>
+    <span class="version-badge version-supported">PostgreSQL: Since 6.0</span>
+    <span class="version-badge version-supported">SQL Server: Since 6.5</span>
+    <span class="version-badge version-supported">Oracle: Since 8i</span>
+    <span class="version-badge version-supported">SQLite: Since 1.0</span>
+    
+  </div>
+
+  <h2>Per-Database Syntax &amp; Notes</h2>
+  <div class="per-db-section">
+        <h4>MySQL</h4>
+        <p class="notes">CREATE TEMPORARY TABLE creates a session-scoped table dropped automatically at session end. Temp tables are invisible to other sessions (each session gets its own private copy even if they use the same name). Cannot be referenced twice in the same query (MySQL limitation). Temp tables appear in information_schema and SHOW TABLES for the current session.</p>
+        <div class="syntax">CREATE TEMPORARY TABLE tmp_active_users (
+    id       INT,
+    username VARCHAR(100)
+);
+
+INSERT INTO tmp_active_users
+SELECT id, username FROM users WHERE active = 1;
+
+SELECT * FROM tmp_active_users;
+
+-- Dropped automatically at session end;
+-- or drop explicitly:
+DROP TEMPORARY TABLE tmp_active_users;</div>
+        <h4>PostgreSQL</h4>
+        <p class="notes">CREATE TEMPORARY TABLE (or TEMP TABLE). Default lifetime is session; ON COMMIT DROP makes it transaction-scoped; ON COMMIT DELETE ROWS keeps the table structure but truncates it at each commit. PostgreSQL creates temp tables in a per-session temporary schema (pg_temp_NNN) that is searched automatically. Global temporary tables are not supported (each session gets its own isolated table). UNLOGGED tables are a related alternative for fast but non-crash-safe permanent tables.</p>
+        <div class="syntax">-- Session-scoped (default):
+CREATE TEMP TABLE tmp_active_users (
+    id       INT,
+    username TEXT
+);
+
+-- Transaction-scoped (dropped on COMMIT/ROLLBACK):
+CREATE TEMP TABLE tmp_work (
+    val INT
+) ON COMMIT DROP;
+
+-- Keep structure, truncate on commit:
+CREATE TEMP TABLE tmp_batch (
+    val INT
+) ON COMMIT DELETE ROWS;
+
+-- From query:
+CREATE TEMP TABLE tmp_summary AS
+SELECT dept, SUM(salary) FROM employees GROUP BY dept;</div>
+        <h4>SQL Server</h4>
+        <p class="notes">Two kinds: local temp tables (#table) are session-scoped and private; global temp tables (##table) are shared across sessions and dropped when the last referencing session closes. Temp tables are physically stored in tempdb. Table variables (@table) are an alternative with different scoping and statistics behavior. Temp tables support indexes and statistics; table variables have limited statistics and no column indexes.</p>
+        <div class="syntax">-- Local temp table (session-private):
+CREATE TABLE #tmp_active_users (
+    id       INT,
+    username NVARCHAR(100)
+);
+
+INSERT INTO #tmp_active_users
+SELECT id, username FROM users WHERE active = 1;
+
+SELECT * FROM #tmp_active_users;
+DROP TABLE IF EXISTS #tmp_active_users;
+
+-- Global temp table (cross-session):
+CREATE TABLE ##shared_work (
+    val INT
+);
+
+-- Table variable (alternative, no DDL needed):
+DECLARE @results TABLE (id INT, val NVARCHAR(100));
+INSERT INTO @results VALUES (1,'a');</div>
+        <h4>Oracle</h4>
+        <p class="notes">Oracle uses Global Temporary Tables (GTTs): the table structure is permanent (visible in all_tables) but each session's data is private. Data lifetime is either ON COMMIT DELETE ROWS (transaction-scoped, default) or ON COMMIT PRESERVE ROWS (session-scoped). GTTs are created once and reused across sessions — no CREATE per-session. Oracle 18c added private temporary tables (CREATE PRIVATE TEMPORARY TABLE) which exist only for the session duration like other engines.</p>
+        <div class="syntax">-- Global temporary table (structure persists, data is private):
+CREATE GLOBAL TEMPORARY TABLE tmp_active_users (
+    id       NUMBER,
+    username VARCHAR2(100)
+) ON COMMIT PRESERVE ROWS;  -- session-scoped data
+
+-- Transaction-scoped data:
+CREATE GLOBAL TEMPORARY TABLE tmp_batch (
+    val NUMBER
+) ON COMMIT DELETE ROWS;    -- default
+
+-- Private temporary table (18c+, session-scoped structure):
+CREATE PRIVATE TEMPORARY TABLE ora$ptt_work (
+    id NUMBER
+) ON COMMIT DROP DEFINITION;
+
+INSERT INTO tmp_active_users SELECT id, username FROM users WHERE active=1;
+SELECT * FROM tmp_active_users;</div>
+        <h4>SQLite</h4>
+        <p class="notes">CREATE TEMPORARY TABLE (or TEMP TABLE) creates a table in the temp database, which is session-scoped and stored in a separate temp file (or in memory). Temp tables are not visible to other database connections. Dropped automatically when the connection closes.</p>
+        <div class="syntax">CREATE TEMPORARY TABLE tmp_active_users (
+    id       INTEGER,
+    username TEXT
+);
+
+INSERT INTO tmp_active_users
+SELECT id, username FROM users WHERE active = 1;
+
+SELECT * FROM tmp_active_users;
+
+-- Explicit drop:
+DROP TABLE IF EXISTS tmp_active_users;
+
+-- In-memory temp table (default connection is :memory:):
+-- All tables are implicitly temp when connection is :memory:</div>
+  </div>
+
+  <div class="search-cta">
+    <p style="margin:0">Looking for another SQL command?
+      <a href="/">Search all SQL commands →</a>
+    </p>
+  </div>
+
+</body>
+</html>

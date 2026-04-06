@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TRY / CATCH / ERROR HANDLING SQL Compatibility | MySQL, PostgreSQL, SQL Server, Oracle, SQLite</title>
+  <meta name="description" content="TRY / CATCH / ERROR HANDLING: Structured error handling that traps runtime exceptions within a SQL block and routes execution to a handler. Check support across MySQL, PostgreSQL, SQL Server, Oracle, and SQLite.">
+  <meta property="og:site_name" content="Can I Use SQL?">
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="https://www.caniusesql.com/f/try-catch">
+  <meta property="og:title" content="TRY / CATCH / ERROR HANDLING SQL Compatibility | MySQL, PostgreSQL, SQL Server, Oracle, SQLite">
+  <meta property="og:description" content="TRY / CATCH / ERROR HANDLING: Structured error handling that traps runtime exceptions within a SQL block and routes execution to a handler. Check support across MySQL, PostgreSQL, SQL Server, Oracle, and SQLite.">
+  <meta property="og:image" content="https://www.caniusesql.com/og-image.png?v=5">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="TRY / CATCH / ERROR HANDLING SQL Compatibility | MySQL, PostgreSQL, SQL Server, Oracle, SQLite">
+  <meta name="twitter:description" content="TRY / CATCH / ERROR HANDLING: Structured error handling that traps runtime exceptions within a SQL block and routes execution to a handler. Check support across MySQL, PostgreSQL, SQL Server, Oracle, and SQLite.">
+  <meta name="twitter:image" content="https://www.caniusesql.com/og-image.png?v=5">
+  <link rel="sitemap" type="application/xml" href="/sitemap.xml">
+  <link rel="canonical" href="https://www.caniusesql.com/f/try-catch">
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen,
+                   Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+      line-height: 1.6;
+      color: #333;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+      background-color: #f5f7fa;
+    }
+    a { color: #3498db; }
+    .site-header {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 24px;
+      flex-wrap: wrap;
+    }
+    .home-link {
+      text-decoration: none;
+      color: #3498db;
+      font-size: 15px;
+      white-space: nowrap;
+    }
+    .home-link:hover { text-decoration: underline; }
+    h1 {
+      color: #2c3e50;
+      margin: 0;
+      font-size: 1.8rem;
+    }
+    h2 { color: #2c3e50; margin-top: 32px; }
+    h4 { color: #2c3e50; margin: 16px 0 4px; }
+    .category-badge {
+      display: inline-block;
+      padding: 3px 10px;
+      background: #eaf3fb;
+      color: #2980b9;
+      border: 1px solid #aed6f1;
+      border-radius: 12px;
+      font-size: 13px;
+      margin-left: 8px;
+      vertical-align: middle;
+    }
+    .command-desc {
+      font-size: 1.05rem;
+      color: #555;
+      margin-bottom: 24px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background-color: white;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    th, td {
+      text-align: left;
+      padding: 12px 15px;
+      border-bottom: 1px solid #ddd;
+    }
+    th { background-color: #3498db; color: white; }
+    tr:last-child td { border-bottom: none; }
+    tr:hover { background-color: #f5f5f5; }
+    .supported     { color: #27ae60; font-weight: bold; }
+    .not-supported { color: #e74c3c; }
+    .notes         { font-size: 14px; color: #7f8c8d; }
+    .syntax {
+      background-color: #f8f9fa;
+      padding: 15px;
+      border-radius: 4px;
+      border-left: 4px solid #3498db;
+      font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+      font-size: 14px;
+      white-space: pre-wrap;
+      margin: 8px 0 16px;
+      overflow-x: auto;
+    }
+    .version-badge {
+      display: inline-block;
+      padding: 3px 8px;
+      border-radius: 4px;
+      font-size: 14px;
+      margin: 0 4px 6px 0;
+    }
+    .version-supported {
+      background-color: #e6f7ee;
+      color: #27ae60;
+      border: 1px solid #27ae60;
+    }
+    .version-not-supported {
+      background-color: #fde8e8;
+      color: #e74c3c;
+      border: 1px solid #e74c3c;
+    }
+    .search-cta {
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      padding: 20px 24px;
+      margin-top: 40px;
+      text-align: center;
+      font-size: 1rem;
+    }
+    .search-cta a {
+      font-weight: 600;
+      text-decoration: none;
+    }
+    .search-cta a:hover { text-decoration: underline; }
+    .per-db-section {
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      padding: 20px 24px;
+      margin-top: 8px;
+    }
+    .detail-block {
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      padding: 20px 24px;
+      margin-top: 8px;
+    }
+  </style>
+</head>
+<body>
+
+  <header class="site-header">
+    <a href="/" class="home-link">← Can I Use SQL?</a>
+    <h1>TRY / CATCH / ERROR HANDLING<span class="category-badge">Programmability</span></h1>
+  </header>
+
+  <p class="command-desc">Structured error handling that traps runtime exceptions within a SQL block and routes execution to a handler.</p>
+
+  <h2>Compatibility</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Database System</th>
+        <th>Support Status</th>
+        <th>Since Version</th>
+        <th>Notes</th>
+      </tr>
+    </thead>
+    <tbody>
+          <tr>
+            <td>MySQL</td>
+            <td class="supported">✓ Supported</td>
+            <td>5.5</td>
+            <td class="notes">Uses DECLARE ... HANDLER syntax inside stored procedures/functions; no bare TRY/CATCH block outside a routine.</td>
+          </tr>
+          <tr>
+            <td>PostgreSQL</td>
+            <td class="supported">✓ Supported</td>
+            <td>8.0</td>
+            <td class="notes">BEGIN/EXCEPTION block is available inside PL/pgSQL functions and DO blocks only; not in plain SQL.</td>
+          </tr>
+          <tr>
+            <td>SQL Server</td>
+            <td class="supported">✓ Supported</td>
+            <td>2005</td>
+            <td class="notes">TRY/CATCH works in ad-hoc batches, procedures, and triggers. Use ERROR_MESSAGE(), ERROR_NUMBER() inside the CATCH block.</td>
+          </tr>
+          <tr>
+            <td>Oracle</td>
+            <td class="supported">✓ Supported</td>
+            <td>7</td>
+            <td class="notes">PL/SQL EXCEPTION section is part of every block (anonymous or named). Uses named exception types or WHEN OTHERS.</td>
+          </tr>
+          <tr>
+            <td>SQLite</td>
+            <td class="not-supported">✗ Not Supported</td>
+            <td>—</td>
+            <td class="notes">No procedural error-handling blocks. Applications must inspect return codes via the host language API.</td>
+          </tr>
+    </tbody>
+  </table>
+
+  <h2>Details</h2>
+  <div class="detail-block">
+    <p style="margin:0">Structured error handling is universally available but the syntax varies significantly. SQL Server's TRY/CATCH is the closest to a general-purpose mechanism because it works in plain batch scripts; the others require a procedural language context (PL/pgSQL, PL/SQL, MySQL stored routines). In PostgreSQL, RAISE EXCEPTION re-throws; in Oracle, RAISE re-raises the current exception. All engines except SQLite expose error code and message via engine-specific functions (SQLERRM, ERROR_MESSAGE(), etc.). A common portability trap: SQL Server's TRY/CATCH does not catch compile-time errors or certain severity-20+ errors; use XACT_STATE() to check transaction validity inside the CATCH block.</p>
+  </div>
+
+  <h2>Standard Syntax</h2>
+  <div class="syntax">BEGIN TRY
+  -- risky statement
+END TRY
+BEGIN CATCH
+  -- handle error
+END CATCH;</div>
+
+  <h2>Version Support</h2>
+  <div style="margin-top: 8px;">
+    <span class="version-badge version-supported">MySQL: Since 5.5</span>
+    <span class="version-badge version-supported">PostgreSQL: Since 8.0</span>
+    <span class="version-badge version-supported">SQL Server: Since 2005</span>
+    <span class="version-badge version-supported">Oracle: Since 7</span>
+    <span class="version-badge version-not-supported">SQLite: Not supported</span>
+    
+  </div>
+
+  <h2>Per-Database Syntax &amp; Notes</h2>
+  <div class="per-db-section">
+        <h4>MySQL</h4>
+        <p class="notes">Uses DECLARE ... HANDLER syntax inside stored procedures/functions; no bare TRY/CATCH block outside a routine.</p>
+        <div class="syntax">DECLARE CONTINUE HANDLER FOR SQLEXCEPTION
+  BEGIN
+    GET DIAGNOSTICS CONDITION 1 @msg = MESSAGE_TEXT;
+  END;</div>
+        <h4>PostgreSQL</h4>
+        <p class="notes">BEGIN/EXCEPTION block is available inside PL/pgSQL functions and DO blocks only; not in plain SQL.</p>
+        <div class="syntax">DO $$
+BEGIN
+  -- risky
+EXCEPTION WHEN others THEN
+  RAISE NOTICE 'error: %', SQLERRM;
+END;
+$$;</div>
+        <h4>SQL Server</h4>
+        <p class="notes">TRY/CATCH works in ad-hoc batches, procedures, and triggers. Use ERROR_MESSAGE(), ERROR_NUMBER() inside the CATCH block.</p>
+        <div class="syntax">BEGIN TRY
+  INSERT INTO t VALUES (1);
+END TRY
+BEGIN CATCH
+  PRINT ERROR_MESSAGE();
+END CATCH;</div>
+        <h4>Oracle</h4>
+        <p class="notes">PL/SQL EXCEPTION section is part of every block (anonymous or named). Uses named exception types or WHEN OTHERS.</p>
+        <div class="syntax">BEGIN
+  INSERT INTO t VALUES (1);
+EXCEPTION
+  WHEN DUP_VAL_ON_INDEX THEN
+    DBMS_OUTPUT.PUT_LINE('duplicate');
+  WHEN OTHERS THEN
+    DBMS_OUTPUT.PUT_LINE(SQLERRM);
+END;</div>
+  </div>
+
+  <div class="search-cta">
+    <p style="margin:0">Looking for another SQL command?
+      <a href="/">Search all SQL commands →</a>
+    </p>
+  </div>
+
+</body>
+</html>

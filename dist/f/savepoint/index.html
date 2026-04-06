@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SAVEPOINT SQL Compatibility | MySQL, PostgreSQL, SQL Server, Oracle, SQLite</title>
+  <meta name="description" content="SAVEPOINT: A named marker within a transaction to which you can partially roll back without aborting the entire transaction. Enables nested or selective error recovery inside a larger unit of work. Check support across MySQL, PostgreSQL, SQL Server, Oracle, and SQLite.">
+  <meta property="og:site_name" content="Can I Use SQL?">
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="https://www.caniusesql.com/f/savepoint">
+  <meta property="og:title" content="SAVEPOINT SQL Compatibility | MySQL, PostgreSQL, SQL Server, Oracle, SQLite">
+  <meta property="og:description" content="SAVEPOINT: A named marker within a transaction to which you can partially roll back without aborting the entire transaction. Enables nested or selective error recovery inside a larger unit of work. Check support across MySQL, PostgreSQL, SQL Server, Oracle, and SQLite.">
+  <meta property="og:image" content="https://www.caniusesql.com/og-image.png?v=5">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="SAVEPOINT SQL Compatibility | MySQL, PostgreSQL, SQL Server, Oracle, SQLite">
+  <meta name="twitter:description" content="SAVEPOINT: A named marker within a transaction to which you can partially roll back without aborting the entire transaction. Enables nested or selective error recovery inside a larger unit of work. Check support across MySQL, PostgreSQL, SQL Server, Oracle, and SQLite.">
+  <meta name="twitter:image" content="https://www.caniusesql.com/og-image.png?v=5">
+  <link rel="sitemap" type="application/xml" href="/sitemap.xml">
+  <link rel="canonical" href="https://www.caniusesql.com/f/savepoint">
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen,
+                   Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+      line-height: 1.6;
+      color: #333;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+      background-color: #f5f7fa;
+    }
+    a { color: #3498db; }
+    .site-header {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 24px;
+      flex-wrap: wrap;
+    }
+    .home-link {
+      text-decoration: none;
+      color: #3498db;
+      font-size: 15px;
+      white-space: nowrap;
+    }
+    .home-link:hover { text-decoration: underline; }
+    h1 {
+      color: #2c3e50;
+      margin: 0;
+      font-size: 1.8rem;
+    }
+    h2 { color: #2c3e50; margin-top: 32px; }
+    h4 { color: #2c3e50; margin: 16px 0 4px; }
+    .category-badge {
+      display: inline-block;
+      padding: 3px 10px;
+      background: #eaf3fb;
+      color: #2980b9;
+      border: 1px solid #aed6f1;
+      border-radius: 12px;
+      font-size: 13px;
+      margin-left: 8px;
+      vertical-align: middle;
+    }
+    .command-desc {
+      font-size: 1.05rem;
+      color: #555;
+      margin-bottom: 24px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background-color: white;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    th, td {
+      text-align: left;
+      padding: 12px 15px;
+      border-bottom: 1px solid #ddd;
+    }
+    th { background-color: #3498db; color: white; }
+    tr:last-child td { border-bottom: none; }
+    tr:hover { background-color: #f5f5f5; }
+    .supported     { color: #27ae60; font-weight: bold; }
+    .not-supported { color: #e74c3c; }
+    .notes         { font-size: 14px; color: #7f8c8d; }
+    .syntax {
+      background-color: #f8f9fa;
+      padding: 15px;
+      border-radius: 4px;
+      border-left: 4px solid #3498db;
+      font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+      font-size: 14px;
+      white-space: pre-wrap;
+      margin: 8px 0 16px;
+      overflow-x: auto;
+    }
+    .version-badge {
+      display: inline-block;
+      padding: 3px 8px;
+      border-radius: 4px;
+      font-size: 14px;
+      margin: 0 4px 6px 0;
+    }
+    .version-supported {
+      background-color: #e6f7ee;
+      color: #27ae60;
+      border: 1px solid #27ae60;
+    }
+    .version-not-supported {
+      background-color: #fde8e8;
+      color: #e74c3c;
+      border: 1px solid #e74c3c;
+    }
+    .search-cta {
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      padding: 20px 24px;
+      margin-top: 40px;
+      text-align: center;
+      font-size: 1rem;
+    }
+    .search-cta a {
+      font-weight: 600;
+      text-decoration: none;
+    }
+    .search-cta a:hover { text-decoration: underline; }
+    .per-db-section {
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      padding: 20px 24px;
+      margin-top: 8px;
+    }
+    .detail-block {
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      padding: 20px 24px;
+      margin-top: 8px;
+    }
+  </style>
+</head>
+<body>
+
+  <header class="site-header">
+    <a href="/" class="home-link">← Can I Use SQL?</a>
+    <h1>SAVEPOINT<span class="category-badge">Transactions</span></h1>
+  </header>
+
+  <p class="command-desc">A named marker within a transaction to which you can partially roll back without aborting the entire transaction. Enables nested or selective error recovery inside a larger unit of work.</p>
+
+  <h2>Compatibility</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Database System</th>
+        <th>Support Status</th>
+        <th>Since Version</th>
+        <th>Notes</th>
+      </tr>
+    </thead>
+    <tbody>
+          <tr>
+            <td>MySQL</td>
+            <td class="supported">✓ Supported</td>
+            <td>4.0.14</td>
+            <td class="notes">SAVEPOINT, ROLLBACK TO SAVEPOINT, and RELEASE SAVEPOINT supported for InnoDB tables since MySQL 4.0.14. Not available for MyISAM (which has no transaction support). Savepoints are session-scoped and discarded on COMMIT or full ROLLBACK. Nested savepoints with the same name replace the previous one.</td>
+          </tr>
+          <tr>
+            <td>PostgreSQL</td>
+            <td class="supported">✓ Supported</td>
+            <td>8.0</td>
+            <td class="notes">SAVEPOINT, ROLLBACK TO SAVEPOINT, and RELEASE SAVEPOINT fully supported. PostgreSQL also uses savepoints internally to implement subtransactions. In PostgreSQL, any error inside a transaction puts it into an error state that blocks further commands — ROLLBACK TO SAVEPOINT is the only way to recover a usable transaction state after an error without aborting everything. This makes savepoints especially important in PostgreSQL for error handling inside application code.</td>
+          </tr>
+          <tr>
+            <td>SQL Server</td>
+            <td class="supported">✓ Supported</td>
+            <td>6.5</td>
+            <td class="notes">SAVE TRANSACTION (note: SAVE, not SAVEPOINT) creates a savepoint. ROLLBACK TRANSACTION &lt;name&gt; rolls back to the savepoint without ending the transaction. SAVE TRANSACTION does not support a full RELEASE equivalent. Nested BEGIN TRANSACTION increments @@TRANCOUNT but the outermost COMMIT is the only one that actually commits — inner COMMITs decrement @@TRANCOUNT only.</td>
+          </tr>
+          <tr>
+            <td>Oracle</td>
+            <td class="supported">✓ Supported</td>
+            <td>7</td>
+            <td class="notes">SAVEPOINT and ROLLBACK TO SAVEPOINT supported. Oracle auto-starts transactions (no explicit BEGIN needed — the first DML statement starts a transaction). RELEASE SAVEPOINT is not supported in Oracle — savepoints are implicitly released on COMMIT. Oracle's autonomous transactions (PRAGMA AUTONOMOUS_TRANSACTION) are a related but distinct concept.</td>
+          </tr>
+          <tr>
+            <td>SQLite</td>
+            <td class="supported">✓ Supported</td>
+            <td>3.6.8</td>
+            <td class="notes">SAVEPOINT, ROLLBACK TO, and RELEASE supported since SQLite 3.6.8. SQLite's SAVEPOINT also doubles as a BEGIN — nesting SAVEPOINTs creates subtransactions. RELEASE is equivalent to committing the savepoint's work into the outer transaction (like COMMIT for the savepoint). Rolling back to a savepoint and then RELEASEing it is not the same as canceling it — RELEASE after ROLLBACK TO simply removes the savepoint marker.</td>
+          </tr>
+    </tbody>
+  </table>
+
+  <h2>Details</h2>
+  <div class="detail-block">
+    <p style="margin:0">The SQL standard keyword is SAVEPOINT; SQL Server uses SAVE TRANSACTION instead. RELEASE SAVEPOINT is supported in MySQL, PostgreSQL, and SQLite, but not in Oracle (implicit release on COMMIT) or SQL Server (no equivalent). PostgreSQL's behavior makes savepoints especially critical in application code: any unhandled error puts the transaction into an aborted state that rejects all further commands — ROLLBACK TO SAVEPOINT is the escape hatch that clears the error without losing the entire transaction. SQLite's SAVEPOINT is unique in that it can replace BEGIN entirely and supports arbitrary nesting.</p>
+  </div>
+
+  <h2>Standard Syntax</h2>
+  <div class="syntax">BEGIN;
+
+INSERT INTO orders (customer_id, total) VALUES (1, 99.99);
+SAVEPOINT after_order;
+
+INSERT INTO order_items (order_id, product_id) VALUES (101, 9);
+-- If this fails:
+ROLLBACK TO SAVEPOINT after_order;
+
+-- Order insert is still intact; continue or commit:
+COMMIT;</div>
+
+  <h2>Version Support</h2>
+  <div style="margin-top: 8px;">
+    <span class="version-badge version-supported">MySQL: Since 4.0.14</span>
+    <span class="version-badge version-supported">PostgreSQL: Since 8.0</span>
+    <span class="version-badge version-supported">SQL Server: Since 6.5</span>
+    <span class="version-badge version-supported">Oracle: Since 7</span>
+    <span class="version-badge version-supported">SQLite: Since 3.6.8</span>
+    
+  </div>
+
+  <h2>Per-Database Syntax &amp; Notes</h2>
+  <div class="per-db-section">
+        <h4>MySQL</h4>
+        <p class="notes">SAVEPOINT, ROLLBACK TO SAVEPOINT, and RELEASE SAVEPOINT supported for InnoDB tables since MySQL 4.0.14. Not available for MyISAM (which has no transaction support). Savepoints are session-scoped and discarded on COMMIT or full ROLLBACK. Nested savepoints with the same name replace the previous one.</p>
+        <div class="syntax">START TRANSACTION;
+
+INSERT INTO orders (customer_id, total) VALUES (1, 99.99);
+SAVEPOINT sp1;
+
+INSERT INTO order_items (order_id, product_id) VALUES (101, 9);
+
+-- Partial rollback:
+ROLLBACK TO SAVEPOINT sp1;
+-- order_items INSERT is undone; orders INSERT remains
+
+-- Release savepoint (optional, removes the savepoint marker):
+RELEASE SAVEPOINT sp1;
+
+COMMIT;</div>
+        <h4>PostgreSQL</h4>
+        <p class="notes">SAVEPOINT, ROLLBACK TO SAVEPOINT, and RELEASE SAVEPOINT fully supported. PostgreSQL also uses savepoints internally to implement subtransactions. In PostgreSQL, any error inside a transaction puts it into an error state that blocks further commands — ROLLBACK TO SAVEPOINT is the only way to recover a usable transaction state after an error without aborting everything. This makes savepoints especially important in PostgreSQL for error handling inside application code.</p>
+        <div class="syntax">BEGIN;
+
+INSERT INTO orders (customer_id, total) VALUES (1, 99.99);
+SAVEPOINT after_order;
+
+INSERT INTO order_items (order_id, product_id) VALUES (101, 9);
+-- Suppose this raises an error:
+ROLLBACK TO SAVEPOINT after_order;
+-- Transaction is now in a clean state; the error is cleared
+
+INSERT INTO order_items (order_id, product_id) VALUES (101, 10);
+-- Try a different item
+
+COMMIT;
+
+-- Release (optional, frees the savepoint name):
+RELEASE SAVEPOINT after_order;</div>
+        <h4>SQL Server</h4>
+        <p class="notes">SAVE TRANSACTION (note: SAVE, not SAVEPOINT) creates a savepoint. ROLLBACK TRANSACTION &lt;name&gt; rolls back to the savepoint without ending the transaction. SAVE TRANSACTION does not support a full RELEASE equivalent. Nested BEGIN TRANSACTION increments @@TRANCOUNT but the outermost COMMIT is the only one that actually commits — inner COMMITs decrement @@TRANCOUNT only.</p>
+        <div class="syntax">BEGIN TRANSACTION;
+
+INSERT INTO orders (customer_id, total) VALUES (1, 99.99);
+SAVE TRANSACTION after_order;  -- SQL Server uses SAVE TRANSACTION
+
+INSERT INTO order_items (order_id, product_id) VALUES (101, 9);
+
+-- Partial rollback:
+ROLLBACK TRANSACTION after_order;
+-- order_items insert is undone; orders insert remains
+
+-- Note: can also use shorthand:
+-- SAVE TRAN sp1 / ROLLBACK TRAN sp1
+
+COMMIT TRANSACTION;</div>
+        <h4>Oracle</h4>
+        <p class="notes">SAVEPOINT and ROLLBACK TO SAVEPOINT supported. Oracle auto-starts transactions (no explicit BEGIN needed — the first DML statement starts a transaction). RELEASE SAVEPOINT is not supported in Oracle — savepoints are implicitly released on COMMIT. Oracle's autonomous transactions (PRAGMA AUTONOMOUS_TRANSACTION) are a related but distinct concept.</p>
+        <div class="syntax">-- No explicit BEGIN in Oracle:
+INSERT INTO orders (customer_id, total) VALUES (1, 99.99);
+SAVEPOINT after_order;
+
+INSERT INTO order_items (order_id, product_id) VALUES (101, 9);
+
+-- Partial rollback:
+ROLLBACK TO SAVEPOINT after_order;
+-- order_items insert rolled back; orders insert intact
+
+COMMIT;
+-- Savepoint is implicitly released on COMMIT</div>
+        <h4>SQLite</h4>
+        <p class="notes">SAVEPOINT, ROLLBACK TO, and RELEASE supported since SQLite 3.6.8. SQLite's SAVEPOINT also doubles as a BEGIN — nesting SAVEPOINTs creates subtransactions. RELEASE is equivalent to committing the savepoint's work into the outer transaction (like COMMIT for the savepoint). Rolling back to a savepoint and then RELEASEing it is not the same as canceling it — RELEASE after ROLLBACK TO simply removes the savepoint marker.</p>
+        <div class="syntax">BEGIN;
+
+INSERT INTO orders (customer_id, total) VALUES (1, 99.99);
+SAVEPOINT after_order;
+
+INSERT INTO order_items (order_id, product_id) VALUES (101, 9);
+
+-- Partial rollback:
+ROLLBACK TO after_order;
+
+-- Release (removes the savepoint marker, merges into outer transaction):
+RELEASE after_order;
+
+COMMIT;
+
+-- SQLite SAVEPOINT can also nest:
+SAVEPOINT outer;
+    INSERT INTO t VALUES (1);
+    SAVEPOINT inner;
+        INSERT INTO t VALUES (2);
+    RELEASE inner;  -- commits inner work into outer
+ROLLBACK TO outer;  -- undoes everything including inner</div>
+  </div>
+
+  <div class="search-cta">
+    <p style="margin:0">Looking for another SQL command?
+      <a href="/">Search all SQL commands →</a>
+    </p>
+  </div>
+
+</body>
+</html>

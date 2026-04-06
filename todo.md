@@ -5,6 +5,9 @@ Must haves:
 ~~4. Caching headers in vercel.json — data.json and og-image.png are never going to change between deploys, but there are no cache headers set, so they get re-fetched every time. Easy win for performance (which is a ranking signal).~~
 ~~5. ensure this document itself doesn't deploy~~
 
+SEO:
+- https://searchengineland.com/build-ai-search-visibility-tracker-473178
+
 Nice to haves:
 - JSON-LD structured data — marking up each command page with schema.org WebApplication or TechArticle structured data is what unlocks rich results / featured snippets in Google. Highest effort but highest reward of anything left.
 - No .catch() on the fetch('data.json') call — if the fetch fails, the page silently breaks with no feedback to the user.

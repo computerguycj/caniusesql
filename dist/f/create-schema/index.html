@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CREATE SCHEMA SQL Compatibility | MySQL, PostgreSQL, SQL Server, Oracle, SQLite</title>
+  <meta name="description" content="CREATE SCHEMA: Create a named namespace within a database that groups related tables, views, and other objects. Schemas provide organizational structure and a layer of access control. Check support across MySQL, PostgreSQL, SQL Server, Oracle, and SQLite.">
+  <meta property="og:site_name" content="Can I Use SQL?">
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="https://www.caniusesql.com/f/create-schema">
+  <meta property="og:title" content="CREATE SCHEMA SQL Compatibility | MySQL, PostgreSQL, SQL Server, Oracle, SQLite">
+  <meta property="og:description" content="CREATE SCHEMA: Create a named namespace within a database that groups related tables, views, and other objects. Schemas provide organizational structure and a layer of access control. Check support across MySQL, PostgreSQL, SQL Server, Oracle, and SQLite.">
+  <meta property="og:image" content="https://www.caniusesql.com/og-image.png?v=5">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="CREATE SCHEMA SQL Compatibility | MySQL, PostgreSQL, SQL Server, Oracle, SQLite">
+  <meta name="twitter:description" content="CREATE SCHEMA: Create a named namespace within a database that groups related tables, views, and other objects. Schemas provide organizational structure and a layer of access control. Check support across MySQL, PostgreSQL, SQL Server, Oracle, and SQLite.">
+  <meta name="twitter:image" content="https://www.caniusesql.com/og-image.png?v=5">
+  <link rel="sitemap" type="application/xml" href="/sitemap.xml">
+  <link rel="canonical" href="https://www.caniusesql.com/f/create-schema">
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen,
+                   Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+      line-height: 1.6;
+      color: #333;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+      background-color: #f5f7fa;
+    }
+    a { color: #3498db; }
+    .site-header {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 24px;
+      flex-wrap: wrap;
+    }
+    .home-link {
+      text-decoration: none;
+      color: #3498db;
+      font-size: 15px;
+      white-space: nowrap;
+    }
+    .home-link:hover { text-decoration: underline; }
+    h1 {
+      color: #2c3e50;
+      margin: 0;
+      font-size: 1.8rem;
+    }
+    h2 { color: #2c3e50; margin-top: 32px; }
+    h4 { color: #2c3e50; margin: 16px 0 4px; }
+    .category-badge {
+      display: inline-block;
+      padding: 3px 10px;
+      background: #eaf3fb;
+      color: #2980b9;
+      border: 1px solid #aed6f1;
+      border-radius: 12px;
+      font-size: 13px;
+      margin-left: 8px;
+      vertical-align: middle;
+    }
+    .command-desc {
+      font-size: 1.05rem;
+      color: #555;
+      margin-bottom: 24px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background-color: white;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    th, td {
+      text-align: left;
+      padding: 12px 15px;
+      border-bottom: 1px solid #ddd;
+    }
+    th { background-color: #3498db; color: white; }
+    tr:last-child td { border-bottom: none; }
+    tr:hover { background-color: #f5f5f5; }
+    .supported     { color: #27ae60; font-weight: bold; }
+    .not-supported { color: #e74c3c; }
+    .notes         { font-size: 14px; color: #7f8c8d; }
+    .syntax {
+      background-color: #f8f9fa;
+      padding: 15px;
+      border-radius: 4px;
+      border-left: 4px solid #3498db;
+      font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+      font-size: 14px;
+      white-space: pre-wrap;
+      margin: 8px 0 16px;
+      overflow-x: auto;
+    }
+    .version-badge {
+      display: inline-block;
+      padding: 3px 8px;
+      border-radius: 4px;
+      font-size: 14px;
+      margin: 0 4px 6px 0;
+    }
+    .version-supported {
+      background-color: #e6f7ee;
+      color: #27ae60;
+      border: 1px solid #27ae60;
+    }
+    .version-not-supported {
+      background-color: #fde8e8;
+      color: #e74c3c;
+      border: 1px solid #e74c3c;
+    }
+    .search-cta {
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      padding: 20px 24px;
+      margin-top: 40px;
+      text-align: center;
+      font-size: 1rem;
+    }
+    .search-cta a {
+      font-weight: 600;
+      text-decoration: none;
+    }
+    .search-cta a:hover { text-decoration: underline; }
+    .per-db-section {
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      padding: 20px 24px;
+      margin-top: 8px;
+    }
+    .detail-block {
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      padding: 20px 24px;
+      margin-top: 8px;
+    }
+  </style>
+</head>
+<body>
+
+  <header class="site-header">
+    <a href="/" class="home-link">← Can I Use SQL?</a>
+    <h1>CREATE SCHEMA<span class="category-badge">DDL</span></h1>
+  </header>
+
+  <p class="command-desc">Create a named namespace within a database that groups related tables, views, and other objects. Schemas provide organizational structure and a layer of access control.</p>
+
+  <h2>Compatibility</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Database System</th>
+        <th>Support Status</th>
+        <th>Since Version</th>
+        <th>Notes</th>
+      </tr>
+    </thead>
+    <tbody>
+          <tr>
+            <td>MySQL</td>
+            <td class="supported">✓ Supported</td>
+            <td>5.0</td>
+            <td class="notes">In MySQL, SCHEMA is a synonym for DATABASE — CREATE SCHEMA and CREATE DATABASE are interchangeable. There is no sub-database namespace concept; each schema/database is a fully separate unit. The dot notation (schema.table) is the cross-database reference syntax. This differs from every other engine where schemas are namespaces within a database.</td>
+          </tr>
+          <tr>
+            <td>PostgreSQL</td>
+            <td class="supported">✓ Supported</td>
+            <td>7.3</td>
+            <td class="notes">Schemas are namespaces within a PostgreSQL database (distinct from databases themselves). The default schema is public. search_path controls which schemas are searched when an unqualified name is used. CREATE SCHEMA ... AUTHORIZATION assigns schema ownership. Objects in different schemas can be queried in the same connection; cross-database queries require foreign data wrappers (postgres_fdw).</td>
+          </tr>
+          <tr>
+            <td>SQL Server</td>
+            <td class="supported">✓ Supported</td>
+            <td>2005</td>
+            <td class="notes">Schemas are sub-namespaces within a database (SQL Server 2005 replaced the old owner-based dbo.table model). The default schema is dbo. Each login has a default schema. Permissions can be granted at the schema level, applying to all current and future objects. The four-part name server.database.schema.object can reference objects across databases and linked servers.</td>
+          </tr>
+          <tr>
+            <td>Oracle</td>
+            <td class="not-supported">✗ Not Supported</td>
+            <td>—</td>
+            <td class="notes">Oracle does not have a separate SCHEMA object — in Oracle, every user IS a schema. Creating a user (CREATE USER) creates the schema of the same name. Objects are owned by users/schemas, and the two terms are interchangeable in Oracle. There is no CREATE SCHEMA DDL to create a new namespace independently of a user. The CREATE SCHEMA statement exists in Oracle but only as a convenience to create multiple objects in one transaction, not to create the schema itself.</td>
+          </tr>
+          <tr>
+            <td>SQLite</td>
+            <td class="not-supported">✗ Not Supported</td>
+            <td>—</td>
+            <td class="notes">SQLite has no schema namespace concept within a database file. Each SQLite database file is a single namespace. The ATTACH DATABASE statement allows attaching multiple database files to one connection, and the attached databases are referenced by alias — this is the closest equivalent to cross-schema access.</td>
+          </tr>
+    </tbody>
+  </table>
+
+  <h2>Details</h2>
+  <div class="detail-block">
+    <p style="margin:0">The term 'schema' means fundamentally different things across engines. In MySQL, SCHEMA = DATABASE — they are completely synonymous. In PostgreSQL, SQL Server, and the SQL standard, a schema is a namespace within a database (one database can contain many schemas). In Oracle, a schema is inseparable from a user account — you cannot create a schema without creating a user. SQLite has no schemas; ATTACH DATABASE provides a similar multi-namespace capability. The SQL standard search path concept (controlling which schema is default for unqualified names) exists natively in PostgreSQL (search_path) and SQL Server (default schema per login), but not in MySQL or Oracle in the same form.</p>
+  </div>
+
+  <h2>Standard Syntax</h2>
+  <div class="syntax">CREATE SCHEMA sales;
+
+CREATE TABLE sales.orders (
+    id     INT PRIMARY KEY,
+    amount DECIMAL(10,2)
+);
+
+SELECT * FROM sales.orders;</div>
+
+  <h2>Version Support</h2>
+  <div style="margin-top: 8px;">
+    <span class="version-badge version-supported">MySQL: Since 5.0</span>
+    <span class="version-badge version-supported">PostgreSQL: Since 7.3</span>
+    <span class="version-badge version-supported">SQL Server: Since 2005</span>
+    <span class="version-badge version-not-supported">Oracle: Not supported</span>
+    <span class="version-badge version-not-supported">SQLite: Not supported</span>
+    
+  </div>
+
+  <h2>Per-Database Syntax &amp; Notes</h2>
+  <div class="per-db-section">
+        <h4>MySQL</h4>
+        <p class="notes">In MySQL, SCHEMA is a synonym for DATABASE — CREATE SCHEMA and CREATE DATABASE are interchangeable. There is no sub-database namespace concept; each schema/database is a fully separate unit. The dot notation (schema.table) is the cross-database reference syntax. This differs from every other engine where schemas are namespaces within a database.</p>
+        <div class="syntax">-- CREATE SCHEMA = CREATE DATABASE in MySQL:
+CREATE SCHEMA sales;
+-- Equivalent to:
+CREATE DATABASE sales;
+
+-- Use the schema:
+USE sales;
+CREATE TABLE orders (id INT PRIMARY KEY, amount DECIMAL(10,2));
+
+-- Cross-database reference:
+SELECT * FROM sales.orders;
+
+-- CREATE SCHEMA with charset:
+CREATE SCHEMA sales
+    CHARACTER SET utf8mb4
+    COLLATE utf8mb4_unicode_ci;</div>
+        <h4>PostgreSQL</h4>
+        <p class="notes">Schemas are namespaces within a PostgreSQL database (distinct from databases themselves). The default schema is public. search_path controls which schemas are searched when an unqualified name is used. CREATE SCHEMA ... AUTHORIZATION assigns schema ownership. Objects in different schemas can be queried in the same connection; cross-database queries require foreign data wrappers (postgres_fdw).</p>
+        <div class="syntax">-- Create a schema:
+CREATE SCHEMA sales;
+CREATE SCHEMA sales AUTHORIZATION alice;  -- owned by alice
+
+-- Create a table in the schema:
+CREATE TABLE sales.orders (
+    id     SERIAL PRIMARY KEY,
+    amount NUMERIC(10,2)
+);
+
+-- Set the search path for the session:
+SET search_path TO sales, public;
+
+-- After setting search_path, unqualified names resolve to sales first:
+SELECT * FROM orders;  -- resolves to sales.orders
+
+-- Grant schema usage:
+GRANT USAGE ON SCHEMA sales TO reporting_role;
+GRANT SELECT ON ALL TABLES IN SCHEMA sales TO reporting_role;</div>
+        <h4>SQL Server</h4>
+        <p class="notes">Schemas are sub-namespaces within a database (SQL Server 2005 replaced the old owner-based dbo.table model). The default schema is dbo. Each login has a default schema. Permissions can be granted at the schema level, applying to all current and future objects. The four-part name server.database.schema.object can reference objects across databases and linked servers.</p>
+        <div class="syntax">-- Create a schema:
+CREATE SCHEMA sales AUTHORIZATION dbo;
+
+-- Create table in schema:
+CREATE TABLE sales.orders (
+    id     INT IDENTITY PRIMARY KEY,
+    amount DECIMAL(10,2)
+);
+
+-- Transfer an existing table to a different schema:
+ALTER SCHEMA sales TRANSFER dbo.legacy_orders;
+
+-- Grant permissions at schema level:
+GRANT SELECT ON SCHEMA::sales TO reporting_user;
+GRANT EXECUTE ON SCHEMA::sales TO api_user;
+
+-- Four-part reference:
+SELECT * FROM myserver.mydb.sales.orders;</div>
+        <h4>Oracle</h4>
+        <p class="notes">Oracle does not have a separate SCHEMA object — in Oracle, every user IS a schema. Creating a user (CREATE USER) creates the schema of the same name. Objects are owned by users/schemas, and the two terms are interchangeable in Oracle. There is no CREATE SCHEMA DDL to create a new namespace independently of a user. The CREATE SCHEMA statement exists in Oracle but only as a convenience to create multiple objects in one transaction, not to create the schema itself.</p>
+        <div class="syntax">-- In Oracle, schema = user:
+CREATE USER sales IDENTIFIED BY password
+    DEFAULT TABLESPACE users
+    QUOTA UNLIMITED ON users;
+
+GRANT CREATE SESSION, CREATE TABLE TO sales;
+
+-- Log in as the sales user:
+-- sqlplus sales/password@db
+
+CREATE TABLE orders (id NUMBER PRIMARY KEY, amount NUMBER(10,2));
+-- This table is now sales.orders
+
+-- Access from another user:
+SELECT * FROM sales.orders;
+
+-- Grant access:
+GRANT SELECT ON sales.orders TO reporting_user;</div>
+        <h4>SQLite</h4>
+        <p class="notes">SQLite has no schema namespace concept within a database file. Each SQLite database file is a single namespace. The ATTACH DATABASE statement allows attaching multiple database files to one connection, and the attached databases are referenced by alias — this is the closest equivalent to cross-schema access.</p>
+        <div class="syntax">-- No schemas, but ATTACH DATABASE gives a similar namespace:
+ATTACH DATABASE '/data/sales.db' AS sales;
+ATTACH DATABASE '/data/hr.db'    AS hr;
+
+-- Cross-database (cross-schema equivalent) query:
+SELECT s.id, h.employee_name
+FROM sales.orders s
+JOIN hr.employees h ON h.id = s.employee_id;
+
+-- The main database is always accessible as 'main':
+SELECT * FROM main.products;
+
+-- List attached databases:
+PRAGMA database_list;</div>
+  </div>
+
+  <div class="search-cta">
+    <p style="margin:0">Looking for another SQL command?
+      <a href="/">Search all SQL commands →</a>
+    </p>
+  </div>
+
+</body>
+</html>

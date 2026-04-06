@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DEADLOCK HANDLING SQL Compatibility | MySQL, PostgreSQL, SQL Server, Oracle, SQLite</title>
+  <meta name="description" content="DEADLOCK HANDLING: How each engine detects and resolves deadlocks — circular lock dependencies between transactions — and what the application must do in response. Check support across MySQL, PostgreSQL, SQL Server, Oracle, and SQLite.">
+  <meta property="og:site_name" content="Can I Use SQL?">
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="https://www.caniusesql.com/f/deadlock-handling">
+  <meta property="og:title" content="DEADLOCK HANDLING SQL Compatibility | MySQL, PostgreSQL, SQL Server, Oracle, SQLite">
+  <meta property="og:description" content="DEADLOCK HANDLING: How each engine detects and resolves deadlocks — circular lock dependencies between transactions — and what the application must do in response. Check support across MySQL, PostgreSQL, SQL Server, Oracle, and SQLite.">
+  <meta property="og:image" content="https://www.caniusesql.com/og-image.png?v=5">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="DEADLOCK HANDLING SQL Compatibility | MySQL, PostgreSQL, SQL Server, Oracle, SQLite">
+  <meta name="twitter:description" content="DEADLOCK HANDLING: How each engine detects and resolves deadlocks — circular lock dependencies between transactions — and what the application must do in response. Check support across MySQL, PostgreSQL, SQL Server, Oracle, and SQLite.">
+  <meta name="twitter:image" content="https://www.caniusesql.com/og-image.png?v=5">
+  <link rel="sitemap" type="application/xml" href="/sitemap.xml">
+  <link rel="canonical" href="https://www.caniusesql.com/f/deadlock-handling">
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen,
+                   Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+      line-height: 1.6;
+      color: #333;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+      background-color: #f5f7fa;
+    }
+    a { color: #3498db; }
+    .site-header {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 24px;
+      flex-wrap: wrap;
+    }
+    .home-link {
+      text-decoration: none;
+      color: #3498db;
+      font-size: 15px;
+      white-space: nowrap;
+    }
+    .home-link:hover { text-decoration: underline; }
+    h1 {
+      color: #2c3e50;
+      margin: 0;
+      font-size: 1.8rem;
+    }
+    h2 { color: #2c3e50; margin-top: 32px; }
+    h4 { color: #2c3e50; margin: 16px 0 4px; }
+    .category-badge {
+      display: inline-block;
+      padding: 3px 10px;
+      background: #eaf3fb;
+      color: #2980b9;
+      border: 1px solid #aed6f1;
+      border-radius: 12px;
+      font-size: 13px;
+      margin-left: 8px;
+      vertical-align: middle;
+    }
+    .command-desc {
+      font-size: 1.05rem;
+      color: #555;
+      margin-bottom: 24px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background-color: white;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    th, td {
+      text-align: left;
+      padding: 12px 15px;
+      border-bottom: 1px solid #ddd;
+    }
+    th { background-color: #3498db; color: white; }
+    tr:last-child td { border-bottom: none; }
+    tr:hover { background-color: #f5f5f5; }
+    .supported     { color: #27ae60; font-weight: bold; }
+    .not-supported { color: #e74c3c; }
+    .notes         { font-size: 14px; color: #7f8c8d; }
+    .syntax {
+      background-color: #f8f9fa;
+      padding: 15px;
+      border-radius: 4px;
+      border-left: 4px solid #3498db;
+      font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+      font-size: 14px;
+      white-space: pre-wrap;
+      margin: 8px 0 16px;
+      overflow-x: auto;
+    }
+    .version-badge {
+      display: inline-block;
+      padding: 3px 8px;
+      border-radius: 4px;
+      font-size: 14px;
+      margin: 0 4px 6px 0;
+    }
+    .version-supported {
+      background-color: #e6f7ee;
+      color: #27ae60;
+      border: 1px solid #27ae60;
+    }
+    .version-not-supported {
+      background-color: #fde8e8;
+      color: #e74c3c;
+      border: 1px solid #e74c3c;
+    }
+    .search-cta {
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      padding: 20px 24px;
+      margin-top: 40px;
+      text-align: center;
+      font-size: 1rem;
+    }
+    .search-cta a {
+      font-weight: 600;
+      text-decoration: none;
+    }
+    .search-cta a:hover { text-decoration: underline; }
+    .per-db-section {
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      padding: 20px 24px;
+      margin-top: 8px;
+    }
+    .detail-block {
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      padding: 20px 24px;
+      margin-top: 8px;
+    }
+  </style>
+</head>
+<body>
+
+  <header class="site-header">
+    <a href="/" class="home-link">← Can I Use SQL?</a>
+    <h1>DEADLOCK HANDLING<span class="category-badge">Transactions</span></h1>
+  </header>
+
+  <p class="command-desc">How each engine detects and resolves deadlocks — circular lock dependencies between transactions — and what the application must do in response.</p>
+
+  <h2>Compatibility</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Database System</th>
+        <th>Support Status</th>
+        <th>Since Version</th>
+        <th>Notes</th>
+      </tr>
+    </thead>
+    <tbody>
+          <tr>
+            <td>MySQL</td>
+            <td class="supported">✓ Supported</td>
+            <td>5.0</td>
+            <td class="notes">InnoDB automatically detects deadlocks and rolls back the transaction with the least undo work (the 'cheaper' victim). Error code 1213 (ER_LOCK_DEADLOCK). The application must catch this and retry the transaction.</td>
+          </tr>
+          <tr>
+            <td>PostgreSQL</td>
+            <td class="supported">✓ Supported</td>
+            <td>7.4</td>
+            <td class="notes">PostgreSQL detects deadlocks using a wait-for graph checked after a configurable lock_timeout or deadlock_timeout (default 1 second). One transaction is chosen as victim and receives error code 40P01. The application must catch and retry.</td>
+          </tr>
+          <tr>
+            <td>SQL Server</td>
+            <td class="supported">✓ Supported</td>
+            <td>2000</td>
+            <td class="notes">Deadlock monitor runs every 5 seconds by default (escalating to 100ms when deadlocks are detected). Victim is chosen by lowest deadlock priority, then cheapest rollback. Error 1205. Use SET DEADLOCK_PRIORITY to influence victim selection.</td>
+          </tr>
+          <tr>
+            <td>Oracle</td>
+            <td class="supported">✓ Supported</td>
+            <td>7</td>
+            <td class="notes">Oracle detects deadlocks and immediately rolls back only the statement that caused the deadlock (not the entire transaction). ORA-00060 is raised. The transaction remains open and the application can choose to commit, roll back further, or retry the statement.</td>
+          </tr>
+          <tr>
+            <td>SQLite</td>
+            <td class="supported">✓ Supported</td>
+            <td>3.0.0</td>
+            <td class="notes">SQLite's locking model (database-level write lock) makes traditional row-level deadlocks impossible. SQLITE_BUSY (error 5) is returned when a write lock cannot be acquired. Use busy_timeout to configure how long to wait before returning SQLITE_BUSY.</td>
+          </tr>
+    </tbody>
+  </table>
+
+  <h2>Details</h2>
+  <div class="detail-block">
+    <p style="margin:0">All five engines detect and resolve deadlocks automatically, but the scope of rollback differs critically. MySQL, PostgreSQL, and SQL Server roll back the entire victim transaction — the application must re-execute from the beginning. Oracle only rolls back the individual deadlocking statement, leaving the transaction open; this gives the application finer control but also means it can silently continue in an inconsistent state if not handled carefully. Deadlock avoidance strategies are consistent across engines: always acquire locks in the same order across transactions, keep transactions short, use appropriate index coverage to reduce lock range, and consider optimistic locking (version columns) as an alternative to pessimistic row locks for read-heavy workloads. In SQL Server, Extended Events or the system_health session captures deadlock graphs automatically — reviewing these is the first step in resolving recurring deadlocks.</p>
+  </div>
+
+  <h2>Standard Syntax</h2>
+  <div class="syntax">-- SQL Server: one transaction is automatically chosen as victim
+-- Application must catch error 1205 and retry</div>
+
+  <h2>Version Support</h2>
+  <div style="margin-top: 8px;">
+    <span class="version-badge version-supported">MySQL: Since 5.0</span>
+    <span class="version-badge version-supported">PostgreSQL: Since 7.4</span>
+    <span class="version-badge version-supported">SQL Server: Since 2000</span>
+    <span class="version-badge version-supported">Oracle: Since 7</span>
+    <span class="version-badge version-supported">SQLite: Since 3.0.0</span>
+    
+  </div>
+
+  <h2>Per-Database Syntax &amp; Notes</h2>
+  <div class="per-db-section">
+        <h4>MySQL</h4>
+        <p class="notes">InnoDB automatically detects deadlocks and rolls back the transaction with the least undo work (the 'cheaper' victim). Error code 1213 (ER_LOCK_DEADLOCK). The application must catch this and retry the transaction.</p>
+        <div class="syntax">-- Application retry pattern:
+-- Catch error 1213, then re-execute the full transaction
+SHOW ENGINE INNODB STATUS;  -- inspect recent deadlock detail</div>
+        <h4>PostgreSQL</h4>
+        <p class="notes">PostgreSQL detects deadlocks using a wait-for graph checked after a configurable lock_timeout or deadlock_timeout (default 1 second). One transaction is chosen as victim and receives error code 40P01. The application must catch and retry.</p>
+        <div class="syntax">-- Set deadlock detection interval:
+SET deadlock_timeout = '500ms';
+-- Application catches SQLSTATE 40P01 and retries</div>
+        <h4>SQL Server</h4>
+        <p class="notes">Deadlock monitor runs every 5 seconds by default (escalating to 100ms when deadlocks are detected). Victim is chosen by lowest deadlock priority, then cheapest rollback. Error 1205. Use SET DEADLOCK_PRIORITY to influence victim selection.</p>
+        <div class="syntax">SET DEADLOCK_PRIORITY LOW;  -- make this session prefer to be victim
+-- Catch error 1205 in application and retry
+-- Trace flag 1222 or Extended Events for deadlock graph logging</div>
+        <h4>Oracle</h4>
+        <p class="notes">Oracle detects deadlocks and immediately rolls back only the statement that caused the deadlock (not the entire transaction). ORA-00060 is raised. The transaction remains open and the application can choose to commit, roll back further, or retry the statement.</p>
+        <div class="syntax">-- Catch ORA-00060
+-- Oracle rolls back only the deadlocking statement
+-- Application decides whether to retry the statement or rollback the transaction</div>
+        <h4>SQLite</h4>
+        <p class="notes">SQLite's locking model (database-level write lock) makes traditional row-level deadlocks impossible. SQLITE_BUSY (error 5) is returned when a write lock cannot be acquired. Use busy_timeout to configure how long to wait before returning SQLITE_BUSY.</p>
+        <div class="syntax">-- Set busy timeout:
+PRAGMA busy_timeout = 5000;  -- wait up to 5 seconds
+-- Or handle SQLITE_BUSY (error 5) in application</div>
+  </div>
+
+  <div class="search-cta">
+    <p style="margin:0">Looking for another SQL command?
+      <a href="/">Search all SQL commands →</a>
+    </p>
+  </div>
+
+</body>
+</html>

@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DEFAULT VALUE SQL Compatibility | MySQL, PostgreSQL, SQL Server, Oracle, SQLite</title>
+  <meta name="description" content="DEFAULT VALUE: Specify a value to be used automatically when no value is provided for a column during INSERT. Check support across MySQL, PostgreSQL, SQL Server, Oracle, and SQLite.">
+  <meta property="og:site_name" content="Can I Use SQL?">
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="https://www.caniusesql.com/f/default-value">
+  <meta property="og:title" content="DEFAULT VALUE SQL Compatibility | MySQL, PostgreSQL, SQL Server, Oracle, SQLite">
+  <meta property="og:description" content="DEFAULT VALUE: Specify a value to be used automatically when no value is provided for a column during INSERT. Check support across MySQL, PostgreSQL, SQL Server, Oracle, and SQLite.">
+  <meta property="og:image" content="https://www.caniusesql.com/og-image.png?v=5">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="DEFAULT VALUE SQL Compatibility | MySQL, PostgreSQL, SQL Server, Oracle, SQLite">
+  <meta name="twitter:description" content="DEFAULT VALUE: Specify a value to be used automatically when no value is provided for a column during INSERT. Check support across MySQL, PostgreSQL, SQL Server, Oracle, and SQLite.">
+  <meta name="twitter:image" content="https://www.caniusesql.com/og-image.png?v=5">
+  <link rel="sitemap" type="application/xml" href="/sitemap.xml">
+  <link rel="canonical" href="https://www.caniusesql.com/f/default-value">
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen,
+                   Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+      line-height: 1.6;
+      color: #333;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+      background-color: #f5f7fa;
+    }
+    a { color: #3498db; }
+    .site-header {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 24px;
+      flex-wrap: wrap;
+    }
+    .home-link {
+      text-decoration: none;
+      color: #3498db;
+      font-size: 15px;
+      white-space: nowrap;
+    }
+    .home-link:hover { text-decoration: underline; }
+    h1 {
+      color: #2c3e50;
+      margin: 0;
+      font-size: 1.8rem;
+    }
+    h2 { color: #2c3e50; margin-top: 32px; }
+    h4 { color: #2c3e50; margin: 16px 0 4px; }
+    .category-badge {
+      display: inline-block;
+      padding: 3px 10px;
+      background: #eaf3fb;
+      color: #2980b9;
+      border: 1px solid #aed6f1;
+      border-radius: 12px;
+      font-size: 13px;
+      margin-left: 8px;
+      vertical-align: middle;
+    }
+    .command-desc {
+      font-size: 1.05rem;
+      color: #555;
+      margin-bottom: 24px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background-color: white;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    th, td {
+      text-align: left;
+      padding: 12px 15px;
+      border-bottom: 1px solid #ddd;
+    }
+    th { background-color: #3498db; color: white; }
+    tr:last-child td { border-bottom: none; }
+    tr:hover { background-color: #f5f5f5; }
+    .supported     { color: #27ae60; font-weight: bold; }
+    .not-supported { color: #e74c3c; }
+    .notes         { font-size: 14px; color: #7f8c8d; }
+    .syntax {
+      background-color: #f8f9fa;
+      padding: 15px;
+      border-radius: 4px;
+      border-left: 4px solid #3498db;
+      font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+      font-size: 14px;
+      white-space: pre-wrap;
+      margin: 8px 0 16px;
+      overflow-x: auto;
+    }
+    .version-badge {
+      display: inline-block;
+      padding: 3px 8px;
+      border-radius: 4px;
+      font-size: 14px;
+      margin: 0 4px 6px 0;
+    }
+    .version-supported {
+      background-color: #e6f7ee;
+      color: #27ae60;
+      border: 1px solid #27ae60;
+    }
+    .version-not-supported {
+      background-color: #fde8e8;
+      color: #e74c3c;
+      border: 1px solid #e74c3c;
+    }
+    .search-cta {
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      padding: 20px 24px;
+      margin-top: 40px;
+      text-align: center;
+      font-size: 1rem;
+    }
+    .search-cta a {
+      font-weight: 600;
+      text-decoration: none;
+    }
+    .search-cta a:hover { text-decoration: underline; }
+    .per-db-section {
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      padding: 20px 24px;
+      margin-top: 8px;
+    }
+    .detail-block {
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      padding: 20px 24px;
+      margin-top: 8px;
+    }
+  </style>
+</head>
+<body>
+
+  <header class="site-header">
+    <a href="/" class="home-link">← Can I Use SQL?</a>
+    <h1>DEFAULT VALUE<span class="category-badge">DDL</span></h1>
+  </header>
+
+  <p class="command-desc">Specify a value to be used automatically when no value is provided for a column during INSERT.</p>
+
+  <h2>Compatibility</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Database System</th>
+        <th>Support Status</th>
+        <th>Since Version</th>
+        <th>Notes</th>
+      </tr>
+    </thead>
+    <tbody>
+          <tr>
+            <td>MySQL</td>
+            <td class="supported">✓ Supported</td>
+            <td>all</td>
+            <td class="notes">Literal defaults for any type. Expression defaults (DEFAULT (expr)) supported from 8.0.13. CURRENT_TIMESTAMP as default for DATETIME/TIMESTAMP. ON UPDATE CURRENT_TIMESTAMP auto-updates the column on row modification.</td>
+          </tr>
+          <tr>
+            <td>PostgreSQL</td>
+            <td class="supported">✓ Supported</td>
+            <td>all</td>
+            <td class="notes">Defaults can be any expression, including function calls. CURRENT_TIMESTAMP, NOW(), gen_random_uuid(), etc. all work. DEFAULT can be set or dropped with ALTER TABLE ... SET DEFAULT / DROP DEFAULT.</td>
+          </tr>
+          <tr>
+            <td>SQL Server</td>
+            <td class="supported">✓ Supported</td>
+            <td>all</td>
+            <td class="notes">Named DEFAULT constraints are preferred over inline defaults — they can be referenced and dropped by name. GETDATE(), NEWID(), NEWSEQUENTIALID() are common default expressions. DEFAULT keyword can be used in INSERT to explicitly invoke the default.</td>
+          </tr>
+          <tr>
+            <td>Oracle</td>
+            <td class="supported">✓ Supported</td>
+            <td>all</td>
+            <td class="notes">Standard DEFAULT with literals or expressions. SYSDATE, SYSTIMESTAMP, SYS_GUID() (UUID) as common defaults. 12c+ adds DEFAULT ON NULL — applies the default even when NULL is explicitly inserted (unlike standard DEFAULT which only fires when the column is omitted).</td>
+          </tr>
+          <tr>
+            <td>SQLite</td>
+            <td class="supported">✓ Supported</td>
+            <td>all</td>
+            <td class="notes">Supports literal defaults and a limited set of functions: CURRENT_TIME, CURRENT_DATE, CURRENT_TIMESTAMP. Arbitrary expression defaults are supported in parentheses. Cannot alter defaults after table creation without recreating the table.</td>
+          </tr>
+    </tbody>
+  </table>
+
+  <h2>Details</h2>
+  <div class="detail-block">
+    <p style="margin:0">Oracle 12c's DEFAULT ON NULL is unique — it fires the default even when NULL is explicitly provided, not just when the column is omitted from INSERT. SQL Server's named DEFAULT constraints are best practice since they can be dropped by name. SQLite does not allow altering defaults post-creation.</p>
+  </div>
+
+  <h2>Standard Syntax</h2>
+  <div class="syntax">CREATE TABLE events (
+  id         INT PRIMARY KEY,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  status     VARCHAR(20) DEFAULT 'pending'
+);</div>
+
+  <h2>Version Support</h2>
+  <div style="margin-top: 8px;">
+    <span class="version-badge version-supported">MySQL: Since all</span>
+    <span class="version-badge version-supported">PostgreSQL: Since all</span>
+    <span class="version-badge version-supported">SQL Server: Since all</span>
+    <span class="version-badge version-supported">Oracle: Since all</span>
+    <span class="version-badge version-supported">SQLite: Since all</span>
+    
+  </div>
+
+  <h2>Per-Database Syntax &amp; Notes</h2>
+  <div class="per-db-section">
+        <h4>MySQL</h4>
+        <p class="notes">Literal defaults for any type. Expression defaults (DEFAULT (expr)) supported from 8.0.13. CURRENT_TIMESTAMP as default for DATETIME/TIMESTAMP. ON UPDATE CURRENT_TIMESTAMP auto-updates the column on row modification.</p>
+        <div class="syntax">CREATE TABLE events (
+  id         INT AUTO_INCREMENT PRIMARY KEY,
+  status     VARCHAR(20)  DEFAULT 'pending',
+  score      INT          DEFAULT 0,
+  created_at DATETIME     DEFAULT CURRENT_TIMESTAMP,
+  updated_at DATETIME     DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+-- Expression default (8.0.13+):
+CREATE TABLE items (price DECIMAL(10,2), tax DECIMAL(10,2) DEFAULT (price * 0.1));</div>
+        <h4>PostgreSQL</h4>
+        <p class="notes">Defaults can be any expression, including function calls. CURRENT_TIMESTAMP, NOW(), gen_random_uuid(), etc. all work. DEFAULT can be set or dropped with ALTER TABLE ... SET DEFAULT / DROP DEFAULT.</p>
+        <div class="syntax">CREATE TABLE events (
+  id         SERIAL PRIMARY KEY,
+  status     TEXT        DEFAULT 'pending',
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  token      UUID        DEFAULT gen_random_uuid()
+);
+
+ALTER TABLE events ALTER COLUMN status SET DEFAULT 'active';
+ALTER TABLE events ALTER COLUMN status DROP DEFAULT;</div>
+        <h4>SQL Server</h4>
+        <p class="notes">Named DEFAULT constraints are preferred over inline defaults — they can be referenced and dropped by name. GETDATE(), NEWID(), NEWSEQUENTIALID() are common default expressions. DEFAULT keyword can be used in INSERT to explicitly invoke the default.</p>
+        <div class="syntax">CREATE TABLE events (
+  id         INT IDENTITY PRIMARY KEY,
+  status     NVARCHAR(20) CONSTRAINT df_status DEFAULT 'pending',
+  created_at DATETIME     CONSTRAINT df_created DEFAULT GETDATE(),
+  token      UNIQUEIDENTIFIER CONSTRAINT df_token DEFAULT NEWID()
+);
+
+-- Explicit default in INSERT:
+INSERT INTO events (status, created_at) VALUES (DEFAULT, DEFAULT);
+
+-- Drop a named default:
+ALTER TABLE events DROP CONSTRAINT df_status;</div>
+        <h4>Oracle</h4>
+        <p class="notes">Standard DEFAULT with literals or expressions. SYSDATE, SYSTIMESTAMP, SYS_GUID() (UUID) as common defaults. 12c+ adds DEFAULT ON NULL — applies the default even when NULL is explicitly inserted (unlike standard DEFAULT which only fires when the column is omitted).</p>
+        <div class="syntax">CREATE TABLE events (
+  id         NUMBER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+  status     VARCHAR2(20)  DEFAULT 'pending',
+  created_at TIMESTAMP     DEFAULT SYSTIMESTAMP,
+  token      RAW(16)       DEFAULT SYS_GUID()
+);
+
+-- 12c+: default even when NULL is explicitly inserted:
+CREATE TABLE items (qty NUMBER DEFAULT ON NULL 1);</div>
+        <h4>SQLite</h4>
+        <p class="notes">Supports literal defaults and a limited set of functions: CURRENT_TIME, CURRENT_DATE, CURRENT_TIMESTAMP. Arbitrary expression defaults are supported in parentheses. Cannot alter defaults after table creation without recreating the table.</p>
+        <div class="syntax">CREATE TABLE events (
+  id         INTEGER PRIMARY KEY,
+  status     TEXT     DEFAULT 'pending',
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  score      INTEGER  DEFAULT 0
+);</div>
+  </div>
+
+  <div class="search-cta">
+    <p style="margin:0">Looking for another SQL command?
+      <a href="/">Search all SQL commands →</a>
+    </p>
+  </div>
+
+</body>
+</html>
