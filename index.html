@@ -212,6 +212,13 @@
         .command-list a:hover {
             text-decoration: underline;
         }
+        .overview {
+            font-size: 14px;
+            color: #555;
+            margin-top: -5px;
+            margin-bottom: 15px;
+            line-height: 1.5;
+        }
     </style>
 </head>
 <body>
@@ -281,17 +288,19 @@
         // Database of SQL commands and their compatibility
         let sqlDatabase = null;
 
+        function escapeHTML(str) {
+            return str.replace(/&/g, "&amp;")
+                    .replace(/</g, "&lt;")
+                    .replace(/>/g, "&gt;")
+                    .replace(/\"/g, "&quot;")
+                    .replace(/'/g, "&#39;")
+                    .replace(/\//g, "&#x2F;");
+        }
+        
         // Search for a command
         function searchCommand(command, replace = false) {
             const searchInput = command || document.getElementById('commandSearch').value.trim().toLowerCase();
-            function escapeHTML(str) {
-                return str.replace(/&/g, "&amp;")
-                        .replace(/</g, "&lt;")
-                        .replace(/>/g, "&gt;")
-                        .replace(/\"/g, "&quot;")
-                        .replace(/'/g, "&#39;")
-                        .replace(/\//g, "&#x2F;");
-            }
+            
             if (!searchInput) return;
 
             if (command) {
@@ -317,7 +326,8 @@
 
                 let resultHTML = `
                     <h2>Compatibility for "${foundCommand.toUpperCase()}"</h2>
-                    <p>${commandData.description}</p>
+                    <p>${escapeHTML(commandData.description)}</p>
+                    ${commandData.overview ? `<p class="overview">${escapeHTML(commandData.overview)}</p>` : ''}
                     <table>
                         <thead>
                             <tr>
@@ -343,7 +353,7 @@
                             <td>${db.charAt(0).toUpperCase() + db.slice(1)}</td>
                             <td class="${supportClass}">${supportText}</td>
                             <td>${versionText}</td>
-                            <td class="notes">${dbInfo.notes}</td>
+                            <td class="notes">${escapeHTML(dbInfo.notes)}</td>
                         </tr>
                     `;
                 }
@@ -398,7 +408,7 @@
             
             let detailHTML = `
                 <h2>${command.toUpperCase()} - Detailed Information</h2>
-                <p>${commandData.details}</p>
+                <p>${escapeHTML(commandData.details)}</p>
                 
                 <h3>Standard Syntax</h3>
                 <div class="syntax">${commandData.syntax}</div>
@@ -424,7 +434,7 @@
             `;
             
             for (const [db, info] of Object.entries(commandData.compatibility)) {
-                detailHTML += `<li><strong>${db.charAt(0).toUpperCase() + db.slice(1)}:</strong> ${info.notes}</li>`;
+                detailHTML += `<li><strong>${db.charAt(0).toUpperCase() + db.slice(1)}:</strong> ${escapeHTML(info.notes)}</li>`;
             }
             
             detailHTML += `

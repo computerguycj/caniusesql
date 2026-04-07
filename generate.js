@@ -50,7 +50,7 @@ function mkdir(dir) {
 // ---------------------------------------------------------------------------
 
 function buildPage(commandName, entry) {
-  const { slug, description, details, syntax, compatibility, category } = entry;
+  const { slug, description, overview, details, syntax, compatibility, category } = entry;
 
   const displayName = commandName.toUpperCase();
   const title       = `${displayName} SQL Compatibility | MySQL, PostgreSQL, SQL Server, Oracle, SQLite`;
@@ -170,7 +170,15 @@ function buildPage(commandName, entry) {
     .command-desc {
       font-size: 1.05rem;
       color: #555;
+      margin-bottom: 8px;
+    }
+    .command-overview {
+      font-size: 0.95rem;
+      color: #666;
       margin-bottom: 24px;
+      line-height: 1.6;
+      border-left: 3px solid #b0c4de;
+      padding-left: 12px;
     }
     table {
       width: 100%;
@@ -257,6 +265,7 @@ function buildPage(commandName, entry) {
   </header>
 
   <p class="command-desc">${esc(description)}</p>
+  ${overview ? `<p class="command-overview">${esc(overview)}</p>` : ''}
 
   <h2>Compatibility</h2>
   <table>
