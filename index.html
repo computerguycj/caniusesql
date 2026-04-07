@@ -288,17 +288,19 @@
         // Database of SQL commands and their compatibility
         let sqlDatabase = null;
 
+        function escapeHTML(str) {
+            return str.replace(/&/g, "&amp;")
+                    .replace(/</g, "&lt;")
+                    .replace(/>/g, "&gt;")
+                    .replace(/\"/g, "&quot;")
+                    .replace(/'/g, "&#39;")
+                    .replace(/\//g, "&#x2F;");
+        }
+        
         // Search for a command
         function searchCommand(command, replace = false) {
             const searchInput = command || document.getElementById('commandSearch').value.trim().toLowerCase();
-            function escapeHTML(str) {
-                return str.replace(/&/g, "&amp;")
-                        .replace(/</g, "&lt;")
-                        .replace(/>/g, "&gt;")
-                        .replace(/\"/g, "&quot;")
-                        .replace(/'/g, "&#39;")
-                        .replace(/\//g, "&#x2F;");
-            }
+            
             if (!searchInput) return;
 
             if (command) {
