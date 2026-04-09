@@ -3,6 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <link rel="stylesheet" href="/styles.css">
   <title>VACUUM / ANALYZE SQL Compatibility | MySQL, PostgreSQL, SQL Server, Oracle, SQLite</title>
   <meta name="description" content="VACUUM / ANALYZE: Maintenance operations that reclaim storage from dead rows (VACUUM) and update query planner statistics (ANALYZE), keeping performance stable over time. Check support across MySQL, PostgreSQL, SQL Server, Oracle, and SQLite.">
   <meta property="og:site_name" content="Can I Use SQL?">
@@ -17,140 +19,29 @@
   <meta name="twitter:image" content="https://www.caniusesql.com/og-image.png?v=5">
   <link rel="sitemap" type="application/xml" href="/sitemap.xml">
   <link rel="canonical" href="https://www.caniusesql.com/f/vacuum-analyze">
-  <style>
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen,
-                   Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-      line-height: 1.6;
-      color: #333;
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 20px;
-      background-color: #f5f7fa;
-    }
-    a { color: #3498db; }
-    .site-header {
-      display: flex;
-      align-items: center;
-      gap: 16px;
-      margin-bottom: 24px;
-      flex-wrap: wrap;
-    }
-    .home-link {
-      text-decoration: none;
-      color: #3498db;
-      font-size: 15px;
-      white-space: nowrap;
-    }
-    .home-link:hover { text-decoration: underline; }
-    h1 {
-      color: #2c3e50;
-      margin: 0;
-      font-size: 1.8rem;
-    }
-    h2 { color: #2c3e50; margin-top: 32px; }
-    h4 { color: #2c3e50; margin: 16px 0 4px; }
-    .category-badge {
-      display: inline-block;
-      padding: 3px 10px;
-      background: #eaf3fb;
-      color: #2980b9;
-      border: 1px solid #aed6f1;
-      border-radius: 12px;
-      font-size: 13px;
-      margin-left: 8px;
-      vertical-align: middle;
-    }
-    .command-desc {
-      font-size: 1.05rem;
-      color: #555;
-      margin-bottom: 24px;
-    }
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      background-color: white;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-      border-radius: 8px;
-      overflow: hidden;
-    }
-    th, td {
-      text-align: left;
-      padding: 12px 15px;
-      border-bottom: 1px solid #ddd;
-    }
-    th { background-color: #3498db; color: white; }
-    tr:last-child td { border-bottom: none; }
-    tr:hover { background-color: #f5f5f5; }
-    .supported     { color: #27ae60; font-weight: bold; }
-    .not-supported { color: #e74c3c; }
-    .notes         { font-size: 14px; color: #7f8c8d; }
-    .syntax {
-      background-color: #f8f9fa;
-      padding: 15px;
-      border-radius: 4px;
-      border-left: 4px solid #3498db;
-      font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
-      font-size: 14px;
-      white-space: pre-wrap;
-      margin: 8px 0 16px;
-      overflow-x: auto;
-    }
-    .version-badge {
-      display: inline-block;
-      padding: 3px 8px;
-      border-radius: 4px;
-      font-size: 14px;
-      margin: 0 4px 6px 0;
-    }
-    .version-supported {
-      background-color: #e6f7ee;
-      color: #27ae60;
-      border: 1px solid #27ae60;
-    }
-    .version-not-supported {
-      background-color: #fde8e8;
-      color: #e74c3c;
-      border: 1px solid #e74c3c;
-    }
-    .search-cta {
-      background: white;
-      border-radius: 8px;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-      padding: 20px 24px;
-      margin-top: 40px;
-      text-align: center;
-      font-size: 1rem;
-    }
-    .search-cta a {
-      font-weight: 600;
-      text-decoration: none;
-    }
-    .search-cta a:hover { text-decoration: underline; }
-    .per-db-section {
-      background: white;
-      border-radius: 8px;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-      padding: 20px 24px;
-      margin-top: 8px;
-    }
-    .detail-block {
-      background: white;
-      border-radius: 8px;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-      padding: 20px 24px;
-      margin-top: 8px;
-    }
-  </style>
 </head>
 <body>
 
-  <header class="site-header">
-    <a href="/" class="home-link">← Can I Use SQL?</a>
-    <h1>VACUUM / ANALYZE<span class="category-badge">Administration</span></h1>
-  </header>
+<header class="site-header">
+  <a href="/" class="home-link" aria-label="Home">
+    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24"
+         fill="none" stroke="currentColor" stroke-width="2"
+         stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+      <polyline points="9 22 9 12 15 12 15 22"/>
+    </svg>
+  </a>
+  <span class="command-heading"><h1>VACUUM / ANALYZE<span class="category-badge">Administration</span></h1></span>
+  <div class="search-widget">
+    <input class="site-search" type="search" placeholder="Search SQL commands…"
+           autocomplete="off" aria-label="Search SQL commands">
+    <ul class="search-results" hidden role="listbox" aria-label="Search suggestions"></ul>
+  </div>
+</header>
+
 
   <p class="command-desc">Maintenance operations that reclaim storage from dead rows (VACUUM) and update query planner statistics (ANALYZE), keeping performance stable over time.</p>
+  <p class="command-overview">PostgreSQL command that updates statistics about the distribution of data in tables and indexes. The query planner uses these statistics to choose optimal execution plans. Run after significant data changes.</p>
 
   <h2>Compatibility</h2>
   <table>
@@ -246,12 +137,16 @@ ALTER TABLE orders MOVE;                                  -- rebuild segment</di
 ANALYZE;                        -- update query planner stats
 PRAGMA auto_vacuum = INCREMENTAL; -- enable incremental auto-vacuum</div>
   </div>
-
-  <div class="search-cta">
-    <p style="margin:0">Looking for another SQL command?
-      <a href="/">Search all SQL commands →</a>
-    </p>
+<footer class="site-footer">
+  <p>Looking for another SQL command?</p>
+  <div class="search-widget">
+    <input class="site-search" type="search" placeholder="Search SQL commands…"
+           autocomplete="off" aria-label="Search SQL commands">
+    <ul class="search-results" hidden role="listbox" aria-label="Search suggestions"></ul>
   </div>
+</footer>
 
+  <script src="/search.js" defer></script>
+  <script src="/splash.js" defer></script>
 </body>
 </html>

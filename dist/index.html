@@ -1,557 +1,460 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Can I Use SQL? | SQL Compatibility Checker</title>
-    <meta name="description" content="Check SQL command compatibility across MySQL, PostgreSQL, SQL Server, Oracle, and SQLite. Find out which databases support SELECT, MERGE, PIVOT, CTEs, window functions, and more.">
-    <meta property="og:site_name" content="Can I Use SQL?">
-    <meta property="og:type" content="website">
-    <meta property="og:url" content="https://caniusesql.com/">
-    <meta property="og:title" content="Can I Use SQL? | SQL Compatibility Checker">
-    <meta property="og:description" content="Check SQL command compatibility across MySQL, PostgreSQL, SQL Server, Oracle, and SQLite. Find out which databases support SELECT, MERGE, PIVOT, CTEs, window functions, and more.">
-    <meta property="og:image" content="https://caniusesql.com/og-image.png?v=5">
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="Can I Use SQL? | SQL Compatibility Checker">
-    <meta name="twitter:description" content="Check SQL command compatibility across MySQL, PostgreSQL, SQL Server, Oracle, and SQLite. Find out which databases support SELECT, MERGE, PIVOT, CTEs, window functions, and more.">
-    <meta name="twitter:image" content="https://caniusesql.com/og-image.png?v=5">
-    <link rel="sitemap" type="application/xml" href="/sitemap.xml">
-    <link rel="canonical" href="https://caniusesql.com/">
-    <style>
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-            line-height: 1.6;
-            color: #333;
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 20px;
-            background-color: #f5f7fa;
-        }
-        h1 {
-            color: #2c3e50;
-            text-align: center;
-            margin-bottom: 30px;
-        }
-        .search-container {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 20px;
-            justify-content: center;
-        }
-        input {
-            padding: 10px 15px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            font-size: 16px;
-            flex-grow: 1;
-            max-width: 500px;
-        }
-        button {
-            background-color: #3498db;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 16px;
-            transition: background-color 0.2s;
-        }
-        button:hover {
-            background-color: #2980b9;
-        }
-        .filters {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 15px;
-            margin-bottom: 20px;
-            justify-content: center;
-        }
-        .filter-group {
-            background-color: white;
-            padding: 15px;
-            border-radius: 8px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-        }
-        .filter-group h3 {
-            margin-top: 0;
-            margin-bottom: 10px;
-            font-size: 18px;
-            color: #2c3e50;
-        }
-        .checkboxes {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-        }
-        .checkbox-item {
-            display: flex;
-            align-items: center;
-            gap: 5px;
-        }
-        .result-container {
-            margin-top: 30px;
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            background-color: white;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-            border-radius: 8px;
-            overflow: hidden;
-        }
-        th, td {
-            text-align: left;
-            padding: 12px 15px;
-            border-bottom: 1px solid #ddd;
-        }
-        th {
-            background-color: #3498db;
-            color: white;
-        }
-        tr:hover {
-            background-color: #f5f5f5;
-        }
-        .supported {
-            color: #27ae60;
-            font-weight: bold;
-        }
-        .not-supported {
-            color: #e74c3c;
-        }
-        .partial {
-            color: #f39c12;
-        }
-        .notes {
-            font-size: 14px;
-            color: #7f8c8d;
-        }
-        .result-message {
-            text-align: center;
-            margin: 20px 0;
-        }
-        .examples {
-            background-color: white;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-            margin-top: 30px;
-        }
-        .examples h2 {
-            margin-top: 0;
-            color: #2c3e50;
-        }
-        .example {
-            margin-bottom: 10px;
-            cursor: pointer;
-            color: #3498db;
-            text-decoration: none;
-            display: block;
-        }
-        .example:hover {
-            text-decoration: underline;
-        }
-        .detail-view {
-            margin-top: 20px;
-            background-color: white;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-        }
-        .detail-view h2 {
-            margin-top: 0;
-            color: #2c3e50;
-        }
-        .syntax {
-            background-color: #f8f9fa;
-            padding: 15px;
-            border-radius: 4px;
-            border-left: 4px solid #3498db;
-            font-family: monospace;
-            white-space: pre-wrap;
-            margin: 15px 0;
-        }
-        .version-badge {
-            display: inline-block;
-            padding: 3px 8px;
-            border-radius: 4px;
-            font-size: 14px;
-            margin-right: 5px;
-            margin-bottom: 5px;
-        }
-        .version-supported {
-            background-color: #e6f7ee;
-            color: #27ae60;
-            border: 1px solid #27ae60;
-        }
-        .version-not-supported {
-            background-color: #fde8e8;
-            color: #e74c3c;
-            border: 1px solid #e74c3c;
-        }
-        .all-commands {
-            background-color: white;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-            margin-top: 40px;
-        }
-        .all-commands h2 {
-            margin-top: 0;
-            color: #2c3e50;
-        }
-        .command-list {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-        }
-        .command-list a {
-            color: #3498db;
-            text-decoration: none;
-            font-size: 14px;
-        }
-        .command-list a:hover {
-            text-decoration: underline;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <link rel="stylesheet" href="/styles.css">
+  <title>Can I Use SQL? | SQL Compatibility Checker</title>
+  <meta name="description" content="Check SQL command compatibility across MySQL, PostgreSQL, SQL Server, Oracle, and SQLite. Find out which databases support SELECT, MERGE, PIVOT, CTEs, window functions, and more.">
+  <meta property="og:site_name" content="Can I Use SQL?">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://caniusesql.com/">
+  <meta property="og:title" content="Can I Use SQL? | SQL Compatibility Checker">
+  <meta property="og:description" content="Check SQL command compatibility across MySQL, PostgreSQL, SQL Server, Oracle, and SQLite. Find out which databases support SELECT, MERGE, PIVOT, CTEs, window functions, and more.">
+  <meta property="og:image" content="https://caniusesql.com/og-image.png?v=5">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Can I Use SQL? | SQL Compatibility Checker">
+  <meta name="twitter:description" content="Check SQL command compatibility across MySQL, PostgreSQL, SQL Server, Oracle, and SQLite. Find out which databases support SELECT, MERGE, PIVOT, CTEs, window functions, and more.">
+  <meta name="twitter:image" content="https://caniusesql.com/og-image.png?v=5">
+  <link rel="sitemap" type="application/xml" href="/sitemap.xml">
+  <link rel="canonical" href="https://caniusesql.com/">
 </head>
 <body>
-    <h1>SQL Command Compatibility Checker</h1>
-    
-    <div class="search-container">
-        <input type="text" id="commandSearch" placeholder="Enter SQL command (e.g., MERGE, WITH, JSON_TABLE)">
-        <button onclick="searchCommand()">Search</button>
+
+<header class="site-header">
+  <a href="/" class="home-link" aria-label="Home">
+    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24"
+         fill="none" stroke="currentColor" stroke-width="2"
+         stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+      <polyline points="9 22 9 12 15 12 15 22"/>
+    </svg>
+  </a>
+  <span class="command-heading"></span>
+  <div class="search-widget">
+    <input class="site-search" type="search" placeholder="Search SQL commands…"
+           autocomplete="off" aria-label="Search SQL commands">
+    <ul class="search-results" hidden role="listbox" aria-label="Search suggestions"></ul>
+  </div>
+</header>
+
+<!-- Homepage-specific styles (shared base is in /styles.css) -->
+<style>
+  h1 {
+    color: #2c3e50;
+    text-align: center;
+    margin-bottom: 30px;
+  }
+  .search-container {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+    justify-content: center;
+  }
+  .search-container input {
+    padding: 10px 15px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 16px;
+    flex-grow: 1;
+    max-width: 500px;
+  }
+  .search-container button {
+    background-color: #3498db;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.2s;
+  }
+  .search-container button:hover { background-color: #2980b9; }
+  .filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin-bottom: 20px;
+    justify-content: center;
+  }
+  .filter-group {
+    background-color: white;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  }
+  .filter-group h3 {
+    margin-top: 0;
+    margin-bottom: 10px;
+    font-size: 18px;
+    color: #2c3e50;
+  }
+  .checkboxes {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  .checkbox-item {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+  .result-container { margin-top: 30px; }
+  .result-message   { text-align: center; margin: 20px 0; }
+  .examples {
+    background-color: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    margin-top: 30px;
+  }
+  .examples h2 { margin-top: 0; color: #2c3e50; }
+  .example {
+    margin-bottom: 10px;
+    cursor: pointer;
+    color: #3498db;
+    text-decoration: none;
+    display: block;
+  }
+  .example:hover { text-decoration: underline; }
+  .detail-view {
+    margin-top: 20px;
+    background-color: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  }
+  .detail-view h2 { margin-top: 0; color: #2c3e50; }
+  .partial { color: #f39c12; }
+  .overview {
+    font-size: 14px;
+    color: #555;
+    margin-top: -5px;
+    margin-bottom: 15px;
+    line-height: 1.5;
+  }
+  .all-commands {
+    background-color: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    margin-top: 40px;
+  }
+  .all-commands h2 { margin-top: 0; color: #2c3e50; }
+  .command-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .command-list a {
+    color: #3498db;
+    text-decoration: none;
+    font-size: 14px;
+  }
+  .command-list a:hover { text-decoration: underline; }
+</style>
+
+<h1>SQL Command Compatibility Checker</h1>
+
+<div class="search-container">
+  <input type="text" id="commandSearch" placeholder="Enter SQL command (e.g., MERGE, WITH, JSON_TABLE)">
+  <button onclick="searchCommand()">Search</button>
+</div>
+
+<div class="filters">
+  <div class="filter-group">
+    <h3>Database Systems</h3>
+    <div class="checkboxes">
+      <div class="checkbox-item">
+        <input type="checkbox" id="mysql" checked>
+        <label for="mysql">MySQL</label>
+      </div>
+      <div class="checkbox-item">
+        <input type="checkbox" id="postgresql" checked>
+        <label for="postgresql">PostgreSQL</label>
+      </div>
+      <div class="checkbox-item">
+        <input type="checkbox" id="sqlserver" checked>
+        <label for="sqlserver">SQL Server</label>
+      </div>
+      <div class="checkbox-item">
+        <input type="checkbox" id="oracle" checked>
+        <label for="oracle">Oracle</label>
+      </div>
+      <div class="checkbox-item">
+        <input type="checkbox" id="sqlite" checked>
+        <label for="sqlite">SQLite</label>
+      </div>
     </div>
-    
-    <div class="filters">
-        <div class="filter-group">
-            <h3>Database Systems</h3>
-            <div class="checkboxes">
-                <div class="checkbox-item">
-                    <input type="checkbox" id="mysql" checked>
-                    <label for="mysql">MySQL</label>
-                </div>
-                <div class="checkbox-item">
-                    <input type="checkbox" id="postgresql" checked>
-                    <label for="postgresql">PostgreSQL</label>
-                </div>
-                <div class="checkbox-item">
-                    <input type="checkbox" id="sqlserver" checked>
-                    <label for="sqlserver">SQL Server</label>
-                </div>
-                <div class="checkbox-item">
-                    <input type="checkbox" id="oracle" checked>
-                    <label for="oracle">Oracle</label>
-                </div>
-                <div class="checkbox-item">
-                    <input type="checkbox" id="sqlite" checked>
-                    <label for="sqlite">SQLite</label>
-                </div>
-            </div>
-        </div>
-    </div>
-    
-    <div class="result-container" id="resultContainer">
-        <div class="result-message">
-            Search for a SQL command to see compatibility across different database systems.
-        </div>
-    </div>
+  </div>
+</div>
 
-    <div id="detailView" style="display: none;" class="detail-view">
-    </div>
+<div class="result-container" id="resultContainer">
+  <div class="result-message">
+    Search for a SQL command to see compatibility across different database systems.
+  </div>
+</div>
 
-    <div class="search-container" style="margin-top: 30px;">
-        <input type="text" id="commandSearchBottom" placeholder="Enter SQL command (e.g., MERGE, WITH, JSON_TABLE)" onkeypress="if(event.key==='Enter') searchFromBottom()">
-        <button onclick="searchFromBottom()">Search</button>
-    </div>
+<div id="detailView" style="display: none;" class="detail-view">
+</div>
 
-    <div class="examples">
-        <h2>Popular SQL Commands</h2>
-        <a class="example" href="/f/select" onclick="searchCommand('SELECT'); return false;">SELECT</a>
-        <a class="example" href="/f/merge" onclick="searchCommand('MERGE'); return false;">MERGE</a>
-        <a class="example" href="/f/pivot" onclick="searchCommand('PIVOT'); return false;">PIVOT</a>
-        <a class="example" href="/f/string-agg" onclick="searchCommand('STRING AGG'); return false;">STRING AGG</a>
-    </div>
+<div class="search-container" style="margin-top: 30px;">
+  <input type="text" id="commandSearchBottom"
+         placeholder="Enter SQL command (e.g., MERGE, WITH, JSON_TABLE)"
+         onkeypress="if(event.key==='Enter') searchFromBottom()">
+  <button onclick="searchFromBottom()">Search</button>
+</div>
 
-    <div class="all-commands" id="allCommands" style="display: none;">
-        <h2>All SQL Commands</h2>
-        <div class="command-list" id="commandList"></div>
-    </div>
+<div class="examples">
+  <h2>Popular SQL Commands</h2>
+  <a class="example" href="/f/select" onclick="searchCommand('SELECT'); return false;">SELECT</a>
+  <a class="example" href="/f/merge" onclick="searchCommand('MERGE'); return false;">MERGE</a>
+  <a class="example" href="/f/pivot" onclick="searchCommand('PIVOT'); return false;">PIVOT</a>
+  <a class="example" href="/f/string-agg" onclick="searchCommand('STRING AGG'); return false;">STRING AGG</a>
+</div>
 
-    <script>
-        // Database of SQL commands and their compatibility
-        let sqlDatabase = null;
+<div class="all-commands" id="allCommands" style="display: none;">
+  <h2>All SQL Commands</h2>
+  <div class="command-list" id="commandList"></div>
+</div>
 
-        // Search for a command
-        function searchCommand(command, replace = false) {
-            const searchInput = command || document.getElementById('commandSearch').value.trim().toLowerCase();
-            function escapeHTML(str) {
-                return str.replace(/&/g, "&amp;")
-                        .replace(/</g, "&lt;")
-                        .replace(/>/g, "&gt;")
-                        .replace(/\"/g, "&quot;")
-                        .replace(/'/g, "&#39;")
-                        .replace(/\//g, "&#x2F;");
-            }
-            if (!searchInput) return;
+<script>
+  // Database of SQL commands and their compatibility
+  var sqlDatabase = null;
 
-            if (command) {
-                document.getElementById('commandSearch').value = command;
-            }
+  function escapeHTML(str) {
+    return str.replace(/&/g, '&amp;')
+              .replace(/</g, '&lt;')
+              .replace(/>/g, '&gt;')
+              .replace(/"/g, '&quot;')
+              .replace(/'/g, '&#39;')
+              .replace(/\//g, '&#x2F;');
+  }
 
-            updateURL(searchInput, replace);
-            updateMeta(searchInput);
+  function searchCommand(command, replace) {
+    var searchInput = command || document.getElementById('commandSearch').value.trim().toLowerCase();
+    if (!searchInput) return;
 
-            const selectedDatabases = {
-                mysql: document.getElementById('mysql').checked,
-                postgresql: document.getElementById('postgresql').checked,
-                sqlserver: document.getElementById('sqlserver').checked,
-                oracle: document.getElementById('oracle').checked,
-                sqlite: document.getElementById('sqlite').checked
-            };
+    if (command) {
+      document.getElementById('commandSearch').value = command;
+    }
 
-            const foundCommand = Object.keys(sqlDatabase).find(cmd => cmd.toLowerCase() === searchInput.toLowerCase());
-            const resultContainer = document.getElementById('resultContainer');
+    updateURL(searchInput, replace);
+    updateMeta(searchInput);
 
-            if (foundCommand) {
-                const commandData = sqlDatabase[foundCommand];
+    var selectedDatabases = {
+      mysql:      document.getElementById('mysql').checked,
+      postgresql: document.getElementById('postgresql').checked,
+      sqlserver:  document.getElementById('sqlserver').checked,
+      oracle:     document.getElementById('oracle').checked,
+      sqlite:     document.getElementById('sqlite').checked
+    };
 
-                let resultHTML = `
-                    <h2>Compatibility for "${foundCommand.toUpperCase()}"</h2>
-                    <p>${commandData.description}</p>
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Database System</th>
-                                <th>Support Status</th>
-                                <th>Since Version</th>
-                                <th>Notes</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                `;
+    var foundCommand = Object.keys(sqlDatabase).find(function (cmd) {
+      return cmd.toLowerCase() === searchInput.toLowerCase();
+    });
+    var resultContainer = document.getElementById('resultContainer');
 
-                for (const [db, checked] of Object.entries(selectedDatabases)) {
-                    if (!checked) continue;
+    if (foundCommand) {
+      var commandData = sqlDatabase[foundCommand];
 
-                    const dbInfo = commandData.compatibility[db];
-                    const supportClass = dbInfo.supported ? 'supported' : 'not-supported';
-                    const supportText = dbInfo.supported ? 'Supported' : 'Not Supported';
-                    const versionText = dbInfo.since || '-';
+      var resultHTML = '<h2>Compatibility for "' + foundCommand.toUpperCase() + '"</h2>'
+        + '<p>' + escapeHTML(commandData.description) + '</p>'
+        + (commandData.overview ? '<p class="overview">' + escapeHTML(commandData.overview) + '</p>' : '')
+        + '<table><thead><tr>'
+        + '<th>Database System</th><th>Support Status</th><th>Since Version</th><th>Notes</th>'
+        + '</tr></thead><tbody>';
 
-                    resultHTML += `
-                        <tr>
-                            <td>${db.charAt(0).toUpperCase() + db.slice(1)}</td>
-                            <td class="${supportClass}">${supportText}</td>
-                            <td>${versionText}</td>
-                            <td class="notes">${dbInfo.notes}</td>
-                        </tr>
-                    `;
-                }
+      for (var db in selectedDatabases) {
+        if (!selectedDatabases[db]) continue;
+        var dbInfo = commandData.compatibility[db];
+        var supportClass = dbInfo.supported ? 'supported' : 'not-supported';
+        var supportText  = dbInfo.supported ? 'Supported' : 'Not Supported';
+        var versionText  = dbInfo.since || '-';
+        resultHTML += '<tr>'
+          + '<td>' + db.charAt(0).toUpperCase() + db.slice(1) + '</td>'
+          + '<td class="' + supportClass + '">' + supportText + '</td>'
+          + '<td>' + versionText + '</td>'
+          + '<td class="notes">' + escapeHTML(dbInfo.notes) + '</td>'
+          + '</tr>';
+      }
 
-                resultHTML += `
-                        </tbody>
-                    </table>
-                    <button onclick="showDetails('${foundCommand}')" style="margin-top: 20px;">View Details</button>
-                `;
+      resultHTML += '</tbody></table>'
+        + '<button onclick="showDetails(\'' + escapeHTML(foundCommand) + '\')" style="margin-top: 20px;">View Details</button>';
 
-                resultContainer.innerHTML = resultHTML;
-            } else {
-                const similarCommands = Object.keys(sqlDatabase).filter(cmd =>
-                    cmd.toLowerCase().includes(searchInput.toLowerCase()) ||
-                    searchInput.toLowerCase().includes(cmd.toLowerCase())
-                );
+      resultContainer.innerHTML = resultHTML;
+    } else {
+      var similarCommands = Object.keys(sqlDatabase).filter(function (cmd) {
+        return cmd.toLowerCase().indexOf(searchInput.toLowerCase()) !== -1
+          || searchInput.toLowerCase().indexOf(cmd.toLowerCase()) !== -1;
+      });
 
-                if (similarCommands.length > 0) {
-                    let resultHTML = `
-                        <div class="result-message">
-                            <p>No exact match found for "${escapeHTML(searchInput)}". Did you mean:</p>
-                            <ul>
-                    `;
-
-                    similarCommands.forEach(cmd => {
-                        resultHTML += `<li><a href="#" onclick="searchCommand('${cmd}'); return false;">${cmd.toUpperCase()}</a></li>`;
-                    });
-
-                    resultHTML += `
-                            </ul>
-                        </div>
-                    `;
-
-                    resultContainer.innerHTML = resultHTML;
-                } else {
-                    resultContainer.innerHTML = `
-                        <div class="result-message">
-                            <p>No results found for "${escapeHTML(searchInput)}".</p>
-                            <p>Try searching for a different SQL command or check our examples above.</p>
-                        </div>
-                    `;
-                }
-            }
-        }
-        
-        // Show detailed view for a command
-        function showDetails(command) {
-            const commandData = sqlDatabase[command];
-            const detailView = document.getElementById('detailView');
-            
-            if (!commandData) return;
-            
-            let detailHTML = `
-                <h2>${command.toUpperCase()} - Detailed Information</h2>
-                <p>${commandData.details}</p>
-                
-                <h3>Standard Syntax</h3>
-                <div class="syntax">${commandData.syntax}</div>
-                
-                <h3>Version Support</h3>
-                <div>
-            `;
-            
-            for (const [db, info] of Object.entries(commandData.compatibility)) {
-                const badgeClass = info.supported ? 'version-supported' : 'version-not-supported';
-                const versionText = info.supported ? 
-                    `${db.charAt(0).toUpperCase() + db.slice(1)}: Since version ${info.since}` : 
-                    `${db.charAt(0).toUpperCase() + db.slice(1)}: Not supported`;
-                
-                detailHTML += `<span class="version-badge ${badgeClass}">${versionText}</span>`;
-            }
-            
-            detailHTML += `
-                </div>
-                
-                <h3>Implementation Notes</h3>
-                <ul>
-            `;
-            
-            for (const [db, info] of Object.entries(commandData.compatibility)) {
-                detailHTML += `<li><strong>${db.charAt(0).toUpperCase() + db.slice(1)}:</strong> ${info.notes}</li>`;
-            }
-            
-            detailHTML += `
-                </ul>
-            `;
-            
-            detailView.innerHTML = detailHTML;
-            detailView.style.display = 'block';
-        }
-        
-        // Function to get query parameter from URL
-        function getQueryParameter(name) {
-            const urlParams = new URLSearchParams(window.location.search);
-            return urlParams.get(name);
-        }
-
-        // Update <title>, <meta description>, and OG/Twitter tags for the current command
-        function updateMeta(query) {
-            const foundCommand = sqlDatabase && Object.keys(sqlDatabase).find(cmd => cmd.toLowerCase() === query.toLowerCase());
-            let title, desc, url;
-            if (foundCommand) {
-                const entry = sqlDatabase[foundCommand];
-                const commandDesc = entry.description;
-                title = foundCommand.toUpperCase() + ' SQL Compatibility | MySQL, PostgreSQL, SQL Server, Oracle, SQLite';
-                desc = foundCommand.toUpperCase() + ': ' + commandDesc + ' Check support across MySQL, PostgreSQL, SQL Server, Oracle, and SQLite.';
-                const slug = entry && entry.slug;
-                url = slug ? 'https://caniusesql.com/f/' + slug : 'https://caniusesql.com';
-            } else {
-                title = 'Can I Use SQL? | SQL Compatibility Checker';
-                desc = 'Check SQL command compatibility across MySQL, PostgreSQL, SQL Server, Oracle, and SQLite. Find out which databases support SELECT, MERGE, PIVOT, CTEs, window functions, and more.';
-                url = 'https://caniusesql.com/';
-            }
-            document.title = title;
-            document.querySelector('meta[name="description"]').setAttribute('content', desc);
-            document.querySelector('meta[property="og:title"]').setAttribute('content', title);
-            document.querySelector('meta[property="og:description"]').setAttribute('content', desc);
-            document.querySelector('meta[property="og:url"]').setAttribute('content', url);
-            document.querySelector('meta[name="twitter:title"]').setAttribute('content', title);
-            document.querySelector('meta[name="twitter:description"]').setAttribute('content', desc);
-            // canonical
-            document.querySelector('link[rel="canonical"]').setAttribute('href', url);
-        }
-
-        // Function to update URL with slug-based path
-        function updateURL(query, replace = false) {
-            const foundCommand = sqlDatabase && Object.keys(sqlDatabase).find(
-                cmd => cmd.toLowerCase() === (query || '').toLowerCase()
-            );
-            const method = replace ? 'replaceState' : 'pushState';
-            if (foundCommand && sqlDatabase[foundCommand].slug) {
-                window.history[method]({}, '', '/f/' + sqlDatabase[foundCommand].slug);
-            } else if (!query || !query.trim()) {
-                window.history[method]({}, '', '/');
-            }
-        }
-
-        // Function to initialize search from URL on page load
-        function initializeFromURL() {
-            const pathMatch = window.location.pathname.match(/^\/f\/([^/]+)$/);
-            if (pathMatch) {
-                try {
-                    const slug = decodeURIComponent(pathMatch[1]);
-                    const foundCommand = sqlDatabase && Object.keys(sqlDatabase).find(
-                        cmd => sqlDatabase[cmd].slug === slug
-                    );
-                    if (foundCommand) {
-                        document.getElementById('commandSearch').value = foundCommand;
-                        searchCommand(foundCommand, true);
-                        return;
-                    }
-                } catch (e) {}
-            }
-            const queryParam = getQueryParameter('q');
-            if (queryParam) {
-                document.getElementById('commandSearch').value = queryParam;
-                searchCommand(queryParam, true);
-            }
-        }
-
-        // Event listener for search box to enable search on Enter key
-        document.getElementById('commandSearch').addEventListener('keypress', function(event) {
-            if (event.key === 'Enter') {
-                searchCommand();
-            }
+      if (similarCommands.length > 0) {
+        var resultHTML = '<div class="result-message"><p>No exact match found for "'
+          + escapeHTML(searchInput) + '". Did you mean:</p><ul>';
+        similarCommands.forEach(function (cmd) {
+          resultHTML += '<li><a href="#" onclick="searchCommand(\'' + escapeHTML(cmd) + '\'); return false;">'
+            + cmd.toUpperCase() + '</a></li>';
         });
+        resultHTML += '</ul></div>';
+        resultContainer.innerHTML = resultHTML;
+      } else {
+        resultContainer.innerHTML = '<div class="result-message"><p>No results found for "'
+          + escapeHTML(searchInput) + '".</p>'
+          + '<p>Try searching for a different SQL command or check our examples above.</p></div>';
+      }
+    }
+  }
 
-        // Search from bottom bar — syncs value up to primary input then searches
-        function searchFromBottom() {
-            const val = document.getElementById('commandSearchBottom').value.trim();
-            if (!val) return;
-            document.getElementById('commandSearch').value = val;
-            searchCommand(val);
-        }
+  function showDetails(command) {
+    var commandData = sqlDatabase[command];
+    var detailView  = document.getElementById('detailView');
+    if (!commandData) return;
 
-        // Render all commands as crawlable links
-        function renderCommandIndex(data) {
-            const list = document.getElementById('commandList');
-            const section = document.getElementById('allCommands');
-            const links = Object.keys(data).map(key => {
-                const a = document.createElement('a');
-                a.href = '/f/' + data[key].slug;
-                a.textContent = key.toUpperCase();
-                a.onclick = function(e) {
-                    e.preventDefault();
-                    searchCommand(key);
-                };
-                return a;
-            });
-            links.forEach(a => list.appendChild(a));
-            section.style.display = 'block';
-        }
+    var detailHTML = '<h2>' + command.toUpperCase() + ' - Detailed Information</h2>'
+      + '<p>' + escapeHTML(commandData.details) + '</p>'
+      + '<h3>Standard Syntax</h3>'
+      + '<div class="syntax">' + escapeHTML(commandData.syntax) + '</div>'
+      + '<h3>Version Support</h3><div>';
 
-        // Load data then initialize search from URL when page loads
-        document.addEventListener('DOMContentLoaded', function() {
-            fetch('data.json?v=2')
-                .then(r => r.json())
-                .then(data => {
-                    sqlDatabase = data;
-                    renderCommandIndex(data);
-                    initializeFromURL();
-                });
+    for (var db in commandData.compatibility) {
+      var info       = commandData.compatibility[db];
+      var badgeClass = info.supported ? 'version-supported' : 'version-not-supported';
+      var versionText = info.supported
+        ? db.charAt(0).toUpperCase() + db.slice(1) + ': Since version ' + info.since
+        : db.charAt(0).toUpperCase() + db.slice(1) + ': Not supported';
+      detailHTML += '<span class="version-badge ' + badgeClass + '">' + versionText + '</span>';
+    }
+
+    detailHTML += '</div><h3>Implementation Notes</h3><ul>';
+    for (var db in commandData.compatibility) {
+      detailHTML += '<li><strong>' + db.charAt(0).toUpperCase() + db.slice(1) + ':</strong> '
+        + escapeHTML(commandData.compatibility[db].notes) + '</li>';
+    }
+    detailHTML += '</ul>';
+
+    detailView.innerHTML = detailHTML;
+    detailView.style.display = 'block';
+  }
+
+  function getQueryParameter(name) {
+    var urlParams = new URLSearchParams(window.location.search);
+    return urlParams.get(name);
+  }
+
+  function updateMeta(query) {
+    var foundCommand = sqlDatabase && Object.keys(sqlDatabase).find(function (cmd) {
+      return cmd.toLowerCase() === query.toLowerCase();
+    });
+    var title, desc, url;
+    if (foundCommand) {
+      var entry = sqlDatabase[foundCommand];
+      title = foundCommand.toUpperCase() + ' SQL Compatibility | MySQL, PostgreSQL, SQL Server, Oracle, SQLite';
+      desc  = foundCommand.toUpperCase() + ': ' + entry.description
+            + ' Check support across MySQL, PostgreSQL, SQL Server, Oracle, and SQLite.';
+      url   = entry.slug ? 'https://caniusesql.com/f/' + entry.slug : 'https://caniusesql.com';
+    } else {
+      title = 'Can I Use SQL? | SQL Compatibility Checker';
+      desc  = 'Check SQL command compatibility across MySQL, PostgreSQL, SQL Server, Oracle, and SQLite. Find out which databases support SELECT, MERGE, PIVOT, CTEs, window functions, and more.';
+      url   = 'https://caniusesql.com/';
+    }
+    document.title = title;
+    document.querySelector('meta[name="description"]').setAttribute('content', desc);
+    document.querySelector('meta[property="og:title"]').setAttribute('content', title);
+    document.querySelector('meta[property="og:description"]').setAttribute('content', desc);
+    document.querySelector('meta[property="og:url"]').setAttribute('content', url);
+    document.querySelector('meta[name="twitter:title"]').setAttribute('content', title);
+    document.querySelector('meta[name="twitter:description"]').setAttribute('content', desc);
+    document.querySelector('link[rel="canonical"]').setAttribute('href', url);
+  }
+
+  function updateURL(query, replace) {
+    var foundCommand = sqlDatabase && Object.keys(sqlDatabase).find(function (cmd) {
+      return cmd.toLowerCase() === (query || '').toLowerCase();
+    });
+    var method = replace ? 'replaceState' : 'pushState';
+    if (foundCommand && sqlDatabase[foundCommand].slug) {
+      window.history[method]({}, '', '/f/' + sqlDatabase[foundCommand].slug);
+    } else if (!query || !query.trim()) {
+      window.history[method]({}, '', '/');
+    }
+  }
+
+  function initializeFromURL() {
+    var pathMatch = window.location.pathname.match(/^\/f\/([^/]+)$/);
+    if (pathMatch) {
+      try {
+        var slug = decodeURIComponent(pathMatch[1]);
+        var foundCommand = sqlDatabase && Object.keys(sqlDatabase).find(function (cmd) {
+          return sqlDatabase[cmd].slug === slug;
         });
+        if (foundCommand) {
+          document.getElementById('commandSearch').value = foundCommand;
+          searchCommand(foundCommand, true);
+          return;
+        }
+      } catch (e) {}
+    }
+    var queryParam = getQueryParameter('q');
+    if (queryParam) {
+      document.getElementById('commandSearch').value = queryParam;
+      searchCommand(queryParam, true);
+    }
+  }
 
-        // Listen for back/forward browser navigation
-        window.addEventListener('popstate', function(event) {
-            initializeFromURL();
-        });
-    </script>
+  document.getElementById('commandSearch').addEventListener('keypress', function (event) {
+    if (event.key === 'Enter') searchCommand();
+  });
+
+  function searchFromBottom() {
+    var val = document.getElementById('commandSearchBottom').value.trim();
+    if (!val) return;
+    document.getElementById('commandSearch').value = val;
+    searchCommand(val);
+  }
+
+  function renderCommandIndex(data) {
+    var list    = document.getElementById('commandList');
+    var section = document.getElementById('allCommands');
+    Object.keys(data).forEach(function (key) {
+      var a = document.createElement('a');
+      a.href = '/f/' + data[key].slug;
+      a.textContent = key.toUpperCase();
+      a.onclick = function (e) {
+        e.preventDefault();
+        searchCommand(key);
+      };
+      list.appendChild(a);
+    });
+    section.style.display = 'block';
+  }
+
+  document.addEventListener('DOMContentLoaded', function () {
+    fetch('data.json?v=2')
+      .then(function (r) { return r.json(); })
+      .then(function (data) {
+        sqlDatabase = data;
+        renderCommandIndex(data);
+        initializeFromURL();
+      });
+  });
+
+  window.addEventListener('popstate', function () {
+    initializeFromURL();
+  });
+</script>
+
+<footer class="site-footer">
+  <p>Looking for another SQL command?</p>
+  <div class="search-widget">
+    <input class="site-search" type="search" placeholder="Search SQL commands…"
+           autocomplete="off" aria-label="Search SQL commands">
+    <ul class="search-results" hidden role="listbox" aria-label="Search suggestions"></ul>
+  </div>
+</footer>
+
+  <script src="/search.js" defer></script>
+  <script src="/splash.js" defer></script>
 </body>
 </html>

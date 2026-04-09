@@ -1,0 +1,272 @@
+/* ==========================================================================
+   Can I Use SQL? — shared stylesheet
+   Linked from all pages; page-specific overrides live in per-page <style> blocks.
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   Base
+   -------------------------------------------------------------------------- */
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen,
+               Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  line-height: 1.6;
+  color: #333;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+  background-color: #f5f7fa;
+}
+
+a { color: #3498db; }
+
+h2 { color: #2c3e50; margin-top: 32px; }
+h4 { color: #2c3e50; margin: 16px 0 4px; }
+
+/* --------------------------------------------------------------------------
+   Site header
+   -------------------------------------------------------------------------- */
+
+.site-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+}
+
+.home-link {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  color: #3498db;
+  flex-shrink: 0;
+}
+
+.home-link:hover { color: #2980b9; }
+.home-link svg   { display: block; }
+
+.command-heading {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  flex: 1;
+  min-width: 0;
+}
+
+.command-heading h1 {
+  color: #2c3e50;
+  margin: 0;
+  font-size: 1.8rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.category-badge {
+  display: inline-block;
+  padding: 3px 10px;
+  background: #eaf3fb;
+  color: #2980b9;
+  border: 1px solid #aed6f1;
+  border-radius: 12px;
+  font-size: 13px;
+  margin-left: 8px;
+  vertical-align: middle;
+  white-space: nowrap;
+}
+
+/* --------------------------------------------------------------------------
+   Search widget (shared by header and footer)
+   -------------------------------------------------------------------------- */
+
+.search-widget {
+  position: relative;
+  flex: 1;
+  min-width: 180px;
+  max-width: 360px;
+}
+
+.site-search {
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
+  box-sizing: border-box;
+  background: white;
+}
+
+.site-search:focus {
+  outline: none;
+  border-color: #3498db;
+  box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+}
+
+.search-results {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  right: 0;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  z-index: 100;
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.search-results li {
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.search-results li:last-child {
+  border-bottom: none;
+}
+
+.search-results a {
+  display: block;
+  padding: 8px 12px;
+  text-decoration: none;
+  color: #2c3e50;
+  font-size: 14px;
+}
+
+.search-results a:hover {
+  background-color: #f0f7ff;
+  color: #3498db;
+}
+
+.search-results small {
+  color: #7f8c8d;
+  font-weight: normal;
+  font-size: 12px;
+}
+
+/* --------------------------------------------------------------------------
+   Site footer
+   -------------------------------------------------------------------------- */
+
+.site-footer {
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  padding: 20px 24px;
+  margin-top: 40px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.site-footer p {
+  margin: 0;
+  font-size: 1rem;
+  white-space: nowrap;
+}
+
+/* --------------------------------------------------------------------------
+   Compatibility table
+   -------------------------------------------------------------------------- */
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: white;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+th, td {
+  text-align: left;
+  padding: 12px 15px;
+  border-bottom: 1px solid #ddd;
+}
+
+th { background-color: #3498db; color: white; }
+tr:last-child td { border-bottom: none; }
+tr:hover { background-color: #f5f5f5; }
+
+.supported     { color: #27ae60; font-weight: bold; }
+.not-supported { color: #e74c3c; }
+.notes         { font-size: 14px; color: #7f8c8d; }
+
+/* --------------------------------------------------------------------------
+   Syntax blocks
+   -------------------------------------------------------------------------- */
+
+.syntax {
+  background-color: #f8f9fa;
+  padding: 15px;
+  border-radius: 4px;
+  border-left: 4px solid #3498db;
+  font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+  font-size: 14px;
+  white-space: pre-wrap;
+  margin: 8px 0 16px;
+  overflow-x: auto;
+}
+
+/* --------------------------------------------------------------------------
+   Version badges
+   -------------------------------------------------------------------------- */
+
+.version-badge {
+  display: inline-block;
+  padding: 3px 8px;
+  border-radius: 4px;
+  font-size: 14px;
+  margin: 0 4px 6px 0;
+}
+
+.version-supported {
+  background-color: #e6f7ee;
+  color: #27ae60;
+  border: 1px solid #27ae60;
+}
+
+.version-not-supported {
+  background-color: #fde8e8;
+  color: #e74c3c;
+  border: 1px solid #e74c3c;
+}
+
+/* --------------------------------------------------------------------------
+   Command page sections
+   -------------------------------------------------------------------------- */
+
+.command-desc {
+  font-size: 1.05rem;
+  color: #555;
+  margin-bottom: 8px;
+}
+
+.command-overview {
+  font-size: 0.95rem;
+  color: #666;
+  margin-bottom: 24px;
+  line-height: 1.6;
+  border-left: 3px solid #b0c4de;
+  padding-left: 12px;
+}
+
+.per-db-section {
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  padding: 20px 24px;
+  margin-top: 8px;
+}
+
+.detail-block {
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  padding: 20px 24px;
+  margin-top: 8px;
+}

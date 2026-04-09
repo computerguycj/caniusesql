@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+  <!-- Database cylinder body -->
+  <rect x="4" y="10" width="24" height="14" rx="0" fill="#2980b9"/>
+  <!-- Bottom ellipse -->
+  <ellipse cx="16" cy="24" rx="12" ry="4" fill="#1a6391"/>
+  <!-- Top ellipse (highlight) -->
+  <ellipse cx="16" cy="10" rx="12" ry="4" fill="#5dade2"/>
+  <!-- Middle highlight stripe -->
+  <ellipse cx="16" cy="10" rx="8" ry="2" fill="#85c1e9" opacity="0.6"/>
+  <!-- SQL label -->
+  <text x="16" y="20" font-family="'SFMono-Regular', Consolas, monospace"
+        font-size="7.5" font-weight="bold" fill="white"
+        text-anchor="middle" dominant-baseline="middle">SQL</text>
+</svg>
