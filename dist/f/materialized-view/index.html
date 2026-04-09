@@ -110,7 +110,7 @@
 
   <h2>Details</h2>
   <div class="detail-block">
-    <p style="margin:0">The concept is consistent but implementations vary enormously. SQL Server's indexed views are automatically maintained on every DML — no REFRESH command exists. Oracle supports incremental (FAST) refresh via materialized view logs, avoiding full recomputes. PostgreSQL's REFRESH is always a full recompute; CONCURRENTLY mode avoids locking but needs a unique index. MySQL has no native support at all. Oracle's query rewrite feature is unique: the optimizer can transparently substitute the materialized view for the base tables in unmodified queries.</p>
+    <p>The concept is consistent but implementations vary enormously. SQL Server's indexed views are automatically maintained on every DML — no REFRESH command exists. Oracle supports incremental (FAST) refresh via materialized view logs, avoiding full recomputes. PostgreSQL's REFRESH is always a full recompute; CONCURRENTLY mode avoids locking but needs a unique index. MySQL has no native support at all. Oracle's query rewrite feature is unique: the optimizer can transparently substitute the materialized view for the base tables in unmodified queries.</p>
   </div>
 
   <h2>Standard Syntax</h2>
@@ -124,7 +124,7 @@ GROUP BY 1;
 REFRESH MATERIALIZED VIEW monthly_sales;</div>
 
   <h2>Version Support</h2>
-  <div style="margin-top: 8px;">
+  <div class="version-list">
     <span class="version-badge version-not-supported">MySQL: Not supported</span>
     <span class="version-badge version-supported">PostgreSQL: Since 9.3</span>
     <span class="version-badge version-supported">SQL Server: Since 2000</span>

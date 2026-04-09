@@ -110,7 +110,7 @@
 
   <h2>Details</h2>
   <div class="detail-block">
-    <p style="margin:0">The SQL standard term is GENERATED AS IDENTITY, supported in PostgreSQL 10+, SQL Server 2012+, and Oracle 12c+ — prefer it for new portable schemas. MySQL's AUTO_INCREMENT and SQL Server's IDENTITY(seed,increment) are engine-specific and will not work elsewhere. SQLite's INTEGER PRIMARY KEY / rowid aliasing is unique: it's automatic and requires no keyword unless you want the strict AUTOINCREMENT no-reuse guarantee. A standalone CREATE SEQUENCE object is supported in PostgreSQL, SQL Server (2012+), and Oracle — but not in MySQL or SQLite.</p>
+    <p>The SQL standard term is GENERATED AS IDENTITY, supported in PostgreSQL 10+, SQL Server 2012+, and Oracle 12c+ — prefer it for new portable schemas. MySQL's AUTO_INCREMENT and SQL Server's IDENTITY(seed,increment) are engine-specific and will not work elsewhere. SQLite's INTEGER PRIMARY KEY / rowid aliasing is unique: it's automatic and requires no keyword unless you want the strict AUTOINCREMENT no-reuse guarantee. A standalone CREATE SEQUENCE object is supported in PostgreSQL, SQL Server (2012+), and Oracle — but not in MySQL or SQLite.</p>
   </div>
 
   <h2>Standard Syntax</h2>
@@ -127,7 +127,7 @@ CREATE TABLE orders (
 );</div>
 
   <h2>Version Support</h2>
-  <div style="margin-top: 8px;">
+  <div class="version-list">
     <span class="version-badge version-supported">MySQL: Since 3.23</span>
     <span class="version-badge version-supported">PostgreSQL: Since 6.0</span>
     <span class="version-badge version-supported">SQL Server: Since 2000</span>

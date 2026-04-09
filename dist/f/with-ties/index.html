@@ -110,7 +110,7 @@
 
   <h2>Details</h2>
   <div class="detail-block">
-    <p style="margin:0">WITH TIES is handy for leaderboards and ranking queries where arbitrary tie-breaking at the boundary is undesirable. SQL Server's TOP n WITH TIES syntax predates the standard FETCH FIRST form. PostgreSQL added it relatively late (13). MySQL and SQLite both lack it entirely — the portable workaround is consistent across all engines: wrap with RANK() OVER (ORDER BY col) and filter WHERE rnk &lt;= n in an outer query. Note that WITH TIES can return more rows than n — an important consideration for pagination or when a caller assumes a fixed row count.</p>
+    <p>WITH TIES is handy for leaderboards and ranking queries where arbitrary tie-breaking at the boundary is undesirable. SQL Server's TOP n WITH TIES syntax predates the standard FETCH FIRST form. PostgreSQL added it relatively late (13). MySQL and SQLite both lack it entirely — the portable workaround is consistent across all engines: wrap with RANK() OVER (ORDER BY col) and filter WHERE rnk &lt;= n in an outer query. Note that WITH TIES can return more rows than n — an important consideration for pagination or when a caller assumes a fixed row count.</p>
   </div>
 
   <h2>Standard Syntax</h2>
@@ -119,7 +119,7 @@ ORDER BY score DESC
 FETCH FIRST 3 ROWS WITH TIES;</div>
 
   <h2>Version Support</h2>
-  <div style="margin-top: 8px;">
+  <div class="version-list">
     <span class="version-badge version-not-supported">MySQL: Not supported</span>
     <span class="version-badge version-supported">PostgreSQL: Since 13</span>
     <span class="version-badge version-supported">SQL Server: Since 2008</span>

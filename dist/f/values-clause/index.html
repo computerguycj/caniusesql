@@ -110,7 +110,7 @@
 
   <h2>Details</h2>
   <div class="detail-block">
-    <p style="margin:0">Multi-row INSERT VALUES (syntax: INSERT INTO t VALUES (r1), (r2), ...) is broadly supported across all engines. The more interesting case is VALUES as a standalone table constructor usable in SELECT, FROM, CTEs, and JOINs — this works in PostgreSQL (8.2+), SQL Server (2008+), SQLite (3.8.3+), and MySQL (8.0.19+ with ROW() wrapper). Oracle is the outlier: it has no VALUES table constructor and requires UNION ALL of SELECT ... FROM DUAL as the workaround. The MySQL VALUES ROW() syntax differs from all other engines — other engines use plain VALUES (row), (row) without the ROW() keyword.</p>
+    <p>Multi-row INSERT VALUES (syntax: INSERT INTO t VALUES (r1), (r2), ...) is broadly supported across all engines. The more interesting case is VALUES as a standalone table constructor usable in SELECT, FROM, CTEs, and JOINs — this works in PostgreSQL (8.2+), SQL Server (2008+), SQLite (3.8.3+), and MySQL (8.0.19+ with ROW() wrapper). Oracle is the outlier: it has no VALUES table constructor and requires UNION ALL of SELECT ... FROM DUAL as the workaround. The MySQL VALUES ROW() syntax differs from all other engines — other engines use plain VALUES (row), (row) without the ROW() keyword.</p>
   </div>
 
   <h2>Standard Syntax</h2>
@@ -123,7 +123,7 @@ INSERT INTO colors (id, name)
 VALUES (1, 'red'), (2, 'green'), (3, 'blue');</div>
 
   <h2>Version Support</h2>
-  <div style="margin-top: 8px;">
+  <div class="version-list">
     <span class="version-badge version-supported">MySQL: Since 8.0.19</span>
     <span class="version-badge version-supported">PostgreSQL: Since 8.2</span>
     <span class="version-badge version-supported">SQL Server: Since 2008</span>

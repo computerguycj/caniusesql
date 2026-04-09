@@ -110,7 +110,7 @@
 
   <h2>Details</h2>
   <div class="detail-block">
-    <p style="margin:0">The NULL trap is the universal gotcha: NOT IN (subquery) returns zero rows if the subquery returns any NULL. This affects all engines identically. Use NOT EXISTS instead of NOT IN when the list or subquery may contain NULLs. Oracle's hard 1000-element IN list limit is unique and produces a runtime error, not a compile-time warning.</p>
+    <p>The NULL trap is the universal gotcha: NOT IN (subquery) returns zero rows if the subquery returns any NULL. This affects all engines identically. Use NOT EXISTS instead of NOT IN when the list or subquery may contain NULLs. Oracle's hard 1000-element IN list limit is unique and produces a runtime error, not a compile-time warning.</p>
   </div>
 
   <h2>Standard Syntax</h2>
@@ -121,7 +121,7 @@ SELECT * FROM orders WHERE customer_id NOT IN (
 );</div>
 
   <h2>Version Support</h2>
-  <div style="margin-top: 8px;">
+  <div class="version-list">
     <span class="version-badge version-supported">MySQL: Since all</span>
     <span class="version-badge version-supported">PostgreSQL: Since all</span>
     <span class="version-badge version-supported">SQL Server: Since all</span>

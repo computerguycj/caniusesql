@@ -110,7 +110,7 @@
 
   <h2>Details</h2>
   <div class="detail-block">
-    <p style="margin:0">The difference: if three rows tie for 2nd place, RANK gives them all 2 and then skips to 5; DENSE_RANK gives them all 2 and continues with 3. DENSE_RANK is usually what you actually want for leaderboards. Oracle's hypothetical aggregate form (RANK(val) WITHIN GROUP) is unique — it answers 'what rank would this value get?' without needing a full result set.</p>
+    <p>The difference: if three rows tie for 2nd place, RANK gives them all 2 and then skips to 5; DENSE_RANK gives them all 2 and continues with 3. DENSE_RANK is usually what you actually want for leaderboards. Oracle's hypothetical aggregate form (RANK(val) WITHIN GROUP) is unique — it answers 'what rank would this value get?' without needing a full result set.</p>
   </div>
 
   <h2>Standard Syntax</h2>
@@ -122,7 +122,7 @@
 FROM scores;</div>
 
   <h2>Version Support</h2>
-  <div style="margin-top: 8px;">
+  <div class="version-list">
     <span class="version-badge version-supported">MySQL: Since 8.0</span>
     <span class="version-badge version-supported">PostgreSQL: Since 8.4</span>
     <span class="version-badge version-supported">SQL Server: Since 2005</span>

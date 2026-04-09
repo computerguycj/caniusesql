@@ -110,7 +110,7 @@
 
   <h2>Details</h2>
   <div class="detail-block">
-    <p style="margin:0">SQLite is the major gotcha — UPPER/LOWER only affects ASCII by default, so accented characters are silently left alone. SQL Server's Turkish collation is a classic production bug. For case-insensitive search, avoid LOWER(col) = LOWER(input) and use engine-native features instead: ILIKE (PostgreSQL), COLLATE (SQL Server/MySQL).</p>
+    <p>SQLite is the major gotcha — UPPER/LOWER only affects ASCII by default, so accented characters are silently left alone. SQL Server's Turkish collation is a classic production bug. For case-insensitive search, avoid LOWER(col) = LOWER(input) and use engine-native features instead: ILIKE (PostgreSQL), COLLATE (SQL Server/MySQL).</p>
   </div>
 
   <h2>Standard Syntax</h2>
@@ -118,7 +118,7 @@
 FROM users;</div>
 
   <h2>Version Support</h2>
-  <div style="margin-top: 8px;">
+  <div class="version-list">
     <span class="version-badge version-supported">MySQL: Since all</span>
     <span class="version-badge version-supported">PostgreSQL: Since all</span>
     <span class="version-badge version-supported">SQL Server: Since all</span>

@@ -110,7 +110,7 @@
 
   <h2>Details</h2>
   <div class="detail-block">
-    <p style="margin:0">The SQL-standard syntax is OFFSET m ROWS FETCH NEXT n ROWS ONLY — supported by PostgreSQL, SQL Server 2012+, and Oracle 12c+. MySQL and SQLite use the non-standard but simpler LIMIT/OFFSET. Oracle's pre-12c ROWNUM approach is famously error-prone (ROWNUM is applied before ORDER BY, requiring a subquery wrapper). Always include ORDER BY — without it, which rows you get is undefined.</p>
+    <p>The SQL-standard syntax is OFFSET m ROWS FETCH NEXT n ROWS ONLY — supported by PostgreSQL, SQL Server 2012+, and Oracle 12c+. MySQL and SQLite use the non-standard but simpler LIMIT/OFFSET. Oracle's pre-12c ROWNUM approach is famously error-prone (ROWNUM is applied before ORDER BY, requiring a subquery wrapper). Always include ORDER BY — without it, which rows you get is undefined.</p>
   </div>
 
   <h2>Standard Syntax</h2>
@@ -122,7 +122,7 @@ SELECT * FROM tbl LIMIT 10 OFFSET 20;  -- MySQL, PostgreSQL, SQLite
 SELECT TOP 10 * FROM tbl;              -- SQL Server</div>
 
   <h2>Version Support</h2>
-  <div style="margin-top: 8px;">
+  <div class="version-list">
     <span class="version-badge version-supported">MySQL: Since all</span>
     <span class="version-badge version-supported">PostgreSQL: Since all</span>
     <span class="version-badge version-supported">SQL Server: Since 2012</span>

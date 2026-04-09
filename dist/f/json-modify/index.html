@@ -110,7 +110,7 @@
 
   <h2>Details</h2>
   <div class="detail-block">
-    <p style="margin:0">MySQL and SQLite share the same three-function split (JSON_SET/json_set for upsert, JSON_INSERT/json_insert for insert-only, JSON_REPLACE/json_replace for replace-only) — the most orthogonal API. SQL Server's JSON_MODIFY is a single function that covers all cases including array append, but requires chaining for multiple updates. PostgreSQL has no JSON_SET — it uses the || operator for top-level merges and jsonb_set() for nested updates; the #- operator and - operator handle removal. Oracle had no JSON mutation functions at all until 21c's JSON_TRANSFORM, which introduces a mini-language rather than function arguments. In all engines, these functions return a new JSON value — they do not modify in place; an UPDATE statement is required to persist changes.</p>
+    <p>MySQL and SQLite share the same three-function split (JSON_SET/json_set for upsert, JSON_INSERT/json_insert for insert-only, JSON_REPLACE/json_replace for replace-only) — the most orthogonal API. SQL Server's JSON_MODIFY is a single function that covers all cases including array append, but requires chaining for multiple updates. PostgreSQL has no JSON_SET — it uses the || operator for top-level merges and jsonb_set() for nested updates; the #- operator and - operator handle removal. Oracle had no JSON mutation functions at all until 21c's JSON_TRANSFORM, which introduces a mini-language rather than function arguments. In all engines, these functions return a new JSON value — they do not modify in place; an UPDATE statement is required to persist changes.</p>
   </div>
 
   <h2>Standard Syntax</h2>
@@ -127,7 +127,7 @@ SELECT data || '{&quot;status&quot;: &quot;active&quot;}' AS updated
 FROM users;</div>
 
   <h2>Version Support</h2>
-  <div style="margin-top: 8px;">
+  <div class="version-list">
     <span class="version-badge version-supported">MySQL: Since 5.7.8</span>
     <span class="version-badge version-supported">PostgreSQL: Since 9.5</span>
     <span class="version-badge version-supported">SQL Server: Since 2016</span>

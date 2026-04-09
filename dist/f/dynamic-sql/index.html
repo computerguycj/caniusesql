@@ -110,7 +110,7 @@
 
   <h2>Details</h2>
   <div class="detail-block">
-    <p style="margin:0">Dynamic SQL is a necessary evil for cases like pivot columns, table-name parameters, or optional filter clauses. The biggest portability concern is SQL injection: always use parameterized queries (USING / sp_executesql parameters / EXECUTE IMMEDIATE USING) rather than string concatenation with user input. PostgreSQL's format() function with %I (identifier quoting) and %L (literal quoting) is particularly ergonomic. SQL Server's sp_executesql additionally enables plan caching since the parameterized template is stable across calls. Oracle's DBMS_SQL package is needed when the number or types of output columns are unknown at compile time — otherwise EXECUTE IMMEDIATE is simpler. MySQL's PREPARE/EXECUTE works at the session level without a stored procedure, which is unique among these engines.</p>
+    <p>Dynamic SQL is a necessary evil for cases like pivot columns, table-name parameters, or optional filter clauses. The biggest portability concern is SQL injection: always use parameterized queries (USING / sp_executesql parameters / EXECUTE IMMEDIATE USING) rather than string concatenation with user input. PostgreSQL's format() function with %I (identifier quoting) and %L (literal quoting) is particularly ergonomic. SQL Server's sp_executesql additionally enables plan caching since the parameterized template is stable across calls. Oracle's DBMS_SQL package is needed when the number or types of output columns are unknown at compile time — otherwise EXECUTE IMMEDIATE is simpler. MySQL's PREPARE/EXECUTE works at the session level without a stored procedure, which is unique among these engines.</p>
   </div>
 
   <h2>Standard Syntax</h2>
@@ -118,7 +118,7 @@
 EXEC sp_executesql N'SELECT * FROM ' + @tbl;</div>
 
   <h2>Version Support</h2>
-  <div style="margin-top: 8px;">
+  <div class="version-list">
     <span class="version-badge version-supported">MySQL: Since 5.0</span>
     <span class="version-badge version-supported">PostgreSQL: Since 7.4</span>
     <span class="version-badge version-supported">SQL Server: Since 2005</span>

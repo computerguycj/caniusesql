@@ -110,7 +110,7 @@
 
   <h2>Details</h2>
   <div class="detail-block">
-    <p style="margin:0">LAST_VALUE's default frame (RANGE UNBOUNDED PRECEDING TO CURRENT ROW) is a universal gotcha — it almost always returns the current row's own value, not the partition's last value. Always explicitly specify ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING when using LAST_VALUE. FIRST_VALUE does not have this problem because the first row is always in frame.</p>
+    <p>LAST_VALUE's default frame (RANGE UNBOUNDED PRECEDING TO CURRENT ROW) is a universal gotcha — it almost always returns the current row's own value, not the partition's last value. Always explicitly specify ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING when using LAST_VALUE. FIRST_VALUE does not have this problem because the first row is always in frame.</p>
   </div>
 
   <h2>Standard Syntax</h2>
@@ -124,7 +124,7 @@
 FROM employees;</div>
 
   <h2>Version Support</h2>
-  <div style="margin-top: 8px;">
+  <div class="version-list">
     <span class="version-badge version-supported">MySQL: Since 8.0</span>
     <span class="version-badge version-supported">PostgreSQL: Since 8.4</span>
     <span class="version-badge version-supported">SQL Server: Since 2012</span>

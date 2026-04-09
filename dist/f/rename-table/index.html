@@ -110,7 +110,7 @@
 
   <h2>Details</h2>
   <div class="detail-block">
-    <p style="margin:0">Table and column renaming is universally supported but the syntax diverges meaningfully. SQL Server's sp_rename is the odd one out — it's a procedure call, not DDL syntax, and critically it does not update references in views, stored procedures, or computed columns. Always run sp_depends or search sys.sql_modules after renaming in SQL Server. Oracle invalidates dependent objects on rename but will revalidate automatically the next time they are accessed if the new name resolves. MySQL's CHANGE syntax for pre-8.0 column renames requires repeating the full column definition, making it error-prone. PostgreSQL and SQLite have the cleanest behavior: standard ALTER TABLE syntax, no object rewrite, and (SQLite 3.25+) automatic reference updates in views and triggers.</p>
+    <p>Table and column renaming is universally supported but the syntax diverges meaningfully. SQL Server's sp_rename is the odd one out — it's a procedure call, not DDL syntax, and critically it does not update references in views, stored procedures, or computed columns. Always run sp_depends or search sys.sql_modules after renaming in SQL Server. Oracle invalidates dependent objects on rename but will revalidate automatically the next time they are accessed if the new name resolves. MySQL's CHANGE syntax for pre-8.0 column renames requires repeating the full column definition, making it error-prone. PostgreSQL and SQLite have the cleanest behavior: standard ALTER TABLE syntax, no object rewrite, and (SQLite 3.25+) automatic reference updates in views and triggers.</p>
   </div>
 
   <h2>Standard Syntax</h2>
@@ -120,7 +120,7 @@ ALTER TABLE old_name RENAME TO new_name;
 ALTER TABLE t RENAME COLUMN old_col TO new_col;</div>
 
   <h2>Version Support</h2>
-  <div style="margin-top: 8px;">
+  <div class="version-list">
     <span class="version-badge version-supported">MySQL: Since 5.0</span>
     <span class="version-badge version-supported">PostgreSQL: Since 7.4</span>
     <span class="version-badge version-supported">SQL Server: Since 2000</span>

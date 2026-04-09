@@ -110,7 +110,7 @@
 
   <h2>Details</h2>
   <div class="detail-block">
-    <p style="margin:0">Date formatting is almost entirely non-portable. MySQL uses % codes (DATE_FORMAT), PostgreSQL and Oracle both use TO_CHAR but with slightly different code sets, SQL Server's FORMAT() uses .NET strings, and SQLite uses C-style strftime. The only safe portable path is formatting dates in application code rather than SQL.</p>
+    <p>Date formatting is almost entirely non-portable. MySQL uses % codes (DATE_FORMAT), PostgreSQL and Oracle both use TO_CHAR but with slightly different code sets, SQL Server's FORMAT() uses .NET strings, and SQLite uses C-style strftime. The only safe portable path is formatting dates in application code rather than SQL.</p>
   </div>
 
   <h2>Standard Syntax</h2>
@@ -121,7 +121,7 @@ TO_CHAR(date_col, 'YYYY-MM-DD')               -- Oracle / PostgreSQL
 DATE_FORMAT(date_col, '%Y-%m-%d')             -- MySQL</div>
 
   <h2>Version Support</h2>
-  <div style="margin-top: 8px;">
+  <div class="version-list">
     <span class="version-badge version-supported">MySQL: Since all</span>
     <span class="version-badge version-supported">PostgreSQL: Since all</span>
     <span class="version-badge version-supported">SQL Server: Since 2012</span>

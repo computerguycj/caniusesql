@@ -110,7 +110,7 @@
 
   <h2>Details</h2>
   <div class="detail-block">
-    <p style="margin:0">Date and number formatting is one of the most fragmented areas across SQL engines. PostgreSQL and Oracle share TO_CHAR() with similar (but not identical) pattern languages — Oracle's format tokens are case-sensitive in some contexts; PostgreSQL is case-insensitive. SQL Server's FORMAT() uses .NET composite format strings, which are powerful but measurably slower than CONVERT() for high-volume queries. MySQL splits the concern: DATE_FORMAT() for dates, FORMAT() for numbers. SQLite uses Unix-style strftime() for dates and printf() for numbers. For cross-engine portability, CAST(value AS VARCHAR/TEXT) plus application-layer formatting is often simpler than maintaining five different format strings.</p>
+    <p>Date and number formatting is one of the most fragmented areas across SQL engines. PostgreSQL and Oracle share TO_CHAR() with similar (but not identical) pattern languages — Oracle's format tokens are case-sensitive in some contexts; PostgreSQL is case-insensitive. SQL Server's FORMAT() uses .NET composite format strings, which are powerful but measurably slower than CONVERT() for high-volume queries. MySQL splits the concern: DATE_FORMAT() for dates, FORMAT() for numbers. SQLite uses Unix-style strftime() for dates and printf() for numbers. For cross-engine portability, CAST(value AS VARCHAR/TEXT) plus application-layer formatting is often simpler than maintaining five different format strings.</p>
   </div>
 
   <h2>Standard Syntax</h2>
@@ -121,7 +121,7 @@ SELECT TO_CHAR(order_date, 'YYYY-MM-DD') FROM orders;
 SELECT FORMAT(order_date, 'yyyy-MM-dd') FROM orders;</div>
 
   <h2>Version Support</h2>
-  <div style="margin-top: 8px;">
+  <div class="version-list">
     <span class="version-badge version-supported">MySQL: Since 5.0</span>
     <span class="version-badge version-supported">PostgreSQL: Since 7.4</span>
     <span class="version-badge version-supported">SQL Server: Since 2012</span>

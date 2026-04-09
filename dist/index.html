@@ -52,32 +52,6 @@
   </div>
 </header>
 
-<!-- Homepage-specific styles (shared base is in /styles.css) -->
-<style>
-  .examples {
-    background-color: var(--color-surface);
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: var(--shadow-md);
-    margin-top: 24px;
-  }
-  .examples h2 { margin-top: 0; color: var(--color-text-heading); font-size: 1rem;
-    font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; }
-  .example {
-    display: inline-block;
-    margin: 4px 6px 4px 0;
-    padding: 4px 10px;
-    background: var(--color-badge-bg);
-    color: var(--color-badge-text);
-    border: 1px solid var(--color-badge-border);
-    border-radius: 4px;
-    text-decoration: none;
-    font-size: 13px;
-    font-weight: 600;
-  }
-  .example:hover { background: var(--color-badge-bg-hover); }
-</style>
-
 <div class="examples" id="popular-commands-box">
   <h2>Popular Commands</h2>
   <div id="popular-commands-list"><a class="example" href="/f/select">SELECT</a>
@@ -86,53 +60,6 @@
   <a class="example" href="/f/string-agg">STRING AGG</a>
   <a class="example" href="/f/window-functions">WINDOW FUNCTIONS</a></div>
 </div>
-
-<script>
-(function () {
-  // Dynamically refresh the Popular Commands list from live Redis data.
-  // Falls back silently to the static build-time list if anything fails.
-  Promise.all([
-    fetch('/api/popular').then(function (r) { return r.ok ? r.json() : []; }),
-    fetch('/data.json').then(function (r) { return r.ok ? r.json() : {}; }),
-  ]).then(function (results) {
-    var slugs = results[0];
-    var data  = results[1];
-    if (!Array.isArray(slugs) || slugs.length === 0) return;
-
-    // Build slug → name lookup
-    var slugToName = {};
-    Object.keys(data).forEach(function (name) {
-      var entry = data[name];
-      if (entry && entry.slug) slugToName[entry.slug] = name;
-    });
-
-    var container = document.getElementById('popular-commands-list');
-    if (!container) return;
-
-    var fragment = document.createDocumentFragment();
-    var rendered = 0;
-    slugs.forEach(function (slug) {
-      if (typeof slug !== 'string') return;
-      var name = slugToName[slug];
-      if (!name) return;
-      var a = document.createElement('a');
-      a.className  = 'example';
-      a.href       = '/f/' + encodeURIComponent(slug) + '/';
-      a.textContent = name.toUpperCase();
-      fragment.appendChild(a);
-      rendered++;
-    });
-
-    if (rendered > 0) {
-      // Only replace if we got real results
-      container.textContent = '';
-      container.appendChild(fragment);
-    }
-  }).catch(function () {
-    // Static fallback remains in place — nothing to do.
-  });
-}());
-</script>
 
 
   <section class="category-group">
@@ -941,6 +868,7 @@
     </div>
   </section>
 
+<script src="/popular.js" defer></script>
   <script src="/search.js" defer></script>
   <script src="/splash.js" defer></script>
   <script src="/track.js" defer></script>

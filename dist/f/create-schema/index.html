@@ -110,7 +110,7 @@
 
   <h2>Details</h2>
   <div class="detail-block">
-    <p style="margin:0">The term 'schema' means fundamentally different things across engines. In MySQL, SCHEMA = DATABASE — they are completely synonymous. In PostgreSQL, SQL Server, and the SQL standard, a schema is a namespace within a database (one database can contain many schemas). In Oracle, a schema is inseparable from a user account — you cannot create a schema without creating a user. SQLite has no schemas; ATTACH DATABASE provides a similar multi-namespace capability. The SQL standard search path concept (controlling which schema is default for unqualified names) exists natively in PostgreSQL (search_path) and SQL Server (default schema per login), but not in MySQL or Oracle in the same form.</p>
+    <p>The term 'schema' means fundamentally different things across engines. In MySQL, SCHEMA = DATABASE — they are completely synonymous. In PostgreSQL, SQL Server, and the SQL standard, a schema is a namespace within a database (one database can contain many schemas). In Oracle, a schema is inseparable from a user account — you cannot create a schema without creating a user. SQLite has no schemas; ATTACH DATABASE provides a similar multi-namespace capability. The SQL standard search path concept (controlling which schema is default for unqualified names) exists natively in PostgreSQL (search_path) and SQL Server (default schema per login), but not in MySQL or Oracle in the same form.</p>
   </div>
 
   <h2>Standard Syntax</h2>
@@ -124,7 +124,7 @@ CREATE TABLE sales.orders (
 SELECT * FROM sales.orders;</div>
 
   <h2>Version Support</h2>
-  <div style="margin-top: 8px;">
+  <div class="version-list">
     <span class="version-badge version-supported">MySQL: Since 5.0</span>
     <span class="version-badge version-supported">PostgreSQL: Since 7.3</span>
     <span class="version-badge version-supported">SQL Server: Since 2005</span>

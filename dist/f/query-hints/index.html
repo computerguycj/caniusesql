@@ -110,7 +110,7 @@
 
   <h2>Details</h2>
   <div class="detail-block">
-    <p style="margin:0">Query hints are a last resort — the right response to a bad query plan is usually better statistics, updated indexes, or a query rewrite. That said, hints are invaluable when a known-good plan is being abandoned due to stale stats or parameter sniffing. Oracle and SQL Server have the most mature hint systems with the widest vocabulary. PostgreSQL deliberately omits inline hints to keep the optimizer honest, but the pg_hint_plan extension fills the gap for production use. MySQL's FORCE INDEX is deceptively aggressive — it tells the optimizer to use that index or do a full table scan, with no middle ground. SQL Server's WITH (NOLOCK) is the most commonly misused hint: it eliminates lock waits at the cost of dirty reads, phantom reads, and even rows appearing twice or not at all during a scan — not appropriate for financial or transactional queries.</p>
+    <p>Query hints are a last resort — the right response to a bad query plan is usually better statistics, updated indexes, or a query rewrite. That said, hints are invaluable when a known-good plan is being abandoned due to stale stats or parameter sniffing. Oracle and SQL Server have the most mature hint systems with the widest vocabulary. PostgreSQL deliberately omits inline hints to keep the optimizer honest, but the pg_hint_plan extension fills the gap for production use. MySQL's FORCE INDEX is deceptively aggressive — it tells the optimizer to use that index or do a full table scan, with no middle ground. SQL Server's WITH (NOLOCK) is the most commonly misused hint: it eliminates lock waits at the cost of dirty reads, phantom reads, and even rows appearing twice or not at all during a scan — not appropriate for financial or transactional queries.</p>
   </div>
 
   <h2>Standard Syntax</h2>
@@ -123,7 +123,7 @@ SELECT * FROM orders USE INDEX (idx_customer)
 WHERE customer_id = 42;</div>
 
   <h2>Version Support</h2>
-  <div style="margin-top: 8px;">
+  <div class="version-list">
     <span class="version-badge version-supported">MySQL: Since 5.0</span>
     <span class="version-badge version-supported">PostgreSQL: Since 7.4</span>
     <span class="version-badge version-supported">SQL Server: Since 2000</span>

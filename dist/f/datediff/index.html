@@ -110,7 +110,7 @@
 
   <h2>Details</h2>
   <div class="detail-block">
-    <p style="margin:0">SQL Server's DATEDIFF counts boundary crossings, not elapsed time — a well-known gotcha (Dec 31 → Jan 1 = 1 year difference). PostgreSQL's subtraction of DATE columns returns an integer directly, which is the cleanest syntax. Oracle and SQLite both require workarounds (MONTHS_BETWEEN / julianday). MySQL's DATEDIFF is days-only; TIMESTAMPDIFF is needed for other units.</p>
+    <p>SQL Server's DATEDIFF counts boundary crossings, not elapsed time — a well-known gotcha (Dec 31 → Jan 1 = 1 year difference). PostgreSQL's subtraction of DATE columns returns an integer directly, which is the cleanest syntax. Oracle and SQLite both require workarounds (MONTHS_BETWEEN / julianday). MySQL's DATEDIFF is days-only; TIMESTAMPDIFF is needed for other units.</p>
   </div>
 
   <h2>Standard Syntax</h2>
@@ -121,7 +121,7 @@ DATEDIFF(unit, start_date, end_date)
 end_date - start_date  -- returns integer days for dates</div>
 
   <h2>Version Support</h2>
-  <div style="margin-top: 8px;">
+  <div class="version-list">
     <span class="version-badge version-supported">MySQL: Since all</span>
     <span class="version-badge version-supported">PostgreSQL: Since all</span>
     <span class="version-badge version-supported">SQL Server: Since all</span>

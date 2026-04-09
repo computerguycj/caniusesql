@@ -110,7 +110,7 @@
 
   <h2>Details</h2>
   <div class="detail-block">
-    <p style="margin:0">Function naming is completely non-standard across engines: json_agg (PostgreSQL), JSON_ARRAYAGG (MySQL/Oracle 18c), json_group_array (SQLite), and FOR JSON PATH (SQL Server). SQL Server is the only engine with no native aggregate function — it requires a subquery with FOR JSON. PostgreSQL is the only engine supporting ORDER BY inside the aggregate directly and offers FILTER (WHERE ...) for conditional aggregation. Oracle added JSON_ARRAYAGG in 18c; Oracle 12c users need a LISTAGG workaround.</p>
+    <p>Function naming is completely non-standard across engines: json_agg (PostgreSQL), JSON_ARRAYAGG (MySQL/Oracle 18c), json_group_array (SQLite), and FOR JSON PATH (SQL Server). SQL Server is the only engine with no native aggregate function — it requires a subquery with FOR JSON. PostgreSQL is the only engine supporting ORDER BY inside the aggregate directly and offers FILTER (WHERE ...) for conditional aggregation. Oracle added JSON_ARRAYAGG in 18c; Oracle 12c users need a LISTAGG workaround.</p>
   </div>
 
   <h2>Standard Syntax</h2>
@@ -127,7 +127,7 @@ FROM employees
 GROUP BY dept_id;</div>
 
   <h2>Version Support</h2>
-  <div style="margin-top: 8px;">
+  <div class="version-list">
     <span class="version-badge version-supported">MySQL: Since 5.7.22</span>
     <span class="version-badge version-supported">PostgreSQL: Since 9.3</span>
     <span class="version-badge version-not-supported">SQL Server: Not supported</span>

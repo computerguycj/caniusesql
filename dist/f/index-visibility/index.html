@@ -110,7 +110,7 @@
 
   <h2>Details</h2>
   <div class="detail-block">
-    <p style="margin:0">Index visibility/disable is a valuable operational tool for testing whether an index is actually being used before committing to dropping it. MySQL's INVISIBLE and Oracle's INVISIBLE (11g+) are the closest equivalents — the index stays current on writes but is hidden from the optimizer, making the test safe and reversible without an index rebuild cost. SQL Server's DISABLE is more destructive: the index is no longer maintained on DML, meaning a REBUILD is required to bring it back (not just a metadata toggle), and disabling a clustered index takes the table offline. PostgreSQL has no single-index disable command — session-level planner knobs or index hints via extensions are the workarounds. For high-traffic tables, MySQL's INVISIBLE approach is the least risky way to validate index removal in production.</p>
+    <p>Index visibility/disable is a valuable operational tool for testing whether an index is actually being used before committing to dropping it. MySQL's INVISIBLE and Oracle's INVISIBLE (11g+) are the closest equivalents — the index stays current on writes but is hidden from the optimizer, making the test safe and reversible without an index rebuild cost. SQL Server's DISABLE is more destructive: the index is no longer maintained on DML, meaning a REBUILD is required to bring it back (not just a metadata toggle), and disabling a clustered index takes the table offline. PostgreSQL has no single-index disable command — session-level planner knobs or index hints via extensions are the workarounds. For high-traffic tables, MySQL's INVISIBLE approach is the least risky way to validate index removal in production.</p>
   </div>
 
   <h2>Standard Syntax</h2>
@@ -121,7 +121,7 @@ ALTER TABLE t ALTER INDEX idx INVISIBLE;
 ALTER INDEX idx ON t DISABLE;</div>
 
   <h2>Version Support</h2>
-  <div style="margin-top: 8px;">
+  <div class="version-list">
     <span class="version-badge version-supported">MySQL: Since 8.0</span>
     <span class="version-badge version-not-supported">PostgreSQL: Not supported</span>
     <span class="version-badge version-supported">SQL Server: Since 2005</span>

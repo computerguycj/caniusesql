@@ -110,7 +110,7 @@
 
   <h2>Details</h2>
   <div class="detail-block">
-    <p style="margin:0">SQL Server is the only engine here that rejects both NATURAL JOIN and USING entirely, requiring explicit ON syntax. NATURAL JOIN is universally considered risky in production schemas: any future column added to either table with a name matching a column in the other table silently changes join behavior. USING is safer since the join column is explicit, but it still produces a single merged output column (not two), which can surprise applications expecting column aliases. For maximum portability and least-surprise semantics, ON is recommended for production code.</p>
+    <p>SQL Server is the only engine here that rejects both NATURAL JOIN and USING entirely, requiring explicit ON syntax. NATURAL JOIN is universally considered risky in production schemas: any future column added to either table with a name matching a column in the other table silently changes join behavior. USING is safer since the join column is explicit, but it still produces a single merged output column (not two), which can surprise applications expecting column aliases. For maximum portability and least-surprise semantics, ON is recommended for production code.</p>
   </div>
 
   <h2>Standard Syntax</h2>
@@ -123,7 +123,7 @@ SELECT * FROM orders
 NATURAL JOIN customers;</div>
 
   <h2>Version Support</h2>
-  <div style="margin-top: 8px;">
+  <div class="version-list">
     <span class="version-badge version-supported">MySQL: Since 5.0</span>
     <span class="version-badge version-supported">PostgreSQL: Since 7.4</span>
     <span class="version-badge version-not-supported">SQL Server: Not supported</span>

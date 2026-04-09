@@ -110,7 +110,7 @@
 
   <h2>Details</h2>
   <div class="detail-block">
-    <p style="margin:0">The NULL trap with NOT IN is the critical gotcha: NOT IN returns zero rows if the subquery result contains any NULL, because SQL can't prove that the value is not equal to NULL. NOT EXISTS handles NULLs correctly and is generally the safer choice. EXISTS short-circuits at the first matching row, making it efficient even for large subqueries.</p>
+    <p>The NULL trap with NOT IN is the critical gotcha: NOT IN returns zero rows if the subquery result contains any NULL, because SQL can't prove that the value is not equal to NULL. NOT EXISTS handles NULLs correctly and is generally the safer choice. EXISTS short-circuits at the first matching row, making it efficient even for large subqueries.</p>
   </div>
 
   <h2>Standard Syntax</h2>
@@ -121,7 +121,7 @@ WHERE EXISTS (
 );</div>
 
   <h2>Version Support</h2>
-  <div style="margin-top: 8px;">
+  <div class="version-list">
     <span class="version-badge version-supported">MySQL: Since all</span>
     <span class="version-badge version-supported">PostgreSQL: Since all</span>
     <span class="version-badge version-supported">SQL Server: Since all</span>

@@ -110,7 +110,7 @@
 
   <h2>Details</h2>
   <div class="detail-block">
-    <p style="margin:0">The WINDOW clause is part of the SQL standard and is supported by PostgreSQL (8.4+), MySQL (8.0+), and SQLite (3.28.0+). SQL Server and Oracle omit it entirely — both require repeating the full OVER() specification for every window function. The practical impact is significant: a query with five window functions all sharing the same partition/order must duplicate that definition five times in SQL Server and Oracle. PostgreSQL supports named window inheritance — one named window can build on another — which MySQL and SQLite do not support. Even without the WINDOW clause, SQL Server and Oracle's optimizers typically recognize identical OVER() clauses and compute the window only once in the execution plan.</p>
+    <p>The WINDOW clause is part of the SQL standard and is supported by PostgreSQL (8.4+), MySQL (8.0+), and SQLite (3.28.0+). SQL Server and Oracle omit it entirely — both require repeating the full OVER() specification for every window function. The practical impact is significant: a query with five window functions all sharing the same partition/order must duplicate that definition five times in SQL Server and Oracle. PostgreSQL supports named window inheritance — one named window can build on another — which MySQL and SQLite do not support. Even without the WINDOW clause, SQL Server and Oracle's optimizers typically recognize identical OVER() clauses and compute the window only once in the execution plan.</p>
   </div>
 
   <h2>Standard Syntax</h2>
@@ -124,7 +124,7 @@ FROM employees
 WINDOW w AS (PARTITION BY dept ORDER BY salary DESC);</div>
 
   <h2>Version Support</h2>
-  <div style="margin-top: 8px;">
+  <div class="version-list">
     <span class="version-badge version-supported">MySQL: Since 8.0</span>
     <span class="version-badge version-supported">PostgreSQL: Since 8.4</span>
     <span class="version-badge version-not-supported">SQL Server: Not supported</span>

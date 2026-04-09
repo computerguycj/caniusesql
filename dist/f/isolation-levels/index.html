@@ -110,7 +110,7 @@
 
   <h2>Details</h2>
   <div class="detail-block">
-    <p style="margin:0">The four ISO levels (READ UNCOMMITTED, READ COMMITTED, REPEATABLE READ, SERIALIZABLE) are defined in the SQL standard but implemented very differently across engines. Oracle doesn't implement READ UNCOMMITTED or REPEATABLE READ at all — its MVCC architecture makes dirty reads impossible by design, and its SERIALIZABLE is actually snapshot isolation (which can still have write skew anomalies under the formal definition). PostgreSQL's SERIALIZABLE (SSI) is the most theoretically correct implementation among these five engines. MySQL's default REPEATABLE READ is stricter than most other engines default, which surprises developers coming from PostgreSQL (READ COMMITTED). SQL Server's READ_COMMITTED_SNAPSHOT changes the entire database's default isolation behavior when enabled — a setting that's often enabled silently by ORM frameworks during database creation. SQLite's transaction modes don't map cleanly to ISO levels; WAL mode is the key configuration that unlocks concurrent reads during a write transaction.</p>
+    <p>The four ISO levels (READ UNCOMMITTED, READ COMMITTED, REPEATABLE READ, SERIALIZABLE) are defined in the SQL standard but implemented very differently across engines. Oracle doesn't implement READ UNCOMMITTED or REPEATABLE READ at all — its MVCC architecture makes dirty reads impossible by design, and its SERIALIZABLE is actually snapshot isolation (which can still have write skew anomalies under the formal definition). PostgreSQL's SERIALIZABLE (SSI) is the most theoretically correct implementation among these five engines. MySQL's default REPEATABLE READ is stricter than most other engines default, which surprises developers coming from PostgreSQL (READ COMMITTED). SQL Server's READ_COMMITTED_SNAPSHOT changes the entire database's default isolation behavior when enabled — a setting that's often enabled silently by ORM frameworks during database creation. SQLite's transaction modes don't map cleanly to ISO levels; WAL mode is the key configuration that unlocks concurrent reads during a write transaction.</p>
   </div>
 
   <h2>Standard Syntax</h2>
@@ -120,7 +120,7 @@ BEGIN;
 COMMIT;</div>
 
   <h2>Version Support</h2>
-  <div style="margin-top: 8px;">
+  <div class="version-list">
     <span class="version-badge version-supported">MySQL: Since 5.0</span>
     <span class="version-badge version-supported">PostgreSQL: Since 7.4</span>
     <span class="version-badge version-supported">SQL Server: Since 2000</span>

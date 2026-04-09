@@ -110,7 +110,7 @@
 
   <h2>Details</h2>
   <div class="detail-block">
-    <p style="margin:0">BETWEEN is inclusive on both ends in all engines — this is a common mistake when filtering DATETIME/TIMESTAMP columns. The safe pattern for timestamp ranges is always col &gt;= start AND col &lt; end (exclusive upper bound). PostgreSQL's BETWEEN SYMMETRIC is unique. Oracle's DATE type secretly includes time, which makes date BETWEEN behave differently than expected.</p>
+    <p>BETWEEN is inclusive on both ends in all engines — this is a common mistake when filtering DATETIME/TIMESTAMP columns. The safe pattern for timestamp ranges is always col &gt;= start AND col &lt; end (exclusive upper bound). PostgreSQL's BETWEEN SYMMETRIC is unique. Oracle's DATE type secretly includes time, which makes date BETWEEN behave differently than expected.</p>
   </div>
 
   <h2>Standard Syntax</h2>
@@ -121,7 +121,7 @@ SELECT * FROM events
 WHERE event_date BETWEEN '2024-01-01' AND '2024-03-31';</div>
 
   <h2>Version Support</h2>
-  <div style="margin-top: 8px;">
+  <div class="version-list">
     <span class="version-badge version-supported">MySQL: Since all</span>
     <span class="version-badge version-supported">PostgreSQL: Since all</span>
     <span class="version-badge version-supported">SQL Server: Since all</span>

@@ -110,7 +110,7 @@
 
   <h2>Details</h2>
   <div class="detail-block">
-    <p style="margin:0">PostgreSQL and SQL Server are the only engines with a true native UUID column type that stores 16 bytes internally and handles formatting transparently. MySQL requires a deliberate choice between CHAR(36) (readable, wasteful) and BINARY(16) (efficient but requires conversion functions on read/write). Oracle's RAW(16) is functional but the formatting overhead is significant. A critical SQL Server gotcha: UNIQUEIDENTIFIER byte order is not standard RFC 4122 — the first three components are stored in little-endian order, which causes the displayed string to differ from what other systems would show for the same 16 bytes. This matters when exchanging UUIDs with non-SQL-Server systems. For random (v4) UUIDs as clustered primary keys in SQL Server, prefer NEWSEQUENTIALID() to avoid index fragmentation.</p>
+    <p>PostgreSQL and SQL Server are the only engines with a true native UUID column type that stores 16 bytes internally and handles formatting transparently. MySQL requires a deliberate choice between CHAR(36) (readable, wasteful) and BINARY(16) (efficient but requires conversion functions on read/write). Oracle's RAW(16) is functional but the formatting overhead is significant. A critical SQL Server gotcha: UNIQUEIDENTIFIER byte order is not standard RFC 4122 — the first three components are stored in little-endian order, which causes the displayed string to differ from what other systems would show for the same 16 bytes. This matters when exchanging UUIDs with non-SQL-Server systems. For random (v4) UUIDs as clustered primary keys in SQL Server, prefer NEWSEQUENTIALID() to avoid index fragmentation.</p>
   </div>
 
   <h2>Standard Syntax</h2>
@@ -120,7 +120,7 @@ CREATE TABLE t (
 );</div>
 
   <h2>Version Support</h2>
-  <div style="margin-top: 8px;">
+  <div class="version-list">
     <span class="version-badge version-not-supported">MySQL: Not supported</span>
     <span class="version-badge version-supported">PostgreSQL: Since 8.3</span>
     <span class="version-badge version-supported">SQL Server: Since 2000</span>

@@ -110,7 +110,7 @@
 
   <h2>Details</h2>
   <div class="detail-block">
-    <p style="margin:0">Partitioning is a mature feature in Oracle and SQL Server, reasonably capable in MySQL and PostgreSQL, and absent in SQLite. Key differences: Oracle's INTERVAL partitioning auto-creates new partitions as data arrives — the other engines require explicit partition management. SQL Server's two-step PARTITION FUNCTION + SCHEME approach is verbose but separates the partitioning logic from the storage layout. PostgreSQL's declarative partitioning since version 10 is clean but foreign keys referencing the parent partitioned table were only fully supported from PG 12. Partition pruning — the optimizer skipping irrelevant partitions — requires that the partition key appear in the WHERE clause; always verify with EXPLAIN. Common pitfalls: MySQL's restriction on foreign keys on partitioned tables, and the fact that a `SELECT *` on the parent in PostgreSQL returns rows from all partitions transparently.</p>
+    <p>Partitioning is a mature feature in Oracle and SQL Server, reasonably capable in MySQL and PostgreSQL, and absent in SQLite. Key differences: Oracle's INTERVAL partitioning auto-creates new partitions as data arrives — the other engines require explicit partition management. SQL Server's two-step PARTITION FUNCTION + SCHEME approach is verbose but separates the partitioning logic from the storage layout. PostgreSQL's declarative partitioning since version 10 is clean but foreign keys referencing the parent partitioned table were only fully supported from PG 12. Partition pruning — the optimizer skipping irrelevant partitions — requires that the partition key appear in the WHERE clause; always verify with EXPLAIN. Common pitfalls: MySQL's restriction on foreign keys on partitioned tables, and the fact that a `SELECT *` on the parent in PostgreSQL returns rows from all partitions transparently.</p>
   </div>
 
   <h2>Standard Syntax</h2>
@@ -121,7 +121,7 @@ CREATE TABLE orders (
 ) PARTITION BY RANGE (order_date);</div>
 
   <h2>Version Support</h2>
-  <div style="margin-top: 8px;">
+  <div class="version-list">
     <span class="version-badge version-supported">MySQL: Since 5.1</span>
     <span class="version-badge version-supported">PostgreSQL: Since 10</span>
     <span class="version-badge version-supported">SQL Server: Since 2005</span>

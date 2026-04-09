@@ -110,7 +110,7 @@
 
   <h2>Details</h2>
   <div class="detail-block">
-    <p style="margin:0">= ANY(subquery) is exactly equivalent to IN(subquery); &lt;&gt; ALL(subquery) is equivalent to NOT IN(subquery). These relationships are useful for remembering the semantics. The practical mnemonic for choosing between ANY and ALL: ANY behaves like OR (at least one must match); ALL behaves like AND (every one must match). PostgreSQL extends ANY/ALL to work on arrays, which is a common and idiomatic PostgreSQL pattern not found elsewhere. SQLite is the only engine with no support — use MIN/MAX aggregate subqueries as the portable fallback.</p>
+    <p>= ANY(subquery) is exactly equivalent to IN(subquery); &lt;&gt; ALL(subquery) is equivalent to NOT IN(subquery). These relationships are useful for remembering the semantics. The practical mnemonic for choosing between ANY and ALL: ANY behaves like OR (at least one must match); ALL behaves like AND (every one must match). PostgreSQL extends ANY/ALL to work on arrays, which is a common and idiomatic PostgreSQL pattern not found elsewhere. SQLite is the only engine with no support — use MIN/MAX aggregate subqueries as the portable fallback.</p>
   </div>
 
   <h2>Standard Syntax</h2>
@@ -127,7 +127,7 @@ WHERE salary &gt; ALL (
 );</div>
 
   <h2>Version Support</h2>
-  <div style="margin-top: 8px;">
+  <div class="version-list">
     <span class="version-badge version-supported">MySQL: Since 4.1</span>
     <span class="version-badge version-supported">PostgreSQL: Since 6.0</span>
     <span class="version-badge version-supported">SQL Server: Since 6.5</span>

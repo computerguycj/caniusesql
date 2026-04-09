@@ -110,7 +110,7 @@
 
   <h2>Details</h2>
   <div class="detail-block">
-    <p style="margin:0">Structured error handling is universally available but the syntax varies significantly. SQL Server's TRY/CATCH is the closest to a general-purpose mechanism because it works in plain batch scripts; the others require a procedural language context (PL/pgSQL, PL/SQL, MySQL stored routines). In PostgreSQL, RAISE EXCEPTION re-throws; in Oracle, RAISE re-raises the current exception. All engines except SQLite expose error code and message via engine-specific functions (SQLERRM, ERROR_MESSAGE(), etc.). A common portability trap: SQL Server's TRY/CATCH does not catch compile-time errors or certain severity-20+ errors; use XACT_STATE() to check transaction validity inside the CATCH block.</p>
+    <p>Structured error handling is universally available but the syntax varies significantly. SQL Server's TRY/CATCH is the closest to a general-purpose mechanism because it works in plain batch scripts; the others require a procedural language context (PL/pgSQL, PL/SQL, MySQL stored routines). In PostgreSQL, RAISE EXCEPTION re-throws; in Oracle, RAISE re-raises the current exception. All engines except SQLite expose error code and message via engine-specific functions (SQLERRM, ERROR_MESSAGE(), etc.). A common portability trap: SQL Server's TRY/CATCH does not catch compile-time errors or certain severity-20+ errors; use XACT_STATE() to check transaction validity inside the CATCH block.</p>
   </div>
 
   <h2>Standard Syntax</h2>
@@ -122,7 +122,7 @@ BEGIN CATCH
 END CATCH;</div>
 
   <h2>Version Support</h2>
-  <div style="margin-top: 8px;">
+  <div class="version-list">
     <span class="version-badge version-supported">MySQL: Since 5.5</span>
     <span class="version-badge version-supported">PostgreSQL: Since 8.0</span>
     <span class="version-badge version-supported">SQL Server: Since 2005</span>

@@ -110,7 +110,7 @@
 
   <h2>Details</h2>
   <div class="detail-block">
-    <p style="margin:0">Oracle's treatment of empty string ('') as NULL is a notorious portability trap — NOT NULL in Oracle also blocks empty strings, unlike all other engines. MySQL without strict mode may silently coerce a NOT NULL violation to a default value instead of rejecting the INSERT, which is arguably worse behavior than an error.</p>
+    <p>Oracle's treatment of empty string ('') as NULL is a notorious portability trap — NOT NULL in Oracle also blocks empty strings, unlike all other engines. MySQL without strict mode may silently coerce a NOT NULL violation to a default value instead of rejecting the INSERT, which is arguably worse behavior than an error.</p>
   </div>
 
   <h2>Standard Syntax</h2>
@@ -121,7 +121,7 @@
 );</div>
 
   <h2>Version Support</h2>
-  <div style="margin-top: 8px;">
+  <div class="version-list">
     <span class="version-badge version-supported">MySQL: Since all</span>
     <span class="version-badge version-supported">PostgreSQL: Since all</span>
     <span class="version-badge version-supported">SQL Server: Since all</span>

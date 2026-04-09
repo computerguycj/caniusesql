@@ -110,7 +110,7 @@
 
   <h2>Details</h2>
   <div class="detail-block">
-    <p style="margin:0">INSERT INTO ... SELECT is universally supported and has been since the earliest versions of all five engines. The more interesting divergences are in the create-and-populate shorthand: CREATE TABLE AS SELECT is the SQL standard form and works in MySQL, PostgreSQL, Oracle, and SQLite; SELECT INTO is a SQL Server and PostgreSQL extension. Oracle's INSERT /*+ APPEND */ hint enables direct-path loading (equivalent to bulk load, bypasses buffer cache) but exclusively locks the segment until COMMIT. Oracle's INSERT ALL is unique — it can fan one SELECT into multiple target tables in a single statement, useful for partitioned loading.</p>
+    <p>INSERT INTO ... SELECT is universally supported and has been since the earliest versions of all five engines. The more interesting divergences are in the create-and-populate shorthand: CREATE TABLE AS SELECT is the SQL standard form and works in MySQL, PostgreSQL, Oracle, and SQLite; SELECT INTO is a SQL Server and PostgreSQL extension. Oracle's INSERT /*+ APPEND */ hint enables direct-path loading (equivalent to bulk load, bypasses buffer cache) but exclusively locks the segment until COMMIT. Oracle's INSERT ALL is unique — it can fan one SELECT into multiple target tables in a single statement, useful for partitioned loading.</p>
   </div>
 
   <h2>Standard Syntax</h2>
@@ -126,7 +126,7 @@ INTO new_table
 FROM orders;  -- SQL Server syntax</div>
 
   <h2>Version Support</h2>
-  <div style="margin-top: 8px;">
+  <div class="version-list">
     <span class="version-badge version-supported">MySQL: Since 3.23</span>
     <span class="version-badge version-supported">PostgreSQL: Since 6.0</span>
     <span class="version-badge version-supported">SQL Server: Since 6.5</span>

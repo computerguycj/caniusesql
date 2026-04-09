@@ -110,7 +110,7 @@
 
   <h2>Details</h2>
   <div class="detail-block">
-    <p style="margin:0">COUNT(*) and COUNT(col) are not interchangeable: COUNT(*) counts every row, COUNT(col) excludes rows where col is NULL. This distinction exists identically in all five engines. The most common portability trap is AVG integer division in SQL Server — always cast the input to FLOAT or DECIMAL when averaging integer columns. The FILTER (WHERE ...) clause for conditional aggregation is supported in PostgreSQL, SQLite 3.30+, and is part of the SQL standard — but not in MySQL or SQL Server, where CASE WHEN inside SUM/COUNT is the portable workaround.</p>
+    <p>COUNT(*) and COUNT(col) are not interchangeable: COUNT(*) counts every row, COUNT(col) excludes rows where col is NULL. This distinction exists identically in all five engines. The most common portability trap is AVG integer division in SQL Server — always cast the input to FLOAT or DECIMAL when averaging integer columns. The FILTER (WHERE ...) clause for conditional aggregation is supported in PostgreSQL, SQLite 3.30+, and is part of the SQL standard — but not in MySQL or SQL Server, where CASE WHEN inside SUM/COUNT is the portable workaround.</p>
   </div>
 
   <h2>Standard Syntax</h2>
@@ -124,7 +124,7 @@
 FROM orders;</div>
 
   <h2>Version Support</h2>
-  <div style="margin-top: 8px;">
+  <div class="version-list">
     <span class="version-badge version-supported">MySQL: Since 3.23</span>
     <span class="version-badge version-supported">PostgreSQL: Since 6.0</span>
     <span class="version-badge version-supported">SQL Server: Since 6.5</span>

@@ -110,7 +110,7 @@
 
   <h2>Details</h2>
   <div class="detail-block">
-    <p style="margin:0">NULL handling is the key divergence: SQL Server allows only ONE NULL per unique column (treats NULLs as equal), while PostgreSQL, MySQL, Oracle, and SQLite allow multiple NULLs (NULL != NULL). PostgreSQL 15 added NULLS NOT DISTINCT to opt into SQL Server's behavior. This is a subtle but real portability trap.</p>
+    <p>NULL handling is the key divergence: SQL Server allows only ONE NULL per unique column (treats NULLs as equal), while PostgreSQL, MySQL, Oracle, and SQLite allow multiple NULLs (NULL != NULL). PostgreSQL 15 added NULLS NOT DISTINCT to opt into SQL Server's behavior. This is a subtle but real portability trap.</p>
   </div>
 
   <h2>Standard Syntax</h2>
@@ -122,7 +122,7 @@
 );</div>
 
   <h2>Version Support</h2>
-  <div style="margin-top: 8px;">
+  <div class="version-list">
     <span class="version-badge version-supported">MySQL: Since all</span>
     <span class="version-badge version-supported">PostgreSQL: Since all</span>
     <span class="version-badge version-supported">SQL Server: Since all</span>

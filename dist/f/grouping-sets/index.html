@@ -110,7 +110,7 @@
 
   <h2>Details</h2>
   <div class="detail-block">
-    <p style="margin:0">GROUPING SETS is the most explicit of the three grouping extensions (vs ROLLUP and CUBE): you list exactly the combinations you want, nothing more. ROLLUP(a, b) is syntactic sugar for GROUPING SETS((a,b),(a),()), and CUBE(a,b) is syntactic sugar for GROUPING SETS((a,b),(a),(b),()). MySQL is the only major RDBMS with no support for GROUPING SETS; SQLite supports none of the three. When genuinely NULL data values exist in grouping columns, always use GROUPING() to distinguish subtotal NULLs from real NULLs — COALESCE alone is unreliable in that case.</p>
+    <p>GROUPING SETS is the most explicit of the three grouping extensions (vs ROLLUP and CUBE): you list exactly the combinations you want, nothing more. ROLLUP(a, b) is syntactic sugar for GROUPING SETS((a,b),(a),()), and CUBE(a,b) is syntactic sugar for GROUPING SETS((a,b),(a),(b),()). MySQL is the only major RDBMS with no support for GROUPING SETS; SQLite supports none of the three. When genuinely NULL data values exist in grouping columns, always use GROUPING() to distinguish subtotal NULLs from real NULLs — COALESCE alone is unreliable in that case.</p>
   </div>
 
   <h2>Standard Syntax</h2>
@@ -123,7 +123,7 @@ GROUP BY GROUPING SETS (
 );</div>
 
   <h2>Version Support</h2>
-  <div style="margin-top: 8px;">
+  <div class="version-list">
     <span class="version-badge version-not-supported">MySQL: Not supported</span>
     <span class="version-badge version-supported">PostgreSQL: Since 9.5</span>
     <span class="version-badge version-supported">SQL Server: Since 2008</span>

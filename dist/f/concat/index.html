@@ -110,7 +110,7 @@
 
   <h2>Details</h2>
   <div class="detail-block">
-    <p style="margin:0">The biggest gotcha: the || operator propagates NULLs in PostgreSQL and SQLite (any NULL in the chain = NULL result), while CONCAT() in MySQL, SQL Server, and PostgreSQL treats NULLs as empty strings. Oracle's CONCAT() only takes two arguments. CONCAT_WS() (MySQL 2017+, SQL Server 2017+) is the cleanest option when you have a separator and want to skip NULLs automatically.</p>
+    <p>The biggest gotcha: the || operator propagates NULLs in PostgreSQL and SQLite (any NULL in the chain = NULL result), while CONCAT() in MySQL, SQL Server, and PostgreSQL treats NULLs as empty strings. Oracle's CONCAT() only takes two arguments. CONCAT_WS() (MySQL 2017+, SQL Server 2017+) is the cleanest option when you have a separator and want to skip NULLs automatically.</p>
   </div>
 
   <h2>Standard Syntax</h2>
@@ -118,7 +118,7 @@
 FROM users;</div>
 
   <h2>Version Support</h2>
-  <div style="margin-top: 8px;">
+  <div class="version-list">
     <span class="version-badge version-supported">MySQL: Since all</span>
     <span class="version-badge version-supported">PostgreSQL: Since all</span>
     <span class="version-badge version-supported">SQL Server: Since 2012</span>

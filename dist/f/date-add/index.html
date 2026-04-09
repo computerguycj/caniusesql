@@ -110,7 +110,7 @@
 
   <h2>Details</h2>
   <div class="detail-block">
-    <p style="margin:0">Date arithmetic is one of the least portable areas of SQL. SQL Server requires DATEADD() — no operator shorthand. Oracle's DATE + n adds days only; months require ADD_MONTHS(). PostgreSQL's INTERVAL arithmetic is the most expressive. SQLite's modifier string approach ('now', '+7 days') is unique and surprisingly capable.</p>
+    <p>Date arithmetic is one of the least portable areas of SQL. SQL Server requires DATEADD() — no operator shorthand. Oracle's DATE + n adds days only; months require ADD_MONTHS(). PostgreSQL's INTERVAL arithmetic is the most expressive. SQLite's modifier string approach ('now', '+7 days') is unique and surprisingly capable.</p>
   </div>
 
   <h2>Standard Syntax</h2>
@@ -123,7 +123,7 @@ some_date + INTERVAL 7 DAY          -- MySQL
 some_date + INTERVAL '7 days'       -- PostgreSQL</div>
 
   <h2>Version Support</h2>
-  <div style="margin-top: 8px;">
+  <div class="version-list">
     <span class="version-badge version-supported">MySQL: Since all</span>
     <span class="version-badge version-supported">PostgreSQL: Since all</span>
     <span class="version-badge version-supported">SQL Server: Since all</span>

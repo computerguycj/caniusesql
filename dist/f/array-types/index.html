@@ -110,7 +110,7 @@
 
   <h2>Details</h2>
   <div class="detail-block">
-    <p style="margin:0">PostgreSQL is the only engine with a true native array type supporting arbitrary element types, multidimensional arrays, GIN indexes for fast containment queries, and a rich function library (array_agg, unnest, array_append, @&gt;, &amp;&amp;). Oracle has arrays via VARRAY and nested tables but they require DDL type definitions and have storage complexities that make JSON columns a more common modern choice. MySQL, SQL Server, and SQLite all lack native arrays — the JSON column workaround is the most ergonomic alternative in all three, especially since JSON array operators (JSON_CONTAINS in MySQL, OPENJSON in SQL Server, json_each in SQLite) are reasonably capable.</p>
+    <p>PostgreSQL is the only engine with a true native array type supporting arbitrary element types, multidimensional arrays, GIN indexes for fast containment queries, and a rich function library (array_agg, unnest, array_append, @&gt;, &amp;&amp;). Oracle has arrays via VARRAY and nested tables but they require DDL type definitions and have storage complexities that make JSON columns a more common modern choice. MySQL, SQL Server, and SQLite all lack native arrays — the JSON column workaround is the most ergonomic alternative in all three, especially since JSON array operators (JSON_CONTAINS in MySQL, OPENJSON in SQL Server, json_each in SQLite) are reasonably capable.</p>
   </div>
 
   <h2>Standard Syntax</h2>
@@ -125,7 +125,7 @@ INSERT INTO products (tags, scores)
 VALUES (ARRAY['featured','sale'], ARRAY[4,5,3]);</div>
 
   <h2>Version Support</h2>
-  <div style="margin-top: 8px;">
+  <div class="version-list">
     <span class="version-badge version-not-supported">MySQL: Not supported</span>
     <span class="version-badge version-supported">PostgreSQL: Since 7.1</span>
     <span class="version-badge version-not-supported">SQL Server: Not supported</span>

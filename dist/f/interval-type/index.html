@@ -110,7 +110,7 @@
 
   <h2>Details</h2>
   <div class="detail-block">
-    <p style="margin:0">PostgreSQL has the most complete INTERVAL implementation — it is a first-class storable type with rich literal syntax and seamless arithmetic with timestamps. Oracle's two-type split (YEAR TO MONTH vs DAY TO SECOND) reflects the genuine semantic problem that a month is not a fixed number of days; the two types cannot be mixed in arithmetic. MySQL uses INTERVAL only as an arithmetic keyword, not a storable type — a frequently missed distinction. SQL Server and SQLite have no interval concept at all; developers store durations as integers and compute with DATEADD/DATEDIFF or SQLite's string modifier functions. The lack of a storable interval type in three of five engines makes this a portability challenge for applications that need to persist duration values such as SLAs, scheduling windows, or rate limit windows.</p>
+    <p>PostgreSQL has the most complete INTERVAL implementation — it is a first-class storable type with rich literal syntax and seamless arithmetic with timestamps. Oracle's two-type split (YEAR TO MONTH vs DAY TO SECOND) reflects the genuine semantic problem that a month is not a fixed number of days; the two types cannot be mixed in arithmetic. MySQL uses INTERVAL only as an arithmetic keyword, not a storable type — a frequently missed distinction. SQL Server and SQLite have no interval concept at all; developers store durations as integers and compute with DATEADD/DATEDIFF or SQLite's string modifier functions. The lack of a storable interval type in three of five engines makes this a portability challenge for applications that need to persist duration values such as SLAs, scheduling windows, or rate limit windows.</p>
   </div>
 
   <h2>Standard Syntax</h2>
@@ -119,7 +119,7 @@ SELECT NOW() + INTERVAL '3 days';
 SELECT INTERVAL '2 hours 30 minutes';</div>
 
   <h2>Version Support</h2>
-  <div style="margin-top: 8px;">
+  <div class="version-list">
     <span class="version-badge version-supported">MySQL: Since 5.0</span>
     <span class="version-badge version-supported">PostgreSQL: Since 7.4</span>
     <span class="version-badge version-not-supported">SQL Server: Not supported</span>

@@ -110,7 +110,7 @@
 
   <h2>Details</h2>
   <div class="detail-block">
-    <p style="margin:0">Generated column terminology differs by engine: MySQL and PostgreSQL use GENERATED ALWAYS AS, SQL Server uses AS (computed column), Oracle uses VIRTUAL column. The STORED vs VIRTUAL split is roughly universal but PostgreSQL only supports STORED — there is no VIRTUAL mode. SQL Server's PERSISTED keyword maps to STORED. All engines allow indexing stored/persisted generated columns; only SQL Server and PostgreSQL allow indexing virtual/non-persisted ones as functional indexes. None allow referencing other generated columns in the expression.</p>
+    <p>Generated column terminology differs by engine: MySQL and PostgreSQL use GENERATED ALWAYS AS, SQL Server uses AS (computed column), Oracle uses VIRTUAL column. The STORED vs VIRTUAL split is roughly universal but PostgreSQL only supports STORED — there is no VIRTUAL mode. SQL Server's PERSISTED keyword maps to STORED. All engines allow indexing stored/persisted generated columns; only SQL Server and PostgreSQL allow indexing virtual/non-persisted ones as functional indexes. None allow referencing other generated columns in the expression.</p>
   </div>
 
   <h2>Standard Syntax</h2>
@@ -122,7 +122,7 @@ CREATE TABLE products (
 );</div>
 
   <h2>Version Support</h2>
-  <div style="margin-top: 8px;">
+  <div class="version-list">
     <span class="version-badge version-supported">MySQL: Since 5.7</span>
     <span class="version-badge version-supported">PostgreSQL: Since 12</span>
     <span class="version-badge version-supported">SQL Server: Since 2000</span>

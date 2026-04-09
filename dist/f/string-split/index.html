@@ -110,7 +110,7 @@
 
   <h2>Details</h2>
   <div class="detail-block">
-    <p style="margin:0">The underlying need (querying a delimited column relationally) is a sign of a denormalized schema — the real fix is normalizing into a child table. That said, STRING_SPLIT (SQL Server 2016+), unnest(string_to_array()) (PostgreSQL), and the json_each workaround (SQLite/MySQL) are commonly needed for migrating or querying legacy data. SQL Server 2016's STRING_SPLIT does not guarantee element order — the ordinal column only arrives in SQL Server 2022. Oracle has no single built-in; the CONNECT BY LEVEL + REGEXP_SUBSTR pattern is the de facto standard but breaks on multi-row inputs without careful PRIOR + SYS_GUID() fencing.</p>
+    <p>The underlying need (querying a delimited column relationally) is a sign of a denormalized schema — the real fix is normalizing into a child table. That said, STRING_SPLIT (SQL Server 2016+), unnest(string_to_array()) (PostgreSQL), and the json_each workaround (SQLite/MySQL) are commonly needed for migrating or querying legacy data. SQL Server 2016's STRING_SPLIT does not guarantee element order — the ordinal column only arrives in SQL Server 2022. Oracle has no single built-in; the CONNECT BY LEVEL + REGEXP_SUBSTR pattern is the de facto standard but breaks on multi-row inputs without careful PRIOR + SYS_GUID() fencing.</p>
   </div>
 
   <h2>Standard Syntax</h2>
@@ -122,7 +122,7 @@ FROM STRING_SPLIT('a,b,c,d', ',');
 SELECT unnest(string_to_array('a,b,c,d', ',')) AS value;</div>
 
   <h2>Version Support</h2>
-  <div style="margin-top: 8px;">
+  <div class="version-list">
     <span class="version-badge version-not-supported">MySQL: Not supported</span>
     <span class="version-badge version-supported">PostgreSQL: Since 8.0</span>
     <span class="version-badge version-supported">SQL Server: Since 2016</span>

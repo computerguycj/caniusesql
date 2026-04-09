@@ -110,7 +110,7 @@
 
   <h2>Details</h2>
   <div class="detail-block">
-    <p style="margin:0">Only PostgreSQL has a true, fully-featured BOOLEAN type. MySQL's BOOLEAN is transparently TINYINT(1), which means any integer value can be inserted, not just 0 and 1, and IS TRUE / IS FALSE predicates behave differently than in PostgreSQL. SQL Server's BIT is the closest equivalent but cannot be used as a standalone expression in WHERE — it always requires an explicit comparison operator. Oracle only gained a SQL-level BOOLEAN column type in 23c; before that, PL/SQL had BOOLEAN but it was unusable in DDL or plain SQL queries, forcing teams to use numeric or character proxies. When writing cross-engine code, the safest portable pattern is a SMALLINT or TINYINT column constrained to 0 and 1 with a CHECK constraint, compared with = 1 / = 0.</p>
+    <p>Only PostgreSQL has a true, fully-featured BOOLEAN type. MySQL's BOOLEAN is transparently TINYINT(1), which means any integer value can be inserted, not just 0 and 1, and IS TRUE / IS FALSE predicates behave differently than in PostgreSQL. SQL Server's BIT is the closest equivalent but cannot be used as a standalone expression in WHERE — it always requires an explicit comparison operator. Oracle only gained a SQL-level BOOLEAN column type in 23c; before that, PL/SQL had BOOLEAN but it was unusable in DDL or plain SQL queries, forcing teams to use numeric or character proxies. When writing cross-engine code, the safest portable pattern is a SMALLINT or TINYINT column constrained to 0 and 1 with a CHECK constraint, compared with = 1 / = 0.</p>
   </div>
 
   <h2>Standard Syntax</h2>
@@ -119,7 +119,7 @@
 );</div>
 
   <h2>Version Support</h2>
-  <div style="margin-top: 8px;">
+  <div class="version-list">
     <span class="version-badge version-supported">MySQL: Since 5.0</span>
     <span class="version-badge version-supported">PostgreSQL: Since 7.4</span>
     <span class="version-badge version-not-supported">SQL Server: Not supported</span>

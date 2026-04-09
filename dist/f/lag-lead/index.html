@@ -110,7 +110,7 @@
 
   <h2>Details</h2>
   <div class="detail-block">
-    <p style="margin:0">LAG/LEAD replaced the classic self-join pattern (join a table to itself on id-1). The optional default argument (third parameter) controls what's returned at partition boundaries — without it you get NULL, which can break calculations. SQL Server didn't add these until 2012; Oracle had them since 8i.</p>
+    <p>LAG/LEAD replaced the classic self-join pattern (join a table to itself on id-1). The optional default argument (third parameter) controls what's returned at partition boundaries — without it you get NULL, which can break calculations. SQL Server didn't add these until 2012; Oracle had them since 8i.</p>
   </div>
 
   <h2>Standard Syntax</h2>
@@ -122,7 +122,7 @@
 FROM orders;</div>
 
   <h2>Version Support</h2>
-  <div style="margin-top: 8px;">
+  <div class="version-list">
     <span class="version-badge version-supported">MySQL: Since 8.0</span>
     <span class="version-badge version-supported">PostgreSQL: Since 8.4</span>
     <span class="version-badge version-supported">SQL Server: Since 2012</span>

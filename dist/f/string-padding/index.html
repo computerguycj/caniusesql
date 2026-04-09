@@ -110,7 +110,7 @@
 
   <h2>Details</h2>
   <div class="detail-block">
-    <p style="margin:0">LPAD and RPAD are available in MySQL, PostgreSQL, and Oracle but absent in SQL Server and SQLite. SQL Server's REPLICATE-based pattern is verbose but reliable and worth encapsulating in a scalar function if used frequently. SQLite's printf('%0Nd', value) handles numeric zero-padding cleanly but there is no general-purpose string-padding path without a custom UDF. A subtle shared behavior in MySQL and PostgreSQL: if the source string is already longer than the target length, it is silently truncated to that length — data loss that can go unnoticed if the target length is set too small.</p>
+    <p>LPAD and RPAD are available in MySQL, PostgreSQL, and Oracle but absent in SQL Server and SQLite. SQL Server's REPLICATE-based pattern is verbose but reliable and worth encapsulating in a scalar function if used frequently. SQLite's printf('%0Nd', value) handles numeric zero-padding cleanly but there is no general-purpose string-padding path without a custom UDF. A subtle shared behavior in MySQL and PostgreSQL: if the source string is already longer than the target length, it is silently truncated to that length — data loss that can go unnoticed if the target length is set too small.</p>
   </div>
 
   <h2>Standard Syntax</h2>
@@ -118,7 +118,7 @@
 SELECT RPAD('hi', 5, '.');  -- 'hi...'</div>
 
   <h2>Version Support</h2>
-  <div style="margin-top: 8px;">
+  <div class="version-list">
     <span class="version-badge version-supported">MySQL: Since 5.0</span>
     <span class="version-badge version-supported">PostgreSQL: Since 7.4</span>
     <span class="version-badge version-not-supported">SQL Server: Not supported</span>

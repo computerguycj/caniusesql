@@ -110,7 +110,7 @@
 
   <h2>Details</h2>
   <div class="detail-block">
-    <p style="margin:0">Unique to PostgreSQL. Range types are especially powerful in combination with exclusion constraints and GiST indexes — the canonical use case is a double-booking prevention system.</p>
+    <p>Unique to PostgreSQL. Range types are especially powerful in combination with exclusion constraints and GiST indexes — the canonical use case is a double-booking prevention system.</p>
   </div>
 
   <h2>Standard Syntax</h2>
@@ -121,7 +121,7 @@ SELECT '[1,10)'::int4range @&gt; 5;  -- true
 SELECT '[1,5)'::int4range &amp;&amp; '[3,8)'::int4range;  -- true</div>
 
   <h2>Version Support</h2>
-  <div style="margin-top: 8px;">
+  <div class="version-list">
     <span class="version-badge version-not-supported">MySQL: Not supported</span>
     <span class="version-badge version-supported">PostgreSQL: Since 9.2</span>
     <span class="version-badge version-not-supported">SQL Server: Not supported</span>

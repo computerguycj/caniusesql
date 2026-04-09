@@ -110,7 +110,7 @@
 
   <h2>Details</h2>
   <div class="detail-block">
-    <p style="margin:0">The SQL standard keyword is SAVEPOINT; SQL Server uses SAVE TRANSACTION instead. RELEASE SAVEPOINT is supported in MySQL, PostgreSQL, and SQLite, but not in Oracle (implicit release on COMMIT) or SQL Server (no equivalent). PostgreSQL's behavior makes savepoints especially critical in application code: any unhandled error puts the transaction into an aborted state that rejects all further commands — ROLLBACK TO SAVEPOINT is the escape hatch that clears the error without losing the entire transaction. SQLite's SAVEPOINT is unique in that it can replace BEGIN entirely and supports arbitrary nesting.</p>
+    <p>The SQL standard keyword is SAVEPOINT; SQL Server uses SAVE TRANSACTION instead. RELEASE SAVEPOINT is supported in MySQL, PostgreSQL, and SQLite, but not in Oracle (implicit release on COMMIT) or SQL Server (no equivalent). PostgreSQL's behavior makes savepoints especially critical in application code: any unhandled error puts the transaction into an aborted state that rejects all further commands — ROLLBACK TO SAVEPOINT is the escape hatch that clears the error without losing the entire transaction. SQLite's SAVEPOINT is unique in that it can replace BEGIN entirely and supports arbitrary nesting.</p>
   </div>
 
   <h2>Standard Syntax</h2>
@@ -127,7 +127,7 @@ ROLLBACK TO SAVEPOINT after_order;
 COMMIT;</div>
 
   <h2>Version Support</h2>
-  <div style="margin-top: 8px;">
+  <div class="version-list">
     <span class="version-badge version-supported">MySQL: Since 4.0.14</span>
     <span class="version-badge version-supported">PostgreSQL: Since 8.0</span>
     <span class="version-badge version-supported">SQL Server: Since 6.5</span>

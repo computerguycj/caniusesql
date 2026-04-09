@@ -110,7 +110,7 @@
 
   <h2>Details</h2>
   <div class="detail-block">
-    <p style="margin:0">Partial indexes are one of the highest-impact indexing tools available: if 5% of rows match the filter condition, the index is 95% smaller, fits in cache, and updates are faster. PostgreSQL (7.2+), SQL Server (2008+), and SQLite (3.8.9+) have direct WHERE clause support on CREATE INDEX. MySQL and Oracle do not — MySQL's workaround uses generated columns (since NULL values are not indexed); Oracle uses function-based indexes returning NULL for excluded rows. A unique partial index is a particularly powerful pattern: it enforces uniqueness only within the matching subset (e.g., unique email among active users only), which is impossible to express with a regular unique constraint.</p>
+    <p>Partial indexes are one of the highest-impact indexing tools available: if 5% of rows match the filter condition, the index is 95% smaller, fits in cache, and updates are faster. PostgreSQL (7.2+), SQL Server (2008+), and SQLite (3.8.9+) have direct WHERE clause support on CREATE INDEX. MySQL and Oracle do not — MySQL's workaround uses generated columns (since NULL values are not indexed); Oracle uses function-based indexes returning NULL for excluded rows. A unique partial index is a particularly powerful pattern: it enforces uniqueness only within the matching subset (e.g., unique email among active users only), which is impossible to express with a regular unique constraint.</p>
   </div>
 
   <h2>Standard Syntax</h2>
@@ -125,7 +125,7 @@ CREATE INDEX idx_pending_orders
     WHERE status = 'pending';</div>
 
   <h2>Version Support</h2>
-  <div style="margin-top: 8px;">
+  <div class="version-list">
     <span class="version-badge version-not-supported">MySQL: Not supported</span>
     <span class="version-badge version-supported">PostgreSQL: Since 7.2</span>
     <span class="version-badge version-supported">SQL Server: Since 2008</span>

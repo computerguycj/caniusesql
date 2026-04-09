@@ -110,7 +110,7 @@
 
   <h2>Details</h2>
   <div class="detail-block">
-    <p style="margin:0">PostgreSQL is unique in requiring explicit vacuuming as a consequence of its MVCC model — dead tuples from updated and deleted rows accumulate and must be reclaimed, and transaction ID wraparound will eventually corrupt the database if VACUUM FREEZE is not run. Autovacuum handles this automatically in typical workloads but should be monitored. MySQL and SQL Server handle dead row cleanup internally (InnoDB purge thread, SQL Server ghost cleanup), making OPTIMIZE TABLE / SHRINK operations rarely necessary and sometimes counterproductive. Oracle's UNDO-segment architecture means old row versions never accumulate in the table itself. Statistics maintenance (ANALYZE / UPDATE STATISTICS / GATHER_TABLE_STATS) is important on all engines — stale statistics are one of the most common causes of sudden query plan regressions, particularly after large bulk loads.</p>
+    <p>PostgreSQL is unique in requiring explicit vacuuming as a consequence of its MVCC model — dead tuples from updated and deleted rows accumulate and must be reclaimed, and transaction ID wraparound will eventually corrupt the database if VACUUM FREEZE is not run. Autovacuum handles this automatically in typical workloads but should be monitored. MySQL and SQL Server handle dead row cleanup internally (InnoDB purge thread, SQL Server ghost cleanup), making OPTIMIZE TABLE / SHRINK operations rarely necessary and sometimes counterproductive. Oracle's UNDO-segment architecture means old row versions never accumulate in the table itself. Statistics maintenance (ANALYZE / UPDATE STATISTICS / GATHER_TABLE_STATS) is important on all engines — stale statistics are one of the most common causes of sudden query plan regressions, particularly after large bulk loads.</p>
   </div>
 
   <h2>Standard Syntax</h2>
@@ -118,7 +118,7 @@
 VACUUM ANALYZE orders;</div>
 
   <h2>Version Support</h2>
-  <div style="margin-top: 8px;">
+  <div class="version-list">
     <span class="version-badge version-supported">MySQL: Since 5.0</span>
     <span class="version-badge version-supported">PostgreSQL: Since 7.4</span>
     <span class="version-badge version-supported">SQL Server: Since 2000</span>

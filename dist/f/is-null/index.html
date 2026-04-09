@@ -110,7 +110,7 @@
 
   <h2>Details</h2>
   <div class="detail-block">
-    <p style="margin:0">Oracle's empty-string-as-NULL is one of the most surprising production gotchas in SQL — inserting '' into an Oracle VARCHAR2 stores NULL. Null-safe equality (where NULL equals NULL) has three different syntaxes: &lt;=&gt; in MySQL, IS NOT DISTINCT FROM in PostgreSQL, IS in SQLite, and no clean operator in SQL Server.</p>
+    <p>Oracle's empty-string-as-NULL is one of the most surprising production gotchas in SQL — inserting '' into an Oracle VARCHAR2 stores NULL. Null-safe equality (where NULL equals NULL) has three different syntaxes: &lt;=&gt; in MySQL, IS NOT DISTINCT FROM in PostgreSQL, IS in SQLite, and no clean operator in SQL Server.</p>
   </div>
 
   <h2>Standard Syntax</h2>
@@ -118,7 +118,7 @@
 SELECT * FROM users WHERE phone IS NOT NULL;</div>
 
   <h2>Version Support</h2>
-  <div style="margin-top: 8px;">
+  <div class="version-list">
     <span class="version-badge version-supported">MySQL: Since all</span>
     <span class="version-badge version-supported">PostgreSQL: Since all</span>
     <span class="version-badge version-supported">SQL Server: Since all</span>

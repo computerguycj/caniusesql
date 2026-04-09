@@ -110,7 +110,7 @@
 
   <h2>Details</h2>
   <div class="detail-block">
-    <p style="margin:0">OFFSET/FETCH is the ISO SQL standard pagination syntax and is now supported across all five engines, though it arrived late in MySQL (8.0), Oracle (12c), and SQLite (3.25.0). For broad compatibility, the LIMIT/OFFSET form works in MySQL, PostgreSQL, and SQLite but not in SQL Server or Oracle. SQL Server's TOP N predates OFFSET/FETCH but cannot paginate (no offset). Oracle's pre-12c ROWNUM pattern is notorious for requiring double-nested subqueries and is a common source of bugs. A key performance note: OFFSET-based pagination degrades at large offsets because the engine must scan and discard rows — keyset pagination (WHERE id &gt; last_seen_id) is more efficient for deep pages.</p>
+    <p>OFFSET/FETCH is the ISO SQL standard pagination syntax and is now supported across all five engines, though it arrived late in MySQL (8.0), Oracle (12c), and SQLite (3.25.0). For broad compatibility, the LIMIT/OFFSET form works in MySQL, PostgreSQL, and SQLite but not in SQL Server or Oracle. SQL Server's TOP N predates OFFSET/FETCH but cannot paginate (no offset). Oracle's pre-12c ROWNUM pattern is notorious for requiring double-nested subqueries and is a common source of bugs. A key performance note: OFFSET-based pagination degrades at large offsets because the engine must scan and discard rows — keyset pagination (WHERE id &gt; last_seen_id) is more efficient for deep pages.</p>
   </div>
 
   <h2>Standard Syntax</h2>
@@ -120,7 +120,7 @@ OFFSET 20 ROWS
 FETCH NEXT 10 ROWS ONLY;</div>
 
   <h2>Version Support</h2>
-  <div style="margin-top: 8px;">
+  <div class="version-list">
     <span class="version-badge version-supported">MySQL: Since 8.0</span>
     <span class="version-badge version-supported">PostgreSQL: Since 8.4</span>
     <span class="version-badge version-supported">SQL Server: Since 2012</span>

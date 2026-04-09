@@ -110,7 +110,7 @@
 
   <h2>Details</h2>
   <div class="detail-block">
-    <p style="margin:0">Unique to PostgreSQL. Commonly used for cache invalidation, real-time job queue signaling, and live-update feeds — without any external infrastructure. Fires on COMMIT, not on the NOTIFY call itself.</p>
+    <p>Unique to PostgreSQL. Commonly used for cache invalidation, real-time job queue signaling, and live-update feeds — without any external infrastructure. Fires on COMMIT, not on the NOTIFY call itself.</p>
   </div>
 
   <h2>Standard Syntax</h2>
@@ -121,7 +121,7 @@ LISTEN order_updates;
 NOTIFY order_updates, '{&quot;id&quot;: 42}';</div>
 
   <h2>Version Support</h2>
-  <div style="margin-top: 8px;">
+  <div class="version-list">
     <span class="version-badge version-not-supported">MySQL: Not supported</span>
     <span class="version-badge version-supported">PostgreSQL: Since all</span>
     <span class="version-badge version-not-supported">SQL Server: Not supported</span>

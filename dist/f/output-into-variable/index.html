@@ -110,7 +110,7 @@
 
   <h2>Details</h2>
   <div class="detail-block">
-    <p style="margin:0">Capturing DML output inline is invaluable for audit logging, chained operations, and avoiding a second SELECT round-trip. PostgreSQL and SQLite share the RETURNING syntax and semantics. SQL Server's OUTPUT clause is the most powerful: it can route output to a table variable via OUTPUT INTO, enabling buffered multi-step operations, and it exposes both the pre-change (deleted) and post-change (inserted) images in a single UPDATE statement. Oracle's RETURNING INTO is PL/SQL only — it doesn't work in plain SQL scripts. MySQL has no equivalent clause at all; LAST_INSERT_ID() covers only the auto-increment key case, not arbitrary column values or UPDATE/DELETE captures. SQLite's RETURNING is recent (2021); target SQLite version carefully if deploying to embedded contexts.</p>
+    <p>Capturing DML output inline is invaluable for audit logging, chained operations, and avoiding a second SELECT round-trip. PostgreSQL and SQLite share the RETURNING syntax and semantics. SQL Server's OUTPUT clause is the most powerful: it can route output to a table variable via OUTPUT INTO, enabling buffered multi-step operations, and it exposes both the pre-change (deleted) and post-change (inserted) images in a single UPDATE statement. Oracle's RETURNING INTO is PL/SQL only — it doesn't work in plain SQL scripts. MySQL has no equivalent clause at all; LAST_INSERT_ID() covers only the auto-increment key case, not arbitrary column values or UPDATE/DELETE captures. SQLite's RETURNING is recent (2021); target SQLite version carefully if deploying to embedded contexts.</p>
   </div>
 
   <h2>Standard Syntax</h2>
@@ -120,7 +120,7 @@ OUTPUT inserted.id
 VALUES ('x');</div>
 
   <h2>Version Support</h2>
-  <div style="margin-top: 8px;">
+  <div class="version-list">
     <span class="version-badge version-supported">MySQL: Since 5.0</span>
     <span class="version-badge version-supported">PostgreSQL: Since 8.2</span>
     <span class="version-badge version-supported">SQL Server: Since 2005</span>

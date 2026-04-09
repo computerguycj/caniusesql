@@ -110,7 +110,7 @@
 
   <h2>Details</h2>
   <div class="detail-block">
-    <p style="margin:0">All five engines detect and resolve deadlocks automatically, but the scope of rollback differs critically. MySQL, PostgreSQL, and SQL Server roll back the entire victim transaction — the application must re-execute from the beginning. Oracle only rolls back the individual deadlocking statement, leaving the transaction open; this gives the application finer control but also means it can silently continue in an inconsistent state if not handled carefully. Deadlock avoidance strategies are consistent across engines: always acquire locks in the same order across transactions, keep transactions short, use appropriate index coverage to reduce lock range, and consider optimistic locking (version columns) as an alternative to pessimistic row locks for read-heavy workloads. In SQL Server, Extended Events or the system_health session captures deadlock graphs automatically — reviewing these is the first step in resolving recurring deadlocks.</p>
+    <p>All five engines detect and resolve deadlocks automatically, but the scope of rollback differs critically. MySQL, PostgreSQL, and SQL Server roll back the entire victim transaction — the application must re-execute from the beginning. Oracle only rolls back the individual deadlocking statement, leaving the transaction open; this gives the application finer control but also means it can silently continue in an inconsistent state if not handled carefully. Deadlock avoidance strategies are consistent across engines: always acquire locks in the same order across transactions, keep transactions short, use appropriate index coverage to reduce lock range, and consider optimistic locking (version columns) as an alternative to pessimistic row locks for read-heavy workloads. In SQL Server, Extended Events or the system_health session captures deadlock graphs automatically — reviewing these is the first step in resolving recurring deadlocks.</p>
   </div>
 
   <h2>Standard Syntax</h2>
@@ -118,7 +118,7 @@
 -- Application must catch error 1205 and retry</div>
 
   <h2>Version Support</h2>
-  <div style="margin-top: 8px;">
+  <div class="version-list">
     <span class="version-badge version-supported">MySQL: Since 5.0</span>
     <span class="version-badge version-supported">PostgreSQL: Since 7.4</span>
     <span class="version-badge version-supported">SQL Server: Since 2000</span>

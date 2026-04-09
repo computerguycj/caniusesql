@@ -110,7 +110,7 @@
 
   <h2>Details</h2>
   <div class="detail-block">
-    <p style="margin:0">This is one of the more fragmented areas across engines. MySQL's explicit JOIN in UPDATE/DELETE is intuitive but non-standard. PostgreSQL and SQL Server both use FROM/USING clauses, but differ in where the target table appears. Oracle is the most restrictive: no JOIN in UPDATE at all — correlated subqueries or the inline-view trick are the workarounds, and the inline-view approach requires the join to be key-preserved (Oracle must be able to prove which base-table row to update). SQLite gained UPDATE FROM relatively recently (3.33.0); scripts targeting older SQLite deployments need the subquery form. Cross-engine portability is best achieved with correlated subqueries (UPDATE t SET col = (SELECT ...) WHERE EXISTS (...)), which work on all five engines.</p>
+    <p>This is one of the more fragmented areas across engines. MySQL's explicit JOIN in UPDATE/DELETE is intuitive but non-standard. PostgreSQL and SQL Server both use FROM/USING clauses, but differ in where the target table appears. Oracle is the most restrictive: no JOIN in UPDATE at all — correlated subqueries or the inline-view trick are the workarounds, and the inline-view approach requires the join to be key-preserved (Oracle must be able to prove which base-table row to update). SQLite gained UPDATE FROM relatively recently (3.33.0); scripts targeting older SQLite deployments need the subquery form. Cross-engine portability is best achieved with correlated subqueries (UPDATE t SET col = (SELECT ...) WHERE EXISTS (...)), which work on all five engines.</p>
   </div>
 
   <h2>Standard Syntax</h2>
@@ -121,7 +121,7 @@ SET t1.col = t2.val
 WHERE t2.flag = 1;</div>
 
   <h2>Version Support</h2>
-  <div style="margin-top: 8px;">
+  <div class="version-list">
     <span class="version-badge version-supported">MySQL: Since 4.0</span>
     <span class="version-badge version-supported">PostgreSQL: Since 7.2</span>
     <span class="version-badge version-supported">SQL Server: Since 2000</span>

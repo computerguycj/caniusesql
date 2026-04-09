@@ -110,7 +110,7 @@
 
   <h2>Details</h2>
   <div class="detail-block">
-    <p style="margin:0">PERCENTILE_CONT vs PERCENTILE_DISC: CONT returns an interpolated value (e.g., the average of the two middle values for an even dataset), DISC returns the closest actual value in the dataset. For an even-count dataset, CONT(0.5) returns the average of rows n/2 and n/2+1; DISC(0.5) returns the value at row n/2. The biggest syntax divergence is SQL Server: it implements these as window functions requiring an OVER clause, while the SQL standard and Oracle define an aggregate form using only WITHIN GROUP. MySQL and SQLite have no native support; the ROW_NUMBER workaround is the portable fallback.</p>
+    <p>PERCENTILE_CONT vs PERCENTILE_DISC: CONT returns an interpolated value (e.g., the average of the two middle values for an even dataset), DISC returns the closest actual value in the dataset. For an even-count dataset, CONT(0.5) returns the average of rows n/2 and n/2+1; DISC(0.5) returns the value at row n/2. The biggest syntax divergence is SQL Server: it implements these as window functions requiring an OVER clause, while the SQL standard and Oracle define an aggregate form using only WITHIN GROUP. MySQL and SQLite have no native support; the ROW_NUMBER workaround is the portable fallback.</p>
   </div>
 
   <h2>Standard Syntax</h2>
@@ -121,7 +121,7 @@ SELECT
 FROM employees;</div>
 
   <h2>Version Support</h2>
-  <div style="margin-top: 8px;">
+  <div class="version-list">
     <span class="version-badge version-not-supported">MySQL: Not supported</span>
     <span class="version-badge version-supported">PostgreSQL: Since 9.4</span>
     <span class="version-badge version-supported">SQL Server: Since 2012</span>

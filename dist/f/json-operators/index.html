@@ -110,7 +110,7 @@
 
   <h2>Details</h2>
   <div class="detail-block">
-    <p style="margin:0">PostgreSQL has the most complete operator set: -&gt;, -&gt;&gt;, #&gt;, #&gt;&gt; for extraction plus @&gt;, &lt;@, ?, ?|, ?&amp; for containment and key existence on jsonb (all GIN-indexable). MySQL and SQLite share -&gt; / -&gt;&gt; but with a key difference: MySQL's -&gt;&gt; returns JSON_UNQUOTE output (text) while SQLite's -&gt;&gt; returns a native SQL type directly. SQL Server and Oracle have no operators at all — only functions. Note that MySQL's path expressions require the $ prefix (data-&gt;&gt;'$.name') while PostgreSQL's do not (data-&gt;&gt;'name').</p>
+    <p>PostgreSQL has the most complete operator set: -&gt;, -&gt;&gt;, #&gt;, #&gt;&gt; for extraction plus @&gt;, &lt;@, ?, ?|, ?&amp; for containment and key existence on jsonb (all GIN-indexable). MySQL and SQLite share -&gt; / -&gt;&gt; but with a key difference: MySQL's -&gt;&gt; returns JSON_UNQUOTE output (text) while SQLite's -&gt;&gt; returns a native SQL type directly. SQL Server and Oracle have no operators at all — only functions. Note that MySQL's path expressions require the $ prefix (data-&gt;&gt;'$.name') while PostgreSQL's do not (data-&gt;&gt;'name').</p>
   </div>
 
   <h2>Standard Syntax</h2>
@@ -127,7 +127,7 @@ SELECT data-&gt;'$.name'   AS name_json,
 FROM users;</div>
 
   <h2>Version Support</h2>
-  <div style="margin-top: 8px;">
+  <div class="version-list">
     <span class="version-badge version-supported">MySQL: Since 5.7.8</span>
     <span class="version-badge version-supported">PostgreSQL: Since 9.3</span>
     <span class="version-badge version-not-supported">SQL Server: Not supported</span>

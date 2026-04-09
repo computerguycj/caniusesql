@@ -110,7 +110,7 @@
 
   <h2>Details</h2>
   <div class="detail-block">
-    <p style="margin:0">Path syntax is consistent across engines ($.key, $.nested.key, $.array[n]) but function names and operators diverge sharply. PostgreSQL alone uses #&gt; / #&gt;&gt; for multi-key nested paths. SQL Server splits extraction into JSON_VALUE (scalars only) vs JSON_QUERY (objects/arrays only) — passing the wrong function silently returns NULL instead of an error. SQLite's -&gt; / -&gt;&gt; operators arrived in 3.38.0; apps targeting older SQLite must use json_extract().</p>
+    <p>Path syntax is consistent across engines ($.key, $.nested.key, $.array[n]) but function names and operators diverge sharply. PostgreSQL alone uses #&gt; / #&gt;&gt; for multi-key nested paths. SQL Server splits extraction into JSON_VALUE (scalars only) vs JSON_QUERY (objects/arrays only) — passing the wrong function silently returns NULL instead of an error. SQLite's -&gt; / -&gt;&gt; operators arrived in 3.38.0; apps targeting older SQLite must use json_extract().</p>
   </div>
 
   <h2>Standard Syntax</h2>
@@ -127,7 +127,7 @@ SELECT JSON_VALUE(data, '$.name') AS name
 FROM users;</div>
 
   <h2>Version Support</h2>
-  <div style="margin-top: 8px;">
+  <div class="version-list">
     <span class="version-badge version-supported">MySQL: Since 5.7.8</span>
     <span class="version-badge version-supported">PostgreSQL: Since 9.3</span>
     <span class="version-badge version-supported">SQL Server: Since 2016</span>

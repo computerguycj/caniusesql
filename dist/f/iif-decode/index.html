@@ -110,7 +110,7 @@
 
   <h2>Details</h2>
   <div class="detail-block">
-    <p style="margin:0">The fully portable form is always CASE WHEN ... THEN ... ELSE ... END — supported by every engine since early versions. IIF exists in SQL Server (2012+) and SQLite (3.32.0+) but nowhere else. Oracle's DECODE is unique: it treats NULL = NULL as true (unlike every other comparison in SQL), making it subtly different from CASE WHEN col IS NULL. MySQL's IF() function is only available in MySQL — do not use it in cross-engine schemas. For NULL-check shorthand: COALESCE is the most portable (SQL standard), NVL is Oracle-only, IFNULL works in MySQL and SQLite, ISNULL works in SQL Server.</p>
+    <p>The fully portable form is always CASE WHEN ... THEN ... ELSE ... END — supported by every engine since early versions. IIF exists in SQL Server (2012+) and SQLite (3.32.0+) but nowhere else. Oracle's DECODE is unique: it treats NULL = NULL as true (unlike every other comparison in SQL), making it subtly different from CASE WHEN col IS NULL. MySQL's IF() function is only available in MySQL — do not use it in cross-engine schemas. For NULL-check shorthand: COALESCE is the most portable (SQL standard), NVL is Oracle-only, IFNULL works in MySQL and SQLite, ISNULL works in SQL Server.</p>
   </div>
 
   <h2>Standard Syntax</h2>
@@ -127,7 +127,7 @@ SELECT IF(salary &gt; 50000, 'Senior', 'Junior') AS grade
 FROM employees;</div>
 
   <h2>Version Support</h2>
-  <div style="margin-top: 8px;">
+  <div class="version-list">
     <span class="version-badge version-supported">MySQL: Since 3.23</span>
     <span class="version-badge version-not-supported">PostgreSQL: Not supported</span>
     <span class="version-badge version-supported">SQL Server: Since 2012</span>

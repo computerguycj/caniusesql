@@ -110,7 +110,7 @@
 
   <h2>Details</h2>
   <div class="detail-block">
-    <p style="margin:0">The single most common collation-related bug: MySQL's utf8 charset is NOT full Unicode (it's a 3-byte subset that silently truncates 4-byte characters like emoji). Always use utf8mb4. In SQL Server, collation mismatches between columns in a JOIN produce 'cannot resolve collation conflict' errors — most commonly hit when joining against #temp tables in tempdb (which uses the server collation). PostgreSQL's ICU-based collations (10+) are recommended over libc collations for cross-platform consistency, particularly for case-insensitive and accent-insensitive indexes (deterministic=false, PG 15+). SQLite's NOCASE is ASCII-only — it does not fold Unicode characters and will not treat 'é' and 'E' as equal.</p>
+    <p>The single most common collation-related bug: MySQL's utf8 charset is NOT full Unicode (it's a 3-byte subset that silently truncates 4-byte characters like emoji). Always use utf8mb4. In SQL Server, collation mismatches between columns in a JOIN produce 'cannot resolve collation conflict' errors — most commonly hit when joining against #temp tables in tempdb (which uses the server collation). PostgreSQL's ICU-based collations (10+) are recommended over libc collations for cross-platform consistency, particularly for case-insensitive and accent-insensitive indexes (deterministic=false, PG 15+). SQLite's NOCASE is ASCII-only — it does not fold Unicode characters and will not treat 'é' and 'E' as equal.</p>
   </div>
 
   <h2>Standard Syntax</h2>
@@ -124,7 +124,7 @@ CREATE TABLE users (
 SELECT * FROM users WHERE username = 'Alice'; -- may match 'alice', 'ALICE'</div>
 
   <h2>Version Support</h2>
-  <div style="margin-top: 8px;">
+  <div class="version-list">
     <span class="version-badge version-supported">MySQL: Since 4.1</span>
     <span class="version-badge version-supported">PostgreSQL: Since 9.1</span>
     <span class="version-badge version-supported">SQL Server: Since 7.0</span>

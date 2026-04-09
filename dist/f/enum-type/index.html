@@ -110,7 +110,7 @@
 
   <h2>Details</h2>
   <div class="detail-block">
-    <p style="margin:0">MySQL and PostgreSQL have native ENUM support; SQL Server, Oracle, and SQLite do not, relying on CHECK constraints or lookup tables. The two native implementations differ significantly: MySQL stores ENUMs as integers internally, so values sort by declaration position rather than alphabetically, and reordering values is a breaking schema change. PostgreSQL's named CREATE TYPE approach is more maintainable — the type is reusable across tables and extensible. A key limitation in PostgreSQL: enum values cannot be removed or renamed after creation without dropping and recreating the type. For teams targeting multiple engines, CHECK constraints or a lookup table with a foreign key are the portable alternatives, with the lookup-table approach offering easier value set changes over time.</p>
+    <p>MySQL and PostgreSQL have native ENUM support; SQL Server, Oracle, and SQLite do not, relying on CHECK constraints or lookup tables. The two native implementations differ significantly: MySQL stores ENUMs as integers internally, so values sort by declaration position rather than alphabetically, and reordering values is a breaking schema change. PostgreSQL's named CREATE TYPE approach is more maintainable — the type is reusable across tables and extensible. A key limitation in PostgreSQL: enum values cannot be removed or renamed after creation without dropping and recreating the type. For teams targeting multiple engines, CHECK constraints or a lookup table with a foreign key are the portable alternatives, with the lookup-table approach offering easier value set changes over time.</p>
   </div>
 
   <h2>Standard Syntax</h2>
@@ -120,7 +120,7 @@ CREATE TABLE orders (
 );</div>
 
   <h2>Version Support</h2>
-  <div style="margin-top: 8px;">
+  <div class="version-list">
     <span class="version-badge version-supported">MySQL: Since 5.0</span>
     <span class="version-badge version-supported">PostgreSQL: Since 8.3</span>
     <span class="version-badge version-not-supported">SQL Server: Not supported</span>

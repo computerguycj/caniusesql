@@ -110,7 +110,7 @@
 
   <h2>Details</h2>
   <div class="detail-block">
-    <p style="margin:0">UUID generation is available in all five engines but with different ergonomics. PostgreSQL's gen_random_uuid() and SQL Server's NEWID() are the most convenient — both return a formatted UUID string and work natively as column defaults. Oracle's SYS_GUID() returns raw bytes, requiring extra formatting to match the standard 8-4-4-4-12 hyphenated representation. MySQL lacks a native UUID column type, making efficient storage a deliberate decision (BINARY(16) with UUID_TO_BIN is recommended over CHAR(36) for index performance). SQLite has no built-in function at all. A common architecture note: random UUIDs (v4) as clustered primary keys cause index fragmentation in SQL Server — use NEWSEQUENTIALID() or ULID-style values instead.</p>
+    <p>UUID generation is available in all five engines but with different ergonomics. PostgreSQL's gen_random_uuid() and SQL Server's NEWID() are the most convenient — both return a formatted UUID string and work natively as column defaults. Oracle's SYS_GUID() returns raw bytes, requiring extra formatting to match the standard 8-4-4-4-12 hyphenated representation. MySQL lacks a native UUID column type, making efficient storage a deliberate decision (BINARY(16) with UUID_TO_BIN is recommended over CHAR(36) for index performance). SQLite has no built-in function at all. A common architecture note: random UUIDs (v4) as clustered primary keys cause index fragmentation in SQL Server — use NEWSEQUENTIALID() or ULID-style values instead.</p>
   </div>
 
   <h2>Standard Syntax</h2>
@@ -121,7 +121,7 @@ SELECT gen_random_uuid();
 SELECT NEWID();</div>
 
   <h2>Version Support</h2>
-  <div style="margin-top: 8px;">
+  <div class="version-list">
     <span class="version-badge version-supported">MySQL: Since 5.0</span>
     <span class="version-badge version-supported">PostgreSQL: Since 8.3</span>
     <span class="version-badge version-supported">SQL Server: Since 2000</span>

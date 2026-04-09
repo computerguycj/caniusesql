@@ -110,7 +110,7 @@
 
   <h2>Details</h2>
   <div class="detail-block">
-    <p style="margin:0">MySQL silently ignored CHECK constraints before 8.0.16 — a major source of data integrity bugs for anyone who assumed they were enforced. PostgreSQL's NOT VALID / VALIDATE CONSTRAINT split is uniquely useful for adding constraints to large tables without a blocking table scan. SQLite allows subqueries in CHECK expressions, which no other engine supports.</p>
+    <p>MySQL silently ignored CHECK constraints before 8.0.16 — a major source of data integrity bugs for anyone who assumed they were enforced. PostgreSQL's NOT VALID / VALIDATE CONSTRAINT split is uniquely useful for adding constraints to large tables without a blocking table scan. SQLite allows subqueries in CHECK expressions, which no other engine supports.</p>
   </div>
 
   <h2>Standard Syntax</h2>
@@ -123,7 +123,7 @@
 );</div>
 
   <h2>Version Support</h2>
-  <div style="margin-top: 8px;">
+  <div class="version-list">
     <span class="version-badge version-supported">MySQL: Since 8.0.16</span>
     <span class="version-badge version-supported">PostgreSQL: Since all</span>
     <span class="version-badge version-supported">SQL Server: Since all</span>

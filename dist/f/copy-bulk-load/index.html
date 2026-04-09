@@ -110,7 +110,7 @@
 
   <h2>Details</h2>
   <div class="detail-block">
-    <p style="margin:0">Wrapping bulk inserts in a single transaction is the universal speedup when native bulk load is unavailable — it eliminates per-row fsync overhead. PostgreSQL's COPY is SQL-based and can be used from application code via libpq or drivers (e.g., pgcopy in Go, COPY from STDIN in Python's psycopg2). SQL Server's TABLOCK hint with BULK INSERT enables minimal logging on simple recovery model databases, significantly reducing log growth. Oracle's direct-path load (sqlldr DIRECT=TRUE) is the fastest option but bypasses triggers and constraints — run a validation pass afterward. MySQL's LOAD DATA LOCAL INFILE is commonly blocked by default for security reasons and requires explicit opt-in on both server and client.</p>
+    <p>Wrapping bulk inserts in a single transaction is the universal speedup when native bulk load is unavailable — it eliminates per-row fsync overhead. PostgreSQL's COPY is SQL-based and can be used from application code via libpq or drivers (e.g., pgcopy in Go, COPY from STDIN in Python's psycopg2). SQL Server's TABLOCK hint with BULK INSERT enables minimal logging on simple recovery model databases, significantly reducing log growth. Oracle's direct-path load (sqlldr DIRECT=TRUE) is the fastest option but bypasses triggers and constraints — run a validation pass afterward. MySQL's LOAD DATA LOCAL INFILE is commonly blocked by default for security reasons and requires explicit opt-in on both server and client.</p>
   </div>
 
   <h2>Standard Syntax</h2>
@@ -127,7 +127,7 @@ LINES TERMINATED BY '\n'
 IGNORE 1 ROWS;</div>
 
   <h2>Version Support</h2>
-  <div style="margin-top: 8px;">
+  <div class="version-list">
     <span class="version-badge version-supported">MySQL: Since 3.23</span>
     <span class="version-badge version-supported">PostgreSQL: Since 7.0</span>
     <span class="version-badge version-supported">SQL Server: Since 6.5</span>

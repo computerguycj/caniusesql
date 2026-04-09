@@ -110,7 +110,7 @@
 
   <h2>Details</h2>
   <div class="detail-block">
-    <p style="margin:0">PostgreSQL's CREATE POLICY is the cleanest SQL DDL syntax. Oracle's VPD (Virtual Private Database) is the oldest implementation but requires PL/SQL. SQL Server's approach uses inline TVFs, which is powerful but verbose.</p>
+    <p>PostgreSQL's CREATE POLICY is the cleanest SQL DDL syntax. Oracle's VPD (Virtual Private Database) is the oldest implementation but requires PL/SQL. SQL Server's approach uses inline TVFs, which is powerful but verbose.</p>
   </div>
 
   <h2>Standard Syntax</h2>
@@ -120,7 +120,7 @@ CREATE POLICY own_orders ON orders
   USING (customer_id = current_setting('app.user_id')::int);</div>
 
   <h2>Version Support</h2>
-  <div style="margin-top: 8px;">
+  <div class="version-list">
     <span class="version-badge version-not-supported">MySQL: Not supported</span>
     <span class="version-badge version-supported">PostgreSQL: Since 9.5</span>
     <span class="version-badge version-supported">SQL Server: Since 2016</span>

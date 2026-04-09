@@ -110,7 +110,7 @@
 
   <h2>Details</h2>
   <div class="detail-block">
-    <p style="margin:0">LATERAL FLATTEN is a Snowflake/DuckDB/BigQuery-native term, but every engine here has an equivalent mechanism under a different name. PostgreSQL's unnest() (native arrays) and jsonb_array_elements() (JSON arrays) are the most ergonomic. SQL Server's OPENJSON and Oracle/MySQL's JSON_TABLE share a more verbose column-definition syntax inherited from the SQL/JSON standard. SQLite's json_each() is clean and compact. The fundamental pattern is the same everywhere: a set-returning (table-valued) function is cross-joined laterally to the source row, producing one output row per array element. Performance note: these operations can be expensive on large JSON payloads; storing arrays as normalized rows is still preferable for high-frequency queries.</p>
+    <p>LATERAL FLATTEN is a Snowflake/DuckDB/BigQuery-native term, but every engine here has an equivalent mechanism under a different name. PostgreSQL's unnest() (native arrays) and jsonb_array_elements() (JSON arrays) are the most ergonomic. SQL Server's OPENJSON and Oracle/MySQL's JSON_TABLE share a more verbose column-definition syntax inherited from the SQL/JSON standard. SQLite's json_each() is clean and compact. The fundamental pattern is the same everywhere: a set-returning (table-valued) function is cross-joined laterally to the source row, producing one output row per array element. Performance note: these operations can be expensive on large JSON payloads; storing arrays as normalized rows is still preferable for high-frequency queries.</p>
   </div>
 
   <h2>Standard Syntax</h2>
@@ -120,7 +120,7 @@ FROM t,
 LATERAL jsonb_array_elements_text(t.tags) AS elem;</div>
 
   <h2>Version Support</h2>
-  <div style="margin-top: 8px;">
+  <div class="version-list">
     <span class="version-badge version-supported">MySQL: Since 8.0</span>
     <span class="version-badge version-supported">PostgreSQL: Since 9.3</span>
     <span class="version-badge version-supported">SQL Server: Since 2016</span>

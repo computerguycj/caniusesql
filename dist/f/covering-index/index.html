@@ -110,7 +110,7 @@
 
   <h2>Details</h2>
   <div class="detail-block">
-    <p style="margin:0">Covering indexes are one of the most impactful query tuning tools available — eliminating the table lookup (heap fetch / row fetch) for selective queries can reduce I/O by an order of magnitude. The INCLUDE syntax (PostgreSQL, SQL Server, SQLite) is preferable to adding columns to the key because non-key columns don't affect key ordering or the index key size limit, and they consume space only in leaf nodes. MySQL and Oracle achieve the same effect by including extra columns in the key, but this makes those columns part of the sort order and counts against key size limits. In SQL Server, the query optimizer will flag 'missing index' hints that suggest INCLUDE columns — these are worth reviewing but should not be applied blindly without considering index maintenance overhead.</p>
+    <p>Covering indexes are one of the most impactful query tuning tools available — eliminating the table lookup (heap fetch / row fetch) for selective queries can reduce I/O by an order of magnitude. The INCLUDE syntax (PostgreSQL, SQL Server, SQLite) is preferable to adding columns to the key because non-key columns don't affect key ordering or the index key size limit, and they consume space only in leaf nodes. MySQL and Oracle achieve the same effect by including extra columns in the key, but this makes those columns part of the sort order and counts against key size limits. In SQL Server, the query optimizer will flag 'missing index' hints that suggest INCLUDE columns — these are worth reviewing but should not be applied blindly without considering index maintenance overhead.</p>
   </div>
 
   <h2>Standard Syntax</h2>
@@ -120,7 +120,7 @@ ON orders (customer_id)
 INCLUDE (order_date, total);</div>
 
   <h2>Version Support</h2>
-  <div style="margin-top: 8px;">
+  <div class="version-list">
     <span class="version-badge version-supported">MySQL: Since 5.0</span>
     <span class="version-badge version-supported">PostgreSQL: Since 11</span>
     <span class="version-badge version-supported">SQL Server: Since 2005</span>

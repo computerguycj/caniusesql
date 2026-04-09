@@ -110,7 +110,7 @@
 
   <h2>Details</h2>
   <div class="detail-block">
-    <p style="margin:0">The core four (FLOOR, CEIL/CEILING, ROUND, ABS) work across all five engines with only minor spelling differences. The most significant behavioral difference is ROUND: PostgreSQL uses banker's rounding (round half to even) for the NUMERIC type, meaning ROUND(2.5) = 2 and ROUND(3.5) = 4, while all other engines use half-away-from-zero (ROUND(2.5) = 3). This is a silent correctness trap when migrating financial calculations to PostgreSQL. Truncation is also inconsistent: PostgreSQL and Oracle have TRUNC(), MySQL has TRUNCATE(), SQL Server uses ROUND(n, d, 1), and SQLite requires a workaround. CEILING vs CEIL: all engines accept at least one spelling; PostgreSQL, MySQL, and SQL Server accept both.</p>
+    <p>The core four (FLOOR, CEIL/CEILING, ROUND, ABS) work across all five engines with only minor spelling differences. The most significant behavioral difference is ROUND: PostgreSQL uses banker's rounding (round half to even) for the NUMERIC type, meaning ROUND(2.5) = 2 and ROUND(3.5) = 4, while all other engines use half-away-from-zero (ROUND(2.5) = 3). This is a silent correctness trap when migrating financial calculations to PostgreSQL. Truncation is also inconsistent: PostgreSQL and Oracle have TRUNC(), MySQL has TRUNCATE(), SQL Server uses ROUND(n, d, 1), and SQLite requires a workaround. CEILING vs CEIL: all engines accept at least one spelling; PostgreSQL, MySQL, and SQL Server accept both.</p>
   </div>
 
   <h2>Standard Syntax</h2>
@@ -121,7 +121,7 @@
   ABS(-42);</div>
 
   <h2>Version Support</h2>
-  <div style="margin-top: 8px;">
+  <div class="version-list">
     <span class="version-badge version-supported">MySQL: Since 5.0</span>
     <span class="version-badge version-supported">PostgreSQL: Since 7.4</span>
     <span class="version-badge version-supported">SQL Server: Since 2000</span>

@@ -110,7 +110,7 @@
 
   <h2>Details</h2>
   <div class="detail-block">
-    <p style="margin:0">SQL Server is the major holdout — no native regex means workarounds are LIKE with limited [] syntax or moving regex logic to the application. PostgreSQL's operator-based approach (~ / ~* / !~ / !~*) is the most concise. SQLite's REGEXP is a syntax trap — it exists but silently fails unless a UDF is registered.</p>
+    <p>SQL Server is the major holdout — no native regex means workarounds are LIKE with limited [] syntax or moving regex logic to the application. PostgreSQL's operator-based approach (~ / ~* / !~ / !~*) is the most concise. SQLite's REGEXP is a syntax trap — it exists but silently fails unless a UDF is registered.</p>
   </div>
 
   <h2>Standard Syntax</h2>
@@ -122,7 +122,7 @@ SELECT * FROM tbl WHERE col ~ '^[A-Z]';
 SELECT * FROM tbl WHERE col REGEXP '^[A-Z]';</div>
 
   <h2>Version Support</h2>
-  <div style="margin-top: 8px;">
+  <div class="version-list">
     <span class="version-badge version-supported">MySQL: Since all</span>
     <span class="version-badge version-supported">PostgreSQL: Since all</span>
     <span class="version-badge version-not-supported">SQL Server: Not supported</span>

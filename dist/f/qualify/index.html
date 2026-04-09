@@ -110,7 +110,7 @@
 
   <h2>Details</h2>
   <div class="detail-block">
-    <p style="margin:0">QUALIFY is a non-standard extension supported natively in Teradata, BigQuery, Snowflake, DuckDB, and Databricks — but not in any of the five engines covered here. Its appeal is readability: it removes the need to wrap a windowed query in a subquery just to filter on the window result. The standard-portable workaround is consistent across all engines: place the window expression in a CTE or subquery, then filter in an outer WHERE clause. Example: WITH ranked AS (SELECT *, ROW_NUMBER() OVER (PARTITION BY grp ORDER BY col) AS rn FROM t) SELECT * FROM ranked WHERE rn = 1. Some engines (PostgreSQL, SQL Server) allow referencing a window function alias in WHERE if wrapped in a subquery, but not in the same query level where it is defined.</p>
+    <p>QUALIFY is a non-standard extension supported natively in Teradata, BigQuery, Snowflake, DuckDB, and Databricks — but not in any of the five engines covered here. Its appeal is readability: it removes the need to wrap a windowed query in a subquery just to filter on the window result. The standard-portable workaround is consistent across all engines: place the window expression in a CTE or subquery, then filter in an outer WHERE clause. Example: WITH ranked AS (SELECT *, ROW_NUMBER() OVER (PARTITION BY grp ORDER BY col) AS rn FROM t) SELECT * FROM ranked WHERE rn = 1. Some engines (PostgreSQL, SQL Server) allow referencing a window function alias in WHERE if wrapped in a subquery, but not in the same query level where it is defined.</p>
   </div>
 
   <h2>Standard Syntax</h2>
@@ -119,7 +119,7 @@ FROM t
 QUALIFY ROW_NUMBER() OVER (PARTITION BY grp ORDER BY col) = 1;</div>
 
   <h2>Version Support</h2>
-  <div style="margin-top: 8px;">
+  <div class="version-list">
     <span class="version-badge version-not-supported">MySQL: Not supported</span>
     <span class="version-badge version-not-supported">PostgreSQL: Not supported</span>
     <span class="version-badge version-not-supported">SQL Server: Not supported</span>

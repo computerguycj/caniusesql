@@ -110,7 +110,7 @@
 
   <h2>Details</h2>
   <div class="detail-block">
-    <p style="margin:0">SQL Server uses DATEPART() instead of EXTRACT() — they're equivalent but different names. PostgreSQL's EXTRACT(EPOCH FROM ts) to get a Unix timestamp is uniquely useful. SQLite has no EXTRACT at all; strftime() with a CAST is the workaround. Week-of-year and day-of-week numbering differs between engines (ISO vs locale-based) — always test if you're using those.</p>
+    <p>SQL Server uses DATEPART() instead of EXTRACT() — they're equivalent but different names. PostgreSQL's EXTRACT(EPOCH FROM ts) to get a Unix timestamp is uniquely useful. SQLite has no EXTRACT at all; strftime() with a CAST is the workaround. Week-of-year and day-of-week numbering differs between engines (ISO vs locale-based) — always test if you're using those.</p>
   </div>
 
   <h2>Standard Syntax</h2>
@@ -118,7 +118,7 @@
 FROM orders;</div>
 
   <h2>Version Support</h2>
-  <div style="margin-top: 8px;">
+  <div class="version-list">
     <span class="version-badge version-supported">MySQL: Since all</span>
     <span class="version-badge version-supported">PostgreSQL: Since all</span>
     <span class="version-badge version-supported">SQL Server: Since all</span>

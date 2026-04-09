@@ -110,7 +110,7 @@
 
   <h2>Details</h2>
   <div class="detail-block">
-    <p style="margin:0">Default frame when ORDER BY is present: RANGE BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW — this is why LAST_VALUE usually returns the current row (it's the last in the default frame). ROWS mode is offset by physical row count; RANGE mode is offset by value distance (requires ORDER BY on a numeric/date). SQL Server does not support RANGE INTERVAL — use ROWS for rolling date windows instead. PostgreSQL 11's EXCLUDE clause is unique and useful for peer-comparison calculations.</p>
+    <p>Default frame when ORDER BY is present: RANGE BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW — this is why LAST_VALUE usually returns the current row (it's the last in the default frame). ROWS mode is offset by physical row count; RANGE mode is offset by value distance (requires ORDER BY on a numeric/date). SQL Server does not support RANGE INTERVAL — use ROWS for rolling date windows instead. PostgreSQL 11's EXCLUDE clause is unique and useful for peer-comparison calculations.</p>
   </div>
 
   <h2>Standard Syntax</h2>
@@ -125,7 +125,7 @@
 FROM orders;</div>
 
   <h2>Version Support</h2>
-  <div style="margin-top: 8px;">
+  <div class="version-list">
     <span class="version-badge version-supported">MySQL: Since 8.0</span>
     <span class="version-badge version-supported">PostgreSQL: Since 8.4</span>
     <span class="version-badge version-supported">SQL Server: Since 2012</span>

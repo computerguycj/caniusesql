@@ -110,7 +110,7 @@
 
   <h2>Details</h2>
   <div class="detail-block">
-    <p style="margin:0">UDFs are supported everywhere but vary widely in capability and performance characteristics. SQL Server scalar UDFs are infamous for row-by-row execution that defeats parallelism — inline table-valued functions (single SELECT, no BEGIN/END) are the idiomatic replacement for scalar logic that operates on sets. PostgreSQL's function overloading (same name, different argument types) is unique among the five engines. Oracle PIPELINED functions allow lazy evaluation of large result sets. MySQL's lack of table-valued UDFs means pivoting or multi-row generation requires stored procedures or workarounds. SQLite's approach — registering functions in the host language rather than via DDL — is architecturally different and means UDFs don't persist across connections unless re-registered.</p>
+    <p>UDFs are supported everywhere but vary widely in capability and performance characteristics. SQL Server scalar UDFs are infamous for row-by-row execution that defeats parallelism — inline table-valued functions (single SELECT, no BEGIN/END) are the idiomatic replacement for scalar logic that operates on sets. PostgreSQL's function overloading (same name, different argument types) is unique among the five engines. Oracle PIPELINED functions allow lazy evaluation of large result sets. MySQL's lack of table-valued UDFs means pivoting or multi-row generation requires stored procedures or workarounds. SQLite's approach — registering functions in the host language rather than via DDL — is architecturally different and means UDFs don't persist across connections unless re-registered.</p>
   </div>
 
   <h2>Standard Syntax</h2>
@@ -121,7 +121,7 @@ AS
 ;</div>
 
   <h2>Version Support</h2>
-  <div style="margin-top: 8px;">
+  <div class="version-list">
     <span class="version-badge version-supported">MySQL: Since 5.0</span>
     <span class="version-badge version-supported">PostgreSQL: Since 6.5</span>
     <span class="version-badge version-supported">SQL Server: Since 2000</span>

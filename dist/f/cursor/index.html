@@ -110,7 +110,7 @@
 
   <h2>Details</h2>
   <div class="detail-block">
-    <p style="margin:0">Cursors are widely supported in stored procedural code but are generally considered an anti-pattern for bulk work — set-based operations are almost always faster. SQL Server is particularly sensitive: even FAST_FORWARD cursors introduce significant per-row overhead vs. a single UPDATE or INSERT...SELECT. Oracle's implicit cursor FOR loop (`FOR rec IN (SELECT ...) LOOP`) is idiomatic and often the most readable option when row-by-row logic is unavoidable. PostgreSQL allows cursors to be returned to the client via `refcursor`, enabling result-set streaming from a function. In MySQL, cursor scope is limited to stored routines; the NOT FOUND handler pattern is the standard termination idiom.</p>
+    <p>Cursors are widely supported in stored procedural code but are generally considered an anti-pattern for bulk work — set-based operations are almost always faster. SQL Server is particularly sensitive: even FAST_FORWARD cursors introduce significant per-row overhead vs. a single UPDATE or INSERT...SELECT. Oracle's implicit cursor FOR loop (`FOR rec IN (SELECT ...) LOOP`) is idiomatic and often the most readable option when row-by-row logic is unavoidable. PostgreSQL allows cursors to be returned to the client via `refcursor`, enabling result-set streaming from a function. In MySQL, cursor scope is limited to stored routines; the NOT FOUND handler pattern is the standard termination idiom.</p>
   </div>
 
   <h2>Standard Syntax</h2>
@@ -121,7 +121,7 @@ CLOSE cur;
 DEALLOCATE cur;</div>
 
   <h2>Version Support</h2>
-  <div style="margin-top: 8px;">
+  <div class="version-list">
     <span class="version-badge version-supported">MySQL: Since 5.0</span>
     <span class="version-badge version-supported">PostgreSQL: Since 7.4</span>
     <span class="version-badge version-supported">SQL Server: Since 1992</span>

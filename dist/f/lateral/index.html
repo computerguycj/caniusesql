@@ -110,7 +110,7 @@
 
   <h2>Details</h2>
   <div class="detail-block">
-    <p style="margin:0">LATERAL enables correlated subqueries in the FROM clause, making it possible to join each row to a derived table that depends on that row. In SQL Server, use CROSS APPLY or OUTER APPLY for similar functionality.</p>
+    <p>LATERAL enables correlated subqueries in the FROM clause, making it possible to join each row to a derived table that depends on that row. In SQL Server, use CROSS APPLY or OUTER APPLY for similar functionality.</p>
   </div>
 
   <h2>Standard Syntax</h2>
@@ -118,7 +118,7 @@
 FROM my_table t, LATERAL (SELECT val FROM other_table WHERE other_table.ref_id = t.id) x;</div>
 
   <h2>Version Support</h2>
-  <div style="margin-top: 8px;">
+  <div class="version-list">
     <span class="version-badge version-supported">MySQL: Since 8.0.14</span>
     <span class="version-badge version-supported">PostgreSQL: Since 9.3</span>
     <span class="version-badge version-supported">SQL Server: Since 2005</span>

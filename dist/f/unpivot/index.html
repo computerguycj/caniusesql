@@ -110,7 +110,7 @@
 
   <h2>Details</h2>
   <div class="detail-block">
-    <p style="margin:0">Only SQL Server (2005+) and Oracle (11g+) have a native UNPIVOT operator. The most portable alternative is the UNION ALL pattern — one SELECT per column being unpivoted. For long column lists this becomes verbose; the VALUES + CROSS APPLY/CROSS JOIN approach (SQL Server, PostgreSQL, SQLite 3.8.3+) is more concise and scans the source table only once. SQL Server's UNPIVOT automatically excludes NULLs; Oracle's UNPIVOT defaults to EXCLUDE NULLS but can be changed with INCLUDE NULLS. The CROSS APPLY (VALUES ...) pattern in SQL Server is generally preferred over the UNPIVOT keyword because it handles multiple value columns and is easier to extend.</p>
+    <p>Only SQL Server (2005+) and Oracle (11g+) have a native UNPIVOT operator. The most portable alternative is the UNION ALL pattern — one SELECT per column being unpivoted. For long column lists this becomes verbose; the VALUES + CROSS APPLY/CROSS JOIN approach (SQL Server, PostgreSQL, SQLite 3.8.3+) is more concise and scans the source table only once. SQL Server's UNPIVOT automatically excludes NULLs; Oracle's UNPIVOT defaults to EXCLUDE NULLS but can be changed with INCLUDE NULLS. The CROSS APPLY (VALUES ...) pattern in SQL Server is generally preferred over the UNPIVOT keyword because it handles multiple value columns and is easier to extend.</p>
   </div>
 
   <h2>Standard Syntax</h2>
@@ -131,7 +131,7 @@ UNION ALL
 SELECT product_id, 'q4', q4 FROM quarterly_sales;</div>
 
   <h2>Version Support</h2>
-  <div style="margin-top: 8px;">
+  <div class="version-list">
     <span class="version-badge version-not-supported">MySQL: Not supported</span>
     <span class="version-badge version-not-supported">PostgreSQL: Not supported</span>
     <span class="version-badge version-supported">SQL Server: Since 2005</span>

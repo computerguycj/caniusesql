@@ -110,7 +110,7 @@
 
   <h2>Details</h2>
   <div class="detail-block">
-    <p style="margin:0">The biggest portability gap is Oracle: it uses Global Temporary Tables where the structure is a permanent schema object shared across sessions — only the data is private. Every other engine creates the temp table structure per-session. SQL Server is unique in having two tiers: session-private (#table) and cross-session global (##table). SQL Server's table variable (@table) is a common alternative but behaves differently from temp tables regarding statistics, transactions, and scope. The ON COMMIT behavior clause (DROP vs DELETE ROWS vs PRESERVE ROWS) is supported in PostgreSQL and Oracle but not MySQL, SQL Server, or SQLite.</p>
+    <p>The biggest portability gap is Oracle: it uses Global Temporary Tables where the structure is a permanent schema object shared across sessions — only the data is private. Every other engine creates the temp table structure per-session. SQL Server is unique in having two tiers: session-private (#table) and cross-session global (##table). SQL Server's table variable (@table) is a common alternative but behaves differently from temp tables regarding statistics, transactions, and scope. The ON COMMIT behavior clause (DROP vs DELETE ROWS vs PRESERVE ROWS) is supported in PostgreSQL and Oracle but not MySQL, SQL Server, or SQLite.</p>
   </div>
 
   <h2>Standard Syntax</h2>
@@ -124,7 +124,7 @@ INSERT INTO temp_results SELECT id, compute(val) FROM source;
 SELECT * FROM temp_results;</div>
 
   <h2>Version Support</h2>
-  <div style="margin-top: 8px;">
+  <div class="version-list">
     <span class="version-badge version-supported">MySQL: Since 3.23</span>
     <span class="version-badge version-supported">PostgreSQL: Since 6.0</span>
     <span class="version-badge version-supported">SQL Server: Since 6.5</span>

@@ -110,14 +110,14 @@
 
   <h2>Details</h2>
   <div class="detail-block">
-    <p style="margin:0">The biggest trap: SQL Server uses LEN() not LENGTH() and silently ignores trailing spaces. MySQL's LENGTH() returns bytes, not characters — always use CHAR_LENGTH() for multi-byte text in MySQL. PostgreSQL and SQLite's LENGTH() correctly returns character count.</p>
+    <p>The biggest trap: SQL Server uses LEN() not LENGTH() and silently ignores trailing spaces. MySQL's LENGTH() returns bytes, not characters — always use CHAR_LENGTH() for multi-byte text in MySQL. PostgreSQL and SQLite's LENGTH() correctly returns character count.</p>
   </div>
 
   <h2>Standard Syntax</h2>
   <div class="syntax">SELECT LENGTH(column) FROM tbl;</div>
 
   <h2>Version Support</h2>
-  <div style="margin-top: 8px;">
+  <div class="version-list">
     <span class="version-badge version-supported">MySQL: Since all</span>
     <span class="version-badge version-supported">PostgreSQL: Since all</span>
     <span class="version-badge version-supported">SQL Server: Since all</span>

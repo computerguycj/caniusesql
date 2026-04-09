@@ -110,7 +110,7 @@
 
   <h2>Details</h2>
   <div class="detail-block">
-    <p style="margin:0">The most common mistake: using HAVING instead of WHERE for row-level filters (HAVING runs after grouping and is slower). The alias-in-HAVING shortcut works in MySQL and SQLite but will fail in PostgreSQL, SQL Server, and Oracle — repeat the aggregate expression for portability.</p>
+    <p>The most common mistake: using HAVING instead of WHERE for row-level filters (HAVING runs after grouping and is slower). The alias-in-HAVING shortcut works in MySQL and SQLite but will fail in PostgreSQL, SQL Server, and Oracle — repeat the aggregate expression for portability.</p>
   </div>
 
   <h2>Standard Syntax</h2>
@@ -120,7 +120,7 @@ GROUP BY dept_id
 HAVING COUNT(*) &gt; 10;</div>
 
   <h2>Version Support</h2>
-  <div style="margin-top: 8px;">
+  <div class="version-list">
     <span class="version-badge version-supported">MySQL: Since all</span>
     <span class="version-badge version-supported">PostgreSQL: Since all</span>
     <span class="version-badge version-supported">SQL Server: Since all</span>
