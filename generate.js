@@ -33,6 +33,16 @@ const DB_LABELS = {
 
 const DB_COUNT = Object.keys(DB_LABELS).length;
 
+// Slugs used when Redis has no data yet (first deploy, local dev without .env).
+const DEFAULT_POPULAR_SLUGS = [
+  'select',
+  'merge',
+  'pivot',
+  'string-agg',
+  'with-common-table-expressions',
+  'window-functions',
+];
+
 // ---------------------------------------------------------------------------
 // Helpers
 // ---------------------------------------------------------------------------
@@ -51,6 +61,69 @@ function mkdir(dir) {
 
 function readTemplate(filename) {
   return fs.readFileSync(path.join(TEMPLATES_DIR, filename), 'utf8');
+}
+
+// ---------------------------------------------------------------------------
+// Popular commands (Redis-backed, falls back to defaults)
+// ---------------------------------------------------------------------------
+
+/**
+ * fetchPopularSlugs — queries Upstash Redis for the top N most-visited slugs.
+ *
+ * Uses the Upstash REST API directly (no SDK) to keep generate.js dependency-free.
+ * Returns null when Redis env vars are absent (local dev) or the request fails,
+ * so callers can fall back to DEFAULT_POPULAR_SLUGS.
+ *
+ * @param {number} topN
+ * @returns {Promise<string[]|null>}
+ */
+async function fetchPopularSlugs(topN) {
+  const redisUrl   = process.env.KV_REST_API_URL;
+  const redisToken = process.env.KV_REST_API_TOKEN;
+
+  if (!redisUrl || !redisToken) {
+    return null;
+  }
+
+  try {
+    // ZREVRANGE popular_commands 0 (topN-1) — returns members highest-score first.
+    const res = await fetch(
+      `${redisUrl}/zrevrange/popular_commands/0/${topN - 1}`,
+      { headers: { Authorization: `Bearer ${redisToken}` } }
+    );
+    if (!res.ok) return null;
+    const json = await res.json();
+    const slugs = json && json.result;
+    return Array.isArray(slugs) && slugs.length > 0 ? slugs : null;
+  } catch (_) {
+    return null;
+  }
+}
+
+/**
+ * buildPopularCommands — generates the Popular Commands link HTML.
+ *
+ * Resolves each slug to its display name via data; skips any slug not found.
+ * All values are escaped via esc() before injection.
+ *
+ * @param {string[]} slugs
+ * @param {Object}   data   - parsed data.json, keyed by command name
+ * @returns {string} HTML fragment
+ */
+function buildPopularCommands(slugs, data) {
+  // Build a reverse lookup: slug → command name
+  const slugToName = {};
+  for (const [name, entry] of Object.entries(data)) {
+    if (entry.slug) slugToName[entry.slug] = name;
+  }
+
+  return slugs
+    .filter(slug => slugToName[slug])
+    .map(slug => {
+      const name = slugToName[slug];
+      return `<a class="example" href="/f/${esc(slug)}">${esc(name.toUpperCase())}</a>`;
+    })
+    .join('\n  ');
 }
 
 function supportClass(count) {
@@ -97,6 +170,7 @@ ${header}
 ${bodyContent}
   <script src="/search.js" defer></script>
   <script src="/splash.js" defer></script>
+  <script src="/track.js" defer></script>
 </body>
 </html>`;
 }
@@ -287,13 +361,14 @@ function buildCommandList(data) {
 // Homepage builder
 // ---------------------------------------------------------------------------
 
-function buildHomepage(data, headerTpl) {
+function buildHomepage(data, headerTpl, popularCommands) {
   const templateContent = fs.readFileSync(path.join(SRC_DIR, 'index.html'), 'utf8');
   const commandList     = buildCommandList(data);
 
-  // Substitute {{COMMAND_LIST}} in the homepage template.
-  // commandList is entirely built from esc()-escaped data, so this is safe.
-  const content = templateContent.replace('{{COMMAND_LIST}}', commandList);
+  // Both substituted values are built entirely from esc()-escaped data.
+  const content = templateContent
+    .replace('{{COMMAND_LIST}}', commandList)
+    .replace('{{POPULAR_COMMANDS}}', popularCommands);
 
   const title     = 'Can I Use SQL? | SQL Compatibility Checker';
   const desc      = 'Check SQL command compatibility across MySQL, PostgreSQL, SQL Server, Oracle, and SQLite. Find out which databases support SELECT, MERGE, PIVOT, CTEs, window functions, and more.';
@@ -338,7 +413,7 @@ function buildSitemap(slugs) {
 // Main
 // ---------------------------------------------------------------------------
 
-function main() {
+async function main() {
   // Load data
   const data     = JSON.parse(fs.readFileSync(DATA_FILE, 'utf8'));
   const commands = Object.entries(data);
@@ -348,8 +423,13 @@ function main() {
 
   mkdir(OUT_DIR);
 
+  // Resolve popular commands (Redis → fallback to defaults)
+  const popularSlugs    = await fetchPopularSlugs(6) || DEFAULT_POPULAR_SLUGS;
+  const popularCommands = buildPopularCommands(popularSlugs, data);
+  console.log(`✔  Popular commands: ${popularSlugs.slice(0, 6).join(', ')}`);
+
   // Assemble and write homepage
-  const homepageHtml = buildHomepage(data, headerTpl);
+  const homepageHtml = buildHomepage(data, headerTpl, popularCommands);
   fs.writeFileSync(path.join(OUT_DIR, 'index.html'), homepageHtml, 'utf8');
   console.log('✔  Built index.html');
 
@@ -368,6 +448,9 @@ function main() {
 
   fs.copyFileSync(path.join(TEMPLATES_DIR, 'splash.js'), path.join(OUT_DIR, 'splash.js'));
   console.log('✔  Copied splash.js');
+
+  fs.copyFileSync(path.join(TEMPLATES_DIR, 'track.js'), path.join(OUT_DIR, 'track.js'));
+  console.log('✔  Copied track.js');
 
   const staticAssets = ['og-image.png', 'robots.txt', 'favicon.ico', 'favicon.png'];
   for (const asset of staticAssets) {
@@ -409,4 +492,4 @@ function main() {
   console.log(`    Output: ${OUT_DIR}`);
 }
 
-main();
+main().catch(err => { console.error(err); process.exit(1); });
