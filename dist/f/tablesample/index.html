@@ -57,6 +57,14 @@
   <p class="command-overview">Returns a statistical sample of rows from a table using BERNOULLI (row-level random) or SYSTEM (block-level random) methods. Useful for quick approximate counts and sampling large tables. The sample size is approximate, not exact.</p>
 
   <h2>Compatibility</h2>
+  <div class="compare-bar">
+    <span class="compare-label">Show:</span>
+    <label><input type="checkbox" value="mysql" checked> MySQL</label>
+    <label><input type="checkbox" value="postgresql" checked> PostgreSQL</label>
+    <label><input type="checkbox" value="sqlserver" checked> SQL Server</label>
+    <label><input type="checkbox" value="oracle" checked> Oracle</label>
+    <label><input type="checkbox" value="sqlite" checked> SQLite</label>
+  </div>
   <table>
     <thead>
       <tr>
@@ -67,31 +75,31 @@
       </tr>
     </thead>
     <tbody>
-          <tr>
+          <tr data-db="mysql">
             <td>MySQL</td>
             <td class="not-supported">✗ Not Supported</td>
             <td>—</td>
             <td class="notes">Not supported. ORDER BY RAND() LIMIT n works but scans the full table and is very slow on large datasets.</td>
           </tr>
-          <tr>
+          <tr data-db="postgresql">
             <td>PostgreSQL</td>
             <td class="supported">✓ Supported</td>
             <td>9.5</td>
             <td class="notes">Two methods: BERNOULLI (true row-level statistical sample — accurate but slower) and SYSTEM (page-level — faster but may have clustering bias). Optional REPEATABLE(seed) for reproducible results. Custom sampling methods can be added via extensions (e.g., tsm_system_rows).</td>
           </tr>
-          <tr>
+          <tr data-db="sqlserver">
             <td>SQL Server</td>
             <td class="supported">✓ Supported</td>
             <td>2005</td>
             <td class="notes">TABLESAMPLE SYSTEM(n PERCENT) or TABLESAMPLE (n ROWS). Only the SYSTEM method (page-level). Optional REPEATABLE(seed).</td>
           </tr>
-          <tr>
+          <tr data-db="oracle">
             <td>Oracle</td>
             <td class="supported">✓ Supported</td>
             <td>8i</td>
             <td class="notes">Non-standard SAMPLE clause syntax (not called TABLESAMPLE). SAMPLE(pct) is row-level (like BERNOULLI); SAMPLE BLOCK(pct) is page-level (like SYSTEM). Optional SEED(n) for reproducibility.</td>
           </tr>
-          <tr>
+          <tr data-db="sqlite">
             <td>SQLite</td>
             <td class="not-supported">✗ Not Supported</td>
             <td>—</td>
@@ -121,10 +129,13 @@ SELECT * FROM tbl TABLESAMPLE SYSTEM(10);     -- ~10% of rows, page-level (faste
 
   <h2>Per-Database Syntax &amp; Notes</h2>
   <div class="per-db-section">
+      <div class="per-db-entry" data-db="mysql">
         <h4>MySQL</h4>
         <p class="notes">Not supported. ORDER BY RAND() LIMIT n works but scans the full table and is very slow on large datasets.</p>
         <div class="syntax">SELECT * FROM tbl ORDER BY RAND() LIMIT 1000;  -- slow
 SELECT * FROM tbl WHERE id % 10 = 0 LIMIT 1000;  -- faster but deterministic/biased</div>
+      </div>
+      <div class="per-db-entry" data-db="postgresql">
         <h4>PostgreSQL</h4>
         <p class="notes">Two methods: BERNOULLI (true row-level statistical sample — accurate but slower) and SYSTEM (page-level — faster but may have clustering bias). Optional REPEATABLE(seed) for reproducible results. Custom sampling methods can be added via extensions (e.g., tsm_system_rows).</p>
         <div class="syntax">SELECT * FROM tbl TABLESAMPLE BERNOULLI(10);
@@ -132,23 +143,31 @@ SELECT * FROM tbl TABLESAMPLE SYSTEM(10);
 SELECT * FROM tbl TABLESAMPLE BERNOULLI(5) REPEATABLE(42);  -- reproducible
 -- With extension:
 SELECT * FROM tbl TABLESAMPLE SYSTEM_ROWS(1000);  -- exact row count</div>
+      </div>
+      <div class="per-db-entry" data-db="sqlserver">
         <h4>SQL Server</h4>
         <p class="notes">TABLESAMPLE SYSTEM(n PERCENT) or TABLESAMPLE (n ROWS). Only the SYSTEM method (page-level). Optional REPEATABLE(seed).</p>
         <div class="syntax">SELECT * FROM tbl TABLESAMPLE SYSTEM(10 PERCENT);
 SELECT * FROM tbl TABLESAMPLE (1000 ROWS) REPEATABLE(42);</div>
+      </div>
+      <div class="per-db-entry" data-db="oracle">
         <h4>Oracle</h4>
         <p class="notes">Non-standard SAMPLE clause syntax (not called TABLESAMPLE). SAMPLE(pct) is row-level (like BERNOULLI); SAMPLE BLOCK(pct) is page-level (like SYSTEM). Optional SEED(n) for reproducibility.</p>
         <div class="syntax">SELECT * FROM tbl SAMPLE(10);         -- row-level ~10%
 SELECT * FROM tbl SAMPLE BLOCK(10);   -- page-level ~10%
 SELECT * FROM tbl SAMPLE(10) SEED(42);</div>
+      </div>
+      <div class="per-db-entry" data-db="sqlite">
         <h4>SQLite</h4>
         <p class="notes">Not supported. Workaround: random rowid selection.</p>
         <div class="syntax">SELECT * FROM tbl WHERE rowid IN (
   SELECT rowid FROM tbl ORDER BY RANDOM() LIMIT 1000
 );</div>
+      </div>
   </div>
   <script src="/search.js" defer></script>
   <script src="/splash.js" defer></script>
   <script src="/track.js" defer></script>
+  <script src="/compare.js" defer></script>
 </body>
 </html>

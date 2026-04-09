@@ -57,6 +57,14 @@
   <p class="command-overview">The ANSI SQL standard upsert command that conditionally INSERTs, UPDATE, or DELETE rows based on a source dataset matching a target table. Not natively supported by MySQL; use INSERT ... ON DUPLICATE KEY UPDATE or MySQL 8+ MERGE workaround.</p>
 
   <h2>Compatibility</h2>
+  <div class="compare-bar">
+    <span class="compare-label">Show:</span>
+    <label><input type="checkbox" value="mysql" checked> MySQL</label>
+    <label><input type="checkbox" value="postgresql" checked> PostgreSQL</label>
+    <label><input type="checkbox" value="sqlserver" checked> SQL Server</label>
+    <label><input type="checkbox" value="oracle" checked> Oracle</label>
+    <label><input type="checkbox" value="sqlite" checked> SQLite</label>
+  </div>
   <table>
     <thead>
       <tr>
@@ -67,13 +75,13 @@
       </tr>
     </thead>
     <tbody>
-          <tr>
+          <tr data-db="mysql">
             <td>MySQL</td>
             <td class="not-supported">✗ Not Supported</td>
             <td>—</td>
             <td class="notes">No MERGE—use INSERT…ON DUPLICATE KEY UPDATE</td>
           </tr>
-          <tr>
+          <tr data-db="postgresql">
             <td>PostgreSQL</td>
             <td class="supported">✓ Supported</td>
             <td>15</td>
@@ -84,19 +92,19 @@ WITH upsert AS (
 )
 INSERT INTO t (…) SELECT … WHERE NOT EXISTS (SELECT 1 FROM upsert);</td>
           </tr>
-          <tr>
+          <tr data-db="sqlserver">
             <td>SQL Server</td>
             <td class="supported">✓ Supported</td>
             <td>2008</td>
             <td class="notes">Available since SQL Server 2008</td>
           </tr>
-          <tr>
+          <tr data-db="oracle">
             <td>Oracle</td>
             <td class="supported">✓ Supported</td>
             <td>9i</td>
             <td class="notes">Available since Oracle 9i</td>
           </tr>
-          <tr>
+          <tr data-db="sqlite">
             <td>SQLite</td>
             <td class="not-supported">✗ Not Supported</td>
             <td>—</td>
@@ -131,9 +139,12 @@ WHEN NOT MATCHED THEN
 
   <h2>Per-Database Syntax &amp; Notes</h2>
   <div class="per-db-section">
+      <div class="per-db-entry" data-db="mysql">
         <h4>MySQL</h4>
         <p class="notes">No MERGE—use INSERT…ON DUPLICATE KEY UPDATE</p>
         <div class="syntax">INSERT INTO t (…) VALUES (…) ON DUPLICATE KEY UPDATE …;</div>
+      </div>
+      <div class="per-db-entry" data-db="postgresql">
         <h4>PostgreSQL</h4>
         <p class="notes">Native MERGE support since PostgreSQL 15
 Prior to this version, use
@@ -148,6 +159,8 @@ WHEN MATCHED THEN
   UPDATE SET …
 WHEN NOT MATCHED THEN
   INSERT (…) VALUES (…);</div>
+      </div>
+      <div class="per-db-entry" data-db="sqlserver">
         <h4>SQL Server</h4>
         <p class="notes">Available since SQL Server 2008</p>
         <div class="syntax">MERGE INTO target AS T
@@ -155,6 +168,8 @@ USING source AS S
   ON T.pk = S.pk
 WHEN MATCHED THEN UPDATE SET …
 WHEN NOT MATCHED THEN INSERT (… ) VALUES (… );</div>
+      </div>
+      <div class="per-db-entry" data-db="oracle">
         <h4>Oracle</h4>
         <p class="notes">Available since Oracle 9i</p>
         <div class="syntax">MERGE INTO target T
@@ -162,12 +177,16 @@ USING source S
   ON (T.pk = S.pk)
 WHEN MATCHED THEN UPDATE SET …
 WHEN NOT MATCHED THEN INSERT (…) VALUES (…);</div>
+      </div>
+      <div class="per-db-entry" data-db="sqlite">
         <h4>SQLite</h4>
         <p class="notes">No MERGE—use INSERT…ON CONFLICT</p>
         <div class="syntax">INSERT INTO t (…) VALUES (…) ON CONFLICT(pk) DO UPDATE SET …;</div>
+      </div>
   </div>
   <script src="/search.js" defer></script>
   <script src="/splash.js" defer></script>
   <script src="/track.js" defer></script>
+  <script src="/compare.js" defer></script>
 </body>
 </html>

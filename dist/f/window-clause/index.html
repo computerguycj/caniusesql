@@ -57,6 +57,14 @@
   <p class="command-overview">Defines window specifications once and reuses them across multiple window functions in the same query, reducing repetition. Particularly useful when the same partition and ordering appears in multiple functions. Improves readability and maintainability.</p>
 
   <h2>Compatibility</h2>
+  <div class="compare-bar">
+    <span class="compare-label">Show:</span>
+    <label><input type="checkbox" value="mysql" checked> MySQL</label>
+    <label><input type="checkbox" value="postgresql" checked> PostgreSQL</label>
+    <label><input type="checkbox" value="sqlserver" checked> SQL Server</label>
+    <label><input type="checkbox" value="oracle" checked> Oracle</label>
+    <label><input type="checkbox" value="sqlite" checked> SQLite</label>
+  </div>
   <table>
     <thead>
       <tr>
@@ -67,31 +75,31 @@
       </tr>
     </thead>
     <tbody>
-          <tr>
+          <tr data-db="mysql">
             <td>MySQL</td>
             <td class="supported">✓ Supported</td>
             <td>8.0</td>
             <td class="notes">WINDOW clause supported since MySQL 8.0. Named windows can be referenced by name in OVER (name) or extended in OVER (name ORDER BY ...) to add or modify clauses. A named window cannot be redefined differently in the same query. ORDER BY and PARTITION BY defined in the named window can be extended but not overridden by the referencing OVER clause.</td>
           </tr>
-          <tr>
+          <tr data-db="postgresql">
             <td>PostgreSQL</td>
             <td class="supported">✓ Supported</td>
             <td>8.4</td>
             <td class="notes">WINDOW clause fully supported since PostgreSQL 8.4 — the earliest of any engine. Named windows can be extended with additional ORDER BY or frame clauses in the referencing OVER clause but cannot change the existing PARTITION BY or ORDER BY. Multiple named windows can be defined, and one named window can reference another (inheritance).</td>
           </tr>
-          <tr>
+          <tr data-db="sqlserver">
             <td>SQL Server</td>
             <td class="not-supported">✗ Not Supported</td>
             <td>—</td>
             <td class="notes">SQL Server does not support the WINDOW clause. Named window definitions cannot be declared and reused. Each window function must repeat its full OVER (...) specification. If multiple window functions share the same OVER clause, the optimizer may still recognize and reuse the window internally, but the syntax must be duplicated.</td>
           </tr>
-          <tr>
+          <tr data-db="oracle">
             <td>Oracle</td>
             <td class="not-supported">✗ Not Supported</td>
             <td>—</td>
             <td class="notes">Oracle does not support the SQL standard WINDOW clause. Each window function requires its own full OVER (...) specification. The optimizer may internally recognize and share window computation for identical OVER clauses, but the syntax still requires repetition.</td>
           </tr>
-          <tr>
+          <tr data-db="sqlite">
             <td>SQLite</td>
             <td class="supported">✓ Supported</td>
             <td>3.28.0</td>
@@ -127,6 +135,7 @@ WINDOW w AS (PARTITION BY dept ORDER BY salary DESC);</div>
 
   <h2>Per-Database Syntax &amp; Notes</h2>
   <div class="per-db-section">
+      <div class="per-db-entry" data-db="mysql">
         <h4>MySQL</h4>
         <p class="notes">WINDOW clause supported since MySQL 8.0. Named windows can be referenced by name in OVER (name) or extended in OVER (name ORDER BY ...) to add or modify clauses. A named window cannot be redefined differently in the same query. ORDER BY and PARTITION BY defined in the named window can be extended but not overridden by the referencing OVER clause.</p>
         <div class="syntax">SELECT
@@ -147,6 +156,8 @@ SELECT
 FROM employees
 WINDOW w AS (PARTITION BY dept);
 -- hire_date ORDER BY extends the named window w</div>
+      </div>
+      <div class="per-db-entry" data-db="postgresql">
         <h4>PostgreSQL</h4>
         <p class="notes">WINDOW clause fully supported since PostgreSQL 8.4 — the earliest of any engine. Named windows can be extended with additional ORDER BY or frame clauses in the referencing OVER clause but cannot change the existing PARTITION BY or ORDER BY. Multiple named windows can be defined, and one named window can reference another (inheritance).</p>
         <div class="syntax">SELECT
@@ -170,6 +181,8 @@ WINDOW
     w1 AS (PARTITION BY dept),
     w2 AS (w1 ORDER BY salary DESC);
 -- w2 inherits the PARTITION BY from w1</div>
+      </div>
+      <div class="per-db-entry" data-db="sqlserver">
         <h4>SQL Server</h4>
         <p class="notes">SQL Server does not support the WINDOW clause. Named window definitions cannot be declared and reused. Each window function must repeat its full OVER (...) specification. If multiple window functions share the same OVER clause, the optimizer may still recognize and reuse the window internally, but the syntax must be duplicated.</p>
         <div class="syntax">-- Must repeat the OVER clause for each window function:
@@ -188,6 +201,8 @@ WITH windowed AS (
     FROM employees
 )
 SELECT * FROM windowed;</div>
+      </div>
+      <div class="per-db-entry" data-db="oracle">
         <h4>Oracle</h4>
         <p class="notes">Oracle does not support the SQL standard WINDOW clause. Each window function requires its own full OVER (...) specification. The optimizer may internally recognize and share window computation for identical OVER clauses, but the syntax still requires repetition.</p>
         <div class="syntax">-- Must repeat OVER for each function:
@@ -206,6 +221,8 @@ FROM (
            AVG(salary) OVER (PARTITION BY dept) AS dept_avg
     FROM employees
 );</div>
+      </div>
+      <div class="per-db-entry" data-db="sqlite">
         <h4>SQLite</h4>
         <p class="notes">WINDOW clause supported since SQLite 3.28.0 (2019-04-16). Standard syntax — named windows can be defined and referenced, and they can be extended (but not overridden) in the referencing OVER clause.</p>
         <div class="syntax">SELECT
@@ -224,9 +241,11 @@ FROM employees
 WINDOW
     full_order AS (ORDER BY salary DESC),
     dept_order AS (PARTITION BY dept ORDER BY salary DESC);</div>
+      </div>
   </div>
   <script src="/search.js" defer></script>
   <script src="/splash.js" defer></script>
   <script src="/track.js" defer></script>
+  <script src="/compare.js" defer></script>
 </body>
 </html>

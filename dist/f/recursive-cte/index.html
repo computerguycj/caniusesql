@@ -57,6 +57,14 @@
   <p class="command-overview">A self-referencing CTE that iteratively generates rows, used for traversing hierarchies (org charts, file systems) and graphs. The recursive part unions with the base case until convergence. Always include a termination condition.</p>
 
   <h2>Compatibility</h2>
+  <div class="compare-bar">
+    <span class="compare-label">Show:</span>
+    <label><input type="checkbox" value="mysql" checked> MySQL</label>
+    <label><input type="checkbox" value="postgresql" checked> PostgreSQL</label>
+    <label><input type="checkbox" value="sqlserver" checked> SQL Server</label>
+    <label><input type="checkbox" value="oracle" checked> Oracle</label>
+    <label><input type="checkbox" value="sqlite" checked> SQLite</label>
+  </div>
   <table>
     <thead>
       <tr>
@@ -67,31 +75,31 @@
       </tr>
     </thead>
     <tbody>
-          <tr>
+          <tr data-db="mysql">
             <td>MySQL</td>
             <td class="supported">✓ Supported</td>
             <td>8.0</td>
             <td class="notes">RECURSIVE keyword required</td>
           </tr>
-          <tr>
+          <tr data-db="postgresql">
             <td>PostgreSQL</td>
             <td class="supported">✓ Supported</td>
             <td>8.4</td>
             <td class="notes">Standard RECURSIVE CTE</td>
           </tr>
-          <tr>
+          <tr data-db="sqlserver">
             <td>SQL Server</td>
             <td class="supported">✓ Supported</td>
             <td>2005</td>
             <td class="notes">Standard CTE recursion</td>
           </tr>
-          <tr>
+          <tr data-db="oracle">
             <td>Oracle</td>
             <td class="supported">✓ Supported</td>
             <td>11g R2</td>
             <td class="notes">Pre-11gR2 use CONNECT BY</td>
           </tr>
-          <tr>
+          <tr data-db="sqlite">
             <td>SQLite</td>
             <td class="supported">✓ Supported</td>
             <td>3.8.3</td>
@@ -127,29 +135,40 @@ SELECT * FROM cte;</div>
 
   <h2>Per-Database Syntax &amp; Notes</h2>
   <div class="per-db-section">
+      <div class="per-db-entry" data-db="mysql">
         <h4>MySQL</h4>
         <p class="notes">RECURSIVE keyword required</p>
         <div class="syntax">WITH RECURSIVE cte AS (…)
 SELECT * FROM cte;</div>
+      </div>
+      <div class="per-db-entry" data-db="postgresql">
         <h4>PostgreSQL</h4>
         <p class="notes">Standard RECURSIVE CTE</p>
         <div class="syntax">WITH RECURSIVE cte AS (…)
 SELECT * FROM cte;</div>
+      </div>
+      <div class="per-db-entry" data-db="sqlserver">
         <h4>SQL Server</h4>
         <p class="notes">Standard CTE recursion</p>
         <div class="syntax">WITH cte AS (…)
 SELECT * FROM cte;</div>
+      </div>
+      <div class="per-db-entry" data-db="oracle">
         <h4>Oracle</h4>
         <p class="notes">Pre-11gR2 use CONNECT BY</p>
         <div class="syntax">WITH cte AS (…)
 SELECT * FROM cte;</div>
+      </div>
+      <div class="per-db-entry" data-db="sqlite">
         <h4>SQLite</h4>
         <p class="notes">Supports RECURSIVE CTEs</p>
         <div class="syntax">WITH RECURSIVE cte AS (…)
 SELECT * FROM cte;</div>
+      </div>
   </div>
   <script src="/search.js" defer></script>
   <script src="/splash.js" defer></script>
   <script src="/track.js" defer></script>
+  <script src="/compare.js" defer></script>
 </body>
 </html>

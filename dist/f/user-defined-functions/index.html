@@ -57,6 +57,14 @@
   <p class="command-overview">Database-specific procedural extensions: PL/pgSQL in PostgreSQL, T-SQL in SQL Server, PL/SQL in Oracle. Allow complex logic, loops, and conditionals in the database. Powerful but can become a maintenance burden and are hard to test.</p>
 
   <h2>Compatibility</h2>
+  <div class="compare-bar">
+    <span class="compare-label">Show:</span>
+    <label><input type="checkbox" value="mysql" checked> MySQL</label>
+    <label><input type="checkbox" value="postgresql" checked> PostgreSQL</label>
+    <label><input type="checkbox" value="sqlserver" checked> SQL Server</label>
+    <label><input type="checkbox" value="oracle" checked> Oracle</label>
+    <label><input type="checkbox" value="sqlite" checked> SQLite</label>
+  </div>
   <table>
     <thead>
       <tr>
@@ -67,31 +75,31 @@
       </tr>
     </thead>
     <tbody>
-          <tr>
+          <tr data-db="mysql">
             <td>MySQL</td>
             <td class="supported">✓ Supported</td>
             <td>5.0</td>
             <td class="notes">Scalar functions only (no table-valued UDFs in native SQL). DETERMINISTIC / NO SQL / READS SQL DATA characteristics affect optimizer behavior.</td>
           </tr>
-          <tr>
+          <tr data-db="postgresql">
             <td>PostgreSQL</td>
             <td class="supported">✓ Supported</td>
             <td>6.5</td>
             <td class="notes">Supports scalar and set-returning (RETURNS TABLE / RETURNS SETOF) functions. LANGUAGE can be sql, plpgsql, python, c, and more.</td>
           </tr>
-          <tr>
+          <tr data-db="sqlserver">
             <td>SQL Server</td>
             <td class="supported">✓ Supported</td>
             <td>2000</td>
             <td class="notes">Three types: scalar, inline table-valued (ITVF), and multi-statement table-valued (MSTVF). ITVFs are strongly preferred over MSTVFs for performance.</td>
           </tr>
-          <tr>
+          <tr data-db="oracle">
             <td>Oracle</td>
             <td class="supported">✓ Supported</td>
             <td>7</td>
             <td class="notes">Functions can use PIPELINED RETURN to stream table results row by row. DETERMINISTIC hint improves optimizer reuse.</td>
           </tr>
-          <tr>
+          <tr data-db="sqlite">
             <td>SQLite</td>
             <td class="supported">✓ Supported</td>
             <td>3.0.0</td>
@@ -124,12 +132,15 @@ AS
 
   <h2>Per-Database Syntax &amp; Notes</h2>
   <div class="per-db-section">
+      <div class="per-db-entry" data-db="mysql">
         <h4>MySQL</h4>
         <p class="notes">Scalar functions only (no table-valued UDFs in native SQL). DETERMINISTIC / NO SQL / READS SQL DATA characteristics affect optimizer behavior.</p>
         <div class="syntax">CREATE FUNCTION add_tax(price DECIMAL(10,2))
 RETURNS DECIMAL(10,2)
 DETERMINISTIC
 RETURN price * 1.1;</div>
+      </div>
+      <div class="per-db-entry" data-db="postgresql">
         <h4>PostgreSQL</h4>
         <p class="notes">Supports scalar and set-returning (RETURNS TABLE / RETURNS SETOF) functions. LANGUAGE can be sql, plpgsql, python, c, and more.</p>
         <div class="syntax">CREATE FUNCTION add_tax(price NUMERIC)
@@ -138,6 +149,8 @@ LANGUAGE sql
 IMMUTABLE AS $$
   SELECT price * 1.1;
 $$;</div>
+      </div>
+      <div class="per-db-entry" data-db="sqlserver">
         <h4>SQL Server</h4>
         <p class="notes">Three types: scalar, inline table-valued (ITVF), and multi-statement table-valued (MSTVF). ITVFs are strongly preferred over MSTVFs for performance.</p>
         <div class="syntax">CREATE FUNCTION dbo.add_tax(@price DECIMAL(10,2))
@@ -146,6 +159,8 @@ AS
 BEGIN
   RETURN @price * 1.1;
 END;</div>
+      </div>
+      <div class="per-db-entry" data-db="oracle">
         <h4>Oracle</h4>
         <p class="notes">Functions can use PIPELINED RETURN to stream table results row by row. DETERMINISTIC hint improves optimizer reuse.</p>
         <div class="syntax">CREATE FUNCTION add_tax(price NUMBER)
@@ -155,15 +170,19 @@ AS
 BEGIN
   RETURN price * 1.1;
 END;</div>
+      </div>
+      <div class="per-db-entry" data-db="sqlite">
         <h4>SQLite</h4>
         <p class="notes">UDFs must be registered at the connection level via the application API (e.g., sqlite3_create_function in C, or conn.create_function() in Python). No CREATE FUNCTION DDL.</p>
         <div class="syntax">-- Python example
 conn.create_function('add_tax', 1, lambda p: p * 1.1)
 -- Then use in SQL:
 SELECT add_tax(price) FROM products;</div>
+      </div>
   </div>
   <script src="/search.js" defer></script>
   <script src="/splash.js" defer></script>
   <script src="/track.js" defer></script>
+  <script src="/compare.js" defer></script>
 </body>
 </html>

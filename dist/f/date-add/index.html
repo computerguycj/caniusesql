@@ -57,6 +57,14 @@
   <p class="command-overview">Adds or subtracts an interval from a date or timestamp, the standard way to shift dates forward or backward. DATEDIFF in SQL Server returns the day count between dates; date functions vary significantly across databases.</p>
 
   <h2>Compatibility</h2>
+  <div class="compare-bar">
+    <span class="compare-label">Show:</span>
+    <label><input type="checkbox" value="mysql" checked> MySQL</label>
+    <label><input type="checkbox" value="postgresql" checked> PostgreSQL</label>
+    <label><input type="checkbox" value="sqlserver" checked> SQL Server</label>
+    <label><input type="checkbox" value="oracle" checked> Oracle</label>
+    <label><input type="checkbox" value="sqlite" checked> SQLite</label>
+  </div>
   <table>
     <thead>
       <tr>
@@ -67,31 +75,31 @@
       </tr>
     </thead>
     <tbody>
-          <tr>
+          <tr data-db="mysql">
             <td>MySQL</td>
             <td class="supported">✓ Supported</td>
             <td>all</td>
             <td class="notes">DATE_ADD(date, INTERVAL n unit) and DATE_SUB(date, INTERVAL n unit). Also supports + INTERVAL shorthand. Units: MICROSECOND, SECOND, MINUTE, HOUR, DAY, WEEK, MONTH, QUARTER, YEAR, and compound types (SECOND_MICROSECOND, etc.).</td>
           </tr>
-          <tr>
+          <tr data-db="postgresql">
             <td>PostgreSQL</td>
             <td class="supported">✓ Supported</td>
             <td>all</td>
             <td class="notes">Uses + / - operators with INTERVAL literals. Interval syntax is flexible: '7 days', '1 month 2 days', '2 hours 30 minutes'. AGE(ts1, ts2) returns a human-readable interval between two timestamps. INTERVAL arithmetic is the most expressive of any engine.</td>
           </tr>
-          <tr>
+          <tr data-db="sqlserver">
             <td>SQL Server</td>
             <td class="supported">✓ Supported</td>
             <td>all</td>
             <td class="notes">DATEADD(unit, n, date) is the only method — no INTERVAL type or + operator for dates. Units spelled out: year, quarter, month, week, day, hour, minute, second, millisecond, microsecond, nanosecond.</td>
           </tr>
-          <tr>
+          <tr data-db="oracle">
             <td>Oracle</td>
             <td class="supported">✓ Supported</td>
             <td>all</td>
             <td class="notes">DATE + n adds n days (integer arithmetic). For months/years use ADD_MONTHS(date, n). INTERVAL types exist for precise interval arithmetic. No DATEADD function.</td>
           </tr>
-          <tr>
+          <tr data-db="sqlite">
             <td>SQLite</td>
             <td class="supported">✓ Supported</td>
             <td>all</td>
@@ -126,39 +134,50 @@ some_date + INTERVAL '7 days'       -- PostgreSQL</div>
 
   <h2>Per-Database Syntax &amp; Notes</h2>
   <div class="per-db-section">
+      <div class="per-db-entry" data-db="mysql">
         <h4>MySQL</h4>
         <p class="notes">DATE_ADD(date, INTERVAL n unit) and DATE_SUB(date, INTERVAL n unit). Also supports + INTERVAL shorthand. Units: MICROSECOND, SECOND, MINUTE, HOUR, DAY, WEEK, MONTH, QUARTER, YEAR, and compound types (SECOND_MICROSECOND, etc.).</p>
         <div class="syntax">SELECT DATE_ADD('2024-01-15', INTERVAL 7 DAY);         -- 2024-01-22
 SELECT DATE_SUB('2024-01-15', INTERVAL 1 MONTH);        -- 2023-12-15
 SELECT '2024-01-15' + INTERVAL 7 DAY;                  -- shorthand
 SELECT NOW() + INTERVAL '2:30' HOUR_MINUTE;</div>
+      </div>
+      <div class="per-db-entry" data-db="postgresql">
         <h4>PostgreSQL</h4>
         <p class="notes">Uses + / - operators with INTERVAL literals. Interval syntax is flexible: '7 days', '1 month 2 days', '2 hours 30 minutes'. AGE(ts1, ts2) returns a human-readable interval between two timestamps. INTERVAL arithmetic is the most expressive of any engine.</p>
         <div class="syntax">SELECT '2024-01-15'::date + INTERVAL '7 days';          -- 2024-01-22
 SELECT NOW() - INTERVAL '1 month 2 days';
 SELECT NOW() + INTERVAL '2 hours 30 minutes';
 SELECT AGE('2024-06-01'::date, '2023-01-15'::date);    -- 1 year 4 mons 17 days</div>
+      </div>
+      <div class="per-db-entry" data-db="sqlserver">
         <h4>SQL Server</h4>
         <p class="notes">DATEADD(unit, n, date) is the only method — no INTERVAL type or + operator for dates. Units spelled out: year, quarter, month, week, day, hour, minute, second, millisecond, microsecond, nanosecond.</p>
         <div class="syntax">SELECT DATEADD(day,    7,  '2024-01-15');   -- 2024-01-22
 SELECT DATEADD(month, -1, '2024-01-15');   -- 2023-12-15
 SELECT DATEADD(hour,  2,  GETDATE());
 SELECT DATEADD(year,  1,  GETDATE());</div>
+      </div>
+      <div class="per-db-entry" data-db="oracle">
         <h4>Oracle</h4>
         <p class="notes">DATE + n adds n days (integer arithmetic). For months/years use ADD_MONTHS(date, n). INTERVAL types exist for precise interval arithmetic. No DATEADD function.</p>
         <div class="syntax">SELECT SYSDATE + 7              FROM DUAL;   -- 7 days later
 SELECT ADD_MONTHS(SYSDATE, 1)   FROM DUAL;   -- 1 month later
 SELECT ADD_MONTHS(SYSDATE, -3)  FROM DUAL;   -- 3 months earlier
 SELECT SYSDATE + INTERVAL '2' HOUR FROM DUAL;</div>
+      </div>
+      <div class="per-db-entry" data-db="sqlite">
         <h4>SQLite</h4>
         <p class="notes">datetime() and date() functions accept a modifier string. Modifiers: '+N days', '+N months', '+N years', 'start of month', 'weekday N', etc. No INTERVAL type or DATEADD function.</p>
         <div class="syntax">SELECT date('2024-01-15', '+7 days');           -- 2024-01-22
 SELECT date('2024-01-15', '+1 month');          -- 2024-02-15
 SELECT datetime('now', '-1 year', '+3 months');
 SELECT date('now', 'start of month', '+1 month', '-1 day');  -- last day of current month</div>
+      </div>
   </div>
   <script src="/search.js" defer></script>
   <script src="/splash.js" defer></script>
   <script src="/track.js" defer></script>
+  <script src="/compare.js" defer></script>
 </body>
 </html>

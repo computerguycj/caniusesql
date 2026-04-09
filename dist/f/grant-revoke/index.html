@@ -57,6 +57,14 @@
   <p class="command-overview">Grants privileges (SELECT, INSERT, UPDATE, DELETE, EXECUTE, etc.) on database objects to users or roles. Principle of least privilege: grant only what is needed. Roles simplify permission management by grouping privileges.</p>
 
   <h2>Compatibility</h2>
+  <div class="compare-bar">
+    <span class="compare-label">Show:</span>
+    <label><input type="checkbox" value="mysql" checked> MySQL</label>
+    <label><input type="checkbox" value="postgresql" checked> PostgreSQL</label>
+    <label><input type="checkbox" value="sqlserver" checked> SQL Server</label>
+    <label><input type="checkbox" value="oracle" checked> Oracle</label>
+    <label><input type="checkbox" value="sqlite" checked> SQLite</label>
+  </div>
   <table>
     <thead>
       <tr>
@@ -67,31 +75,31 @@
       </tr>
     </thead>
     <tbody>
-          <tr>
+          <tr data-db="mysql">
             <td>MySQL</td>
             <td class="supported">✓ Supported</td>
             <td>8.0</td>
             <td class="notes">MySQL supports GRANT and REVOKE for managing user permissions.</td>
           </tr>
-          <tr>
+          <tr data-db="postgresql">
             <td>PostgreSQL</td>
             <td class="supported">✓ Supported</td>
             <td>7.0</td>
             <td class="notes">PostgreSQL uses a different model for granting roles and revoking privileges.</td>
           </tr>
-          <tr>
+          <tr data-db="sqlserver">
             <td>SQL Server</td>
             <td class="supported">✓ Supported</td>
             <td>2016</td>
             <td class="notes">SQL Server supports GRANT and REVOKE for managing user permissions.</td>
           </tr>
-          <tr>
+          <tr data-db="oracle">
             <td>Oracle</td>
             <td class="supported">✓ Supported</td>
             <td>7</td>
             <td class="notes">Oracle's permission model is built on GRANT and REVOKE. Privileges are granted directly or via roles.</td>
           </tr>
-          <tr>
+          <tr data-db="sqlite">
             <td>SQLite</td>
             <td class="not-supported">✗ Not Supported</td>
             <td>—</td>
@@ -124,5 +132,6 @@
   <script src="/search.js" defer></script>
   <script src="/splash.js" defer></script>
   <script src="/track.js" defer></script>
+  <script src="/compare.js" defer></script>
 </body>
 </html>

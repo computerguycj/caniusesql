@@ -57,6 +57,14 @@
   <p class="command-overview">Returns the first or last value from an ordered window frame. Useful for finding the first/last occurrence per group, carrying forward values, and comparing against an endpoint. LAST_VALUE needs an explicit frame to be meaningful.</p>
 
   <h2>Compatibility</h2>
+  <div class="compare-bar">
+    <span class="compare-label">Show:</span>
+    <label><input type="checkbox" value="mysql" checked> MySQL</label>
+    <label><input type="checkbox" value="postgresql" checked> PostgreSQL</label>
+    <label><input type="checkbox" value="sqlserver" checked> SQL Server</label>
+    <label><input type="checkbox" value="oracle" checked> Oracle</label>
+    <label><input type="checkbox" value="sqlite" checked> SQLite</label>
+  </div>
   <table>
     <thead>
       <tr>
@@ -67,31 +75,31 @@
       </tr>
     </thead>
     <tbody>
-          <tr>
+          <tr data-db="mysql">
             <td>MySQL</td>
             <td class="supported">✓ Supported</td>
             <td>8.0</td>
             <td class="notes">FIRST_VALUE() and LAST_VALUE() added in MySQL 8.0. Default window frame is RANGE BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW — this means LAST_VALUE() will usually return the current row's value, not the last in the partition. Always specify the frame explicitly for LAST_VALUE.</td>
           </tr>
-          <tr>
+          <tr data-db="postgresql">
             <td>PostgreSQL</td>
             <td class="supported">✓ Supported</td>
             <td>8.4</td>
             <td class="notes">FIRST_VALUE() and LAST_VALUE() supported. Same default frame gotcha as MySQL — LAST_VALUE needs explicit ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING to see the true last value in the partition.</td>
           </tr>
-          <tr>
+          <tr data-db="sqlserver">
             <td>SQL Server</td>
             <td class="supported">✓ Supported</td>
             <td>2012</td>
             <td class="notes">FIRST_VALUE() and LAST_VALUE() added in SQL Server 2012. Same default frame gotcha. IGNORE NULLS option added in SQL Server 2022.</td>
           </tr>
-          <tr>
+          <tr data-db="oracle">
             <td>Oracle</td>
             <td class="supported">✓ Supported</td>
             <td>8i</td>
             <td class="notes">FIRST_VALUE() and LAST_VALUE() supported. IGNORE NULLS / RESPECT NULLS options available (Oracle supports these earlier than other engines). Same default frame gotcha with LAST_VALUE.</td>
           </tr>
-          <tr>
+          <tr data-db="sqlite">
             <td>SQLite</td>
             <td class="supported">✓ Supported</td>
             <td>3.25.0</td>
@@ -127,6 +135,7 @@ FROM employees;</div>
 
   <h2>Per-Database Syntax &amp; Notes</h2>
   <div class="per-db-section">
+      <div class="per-db-entry" data-db="mysql">
         <h4>MySQL</h4>
         <p class="notes">FIRST_VALUE() and LAST_VALUE() added in MySQL 8.0. Default window frame is RANGE BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW — this means LAST_VALUE() will usually return the current row's value, not the last in the partition. Always specify the frame explicitly for LAST_VALUE.</p>
         <div class="syntax">SELECT name, dept, salary,
@@ -137,6 +146,8 @@ FROM employees;</div>
     ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING
   ) AS bottom_salary
 FROM employees;</div>
+      </div>
+      <div class="per-db-entry" data-db="postgresql">
         <h4>PostgreSQL</h4>
         <p class="notes">FIRST_VALUE() and LAST_VALUE() supported. Same default frame gotcha as MySQL — LAST_VALUE needs explicit ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING to see the true last value in the partition.</p>
         <div class="syntax">SELECT name, dept, salary,
@@ -147,6 +158,8 @@ WINDOW w AS (
   PARTITION BY dept ORDER BY salary DESC
   ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING
 );</div>
+      </div>
+      <div class="per-db-entry" data-db="sqlserver">
         <h4>SQL Server</h4>
         <p class="notes">FIRST_VALUE() and LAST_VALUE() added in SQL Server 2012. Same default frame gotcha. IGNORE NULLS option added in SQL Server 2022.</p>
         <div class="syntax">SELECT name, dept, salary,
@@ -159,6 +172,8 @@ FROM employees;
 
 -- SQL Server 2022+:
 SELECT FIRST_VALUE(salary) IGNORE NULLS OVER (ORDER BY hire_date) FROM employees;</div>
+      </div>
+      <div class="per-db-entry" data-db="oracle">
         <h4>Oracle</h4>
         <p class="notes">FIRST_VALUE() and LAST_VALUE() supported. IGNORE NULLS / RESPECT NULLS options available (Oracle supports these earlier than other engines). Same default frame gotcha with LAST_VALUE.</p>
         <div class="syntax">SELECT name, dept, salary,
@@ -169,6 +184,8 @@ SELECT FIRST_VALUE(salary) IGNORE NULLS OVER (ORDER BY hire_date) FROM employees
   ) AS bottom_salary,
   FIRST_VALUE(salary) IGNORE NULLS OVER (ORDER BY hire_date) AS first_non_null
 FROM employees;</div>
+      </div>
+      <div class="per-db-entry" data-db="sqlite">
         <h4>SQLite</h4>
         <p class="notes">FIRST_VALUE() and LAST_VALUE() added in SQLite 3.25.0. Standard syntax. Same default frame gotcha with LAST_VALUE.</p>
         <div class="syntax">SELECT name, dept, salary,
@@ -178,9 +195,11 @@ FROM employees;</div>
     ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING
   ) AS bottom_salary
 FROM employees;</div>
+      </div>
   </div>
   <script src="/search.js" defer></script>
   <script src="/splash.js" defer></script>
   <script src="/track.js" defer></script>
+  <script src="/compare.js" defer></script>
 </body>
 </html>

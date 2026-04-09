@@ -57,6 +57,14 @@
   <p class="command-overview">Divides a large table into smaller pieces (partitions) based on a partition key (range, list, or hash). Improves query performance through partition pruning and enables efficient maintenance like archiving old partitions. Essential for tables with billions of rows.</p>
 
   <h2>Compatibility</h2>
+  <div class="compare-bar">
+    <span class="compare-label">Show:</span>
+    <label><input type="checkbox" value="mysql" checked> MySQL</label>
+    <label><input type="checkbox" value="postgresql" checked> PostgreSQL</label>
+    <label><input type="checkbox" value="sqlserver" checked> SQL Server</label>
+    <label><input type="checkbox" value="oracle" checked> Oracle</label>
+    <label><input type="checkbox" value="sqlite" checked> SQLite</label>
+  </div>
   <table>
     <thead>
       <tr>
@@ -67,31 +75,31 @@
       </tr>
     </thead>
     <tbody>
-          <tr>
+          <tr data-db="mysql">
             <td>MySQL</td>
             <td class="supported">✓ Supported</td>
             <td>5.1</td>
             <td class="notes">Supports RANGE, LIST, HASH, and KEY partitioning. All partitions must live in the same schema. Foreign keys referencing partitioned tables are not supported.</td>
           </tr>
-          <tr>
+          <tr data-db="postgresql">
             <td>PostgreSQL</td>
             <td class="supported">✓ Supported</td>
             <td>10</td>
             <td class="notes">Declarative partitioning (PARTITION BY RANGE/LIST/HASH) added in PG 10. Earlier versions required trigger-based inheritance partitioning. Each partition is a real child table.</td>
           </tr>
-          <tr>
+          <tr data-db="sqlserver">
             <td>SQL Server</td>
             <td class="supported">✓ Supported</td>
             <td>2005</td>
             <td class="notes">Requires creating a PARTITION FUNCTION and PARTITION SCHEME before the table. Partitioning is an Enterprise Edition feature (Standard Edition has limited support since 2016 SP1).</td>
           </tr>
-          <tr>
+          <tr data-db="oracle">
             <td>Oracle</td>
             <td class="supported">✓ Supported</td>
             <td>8i</td>
             <td class="notes">One of the most mature partitioning implementations. Supports RANGE, LIST, HASH, COMPOSITE (range-hash, range-list), INTERVAL, and REFERENCE partitioning. Requires the Partitioning option.</td>
           </tr>
-          <tr>
+          <tr data-db="sqlite">
             <td>SQLite</td>
             <td class="not-supported">✗ Not Supported</td>
             <td>—</td>
@@ -124,6 +132,7 @@ CREATE TABLE orders (
 
   <h2>Per-Database Syntax &amp; Notes</h2>
   <div class="per-db-section">
+      <div class="per-db-entry" data-db="mysql">
         <h4>MySQL</h4>
         <p class="notes">Supports RANGE, LIST, HASH, and KEY partitioning. All partitions must live in the same schema. Foreign keys referencing partitioned tables are not supported.</p>
         <div class="syntax">CREATE TABLE orders (
@@ -135,6 +144,8 @@ PARTITION BY RANGE (YEAR(order_date)) (
   PARTITION p2023 VALUES LESS THAN (2024),
   PARTITION pmax  VALUES LESS THAN MAXVALUE
 );</div>
+      </div>
+      <div class="per-db-entry" data-db="postgresql">
         <h4>PostgreSQL</h4>
         <p class="notes">Declarative partitioning (PARTITION BY RANGE/LIST/HASH) added in PG 10. Earlier versions required trigger-based inheritance partitioning. Each partition is a real child table.</p>
         <div class="syntax">CREATE TABLE orders (
@@ -145,6 +156,8 @@ PARTITION BY RANGE (YEAR(order_date)) (
 CREATE TABLE orders_2023
   PARTITION OF orders
   FOR VALUES FROM ('2023-01-01') TO ('2024-01-01');</div>
+      </div>
+      <div class="per-db-entry" data-db="sqlserver">
         <h4>SQL Server</h4>
         <p class="notes">Requires creating a PARTITION FUNCTION and PARTITION SCHEME before the table. Partitioning is an Enterprise Edition feature (Standard Edition has limited support since 2016 SP1).</p>
         <div class="syntax">CREATE PARTITION FUNCTION pf_date (DATE)
@@ -157,6 +170,8 @@ CREATE TABLE orders (
   id INT,
   order_date DATE
 ) ON ps_date(order_date);</div>
+      </div>
+      <div class="per-db-entry" data-db="oracle">
         <h4>Oracle</h4>
         <p class="notes">One of the most mature partitioning implementations. Supports RANGE, LIST, HASH, COMPOSITE (range-hash, range-list), INTERVAL, and REFERENCE partitioning. Requires the Partitioning option.</p>
         <div class="syntax">CREATE TABLE orders (
@@ -167,9 +182,11 @@ PARTITION BY RANGE (order_date)
 INTERVAL (NUMTOYMINTERVAL(1, 'YEAR')) (
   PARTITION p_before_2023 VALUES LESS THAN (DATE '2023-01-01')
 );</div>
+      </div>
   </div>
   <script src="/search.js" defer></script>
   <script src="/splash.js" defer></script>
   <script src="/track.js" defer></script>
+  <script src="/compare.js" defer></script>
 </body>
 </html>

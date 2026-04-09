@@ -57,6 +57,14 @@
   <p class="command-overview">Exception handling block that catches errors in the enclosed SQL or procedural code and lets execution continue. Different syntax across databases: EXCEPTION WHEN OTHERS (Oracle/PostgreSQL), TRY...CATCH (SQL Server/MySQL). Essential for robust stored procedures.</p>
 
   <h2>Compatibility</h2>
+  <div class="compare-bar">
+    <span class="compare-label">Show:</span>
+    <label><input type="checkbox" value="mysql" checked> MySQL</label>
+    <label><input type="checkbox" value="postgresql" checked> PostgreSQL</label>
+    <label><input type="checkbox" value="sqlserver" checked> SQL Server</label>
+    <label><input type="checkbox" value="oracle" checked> Oracle</label>
+    <label><input type="checkbox" value="sqlite" checked> SQLite</label>
+  </div>
   <table>
     <thead>
       <tr>
@@ -67,31 +75,31 @@
       </tr>
     </thead>
     <tbody>
-          <tr>
+          <tr data-db="mysql">
             <td>MySQL</td>
             <td class="supported">✓ Supported</td>
             <td>5.5</td>
             <td class="notes">Uses DECLARE ... HANDLER syntax inside stored procedures/functions; no bare TRY/CATCH block outside a routine.</td>
           </tr>
-          <tr>
+          <tr data-db="postgresql">
             <td>PostgreSQL</td>
             <td class="supported">✓ Supported</td>
             <td>8.0</td>
             <td class="notes">BEGIN/EXCEPTION block is available inside PL/pgSQL functions and DO blocks only; not in plain SQL.</td>
           </tr>
-          <tr>
+          <tr data-db="sqlserver">
             <td>SQL Server</td>
             <td class="supported">✓ Supported</td>
             <td>2005</td>
             <td class="notes">TRY/CATCH works in ad-hoc batches, procedures, and triggers. Use ERROR_MESSAGE(), ERROR_NUMBER() inside the CATCH block.</td>
           </tr>
-          <tr>
+          <tr data-db="oracle">
             <td>Oracle</td>
             <td class="supported">✓ Supported</td>
             <td>7</td>
             <td class="notes">PL/SQL EXCEPTION section is part of every block (anonymous or named). Uses named exception types or WHEN OTHERS.</td>
           </tr>
-          <tr>
+          <tr data-db="sqlite">
             <td>SQLite</td>
             <td class="not-supported">✗ Not Supported</td>
             <td>—</td>
@@ -125,12 +133,15 @@ END CATCH;</div>
 
   <h2>Per-Database Syntax &amp; Notes</h2>
   <div class="per-db-section">
+      <div class="per-db-entry" data-db="mysql">
         <h4>MySQL</h4>
         <p class="notes">Uses DECLARE ... HANDLER syntax inside stored procedures/functions; no bare TRY/CATCH block outside a routine.</p>
         <div class="syntax">DECLARE CONTINUE HANDLER FOR SQLEXCEPTION
   BEGIN
     GET DIAGNOSTICS CONDITION 1 @msg = MESSAGE_TEXT;
   END;</div>
+      </div>
+      <div class="per-db-entry" data-db="postgresql">
         <h4>PostgreSQL</h4>
         <p class="notes">BEGIN/EXCEPTION block is available inside PL/pgSQL functions and DO blocks only; not in plain SQL.</p>
         <div class="syntax">DO $$
@@ -140,6 +151,8 @@ EXCEPTION WHEN others THEN
   RAISE NOTICE 'error: %', SQLERRM;
 END;
 $$;</div>
+      </div>
+      <div class="per-db-entry" data-db="sqlserver">
         <h4>SQL Server</h4>
         <p class="notes">TRY/CATCH works in ad-hoc batches, procedures, and triggers. Use ERROR_MESSAGE(), ERROR_NUMBER() inside the CATCH block.</p>
         <div class="syntax">BEGIN TRY
@@ -148,6 +161,8 @@ END TRY
 BEGIN CATCH
   PRINT ERROR_MESSAGE();
 END CATCH;</div>
+      </div>
+      <div class="per-db-entry" data-db="oracle">
         <h4>Oracle</h4>
         <p class="notes">PL/SQL EXCEPTION section is part of every block (anonymous or named). Uses named exception types or WHEN OTHERS.</p>
         <div class="syntax">BEGIN
@@ -158,9 +173,11 @@ EXCEPTION
   WHEN OTHERS THEN
     DBMS_OUTPUT.PUT_LINE(SQLERRM);
 END;</div>
+      </div>
   </div>
   <script src="/search.js" defer></script>
   <script src="/splash.js" defer></script>
   <script src="/track.js" defer></script>
+  <script src="/compare.js" defer></script>
 </body>
 </html>

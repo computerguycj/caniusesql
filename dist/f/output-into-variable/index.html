@@ -57,6 +57,14 @@
   <p class="command-overview">SQL Server and Sybase equivalent of RETURNING, capturing values from modified rows. Useful for getting identity values, computed columns, or deleted row data immediately after an INSERT/UPDATE/DELETE operation.</p>
 
   <h2>Compatibility</h2>
+  <div class="compare-bar">
+    <span class="compare-label">Show:</span>
+    <label><input type="checkbox" value="mysql" checked> MySQL</label>
+    <label><input type="checkbox" value="postgresql" checked> PostgreSQL</label>
+    <label><input type="checkbox" value="sqlserver" checked> SQL Server</label>
+    <label><input type="checkbox" value="oracle" checked> Oracle</label>
+    <label><input type="checkbox" value="sqlite" checked> SQLite</label>
+  </div>
   <table>
     <thead>
       <tr>
@@ -67,31 +75,31 @@
       </tr>
     </thead>
     <tbody>
-          <tr>
+          <tr data-db="mysql">
             <td>MySQL</td>
             <td class="supported">✓ Supported</td>
             <td>5.0</td>
             <td class="notes">No OUTPUT/RETURNING clause. Use LAST_INSERT_ID() after INSERT to retrieve the auto-increment key. Multi-row capture requires triggers or application logic.</td>
           </tr>
-          <tr>
+          <tr data-db="postgresql">
             <td>PostgreSQL</td>
             <td class="supported">✓ Supported</td>
             <td>8.2</td>
             <td class="notes">RETURNING clause on INSERT, UPDATE, and DELETE returns a full result set. Works in plain SQL and inside PL/pgSQL with SELECT INTO or FOR loop.</td>
           </tr>
-          <tr>
+          <tr data-db="sqlserver">
             <td>SQL Server</td>
             <td class="supported">✓ Supported</td>
             <td>2005</td>
             <td class="notes">OUTPUT clause on INSERT, UPDATE, DELETE, and MERGE. Can write to a table variable (OUTPUT INTO @tbl) or return rows to the client. Exposes inserted and deleted virtual tables.</td>
           </tr>
-          <tr>
+          <tr data-db="oracle">
             <td>Oracle</td>
             <td class="supported">✓ Supported</td>
             <td>8i</td>
             <td class="notes">RETURNING...INTO in PL/SQL captures scalar or collection values from INSERT/UPDATE/DELETE. For bulk operations use RETURNING BULK COLLECT INTO.</td>
           </tr>
-          <tr>
+          <tr data-db="sqlite">
             <td>SQLite</td>
             <td class="supported">✓ Supported</td>
             <td>3.35.0</td>
@@ -123,10 +131,13 @@ VALUES ('x');</div>
 
   <h2>Per-Database Syntax &amp; Notes</h2>
   <div class="per-db-section">
+      <div class="per-db-entry" data-db="mysql">
         <h4>MySQL</h4>
         <p class="notes">No OUTPUT/RETURNING clause. Use LAST_INSERT_ID() after INSERT to retrieve the auto-increment key. Multi-row capture requires triggers or application logic.</p>
         <div class="syntax">INSERT INTO orders (item) VALUES ('widget');
 SELECT LAST_INSERT_ID() AS new_id;</div>
+      </div>
+      <div class="per-db-entry" data-db="postgresql">
         <h4>PostgreSQL</h4>
         <p class="notes">RETURNING clause on INSERT, UPDATE, and DELETE returns a full result set. Works in plain SQL and inside PL/pgSQL with SELECT INTO or FOR loop.</p>
         <div class="syntax">INSERT INTO orders (item)
@@ -137,6 +148,8 @@ RETURNING id, created_at;
 INSERT INTO orders (item)
 VALUES ('widget')
 RETURNING id INTO v_id;</div>
+      </div>
+      <div class="per-db-entry" data-db="sqlserver">
         <h4>SQL Server</h4>
         <p class="notes">OUTPUT clause on INSERT, UPDATE, DELETE, and MERGE. Can write to a table variable (OUTPUT INTO @tbl) or return rows to the client. Exposes inserted and deleted virtual tables.</p>
         <div class="syntax">-- Capture into table variable:
@@ -150,6 +163,8 @@ SELECT * FROM @ids;
 UPDATE orders SET status = 'closed'
 OUTPUT inserted.id, deleted.status
 WHERE status = 'open';</div>
+      </div>
+      <div class="per-db-entry" data-db="oracle">
         <h4>Oracle</h4>
         <p class="notes">RETURNING...INTO in PL/SQL captures scalar or collection values from INSERT/UPDATE/DELETE. For bulk operations use RETURNING BULK COLLECT INTO.</p>
         <div class="syntax">DECLARE v_id NUMBER;
@@ -159,6 +174,8 @@ BEGIN
   RETURNING id INTO v_id;
   DBMS_OUTPUT.PUT_LINE('new id: ' || v_id);
 END;</div>
+      </div>
+      <div class="per-db-entry" data-db="sqlite">
         <h4>SQLite</h4>
         <p class="notes">RETURNING clause on INSERT, UPDATE, and DELETE added in 3.35.0 (2021). Returns a result set; no direct INTO variable support in SQL.</p>
         <div class="syntax">INSERT INTO orders (item)
@@ -167,9 +184,11 @@ RETURNING id, created_at;
 
 DELETE FROM orders WHERE status = 'old'
 RETURNING id;</div>
+      </div>
   </div>
   <script src="/search.js" defer></script>
   <script src="/splash.js" defer></script>
   <script src="/track.js" defer></script>
+  <script src="/compare.js" defer></script>
 </body>
 </html>

@@ -57,6 +57,14 @@
   <p class="command-overview">PostgreSQL function for updating specific paths within a JSONB document, creating a modified copy. Supports creating nested paths with create_missing =&gt; true. Useful for JSON document versioning and partial updates.</p>
 
   <h2>Compatibility</h2>
+  <div class="compare-bar">
+    <span class="compare-label">Show:</span>
+    <label><input type="checkbox" value="mysql" checked> MySQL</label>
+    <label><input type="checkbox" value="postgresql" checked> PostgreSQL</label>
+    <label><input type="checkbox" value="sqlserver" checked> SQL Server</label>
+    <label><input type="checkbox" value="oracle" checked> Oracle</label>
+    <label><input type="checkbox" value="sqlite" checked> SQLite</label>
+  </div>
   <table>
     <thead>
       <tr>
@@ -67,31 +75,31 @@
       </tr>
     </thead>
     <tbody>
-          <tr>
+          <tr data-db="mysql">
             <td>MySQL</td>
             <td class="supported">✓ Supported</td>
             <td>5.7.8</td>
             <td class="notes">Three distinct functions with different insert/update semantics: JSON_SET inserts or replaces (upsert). JSON_INSERT inserts only if the key does not exist. JSON_REPLACE replaces only if the key already exists. JSON_REMOVE deletes a path. All return a new JSON document; the source column is not modified in-place — use UPDATE ... SET col = JSON_SET(col, ...) to persist changes.</td>
           </tr>
-          <tr>
+          <tr data-db="postgresql">
             <td>PostgreSQL</td>
             <td class="supported">✓ Supported</td>
             <td>9.5</td>
             <td class="notes">No single JSON_SET function. Instead, the || (concatenation) operator merges/overwrites top-level keys on jsonb. For deep updates, jsonb_set(target, path_array, new_value) (9.5+) modifies a nested key. jsonb_set_lax() (14+) adds NULL-handling options. jsonb_insert() (9.6+) inserts into arrays at a specific position. jsonb_strip_nulls() removes null-valued keys. The #- operator removes a key by path.</td>
           </tr>
-          <tr>
+          <tr data-db="sqlserver">
             <td>SQL Server</td>
             <td class="supported">✓ Supported</td>
             <td>2016</td>
             <td class="notes">JSON_MODIFY(expression, path, new_value) is the single function for all mutations. Setting new_value to NULL removes the key (or sets it to JSON null — use JSON_MODIFY(col, 'lax $.key', NULL) to force removal). Supports append mode for arrays: JSON_MODIFY(col, 'append $.tags', 'featured'). JSON_MODIFY can be chained/nested to modify multiple paths. Returns NVARCHAR.</td>
           </tr>
-          <tr>
+          <tr data-db="oracle">
             <td>Oracle</td>
             <td class="supported">✓ Supported</td>
             <td>21c</td>
             <td class="notes">JSON_TRANSFORM (Oracle 21c+) is the primary function for modifying JSON documents with a dedicated mini-language of operations: SET, INSERT, REPLACE, APPEND, REMOVE, RENAME, KEEP, COPY, MOVE, SORT, FLATTEN. Prior to 21c, JSON modification required extracting values, modifying in application code, and updating the column. Oracle 12c/18c had no in-database JSON mutation functions.</td>
           </tr>
-          <tr>
+          <tr data-db="sqlite">
             <td>SQLite</td>
             <td class="supported">✓ Supported</td>
             <td>3.9.0</td>
@@ -130,6 +138,7 @@ FROM users;</div>
 
   <h2>Per-Database Syntax &amp; Notes</h2>
   <div class="per-db-section">
+      <div class="per-db-entry" data-db="mysql">
         <h4>MySQL</h4>
         <p class="notes">Three distinct functions with different insert/update semantics: JSON_SET inserts or replaces (upsert). JSON_INSERT inserts only if the key does not exist. JSON_REPLACE replaces only if the key already exists. JSON_REMOVE deletes a path. All return a new JSON document; the source column is not modified in-place — use UPDATE ... SET col = JSON_SET(col, ...) to persist changes.</p>
         <div class="syntax">-- JSON_SET (upsert a value):
@@ -161,6 +170,8 @@ WHERE id = 1;
 UPDATE posts
 SET data = JSON_ARRAY_APPEND(data, '$.tags', 'featured')
 WHERE id = 42;</div>
+      </div>
+      <div class="per-db-entry" data-db="postgresql">
         <h4>PostgreSQL</h4>
         <p class="notes">No single JSON_SET function. Instead, the || (concatenation) operator merges/overwrites top-level keys on jsonb. For deep updates, jsonb_set(target, path_array, new_value) (9.5+) modifies a nested key. jsonb_set_lax() (14+) adds NULL-handling options. jsonb_insert() (9.6+) inserts into arrays at a specific position. jsonb_strip_nulls() removes null-valued keys. The #- operator removes a key by path.</p>
         <div class="syntax">-- Top-level key upsert (|| operator):
@@ -187,6 +198,8 @@ WHERE id = 1;
 UPDATE users
 SET data = data #- '{address,zip}'
 WHERE id = 1;</div>
+      </div>
+      <div class="per-db-entry" data-db="sqlserver">
         <h4>SQL Server</h4>
         <p class="notes">JSON_MODIFY(expression, path, new_value) is the single function for all mutations. Setting new_value to NULL removes the key (or sets it to JSON null — use JSON_MODIFY(col, 'lax $.key', NULL) to force removal). Supports append mode for arrays: JSON_MODIFY(col, 'append $.tags', 'featured'). JSON_MODIFY can be chained/nested to modify multiple paths. Returns NVARCHAR.</p>
         <div class="syntax">-- Set a value:
@@ -216,6 +229,8 @@ WHERE id = 1;
 UPDATE users
 SET data = JSON_MODIFY(data, '$.address.city', 'Portland')
 WHERE id = 1;</div>
+      </div>
+      <div class="per-db-entry" data-db="oracle">
         <h4>Oracle</h4>
         <p class="notes">JSON_TRANSFORM (Oracle 21c+) is the primary function for modifying JSON documents with a dedicated mini-language of operations: SET, INSERT, REPLACE, APPEND, REMOVE, RENAME, KEEP, COPY, MOVE, SORT, FLATTEN. Prior to 21c, JSON modification required extracting values, modifying in application code, and updating the column. Oracle 12c/18c had no in-database JSON mutation functions.</p>
         <div class="syntax">-- JSON_TRANSFORM (21c+):
@@ -239,6 +254,8 @@ WHERE id = 42;
 
 -- Pre-21c workaround (extract, modify, reserialize):
 -- Must be done in application code or a PL/SQL procedure.</div>
+      </div>
+      <div class="per-db-entry" data-db="sqlite">
         <h4>SQLite</h4>
         <p class="notes">json_set(json, path, value, ...) (upsert), json_insert(json, path, value, ...) (insert only), json_replace(json, path, value, ...) (replace only), and json_remove(json, path, ...) follow the same insert/replace/upsert semantics as MySQL. All available since SQLite 3.9.0. Multiple paths can be modified in a single call. Returns a new JSON string; must be used in an UPDATE to persist.</p>
         <div class="syntax">-- json_set (upsert):
@@ -263,9 +280,11 @@ WHERE id = 1;
 UPDATE users
 SET data = json_insert(data, '$.created_at', datetime('now'))
 WHERE id = 1;</div>
+      </div>
   </div>
   <script src="/search.js" defer></script>
   <script src="/splash.js" defer></script>
   <script src="/track.js" defer></script>
+  <script src="/compare.js" defer></script>
 </body>
 </html>

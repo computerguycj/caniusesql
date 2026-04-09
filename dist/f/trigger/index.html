@@ -57,6 +57,14 @@
   <p class="command-overview">Procedural code automatically executed in response to INSERT, UPDATE, or DELETE events on a table. Useful for auditing, derived data maintenance, and enforcing complex integrity rules. Can cause performance issues and make debugging harder -- use with caution.</p>
 
   <h2>Compatibility</h2>
+  <div class="compare-bar">
+    <span class="compare-label">Show:</span>
+    <label><input type="checkbox" value="mysql" checked> MySQL</label>
+    <label><input type="checkbox" value="postgresql" checked> PostgreSQL</label>
+    <label><input type="checkbox" value="sqlserver" checked> SQL Server</label>
+    <label><input type="checkbox" value="oracle" checked> Oracle</label>
+    <label><input type="checkbox" value="sqlite" checked> SQLite</label>
+  </div>
   <table>
     <thead>
       <tr>
@@ -67,31 +75,31 @@
       </tr>
     </thead>
     <tbody>
-          <tr>
+          <tr data-db="mysql">
             <td>MySQL</td>
             <td class="supported">✓ Supported</td>
             <td>5.0.2</td>
             <td class="notes">BEFORE/AFTER on INSERT/UPDATE/DELETE. One trigger per event/timing combination per table (before 8.0.16). Uses NEW and OLD row references.</td>
           </tr>
-          <tr>
+          <tr data-db="postgresql">
             <td>PostgreSQL</td>
             <td class="supported">✓ Supported</td>
             <td>all</td>
             <td class="notes">BEFORE/AFTER/INSTEAD OF. Multiple triggers per event allowed. Trigger logic lives in a separate PL/pgSQL FUNCTION returning TRIGGER. Supports both row-level and statement-level triggers.</td>
           </tr>
-          <tr>
+          <tr data-db="sqlserver">
             <td>SQL Server</td>
             <td class="supported">✓ Supported</td>
             <td>all</td>
             <td class="notes">AFTER and INSTEAD OF DML triggers. DDL triggers (for schema changes) since 2005. Uses inserted and deleted pseudo-tables.</td>
           </tr>
-          <tr>
+          <tr data-db="oracle">
             <td>Oracle</td>
             <td class="supported">✓ Supported</td>
             <td>all</td>
             <td class="notes">BEFORE/AFTER/INSTEAD OF. Row-level and statement-level. Schema-level and database-level event triggers also supported. Uses :NEW and :OLD.</td>
           </tr>
-          <tr>
+          <tr data-db="sqlite">
             <td>SQLite</td>
             <td class="supported">✓ Supported</td>
             <td>2.5.0</td>
@@ -126,10 +134,13 @@ END;</div>
 
   <h2>Per-Database Syntax &amp; Notes</h2>
   <div class="per-db-section">
+      <div class="per-db-entry" data-db="mysql">
         <h4>MySQL</h4>
         <p class="notes">BEFORE/AFTER on INSERT/UPDATE/DELETE. One trigger per event/timing combination per table (before 8.0.16). Uses NEW and OLD row references.</p>
         <div class="syntax">CREATE TRIGGER trg BEFORE INSERT ON tbl
 FOR EACH ROW SET NEW.created_at = NOW();</div>
+      </div>
+      <div class="per-db-entry" data-db="postgresql">
         <h4>PostgreSQL</h4>
         <p class="notes">BEFORE/AFTER/INSTEAD OF. Multiple triggers per event allowed. Trigger logic lives in a separate PL/pgSQL FUNCTION returning TRIGGER. Supports both row-level and statement-level triggers.</p>
         <div class="syntax">CREATE FUNCTION set_updated_at() RETURNS trigger LANGUAGE plpgsql AS $$
@@ -138,6 +149,8 @@ $$;
 
 CREATE TRIGGER trg BEFORE UPDATE ON tbl
 FOR EACH ROW EXECUTE FUNCTION set_updated_at();</div>
+      </div>
+      <div class="per-db-entry" data-db="sqlserver">
         <h4>SQL Server</h4>
         <p class="notes">AFTER and INSTEAD OF DML triggers. DDL triggers (for schema changes) since 2005. Uses inserted and deleted pseudo-tables.</p>
         <div class="syntax">CREATE TRIGGER trg ON tbl AFTER INSERT AS
@@ -145,19 +158,25 @@ BEGIN
   UPDATE tbl SET updated_at = GETDATE()
   WHERE id IN (SELECT id FROM inserted);
 END;</div>
+      </div>
+      <div class="per-db-entry" data-db="oracle">
         <h4>Oracle</h4>
         <p class="notes">BEFORE/AFTER/INSTEAD OF. Row-level and statement-level. Schema-level and database-level event triggers also supported. Uses :NEW and :OLD.</p>
         <div class="syntax">CREATE TRIGGER trg BEFORE INSERT ON tbl
 FOR EACH ROW BEGIN :NEW.created_at := SYSDATE; END;</div>
+      </div>
+      <div class="per-db-entry" data-db="sqlite">
         <h4>SQLite</h4>
         <p class="notes">BEFORE/AFTER/INSTEAD OF (INSTEAD OF only on views). No statement-level triggers. Uses NEW and OLD row references.</p>
         <div class="syntax">CREATE TRIGGER trg AFTER INSERT ON tbl
 BEGIN
   UPDATE tbl SET updated_at = datetime('now') WHERE id = NEW.id;
 END;</div>
+      </div>
   </div>
   <script src="/search.js" defer></script>
   <script src="/splash.js" defer></script>
   <script src="/track.js" defer></script>
+  <script src="/compare.js" defer></script>
 </body>
 </html>

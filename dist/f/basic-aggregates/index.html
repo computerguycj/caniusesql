@@ -57,6 +57,14 @@
   <p class="command-overview">Functions that collapse multiple rows into a single value: COUNT, SUM, AVG, MIN, MAX, and more. Ignored by window function counterparts when used as window functions. Essential for summarization and analytics.</p>
 
   <h2>Compatibility</h2>
+  <div class="compare-bar">
+    <span class="compare-label">Show:</span>
+    <label><input type="checkbox" value="mysql" checked> MySQL</label>
+    <label><input type="checkbox" value="postgresql" checked> PostgreSQL</label>
+    <label><input type="checkbox" value="sqlserver" checked> SQL Server</label>
+    <label><input type="checkbox" value="oracle" checked> Oracle</label>
+    <label><input type="checkbox" value="sqlite" checked> SQLite</label>
+  </div>
   <table>
     <thead>
       <tr>
@@ -67,31 +75,31 @@
       </tr>
     </thead>
     <tbody>
-          <tr>
+          <tr data-db="mysql">
             <td>MySQL</td>
             <td class="supported">✓ Supported</td>
             <td>3.23</td>
             <td class="notes">All five functions supported. COUNT(*) counts all rows including NULLs; COUNT(col) counts non-NULL values only. AVG returns a floating-point result regardless of column type. COUNT(DISTINCT col) and SUM(DISTINCT col) are supported. In MySQL, AVG of an integer column returns a DECIMAL.</td>
           </tr>
-          <tr>
+          <tr data-db="postgresql">
             <td>PostgreSQL</td>
             <td class="supported">✓ Supported</td>
             <td>6.0</td>
             <td class="notes">All five functions supported, plus FILTER (WHERE ...) for conditional aggregation on any aggregate. AVG returns NUMERIC for integer/decimal inputs. count(*) is slightly faster than count(1). DISTINCT is supported inside all aggregates. ORDER BY inside aggregates is supported for ordered-set functions.</td>
           </tr>
-          <tr>
+          <tr data-db="sqlserver">
             <td>SQL Server</td>
             <td class="supported">✓ Supported</td>
             <td>6.5</td>
             <td class="notes">All five functions supported. COUNT(*) vs COUNT(col) distinction applies. AVG performs integer division when the column is an integer type — cast to FLOAT or DECIMAL to avoid truncation. COUNT_BIG() variant returns BIGINT for very large tables. No FILTER clause — use SUM(CASE WHEN ... THEN 1 ELSE 0 END) as a workaround.</td>
           </tr>
-          <tr>
+          <tr data-db="oracle">
             <td>Oracle</td>
             <td class="supported">✓ Supported</td>
             <td>7</td>
             <td class="notes">All five functions supported. COUNT(*) vs COUNT(col) distinction applies. AVG returns NUMBER. DISTINCT supported in all aggregates. No FILTER clause — use SUM(CASE WHEN ... END) pattern.</td>
           </tr>
-          <tr>
+          <tr data-db="sqlite">
             <td>SQLite</td>
             <td class="supported">✓ Supported</td>
             <td>1.0</td>
@@ -127,6 +135,7 @@ FROM orders;</div>
 
   <h2>Per-Database Syntax &amp; Notes</h2>
   <div class="per-db-section">
+      <div class="per-db-entry" data-db="mysql">
         <h4>MySQL</h4>
         <p class="notes">All five functions supported. COUNT(*) counts all rows including NULLs; COUNT(col) counts non-NULL values only. AVG returns a floating-point result regardless of column type. COUNT(DISTINCT col) and SUM(DISTINCT col) are supported. In MySQL, AVG of an integer column returns a DECIMAL.</p>
         <div class="syntax">-- Core usage:
@@ -147,6 +156,8 @@ SELECT dept,
        MAX(salary) AS top_salary
 FROM employees
 GROUP BY dept;</div>
+      </div>
+      <div class="per-db-entry" data-db="postgresql">
         <h4>PostgreSQL</h4>
         <p class="notes">All five functions supported, plus FILTER (WHERE ...) for conditional aggregation on any aggregate. AVG returns NUMERIC for integer/decimal inputs. count(*) is slightly faster than count(1). DISTINCT is supported inside all aggregates. ORDER BY inside aggregates is supported for ordered-set functions.</p>
         <div class="syntax">-- Core usage:
@@ -164,6 +175,8 @@ SELECT
   COUNT(*) FILTER (WHERE status = 'completed') AS completed_count,
   SUM(amount) FILTER (WHERE region = 'US')     AS us_total
 FROM orders;</div>
+      </div>
+      <div class="per-db-entry" data-db="sqlserver">
         <h4>SQL Server</h4>
         <p class="notes">All five functions supported. COUNT(*) vs COUNT(col) distinction applies. AVG performs integer division when the column is an integer type — cast to FLOAT or DECIMAL to avoid truncation. COUNT_BIG() variant returns BIGINT for very large tables. No FILTER clause — use SUM(CASE WHEN ... THEN 1 ELSE 0 END) as a workaround.</p>
         <div class="syntax">-- Core usage:
@@ -185,6 +198,8 @@ SELECT
   SUM(CASE WHEN status = 'completed' THEN 1 ELSE 0 END) AS completed_count,
   SUM(CASE WHEN region = 'US' THEN amount ELSE 0 END)   AS us_total
 FROM orders;</div>
+      </div>
+      <div class="per-db-entry" data-db="oracle">
         <h4>Oracle</h4>
         <p class="notes">All five functions supported. COUNT(*) vs COUNT(col) distinction applies. AVG returns NUMBER. DISTINCT supported in all aggregates. No FILTER clause — use SUM(CASE WHEN ... END) pattern.</p>
         <div class="syntax">SELECT
@@ -201,6 +216,8 @@ SELECT
   SUM(CASE WHEN status = 'COMPLETE' THEN 1 ELSE 0 END) AS completed,
   SUM(CASE WHEN region = 'US' THEN amount ELSE 0 END)  AS us_total
 FROM orders;</div>
+      </div>
+      <div class="per-db-entry" data-db="sqlite">
         <h4>SQLite</h4>
         <p class="notes">All five functions supported. COUNT(*) counts all rows; COUNT(col) skips NULLs. AVG always returns REAL. The FILTER (WHERE ...) clause is supported since SQLite 3.30.0.</p>
         <div class="syntax">SELECT
@@ -216,9 +233,11 @@ FROM orders;
 SELECT
   COUNT(*) FILTER (WHERE status = 'completed') AS completed_count
 FROM orders;</div>
+      </div>
   </div>
   <script src="/search.js" defer></script>
   <script src="/splash.js" defer></script>
   <script src="/track.js" defer></script>
+  <script src="/compare.js" defer></script>
 </body>
 </html>

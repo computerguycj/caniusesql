@@ -57,6 +57,14 @@
   <p class="command-overview">Accesses data from a preceding (LAG) or following (LEAD) row within a partition without a self-join. Essential for period-over-period comparisons, change detection, and computing differences between consecutive rows.</p>
 
   <h2>Compatibility</h2>
+  <div class="compare-bar">
+    <span class="compare-label">Show:</span>
+    <label><input type="checkbox" value="mysql" checked> MySQL</label>
+    <label><input type="checkbox" value="postgresql" checked> PostgreSQL</label>
+    <label><input type="checkbox" value="sqlserver" checked> SQL Server</label>
+    <label><input type="checkbox" value="oracle" checked> Oracle</label>
+    <label><input type="checkbox" value="sqlite" checked> SQLite</label>
+  </div>
   <table>
     <thead>
       <tr>
@@ -67,31 +75,31 @@
       </tr>
     </thead>
     <tbody>
-          <tr>
+          <tr data-db="mysql">
             <td>MySQL</td>
             <td class="supported">✓ Supported</td>
             <td>8.0</td>
             <td class="notes">LAG(expr [, offset [, default]]) and LEAD(expr [, offset [, default]]). Offset defaults to 1. Default value returned when offset goes out of bounds (instead of NULL).</td>
           </tr>
-          <tr>
+          <tr data-db="postgresql">
             <td>PostgreSQL</td>
             <td class="supported">✓ Supported</td>
             <td>8.4</td>
             <td class="notes">LAG(expr [, offset [, default]]) and LEAD(expr [, offset [, default]]). Supports any offset and a default value for when the offset goes beyond partition bounds.</td>
           </tr>
-          <tr>
+          <tr data-db="sqlserver">
             <td>SQL Server</td>
             <td class="supported">✓ Supported</td>
             <td>2012</td>
             <td class="notes">LAG(expr [, offset [, default]]) and LEAD(expr [, offset [, default]]). Added in SQL Server 2012. Offset must be a non-negative integer constant.</td>
           </tr>
-          <tr>
+          <tr data-db="oracle">
             <td>Oracle</td>
             <td class="supported">✓ Supported</td>
             <td>8i</td>
             <td class="notes">LAG(expr [, offset [, default]]) and LEAD(expr [, offset [, default]]). One of the earliest implementations — Oracle has had these since 8i.</td>
           </tr>
-          <tr>
+          <tr data-db="sqlite">
             <td>SQLite</td>
             <td class="supported">✓ Supported</td>
             <td>3.25.0</td>
@@ -125,6 +133,7 @@ FROM orders;</div>
 
   <h2>Per-Database Syntax &amp; Notes</h2>
   <div class="per-db-section">
+      <div class="per-db-entry" data-db="mysql">
         <h4>MySQL</h4>
         <p class="notes">LAG(expr [, offset [, default]]) and LEAD(expr [, offset [, default]]). Offset defaults to 1. Default value returned when offset goes out of bounds (instead of NULL).</p>
         <div class="syntax">SELECT
@@ -132,6 +141,8 @@ FROM orders;</div>
   amount,
   LAG(amount, 1, 0) OVER (ORDER BY order_date) AS prev_amount
 FROM orders;</div>
+      </div>
+      <div class="per-db-entry" data-db="postgresql">
         <h4>PostgreSQL</h4>
         <p class="notes">LAG(expr [, offset [, default]]) and LEAD(expr [, offset [, default]]). Supports any offset and a default value for when the offset goes beyond partition bounds.</p>
         <div class="syntax">SELECT
@@ -141,6 +152,8 @@ FROM orders;</div>
   LAG(amount, 2)   OVER (ORDER BY order_date)          AS two_ago,
   LEAD(amount, 1, 0) OVER (PARTITION BY cust_id ORDER BY order_date) AS next_amount
 FROM orders;</div>
+      </div>
+      <div class="per-db-entry" data-db="sqlserver">
         <h4>SQL Server</h4>
         <p class="notes">LAG(expr [, offset [, default]]) and LEAD(expr [, offset [, default]]). Added in SQL Server 2012. Offset must be a non-negative integer constant.</p>
         <div class="syntax">SELECT
@@ -149,6 +162,8 @@ FROM orders;</div>
   LAG(amount, 1, 0)  OVER (ORDER BY order_date) AS prev_amount,
   LEAD(amount, 1, 0) OVER (ORDER BY order_date) AS next_amount
 FROM orders;</div>
+      </div>
+      <div class="per-db-entry" data-db="oracle">
         <h4>Oracle</h4>
         <p class="notes">LAG(expr [, offset [, default]]) and LEAD(expr [, offset [, default]]). One of the earliest implementations — Oracle has had these since 8i.</p>
         <div class="syntax">SELECT
@@ -157,6 +172,8 @@ FROM orders;</div>
   LAG(amount, 1, 0)  OVER (ORDER BY order_date) AS prev_amount,
   LEAD(amount, 1, 0) OVER (ORDER BY order_date) AS next_amount
 FROM orders;</div>
+      </div>
+      <div class="per-db-entry" data-db="sqlite">
         <h4>SQLite</h4>
         <p class="notes">LAG() and LEAD() fully supported since SQLite 3.25.0 (September 2018).</p>
         <div class="syntax">SELECT
@@ -165,9 +182,11 @@ FROM orders;</div>
   LAG(amount)  OVER (ORDER BY order_date) AS prev_amount,
   LEAD(amount) OVER (ORDER BY order_date) AS next_amount
 FROM orders;</div>
+      </div>
   </div>
   <script src="/search.js" defer></script>
   <script src="/splash.js" defer></script>
   <script src="/track.js" defer></script>
+  <script src="/compare.js" defer></script>
 </body>
 </html>

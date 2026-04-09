@@ -57,6 +57,14 @@
   <p class="command-overview">Pads a string to a specified length by prepending (LPAD) or appending (RPAD) a fill character. Useful for zero-padding numbers and formatting fixed-width output.</p>
 
   <h2>Compatibility</h2>
+  <div class="compare-bar">
+    <span class="compare-label">Show:</span>
+    <label><input type="checkbox" value="mysql" checked> MySQL</label>
+    <label><input type="checkbox" value="postgresql" checked> PostgreSQL</label>
+    <label><input type="checkbox" value="sqlserver" checked> SQL Server</label>
+    <label><input type="checkbox" value="oracle" checked> Oracle</label>
+    <label><input type="checkbox" value="sqlite" checked> SQLite</label>
+  </div>
   <table>
     <thead>
       <tr>
@@ -67,31 +75,31 @@
       </tr>
     </thead>
     <tbody>
-          <tr>
+          <tr data-db="mysql">
             <td>MySQL</td>
             <td class="supported">✓ Supported</td>
             <td>5.0</td>
             <td class="notes">LPAD and RPAD are both built-in. If the string is longer than the target length, the result is silently truncated to that length.</td>
           </tr>
-          <tr>
+          <tr data-db="postgresql">
             <td>PostgreSQL</td>
             <td class="supported">✓ Supported</td>
             <td>7.4</td>
             <td class="notes">LPAD and RPAD are built-in. The fill string defaults to a space if omitted. If the input is longer than length, the result is truncated from the right.</td>
           </tr>
-          <tr>
+          <tr data-db="sqlserver">
             <td>SQL Server</td>
             <td class="not-supported">✗ Not Supported</td>
             <td>—</td>
             <td class="notes">No native LPAD or RPAD. Standard workarounds use RIGHT/LEFT with REPLICATE.</td>
           </tr>
-          <tr>
+          <tr data-db="oracle">
             <td>Oracle</td>
             <td class="supported">✓ Supported</td>
             <td>7</td>
             <td class="notes">LPAD and RPAD are standard Oracle string functions, available in SQL and PL/SQL.</td>
           </tr>
-          <tr>
+          <tr data-db="sqlite">
             <td>SQLite</td>
             <td class="not-supported">✗ Not Supported</td>
             <td>—</td>
@@ -121,31 +129,42 @@ SELECT RPAD('hi', 5, '.');  -- 'hi...'</div>
 
   <h2>Per-Database Syntax &amp; Notes</h2>
   <div class="per-db-section">
+      <div class="per-db-entry" data-db="mysql">
         <h4>MySQL</h4>
         <p class="notes">LPAD and RPAD are both built-in. If the string is longer than the target length, the result is silently truncated to that length.</p>
         <div class="syntax">SELECT LPAD('42', 6, '0');    -- '000042'
 SELECT RPAD('hello', 8, '-'); -- 'hello---'</div>
+      </div>
+      <div class="per-db-entry" data-db="postgresql">
         <h4>PostgreSQL</h4>
         <p class="notes">LPAD and RPAD are built-in. The fill string defaults to a space if omitted. If the input is longer than length, the result is truncated from the right.</p>
         <div class="syntax">SELECT LPAD('42', 6, '0');    -- '000042'
 SELECT RPAD('hello', 8, '-'); -- 'hello---'</div>
+      </div>
+      <div class="per-db-entry" data-db="sqlserver">
         <h4>SQL Server</h4>
         <p class="notes">No native LPAD or RPAD. Standard workarounds use RIGHT/LEFT with REPLICATE.</p>
         <div class="syntax">-- LPAD equivalent:
 SELECT RIGHT(REPLICATE('0', 6) + '42', 6);   -- '000042'
 -- RPAD equivalent:
 SELECT LEFT('hello' + REPLICATE('-', 8), 8);  -- 'hello---'</div>
+      </div>
+      <div class="per-db-entry" data-db="oracle">
         <h4>Oracle</h4>
         <p class="notes">LPAD and RPAD are standard Oracle string functions, available in SQL and PL/SQL.</p>
         <div class="syntax">SELECT LPAD('42', 6, '0') FROM dual;    -- '000042'
 SELECT RPAD('hello', 8, '-') FROM dual; -- 'hello---'</div>
+      </div>
+      <div class="per-db-entry" data-db="sqlite">
         <h4>SQLite</h4>
         <p class="notes">No native LPAD or RPAD. Use printf() / format() for left-zero-padding integers. General string padding requires application-side logic or a custom UDF.</p>
         <div class="syntax">-- Zero-pad integer:
 SELECT printf('%06d', 42);  -- '000042'</div>
+      </div>
   </div>
   <script src="/search.js" defer></script>
   <script src="/splash.js" defer></script>
   <script src="/track.js" defer></script>
+  <script src="/compare.js" defer></script>
 </body>
 </html>

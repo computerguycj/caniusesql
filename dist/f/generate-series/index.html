@@ -57,6 +57,14 @@
   <p class="command-overview">Generates a series of values from start to end with an optional step, available in PostgreSQL and SQLite (3.31.0+). Essential for generating date sequences, test data, and calendar tables without creating physical tables.</p>
 
   <h2>Compatibility</h2>
+  <div class="compare-bar">
+    <span class="compare-label">Show:</span>
+    <label><input type="checkbox" value="mysql" checked> MySQL</label>
+    <label><input type="checkbox" value="postgresql" checked> PostgreSQL</label>
+    <label><input type="checkbox" value="sqlserver" checked> SQL Server</label>
+    <label><input type="checkbox" value="oracle" checked> Oracle</label>
+    <label><input type="checkbox" value="sqlite" checked> SQLite</label>
+  </div>
   <table>
     <thead>
       <tr>
@@ -67,31 +75,31 @@
       </tr>
     </thead>
     <tbody>
-          <tr>
+          <tr data-db="mysql">
             <td>MySQL</td>
             <td class="not-supported">✗ Not Supported</td>
             <td>—</td>
             <td class="notes">Not supported. Workaround: recursive CTE (limited to @@cte_max_recursion_depth, default 1000).</td>
           </tr>
-          <tr>
+          <tr data-db="postgresql">
             <td>PostgreSQL</td>
             <td class="supported">✓ Supported</td>
             <td>8.0</td>
             <td class="notes">generate_series(start, stop[, step]) for integers/bigints/numerics. Timestamp support added in 8.4. Negative step works. Returns empty set if start &gt; stop (with positive step).</td>
           </tr>
-          <tr>
+          <tr data-db="sqlserver">
             <td>SQL Server</td>
             <td class="supported">✓ Supported</td>
             <td>2022</td>
             <td class="notes">GENERATE_SERIES(start, stop[, step]) added in SQL Server 2022. Requires database compatibility level 160. Supports int, bigint, decimal, numeric. No timestamp/date support.</td>
           </tr>
-          <tr>
+          <tr data-db="oracle">
             <td>Oracle</td>
             <td class="not-supported">✗ Not Supported</td>
             <td>—</td>
             <td class="notes">Not supported. Workaround: CONNECT BY LEVEL for integers; recursive CTE for other types.</td>
           </tr>
-          <tr>
+          <tr data-db="sqlite">
             <td>SQLite</td>
             <td class="supported">✓ Supported</td>
             <td>3.31.0</td>
@@ -127,6 +135,7 @@ SELECT generate_series(
 
   <h2>Per-Database Syntax &amp; Notes</h2>
   <div class="per-db-section">
+      <div class="per-db-entry" data-db="mysql">
         <h4>MySQL</h4>
         <p class="notes">Not supported. Workaround: recursive CTE (limited to @@cte_max_recursion_depth, default 1000).</p>
         <div class="syntax">WITH RECURSIVE n AS (
@@ -135,6 +144,8 @@ SELECT generate_series(
   SELECT val + 1 FROM n WHERE val &lt; 10
 )
 SELECT val FROM n;</div>
+      </div>
+      <div class="per-db-entry" data-db="postgresql">
         <h4>PostgreSQL</h4>
         <p class="notes">generate_series(start, stop[, step]) for integers/bigints/numerics. Timestamp support added in 8.4. Negative step works. Returns empty set if start &gt; stop (with positive step).</p>
         <div class="syntax">SELECT generate_series(1, 10);
@@ -144,20 +155,28 @@ SELECT generate_series(
   '2024-12-31',
   '1 month'
 ) AS month;</div>
+      </div>
+      <div class="per-db-entry" data-db="sqlserver">
         <h4>SQL Server</h4>
         <p class="notes">GENERATE_SERIES(start, stop[, step]) added in SQL Server 2022. Requires database compatibility level 160. Supports int, bigint, decimal, numeric. No timestamp/date support.</p>
         <div class="syntax">SELECT value FROM GENERATE_SERIES(1, 10);
 SELECT value FROM GENERATE_SERIES(1, 10, 2);
 -- Requires: ALTER DATABASE db SET COMPATIBILITY_LEVEL = 160;</div>
+      </div>
+      <div class="per-db-entry" data-db="oracle">
         <h4>Oracle</h4>
         <p class="notes">Not supported. Workaround: CONNECT BY LEVEL for integers; recursive CTE for other types.</p>
         <div class="syntax">SELECT LEVEL AS n FROM DUAL CONNECT BY LEVEL &lt;= 10;</div>
+      </div>
+      <div class="per-db-entry" data-db="sqlite">
         <h4>SQLite</h4>
         <p class="notes">Built-in table-valued function since 3.31.0, but may require explicit loading in some environments and is not enabled by default.</p>
         <div class="syntax">SELECT value FROM generate_series(1, 10);</div>
+      </div>
   </div>
   <script src="/search.js" defer></script>
   <script src="/splash.js" defer></script>
   <script src="/track.js" defer></script>
+  <script src="/compare.js" defer></script>
 </body>
 </html>

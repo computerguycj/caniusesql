@@ -57,6 +57,14 @@
   <p class="command-overview">Physical snapshots of a query result stored as a table, refreshed on demand or on a schedule. Dramatically faster for expensive aggregations over large tables at the cost of stale data. The right choice when near-real-time accuracy is not required.</p>
 
   <h2>Compatibility</h2>
+  <div class="compare-bar">
+    <span class="compare-label">Show:</span>
+    <label><input type="checkbox" value="mysql" checked> MySQL</label>
+    <label><input type="checkbox" value="postgresql" checked> PostgreSQL</label>
+    <label><input type="checkbox" value="sqlserver" checked> SQL Server</label>
+    <label><input type="checkbox" value="oracle" checked> Oracle</label>
+    <label><input type="checkbox" value="sqlite" checked> SQLite</label>
+  </div>
   <table>
     <thead>
       <tr>
@@ -67,31 +75,31 @@
       </tr>
     </thead>
     <tbody>
-          <tr>
+          <tr data-db="mysql">
             <td>MySQL</td>
             <td class="not-supported">✗ Not Supported</td>
             <td>—</td>
             <td class="notes">MySQL has no native materialized view. Common workarounds: (1) a regular table populated by a scheduled event or stored procedure; (2) a STORED table populated by a trigger on the source table. MariaDB does not have materialized views either.</td>
           </tr>
-          <tr>
+          <tr data-db="postgresql">
             <td>PostgreSQL</td>
             <td class="supported">✓ Supported</td>
             <td>9.3</td>
             <td class="notes">REFRESH MATERIALIZED VIEW rebuilds the view from scratch (locks table during refresh by default). REFRESH MATERIALIZED VIEW CONCURRENTLY (requires a UNIQUE index) allows concurrent reads during refresh. No automatic refresh — use pg_cron, a trigger, or an external scheduler. Can be indexed like a regular table.</td>
           </tr>
-          <tr>
+          <tr data-db="sqlserver">
             <td>SQL Server</td>
             <td class="supported">✓ Supported</td>
             <td>2000</td>
             <td class="notes">Called indexed views. Create a regular view, then add a UNIQUE CLUSTERED INDEX — SQL Server automatically maintains the stored result on DML changes (synchronous, not on-demand). Requires the view to be created WITH SCHEMABINDING and imposes restrictions: no subqueries, no OUTER JOINs (Enterprise Edition relaxes some), no non-deterministic functions. The optimizer can use indexed views automatically (Enterprise) or with NOEXPAND hint (all editions).</td>
           </tr>
-          <tr>
+          <tr data-db="oracle">
             <td>Oracle</td>
             <td class="supported">✓ Supported</td>
             <td>8i</td>
             <td class="notes">Full-featured materialized views with multiple refresh modes: COMPLETE (full recompute), FAST (incremental via materialized view logs), and FORCE (FAST if possible, else COMPLETE). Refresh can be ON COMMIT (synchronous) or ON DEMAND. The query rewrite feature lets Oracle's optimizer automatically use a materialized view instead of the base tables when it detects a matching pattern.</td>
           </tr>
-          <tr>
+          <tr data-db="sqlite">
             <td>SQLite</td>
             <td class="not-supported">✗ Not Supported</td>
             <td>—</td>
@@ -127,6 +135,7 @@ REFRESH MATERIALIZED VIEW monthly_sales;</div>
 
   <h2>Per-Database Syntax &amp; Notes</h2>
   <div class="per-db-section">
+      <div class="per-db-entry" data-db="mysql">
         <h4>MySQL</h4>
         <p class="notes">MySQL has no native materialized view. Common workarounds: (1) a regular table populated by a scheduled event or stored procedure; (2) a STORED table populated by a trigger on the source table. MariaDB does not have materialized views either.</p>
         <div class="syntax">-- Workaround: populate a summary table via event:
@@ -145,6 +154,8 @@ CREATE EVENT refresh_monthly_sales
         FROM orders
         GROUP BY 1;
     END;</div>
+      </div>
+      <div class="per-db-entry" data-db="postgresql">
         <h4>PostgreSQL</h4>
         <p class="notes">REFRESH MATERIALIZED VIEW rebuilds the view from scratch (locks table during refresh by default). REFRESH MATERIALIZED VIEW CONCURRENTLY (requires a UNIQUE index) allows concurrent reads during refresh. No automatic refresh — use pg_cron, a trigger, or an external scheduler. Can be indexed like a regular table.</p>
         <div class="syntax">CREATE MATERIALIZED VIEW monthly_sales AS
@@ -166,6 +177,8 @@ REFRESH MATERIALIZED VIEW CONCURRENTLY monthly_sales;
 
 -- Drop:
 DROP MATERIALIZED VIEW monthly_sales;</div>
+      </div>
+      <div class="per-db-entry" data-db="sqlserver">
         <h4>SQL Server</h4>
         <p class="notes">Called indexed views. Create a regular view, then add a UNIQUE CLUSTERED INDEX — SQL Server automatically maintains the stored result on DML changes (synchronous, not on-demand). Requires the view to be created WITH SCHEMABINDING and imposes restrictions: no subqueries, no OUTER JOINs (Enterprise Edition relaxes some), no non-deterministic functions. The optimizer can use indexed views automatically (Enterprise) or with NOEXPAND hint (all editions).</p>
         <div class="syntax">-- Step 1: create view with SCHEMABINDING:
@@ -183,6 +196,8 @@ CREATE UNIQUE CLUSTERED INDEX idx_mv ON dbo.monthly_sales (month);
 
 -- SQL Server auto-maintains the index on INSERT/UPDATE/DELETE.
 -- No manual REFRESH needed or available.</div>
+      </div>
+      <div class="per-db-entry" data-db="oracle">
         <h4>Oracle</h4>
         <p class="notes">Full-featured materialized views with multiple refresh modes: COMPLETE (full recompute), FAST (incremental via materialized view logs), and FORCE (FAST if possible, else COMPLETE). Refresh can be ON COMMIT (synchronous) or ON DEMAND. The query rewrite feature lets Oracle's optimizer automatically use a materialized view instead of the base tables when it detects a matching pattern.</p>
         <div class="syntax">-- On-demand complete refresh:
@@ -206,6 +221,8 @@ REFRESH FAST ON COMMIT AS ...;
 -- Automatic query rewrite (Enterprise):
 CREATE MATERIALIZED VIEW monthly_sales
     ENABLE QUERY REWRITE AS ...;</div>
+      </div>
+      <div class="per-db-entry" data-db="sqlite">
         <h4>SQLite</h4>
         <p class="notes">SQLite has no materialized view support. The standard workaround is to create a regular table and populate it manually or via a trigger.</p>
         <div class="syntax">-- Workaround: populate a summary table:
@@ -220,9 +237,11 @@ INSERT INTO monthly_sales_cache
 SELECT strftime('%Y-%m', order_date), SUM(amount)
 FROM orders
 GROUP BY strftime('%Y-%m', order_date);</div>
+      </div>
   </div>
   <script src="/search.js" defer></script>
   <script src="/splash.js" defer></script>
   <script src="/track.js" defer></script>
+  <script src="/compare.js" defer></script>
 </body>
 </html>

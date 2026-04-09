@@ -57,6 +57,14 @@
   <p class="command-overview">Automatically filters query results based on the current user identity, implemented in PostgreSQL (via policies) and SQL Server (via security policies). Critical for multi-tenant databases where rows must be isolated by tenant.</p>
 
   <h2>Compatibility</h2>
+  <div class="compare-bar">
+    <span class="compare-label">Show:</span>
+    <label><input type="checkbox" value="mysql" checked> MySQL</label>
+    <label><input type="checkbox" value="postgresql" checked> PostgreSQL</label>
+    <label><input type="checkbox" value="sqlserver" checked> SQL Server</label>
+    <label><input type="checkbox" value="oracle" checked> Oracle</label>
+    <label><input type="checkbox" value="sqlite" checked> SQLite</label>
+  </div>
   <table>
     <thead>
       <tr>
@@ -67,31 +75,31 @@
       </tr>
     </thead>
     <tbody>
-          <tr>
+          <tr data-db="mysql">
             <td>MySQL</td>
             <td class="not-supported">✗ Not Supported</td>
             <td>—</td>
             <td class="notes">Not supported natively. Must be simulated with views or application-layer filtering.</td>
           </tr>
-          <tr>
+          <tr data-db="postgresql">
             <td>PostgreSQL</td>
             <td class="supported">✓ Supported</td>
             <td>9.5</td>
             <td class="notes">ALTER TABLE ... ENABLE ROW LEVEL SECURITY, then CREATE POLICY. Policies can be permissive (OR logic) or restrictive (AND logic). Superusers bypass RLS by default; use FORCE ROW LEVEL SECURITY to override. session variables (current_setting()) are the standard way to pass the current user identity.</td>
           </tr>
-          <tr>
+          <tr data-db="sqlserver">
             <td>SQL Server</td>
             <td class="supported">✓ Supported</td>
             <td>2016</td>
             <td class="notes">CREATE SECURITY POLICY using inline table-valued functions as filter and block predicates. More verbose than PostgreSQL. Supports FILTER predicates (hide rows) and BLOCK predicates (prevent writes).</td>
           </tr>
-          <tr>
+          <tr data-db="oracle">
             <td>Oracle</td>
             <td class="supported">✓ Supported</td>
             <td>8i</td>
             <td class="notes">Virtual Private Database (VPD) via DBMS_RLS.ADD_POLICY(). Predates PostgreSQL RLS. Requires PL/SQL — not pure SQL DDL. Policy function returns a WHERE clause string dynamically appended to queries.</td>
           </tr>
-          <tr>
+          <tr data-db="sqlite">
             <td>SQLite</td>
             <td class="not-supported">✗ Not Supported</td>
             <td>—</td>
@@ -123,11 +131,14 @@ CREATE POLICY own_orders ON orders
 
   <h2>Per-Database Syntax &amp; Notes</h2>
   <div class="per-db-section">
+      <div class="per-db-entry" data-db="mysql">
         <h4>MySQL</h4>
         <p class="notes">Not supported natively. Must be simulated with views or application-layer filtering.</p>
         <div class="syntax">-- Not supported. Workaround: a view with a WHERE clause
 CREATE VIEW my_orders AS
   SELECT * FROM orders WHERE customer_id = GET_USER_ID();</div>
+      </div>
+      <div class="per-db-entry" data-db="postgresql">
         <h4>PostgreSQL</h4>
         <p class="notes">ALTER TABLE ... ENABLE ROW LEVEL SECURITY, then CREATE POLICY. Policies can be permissive (OR logic) or restrictive (AND logic). Superusers bypass RLS by default; use FORCE ROW LEVEL SECURITY to override. session variables (current_setting()) are the standard way to pass the current user identity.</p>
         <div class="syntax">ALTER TABLE orders ENABLE ROW LEVEL SECURITY;
@@ -140,6 +151,8 @@ CREATE POLICY own_orders ON orders FOR SELECT
 -- Allow admins to see everything:
 CREATE POLICY admin_all ON orders FOR ALL TO admin_role
   USING (true);</div>
+      </div>
+      <div class="per-db-entry" data-db="sqlserver">
         <h4>SQL Server</h4>
         <p class="notes">CREATE SECURITY POLICY using inline table-valued functions as filter and block predicates. More verbose than PostgreSQL. Supports FILTER predicates (hide rows) and BLOCK predicates (prevent writes).</p>
         <div class="syntax">CREATE FUNCTION dbo.rls_fn(@cust_id INT)
@@ -149,6 +162,8 @@ RETURN SELECT 1 AS ok WHERE @cust_id = CAST(SESSION_CONTEXT(N'user_id') AS INT);
 CREATE SECURITY POLICY dbo.OrderPolicy
 ADD FILTER PREDICATE dbo.rls_fn(customer_id) ON dbo.orders
 WITH (STATE = ON);</div>
+      </div>
+      <div class="per-db-entry" data-db="oracle">
         <h4>Oracle</h4>
         <p class="notes">Virtual Private Database (VPD) via DBMS_RLS.ADD_POLICY(). Predates PostgreSQL RLS. Requires PL/SQL — not pure SQL DDL. Policy function returns a WHERE clause string dynamically appended to queries.</p>
         <div class="syntax">CREATE FUNCTION rls_policy(schema_v VARCHAR2, tbl VARCHAR2)
@@ -158,12 +173,16 @@ BEGIN RETURN 'customer_id = SYS_CONTEXT(''USERENV'',''SESSION_USER'')'; END;
 BEGIN
   DBMS_RLS.ADD_POLICY('SCOTT','ORDERS','own_orders','SCOTT','rls_policy');
 END;</div>
+      </div>
+      <div class="per-db-entry" data-db="sqlite">
         <h4>SQLite</h4>
         <p class="notes">Not supported. SQLite has no multi-user access control model.</p>
         <div class="syntax">-- Not supported.</div>
+      </div>
   </div>
   <script src="/search.js" defer></script>
   <script src="/splash.js" defer></script>
   <script src="/track.js" defer></script>
+  <script src="/compare.js" defer></script>
 </body>
 </html>

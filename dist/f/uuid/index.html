@@ -57,6 +57,14 @@
   <p class="command-overview">PostgreSQL built-in UUID v4 generation function, available without extensions. Returns a cryptographically random UUID. For time-ordered UUIDs, use the uuid-ossp extension.</p>
 
   <h2>Compatibility</h2>
+  <div class="compare-bar">
+    <span class="compare-label">Show:</span>
+    <label><input type="checkbox" value="mysql" checked> MySQL</label>
+    <label><input type="checkbox" value="postgresql" checked> PostgreSQL</label>
+    <label><input type="checkbox" value="sqlserver" checked> SQL Server</label>
+    <label><input type="checkbox" value="oracle" checked> Oracle</label>
+    <label><input type="checkbox" value="sqlite" checked> SQLite</label>
+  </div>
   <table>
     <thead>
       <tr>
@@ -67,31 +75,31 @@
       </tr>
     </thead>
     <tbody>
-          <tr>
+          <tr data-db="mysql">
             <td>MySQL</td>
             <td class="supported">✓ Supported</td>
             <td>5.0</td>
             <td class="notes">UUID() returns a v1 UUID (time-based). UUID_TO_BIN() and BIN_TO_UUID() added in 8.0 for compact 16-byte binary storage. No native UUID column type; store as CHAR(36) or BINARY(16).</td>
           </tr>
-          <tr>
+          <tr data-db="postgresql">
             <td>PostgreSQL</td>
             <td class="supported">✓ Supported</td>
             <td>8.3</td>
             <td class="notes">gen_random_uuid() (v4, cryptographically random) is built-in since PG 13; earlier versions require the pgcrypto extension. Native UUID column type available.</td>
           </tr>
-          <tr>
+          <tr data-db="sqlserver">
             <td>SQL Server</td>
             <td class="supported">✓ Supported</td>
             <td>2000</td>
             <td class="notes">NEWID() generates a random GUID. NEWSEQUENTIALID() generates sequential GUIDs suitable as clustered index keys (reduces page splits). Native UNIQUEIDENTIFIER column type.</td>
           </tr>
-          <tr>
+          <tr data-db="oracle">
             <td>Oracle</td>
             <td class="supported">✓ Supported</td>
             <td>8i</td>
             <td class="notes">SYS_GUID() returns a 16-byte RAW value, not a formatted UUID string. Extra formatting is required to produce the standard hyphenated form.</td>
           </tr>
-          <tr>
+          <tr data-db="sqlite">
             <td>SQLite</td>
             <td class="not-supported">✗ Not Supported</td>
             <td>—</td>
@@ -124,19 +132,26 @@ SELECT NEWID();</div>
 
   <h2>Per-Database Syntax &amp; Notes</h2>
   <div class="per-db-section">
+      <div class="per-db-entry" data-db="mysql">
         <h4>MySQL</h4>
         <p class="notes">UUID() returns a v1 UUID (time-based). UUID_TO_BIN() and BIN_TO_UUID() added in 8.0 for compact 16-byte binary storage. No native UUID column type; store as CHAR(36) or BINARY(16).</p>
         <div class="syntax">SELECT UUID();
 -- Efficient binary storage (8.0+):
 INSERT INTO t (id) VALUES (UUID_TO_BIN(UUID(), 1));</div>
+      </div>
+      <div class="per-db-entry" data-db="postgresql">
         <h4>PostgreSQL</h4>
         <p class="notes">gen_random_uuid() (v4, cryptographically random) is built-in since PG 13; earlier versions require the pgcrypto extension. Native UUID column type available.</p>
         <div class="syntax">SELECT gen_random_uuid();
 CREATE TABLE t (id UUID DEFAULT gen_random_uuid() PRIMARY KEY);</div>
+      </div>
+      <div class="per-db-entry" data-db="sqlserver">
         <h4>SQL Server</h4>
         <p class="notes">NEWID() generates a random GUID. NEWSEQUENTIALID() generates sequential GUIDs suitable as clustered index keys (reduces page splits). Native UNIQUEIDENTIFIER column type.</p>
         <div class="syntax">SELECT NEWID();
 CREATE TABLE t (id UNIQUEIDENTIFIER DEFAULT NEWID() PRIMARY KEY);</div>
+      </div>
+      <div class="per-db-entry" data-db="oracle">
         <h4>Oracle</h4>
         <p class="notes">SYS_GUID() returns a 16-byte RAW value, not a formatted UUID string. Extra formatting is required to produce the standard hyphenated form.</p>
         <div class="syntax">SELECT SYS_GUID() FROM dual;
@@ -144,9 +159,11 @@ CREATE TABLE t (id UNIQUEIDENTIFIER DEFAULT NEWID() PRIMARY KEY);</div>
 SELECT REGEXP_REPLACE(LOWER(RAWTOHEX(SYS_GUID())),
   '([a-f0-9]{8})([a-f0-9]{4})([a-f0-9]{4})([a-f0-9]{4})([a-f0-9]{12})',
   '\1-\2-\3-\4-\5') FROM dual;</div>
+      </div>
   </div>
   <script src="/search.js" defer></script>
   <script src="/splash.js" defer></script>
   <script src="/track.js" defer></script>
+  <script src="/compare.js" defer></script>
 </body>
 </html>

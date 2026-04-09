@@ -57,6 +57,14 @@
   <p class="command-overview">The fundamental statement for retrieving data from one or more tables. It is the primary way to filter, transform, and shape data before presenting it. Watch out for SELECT * in production -- it is fragile to schema changes and can pull more data than needed.</p>
 
   <h2>Compatibility</h2>
+  <div class="compare-bar">
+    <span class="compare-label">Show:</span>
+    <label><input type="checkbox" value="mysql" checked> MySQL</label>
+    <label><input type="checkbox" value="postgresql" checked> PostgreSQL</label>
+    <label><input type="checkbox" value="sqlserver" checked> SQL Server</label>
+    <label><input type="checkbox" value="oracle" checked> Oracle</label>
+    <label><input type="checkbox" value="sqlite" checked> SQLite</label>
+  </div>
   <table>
     <thead>
       <tr>
@@ -67,31 +75,31 @@
       </tr>
     </thead>
     <tbody>
-          <tr>
+          <tr data-db="mysql">
             <td>MySQL</td>
             <td class="supported">✓ Supported</td>
             <td>all</td>
             <td class="notes">Use LIMIT at end</td>
           </tr>
-          <tr>
+          <tr data-db="postgresql">
             <td>PostgreSQL</td>
             <td class="supported">✓ Supported</td>
             <td>all</td>
             <td class="notes">LIMIT/OFFSET</td>
           </tr>
-          <tr>
+          <tr data-db="sqlserver">
             <td>SQL Server</td>
             <td class="supported">✓ Supported</td>
             <td>2005</td>
             <td class="notes">Use TOP or OFFSET FETCH</td>
           </tr>
-          <tr>
+          <tr data-db="oracle">
             <td>Oracle</td>
             <td class="supported">✓ Supported</td>
             <td>12c</td>
             <td class="notes">OFFSET/FETCH</td>
           </tr>
-          <tr>
+          <tr data-db="sqlite">
             <td>SQLite</td>
             <td class="supported">✓ Supported</td>
             <td>all</td>
@@ -124,28 +132,39 @@ LIMIT 10;</div>
 
   <h2>Per-Database Syntax &amp; Notes</h2>
   <div class="per-db-section">
+      <div class="per-db-entry" data-db="mysql">
         <h4>MySQL</h4>
         <p class="notes">Use LIMIT at end</p>
         <div class="syntax">SELECT * FROM tbl WHERE … ORDER BY col LIMIT 10 OFFSET 5;</div>
+      </div>
+      <div class="per-db-entry" data-db="postgresql">
         <h4>PostgreSQL</h4>
         <p class="notes">LIMIT/OFFSET</p>
         <div class="syntax">SELECT * FROM tbl WHERE … ORDER BY col LIMIT 10 OFFSET 5;</div>
+      </div>
+      <div class="per-db-entry" data-db="sqlserver">
         <h4>SQL Server</h4>
         <p class="notes">Use TOP or OFFSET FETCH</p>
         <div class="syntax">SELECT TOP 10 * FROM tbl WHERE … ORDER BY col;
 -- or with OFFSET FETCH:
 SELECT * FROM tbl WHERE … ORDER BY col
 OFFSET 5 ROWS FETCH NEXT 10 ROWS ONLY;</div>
+      </div>
+      <div class="per-db-entry" data-db="oracle">
         <h4>Oracle</h4>
         <p class="notes">OFFSET/FETCH</p>
         <div class="syntax">SELECT * FROM tbl WHERE … ORDER BY col
 OFFSET 5 ROWS FETCH NEXT 10 ROWS ONLY;</div>
+      </div>
+      <div class="per-db-entry" data-db="sqlite">
         <h4>SQLite</h4>
         <p class="notes">Uses LIMIT/OFFSET</p>
         <div class="syntax">SELECT * FROM tbl WHERE … ORDER BY col LIMIT 10 OFFSET 5;</div>
+      </div>
   </div>
   <script src="/search.js" defer></script>
   <script src="/splash.js" defer></script>
   <script src="/track.js" defer></script>
+  <script src="/compare.js" defer></script>
 </body>
 </html>

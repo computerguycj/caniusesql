@@ -57,6 +57,14 @@
   <p class="command-overview">A modifier on TOP/LIMIT that includes additional rows that tie with the last returned row, useful for including all top-ranked results when the Nth and N+1st rows are tied. Prevents arbitrary cutoff of equal-ranked items.</p>
 
   <h2>Compatibility</h2>
+  <div class="compare-bar">
+    <span class="compare-label">Show:</span>
+    <label><input type="checkbox" value="mysql" checked> MySQL</label>
+    <label><input type="checkbox" value="postgresql" checked> PostgreSQL</label>
+    <label><input type="checkbox" value="sqlserver" checked> SQL Server</label>
+    <label><input type="checkbox" value="oracle" checked> Oracle</label>
+    <label><input type="checkbox" value="sqlite" checked> SQLite</label>
+  </div>
   <table>
     <thead>
       <tr>
@@ -67,31 +75,31 @@
       </tr>
     </thead>
     <tbody>
-          <tr>
+          <tr data-db="mysql">
             <td>MySQL</td>
             <td class="not-supported">✗ Not Supported</td>
             <td>—</td>
             <td class="notes">WITH TIES is not supported. Workaround: use RANK() in a subquery and filter WHERE rnk &lt;= n.</td>
           </tr>
-          <tr>
+          <tr data-db="postgresql">
             <td>PostgreSQL</td>
             <td class="supported">✓ Supported</td>
             <td>13</td>
             <td class="notes">FETCH FIRST n ROWS WITH TIES added in PostgreSQL 13.</td>
           </tr>
-          <tr>
+          <tr data-db="sqlserver">
             <td>SQL Server</td>
             <td class="supported">✓ Supported</td>
             <td>2008</td>
             <td class="notes">Supported via SELECT TOP n WITH TIES. Requires an ORDER BY clause.</td>
           </tr>
-          <tr>
+          <tr data-db="oracle">
             <td>Oracle</td>
             <td class="supported">✓ Supported</td>
             <td>12c</td>
             <td class="notes">Supported in the FETCH FIRST syntax introduced in 12c.</td>
           </tr>
-          <tr>
+          <tr data-db="sqlite">
             <td>SQLite</td>
             <td class="not-supported">✗ Not Supported</td>
             <td>—</td>
@@ -122,24 +130,31 @@ FETCH FIRST 3 ROWS WITH TIES;</div>
 
   <h2>Per-Database Syntax &amp; Notes</h2>
   <div class="per-db-section">
+      <div class="per-db-entry" data-db="postgresql">
         <h4>PostgreSQL</h4>
         <p class="notes">FETCH FIRST n ROWS WITH TIES added in PostgreSQL 13.</p>
         <div class="syntax">SELECT * FROM leaderboard
 ORDER BY score DESC
 FETCH FIRST 3 ROWS WITH TIES;</div>
+      </div>
+      <div class="per-db-entry" data-db="sqlserver">
         <h4>SQL Server</h4>
         <p class="notes">Supported via SELECT TOP n WITH TIES. Requires an ORDER BY clause.</p>
         <div class="syntax">SELECT TOP 3 WITH TIES *
 FROM leaderboard
 ORDER BY score DESC;</div>
+      </div>
+      <div class="per-db-entry" data-db="oracle">
         <h4>Oracle</h4>
         <p class="notes">Supported in the FETCH FIRST syntax introduced in 12c.</p>
         <div class="syntax">SELECT * FROM leaderboard
 ORDER BY score DESC
 FETCH FIRST 3 ROWS WITH TIES;</div>
+      </div>
   </div>
   <script src="/search.js" defer></script>
   <script src="/splash.js" defer></script>
   <script src="/track.js" defer></script>
+  <script src="/compare.js" defer></script>
 </body>
 </html>

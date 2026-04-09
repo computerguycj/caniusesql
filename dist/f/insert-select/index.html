@@ -57,6 +57,14 @@
   <p class="command-overview">Inserts rows computed from a SELECT query, the standard way to copy data between tables, transform data during insertion, and populate tables from computed results.</p>
 
   <h2>Compatibility</h2>
+  <div class="compare-bar">
+    <span class="compare-label">Show:</span>
+    <label><input type="checkbox" value="mysql" checked> MySQL</label>
+    <label><input type="checkbox" value="postgresql" checked> PostgreSQL</label>
+    <label><input type="checkbox" value="sqlserver" checked> SQL Server</label>
+    <label><input type="checkbox" value="oracle" checked> Oracle</label>
+    <label><input type="checkbox" value="sqlite" checked> SQLite</label>
+  </div>
   <table>
     <thead>
       <tr>
@@ -67,31 +75,31 @@
       </tr>
     </thead>
     <tbody>
-          <tr>
+          <tr data-db="mysql">
             <td>MySQL</td>
             <td class="supported">✓ Supported</td>
             <td>3.23</td>
             <td class="notes">INSERT INTO ... SELECT is fully supported. Column list in the INSERT is optional if the SELECT returns columns in the exact same order and count as the table. CREATE TABLE ... SELECT creates and populates a new table in one statement (MySQL-specific shorthand). AUTO_INCREMENT columns are populated normally during INSERT INTO ... SELECT.</td>
           </tr>
-          <tr>
+          <tr data-db="postgresql">
             <td>PostgreSQL</td>
             <td class="supported">✓ Supported</td>
             <td>6.0</td>
             <td class="notes">INSERT INTO ... SELECT is fully supported. SELECT INTO creates a new table from a query (PostgreSQL-specific; standard SQL uses CREATE TABLE AS SELECT). CREATE TABLE AS SELECT is the portable form. Can include ON CONFLICT clause for upsert behavior on the destination table.</td>
           </tr>
-          <tr>
+          <tr data-db="sqlserver">
             <td>SQL Server</td>
             <td class="supported">✓ Supported</td>
             <td>6.5</td>
             <td class="notes">INSERT INTO ... SELECT fully supported. SELECT INTO creates a new table (SQL Server extension, same as PostgreSQL). For large inserts, TABLOCK hint with minimal logging (simple recovery model) dramatically reduces log growth. The OUTPUT clause captures inserted rows in the same statement. Can use OPENROWSET or linked servers as the source.</td>
           </tr>
-          <tr>
+          <tr data-db="oracle">
             <td>Oracle</td>
             <td class="supported">✓ Supported</td>
             <td>7</td>
             <td class="notes">INSERT INTO ... SELECT fully supported. CREATE TABLE AS SELECT (CTAS) is the Oracle form for create-and-populate. INSERT ALL allows inserting into multiple tables from a single SELECT. The APPEND hint enables direct-path insert (faster, bypasses buffer cache, locks the table for the duration).</td>
           </tr>
-          <tr>
+          <tr data-db="sqlite">
             <td>SQLite</td>
             <td class="supported">✓ Supported</td>
             <td>1.0</td>
@@ -129,6 +137,7 @@ FROM orders;  -- SQL Server syntax</div>
 
   <h2>Per-Database Syntax &amp; Notes</h2>
   <div class="per-db-section">
+      <div class="per-db-entry" data-db="mysql">
         <h4>MySQL</h4>
         <p class="notes">INSERT INTO ... SELECT is fully supported. Column list in the INSERT is optional if the SELECT returns columns in the exact same order and count as the table. CREATE TABLE ... SELECT creates and populates a new table in one statement (MySQL-specific shorthand). AUTO_INCREMENT columns are populated normally during INSERT INTO ... SELECT.</p>
         <div class="syntax">-- Standard INSERT INTO ... SELECT:
@@ -152,6 +161,8 @@ GROUP BY category;
 -- Ignore duplicate key conflicts:
 INSERT IGNORE INTO users_cache
 SELECT id, email FROM users_import;</div>
+      </div>
+      <div class="per-db-entry" data-db="postgresql">
         <h4>PostgreSQL</h4>
         <p class="notes">INSERT INTO ... SELECT is fully supported. SELECT INTO creates a new table from a query (PostgreSQL-specific; standard SQL uses CREATE TABLE AS SELECT). CREATE TABLE AS SELECT is the portable form. Can include ON CONFLICT clause for upsert behavior on the destination table.</p>
         <div class="syntax">-- Standard INSERT INTO ... SELECT:
@@ -178,6 +189,8 @@ WITH recent AS (
 )
 INSERT INTO recent_orders_summary
 SELECT customer_id, COUNT(*), SUM(amount) FROM recent GROUP BY customer_id;</div>
+      </div>
+      <div class="per-db-entry" data-db="sqlserver">
         <h4>SQL Server</h4>
         <p class="notes">INSERT INTO ... SELECT fully supported. SELECT INTO creates a new table (SQL Server extension, same as PostgreSQL). For large inserts, TABLOCK hint with minimal logging (simple recovery model) dramatically reduces log growth. The OUTPUT clause captures inserted rows in the same statement. Can use OPENROWSET or linked servers as the source.</p>
         <div class="syntax">-- Standard INSERT INTO ... SELECT:
@@ -199,6 +212,8 @@ SELECT id, price FROM products;
 -- Bulk hint for minimal logging:
 INSERT INTO staging_table WITH (TABLOCK)
 SELECT * FROM source_table;</div>
+      </div>
+      <div class="per-db-entry" data-db="oracle">
         <h4>Oracle</h4>
         <p class="notes">INSERT INTO ... SELECT fully supported. CREATE TABLE AS SELECT (CTAS) is the Oracle form for create-and-populate. INSERT ALL allows inserting into multiple tables from a single SELECT. The APPEND hint enables direct-path insert (faster, bypasses buffer cache, locks the table for the duration).</p>
         <div class="syntax">-- Standard INSERT INTO ... SELECT:
@@ -222,6 +237,8 @@ INSERT ALL
     INTO eu_orders   SELECT * WHERE region = 'EU'
     INTO other_orders SELECT * WHERE region NOT IN ('US','EU')
 SELECT * FROM orders;</div>
+      </div>
+      <div class="per-db-entry" data-db="sqlite">
         <h4>SQLite</h4>
         <p class="notes">INSERT INTO ... SELECT fully supported. CREATE TABLE AS SELECT creates and populates a new table. Wrapping a large INSERT INTO ... SELECT in a transaction is critical for performance — SQLite without a transaction performs an fsync per row.</p>
         <div class="syntax">-- Standard INSERT INTO ... SELECT:
@@ -242,9 +259,11 @@ COMMIT;
 -- With INSERT OR IGNORE for conflict handling:
 INSERT OR IGNORE INTO users_cache
 SELECT id, email FROM users_import;</div>
+      </div>
   </div>
   <script src="/search.js" defer></script>
   <script src="/splash.js" defer></script>
   <script src="/track.js" defer></script>
+  <script src="/compare.js" defer></script>
 </body>
 </html>

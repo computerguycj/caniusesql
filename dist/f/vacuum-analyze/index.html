@@ -57,6 +57,14 @@
   <p class="command-overview">PostgreSQL command that updates statistics about the distribution of data in tables and indexes. The query planner uses these statistics to choose optimal execution plans. Run after significant data changes.</p>
 
   <h2>Compatibility</h2>
+  <div class="compare-bar">
+    <span class="compare-label">Show:</span>
+    <label><input type="checkbox" value="mysql" checked> MySQL</label>
+    <label><input type="checkbox" value="postgresql" checked> PostgreSQL</label>
+    <label><input type="checkbox" value="sqlserver" checked> SQL Server</label>
+    <label><input type="checkbox" value="oracle" checked> Oracle</label>
+    <label><input type="checkbox" value="sqlite" checked> SQLite</label>
+  </div>
   <table>
     <thead>
       <tr>
@@ -67,31 +75,31 @@
       </tr>
     </thead>
     <tbody>
-          <tr>
+          <tr data-db="mysql">
             <td>MySQL</td>
             <td class="supported">✓ Supported</td>
             <td>5.0</td>
             <td class="notes">OPTIMIZE TABLE reclaims space from deleted rows in InnoDB and MyISAM. ANALYZE TABLE updates index statistics used by the optimizer. Both can be run online (non-blocking) in InnoDB since 5.6. No VACUUM keyword.</td>
           </tr>
-          <tr>
+          <tr data-db="postgresql">
             <td>PostgreSQL</td>
             <td class="supported">✓ Supported</td>
             <td>7.4</td>
             <td class="notes">VACUUM reclaims storage from dead tuples created by MVCC updates/deletes. VACUUM FULL rewrites the table (locks table, reclaims more space). ANALYZE updates planner statistics. Autovacuum runs both automatically. VACUUM FREEZE prevents transaction ID wraparound.</td>
           </tr>
-          <tr>
+          <tr data-db="sqlserver">
             <td>SQL Server</td>
             <td class="supported">✓ Supported</td>
             <td>2000</td>
             <td class="notes">No VACUUM equivalent — SQL Server uses a separate background thread for ghost record cleanup. UPDATE STATISTICS or sp_updatestats updates query planner statistics. DBCC SHRINKFILE / SHRINKDATABASE reclaims space (use sparingly — causes fragmentation). REBUILD INDEX is the primary defragmentation tool.</td>
           </tr>
-          <tr>
+          <tr data-db="oracle">
             <td>Oracle</td>
             <td class="supported">✓ Supported</td>
             <td>7</td>
             <td class="notes">Oracle uses UNDO segments rather than dead tuple storage, so no VACUUM equivalent is needed. DBMS_STATS.GATHER_TABLE_STATS updates optimizer statistics. Segment shrink (ALTER TABLE ... SHRINK SPACE) reclaims space below the high-water mark.</td>
           </tr>
-          <tr>
+          <tr data-db="sqlite">
             <td>SQLite</td>
             <td class="supported">✓ Supported</td>
             <td>3.0.0</td>
@@ -121,11 +129,14 @@ VACUUM ANALYZE orders;</div>
 
   <h2>Per-Database Syntax &amp; Notes</h2>
   <div class="per-db-section">
+      <div class="per-db-entry" data-db="mysql">
         <h4>MySQL</h4>
         <p class="notes">OPTIMIZE TABLE reclaims space from deleted rows in InnoDB and MyISAM. ANALYZE TABLE updates index statistics used by the optimizer. Both can be run online (non-blocking) in InnoDB since 5.6. No VACUUM keyword.</p>
         <div class="syntax">ANALYZE TABLE orders;          -- update statistics
 OPTIMIZE TABLE orders;         -- reclaim space (rebuilds table)
 CHECK TABLE orders;            -- verify integrity</div>
+      </div>
+      <div class="per-db-entry" data-db="postgresql">
         <h4>PostgreSQL</h4>
         <p class="notes">VACUUM reclaims storage from dead tuples created by MVCC updates/deletes. VACUUM FULL rewrites the table (locks table, reclaims more space). ANALYZE updates planner statistics. Autovacuum runs both automatically. VACUUM FREEZE prevents transaction ID wraparound.</p>
         <div class="syntax">VACUUM orders;              -- reclaim dead tuples, non-blocking
@@ -133,25 +144,33 @@ VACUUM FULL orders;         -- full rewrite, exclusive lock
 ANALYZE orders;             -- update statistics only
 VACUUM ANALYZE orders;      -- both at once
 VACUUM FREEZE orders;       -- also freeze old tuples</div>
+      </div>
+      <div class="per-db-entry" data-db="sqlserver">
         <h4>SQL Server</h4>
         <p class="notes">No VACUUM equivalent — SQL Server uses a separate background thread for ghost record cleanup. UPDATE STATISTICS or sp_updatestats updates query planner statistics. DBCC SHRINKFILE / SHRINKDATABASE reclaims space (use sparingly — causes fragmentation). REBUILD INDEX is the primary defragmentation tool.</p>
         <div class="syntax">UPDATE STATISTICS dbo.orders;           -- update stats for one table
 EXEC sp_updatestats;                    -- update all stale stats
 ALTER INDEX ALL ON dbo.orders REBUILD;  -- rebuild all indexes (defrag + stats)
 ALTER INDEX ALL ON dbo.orders REORGANIZE; -- online, lighter defrag</div>
+      </div>
+      <div class="per-db-entry" data-db="oracle">
         <h4>Oracle</h4>
         <p class="notes">Oracle uses UNDO segments rather than dead tuple storage, so no VACUUM equivalent is needed. DBMS_STATS.GATHER_TABLE_STATS updates optimizer statistics. Segment shrink (ALTER TABLE ... SHRINK SPACE) reclaims space below the high-water mark.</p>
         <div class="syntax">EXEC DBMS_STATS.GATHER_TABLE_STATS('schema', 'ORDERS');  -- update stats
 ALTER TABLE orders SHRINK SPACE;                          -- reclaim space
 ALTER TABLE orders MOVE;                                  -- rebuild segment</div>
+      </div>
+      <div class="per-db-entry" data-db="sqlite">
         <h4>SQLite</h4>
         <p class="notes">VACUUM rewrites the entire database file to reclaim space from deleted rows and reduce fragmentation. ANALYZE updates statistics in the sqlite_stat tables used by the query planner. Both are manual operations; no auto-vacuum by default (can be enabled with PRAGMA auto_vacuum).</p>
         <div class="syntax">VACUUM;                         -- rewrite entire db file
 ANALYZE;                        -- update query planner stats
 PRAGMA auto_vacuum = INCREMENTAL; -- enable incremental auto-vacuum</div>
+      </div>
   </div>
   <script src="/search.js" defer></script>
   <script src="/splash.js" defer></script>
   <script src="/track.js" defer></script>
+  <script src="/compare.js" defer></script>
 </body>
 </html>

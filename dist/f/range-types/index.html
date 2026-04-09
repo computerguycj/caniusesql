@@ -57,6 +57,14 @@
   <p class="command-overview">PostgreSQL types that represent an interval with a lower and upper bound: int4range, daterange, tsrange. Enable efficient storage and querying of temporal intervals. Useful for reservation systems and versioned records.</p>
 
   <h2>Compatibility</h2>
+  <div class="compare-bar">
+    <span class="compare-label">Show:</span>
+    <label><input type="checkbox" value="mysql" checked> MySQL</label>
+    <label><input type="checkbox" value="postgresql" checked> PostgreSQL</label>
+    <label><input type="checkbox" value="sqlserver" checked> SQL Server</label>
+    <label><input type="checkbox" value="oracle" checked> Oracle</label>
+    <label><input type="checkbox" value="sqlite" checked> SQLite</label>
+  </div>
   <table>
     <thead>
       <tr>
@@ -67,31 +75,31 @@
       </tr>
     </thead>
     <tbody>
-          <tr>
+          <tr data-db="mysql">
             <td>MySQL</td>
             <td class="not-supported">✗ Not Supported</td>
             <td>—</td>
             <td class="notes">No range types. Use two columns (start_date, end_date) and enforce constraints manually or via triggers.</td>
           </tr>
-          <tr>
+          <tr data-db="postgresql">
             <td>PostgreSQL</td>
             <td class="supported">✓ Supported</td>
             <td>9.2</td>
             <td class="notes">Built-in types: int4range, int8range, numrange, tsrange, tstzrange, daterange. Multirange types (int4multirange, etc.) added in PG 14. Operators: @&gt; (contains), &lt;@ (contained by), &amp;&amp; (overlaps), &lt;&lt; (strictly left of), &gt;&gt; (strictly right of), -|- (adjacent). GiST indexable. Boundary inclusivity is explicit: [1,5) vs (1,5].</td>
           </tr>
-          <tr>
+          <tr data-db="sqlserver">
             <td>SQL Server</td>
             <td class="not-supported">✗ Not Supported</td>
             <td>—</td>
             <td class="notes">No range types. Temporal tables (2016+) handle system-time history but are not general-purpose range types.</td>
           </tr>
-          <tr>
+          <tr data-db="oracle">
             <td>Oracle</td>
             <td class="not-supported">✗ Not Supported</td>
             <td>—</td>
             <td class="notes">No range types. INTERVAL types exist but represent durations, not ranges.</td>
           </tr>
-          <tr>
+          <tr data-db="sqlite">
             <td>SQLite</td>
             <td class="not-supported">✗ Not Supported</td>
             <td>—</td>
@@ -124,11 +132,14 @@ SELECT '[1,5)'::int4range &amp;&amp; '[3,8)'::int4range;  -- true</div>
 
   <h2>Per-Database Syntax &amp; Notes</h2>
   <div class="per-db-section">
+      <div class="per-db-entry" data-db="mysql">
         <h4>MySQL</h4>
         <p class="notes">No range types. Use two columns (start_date, end_date) and enforce constraints manually or via triggers.</p>
         <div class="syntax">-- Not supported.
 SELECT * FROM bookings
 WHERE start_date &lt; '2024-02-01' AND end_date &gt; '2024-01-01';</div>
+      </div>
+      <div class="per-db-entry" data-db="postgresql">
         <h4>PostgreSQL</h4>
         <p class="notes">Built-in types: int4range, int8range, numrange, tsrange, tstzrange, daterange. Multirange types (int4multirange, etc.) added in PG 14. Operators: @&gt; (contains), &lt;@ (contained by), &amp;&amp; (overlaps), &lt;&lt; (strictly left of), &gt;&gt; (strictly right of), -|- (adjacent). GiST indexable. Boundary inclusivity is explicit: [1,5) vs (1,5].</p>
         <div class="syntax">SELECT '[1,5)'::int4range @&gt; 3;   -- true
@@ -143,18 +154,26 @@ CREATE INDEX ON events USING gist (during);
 -- Query events overlapping a window:
 SELECT * FROM events
 WHERE during &amp;&amp; '[2024-01-01,2024-02-01)'::tsrange;</div>
+      </div>
+      <div class="per-db-entry" data-db="sqlserver">
         <h4>SQL Server</h4>
         <p class="notes">No range types. Temporal tables (2016+) handle system-time history but are not general-purpose range types.</p>
         <div class="syntax">-- Not supported.</div>
+      </div>
+      <div class="per-db-entry" data-db="oracle">
         <h4>Oracle</h4>
         <p class="notes">No range types. INTERVAL types exist but represent durations, not ranges.</p>
         <div class="syntax">-- Not supported.</div>
+      </div>
+      <div class="per-db-entry" data-db="sqlite">
         <h4>SQLite</h4>
         <p class="notes">No range types. Use two columns.</p>
         <div class="syntax">-- Not supported.</div>
+      </div>
   </div>
   <script src="/search.js" defer></script>
   <script src="/splash.js" defer></script>
   <script src="/track.js" defer></script>
+  <script src="/compare.js" defer></script>
 </body>
 </html>

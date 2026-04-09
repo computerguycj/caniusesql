@@ -57,6 +57,14 @@
   <p class="command-overview">REPLACE(str, from, to) returns str with all occurrences of 'from' replaced by 'to'. It is non-destructive and differs from REGEXP_REPLACE, which uses regular expressions for pattern matching. Note that REPLACE INTO is a separate DML statement for upsert operations (deletes and inserts on unique key conflicts), not related to this string function.</p>
 
   <h2>Compatibility</h2>
+  <div class="compare-bar">
+    <span class="compare-label">Show:</span>
+    <label><input type="checkbox" value="mysql" checked> MySQL</label>
+    <label><input type="checkbox" value="postgresql" checked> PostgreSQL</label>
+    <label><input type="checkbox" value="sqlserver" checked> SQL Server</label>
+    <label><input type="checkbox" value="oracle" checked> Oracle</label>
+    <label><input type="checkbox" value="sqlite" checked> SQLite</label>
+  </div>
   <table>
     <thead>
       <tr>
@@ -67,31 +75,31 @@
       </tr>
     </thead>
     <tbody>
-          <tr>
+          <tr data-db="mysql">
             <td>MySQL</td>
             <td class="supported">✓ Supported</td>
             <td>all</td>
             <td class="notes">REPLACE(str, from_str, to_str). Case-sensitive (regardless of collation). Replaces all occurrences.</td>
           </tr>
-          <tr>
+          <tr data-db="postgresql">
             <td>PostgreSQL</td>
             <td class="supported">✓ Supported</td>
             <td>all</td>
             <td class="notes">REPLACE(str, from, to). Case-sensitive. For case-insensitive replace, use REGEXP_REPLACE with the 'i' flag.</td>
           </tr>
-          <tr>
+          <tr data-db="sqlserver">
             <td>SQL Server</td>
             <td class="supported">✓ Supported</td>
             <td>all</td>
             <td class="notes">REPLACE(str, old, new). Case sensitivity depends on the database collation. In a case-insensitive collation, REPLACE('Hello', 'hello', 'X') returns 'X'.</td>
           </tr>
-          <tr>
+          <tr data-db="oracle">
             <td>Oracle</td>
             <td class="supported">✓ Supported</td>
             <td>all</td>
             <td class="notes">REPLACE(str, search [, replacement]). If replacement is omitted or NULL, all occurrences of search are deleted. Case-sensitive.</td>
           </tr>
-          <tr>
+          <tr data-db="sqlite">
             <td>SQLite</td>
             <td class="supported">✓ Supported</td>
             <td>all</td>
@@ -121,28 +129,39 @@ FROM tbl;</div>
 
   <h2>Per-Database Syntax &amp; Notes</h2>
   <div class="per-db-section">
+      <div class="per-db-entry" data-db="mysql">
         <h4>MySQL</h4>
         <p class="notes">REPLACE(str, from_str, to_str). Case-sensitive (regardless of collation). Replaces all occurrences.</p>
         <div class="syntax">SELECT REPLACE('Hello World', 'World', 'SQL');  -- 'Hello SQL'
 SELECT REPLACE('aabbcc', 'b', 'x');             -- 'aaxxcc'</div>
+      </div>
+      <div class="per-db-entry" data-db="postgresql">
         <h4>PostgreSQL</h4>
         <p class="notes">REPLACE(str, from, to). Case-sensitive. For case-insensitive replace, use REGEXP_REPLACE with the 'i' flag.</p>
         <div class="syntax">SELECT REPLACE('Hello World', 'World', 'SQL');         -- 'Hello SQL'
 SELECT REGEXP_REPLACE('Hello World', 'world', 'SQL', 'i'); -- case-insensitive</div>
+      </div>
+      <div class="per-db-entry" data-db="sqlserver">
         <h4>SQL Server</h4>
         <p class="notes">REPLACE(str, old, new). Case sensitivity depends on the database collation. In a case-insensitive collation, REPLACE('Hello', 'hello', 'X') returns 'X'.</p>
         <div class="syntax">SELECT REPLACE('Hello World', 'World', 'SQL');  -- 'Hello SQL'
 SELECT REPLACE('aabbcc', 'b', 'x');             -- 'aaxxcc'</div>
+      </div>
+      <div class="per-db-entry" data-db="oracle">
         <h4>Oracle</h4>
         <p class="notes">REPLACE(str, search [, replacement]). If replacement is omitted or NULL, all occurrences of search are deleted. Case-sensitive.</p>
         <div class="syntax">SELECT REPLACE('Hello World', 'World', 'SQL') FROM DUAL;  -- 'Hello SQL'
 SELECT REPLACE('Hello World', 'World') FROM DUAL;          -- 'Hello ' (deleted)</div>
+      </div>
+      <div class="per-db-entry" data-db="sqlite">
         <h4>SQLite</h4>
         <p class="notes">REPLACE(str, old, new). Case-sensitive. Replaces all occurrences.</p>
         <div class="syntax">SELECT REPLACE('Hello World', 'World', 'SQL');  -- 'Hello SQL'</div>
+      </div>
   </div>
   <script src="/search.js" defer></script>
   <script src="/splash.js" defer></script>
   <script src="/track.js" defer></script>
+  <script src="/compare.js" defer></script>
 </body>
 </html>

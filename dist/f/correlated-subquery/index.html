@@ -57,6 +57,14 @@
   <p class="command-overview">A subquery that returns exactly one value (one column, one row), usable anywhere a single value is expected. If the subquery returns multiple rows, execution halts. Wrap in COALESCE or use aggregation to guarantee a single value when the result may be empty.</p>
 
   <h2>Compatibility</h2>
+  <div class="compare-bar">
+    <span class="compare-label">Show:</span>
+    <label><input type="checkbox" value="mysql" checked> MySQL</label>
+    <label><input type="checkbox" value="postgresql" checked> PostgreSQL</label>
+    <label><input type="checkbox" value="sqlserver" checked> SQL Server</label>
+    <label><input type="checkbox" value="oracle" checked> Oracle</label>
+    <label><input type="checkbox" value="sqlite" checked> SQLite</label>
+  </div>
   <table>
     <thead>
       <tr>
@@ -67,31 +75,31 @@
       </tr>
     </thead>
     <tbody>
-          <tr>
+          <tr data-db="mysql">
             <td>MySQL</td>
             <td class="supported">✓ Supported</td>
             <td>4.1</td>
             <td class="notes">Correlated subqueries supported since 4.1. MySQL historically had poor optimization of correlated subqueries (particularly NOT IN / NOT EXISTS patterns), materializing the outer loop inefficiently. MySQL 8.0 significantly improved the optimizer with hash semi-join and anti-join transformations. For large tables, rewriting as a JOIN or using a CTE is often much faster in MySQL.</td>
           </tr>
-          <tr>
+          <tr data-db="postgresql">
             <td>PostgreSQL</td>
             <td class="supported">✓ Supported</td>
             <td>6.0</td>
             <td class="notes">Fully supported. PostgreSQL's optimizer can decorrelate many correlated subqueries automatically, converting them to hash joins or merge joins. EXISTS and NOT EXISTS correlated subqueries are well-optimized. LATERAL joins (PostgreSQL 9.3+) are often a cleaner and more performant alternative for correlated subqueries in the FROM clause.</td>
           </tr>
-          <tr>
+          <tr data-db="sqlserver">
             <td>SQL Server</td>
             <td class="supported">✓ Supported</td>
             <td>6.5</td>
             <td class="notes">Fully supported. SQL Server's optimizer generally handles correlated subqueries well, transforming them into apply or join operations internally. APPLY (CROSS APPLY / OUTER APPLY) is the SQL Server equivalent of LATERAL and is often preferred for complex correlated logic in the FROM clause.</td>
           </tr>
-          <tr>
+          <tr data-db="oracle">
             <td>Oracle</td>
             <td class="supported">✓ Supported</td>
             <td>7</td>
             <td class="notes">Fully supported. Oracle's cost-based optimizer (CBO) can decorrelate subqueries. The LATERAL keyword (Oracle 12c+) and CROSS APPLY / OUTER APPLY (also 12c+) provide alternatives. Correlated subqueries in SELECT list, WHERE, and HAVING are all valid.</td>
           </tr>
-          <tr>
+          <tr data-db="sqlite">
             <td>SQLite</td>
             <td class="supported">✓ Supported</td>
             <td>3.0</td>
@@ -127,6 +135,7 @@ WHERE salary &gt; (
 
   <h2>Per-Database Syntax &amp; Notes</h2>
   <div class="per-db-section">
+      <div class="per-db-entry" data-db="mysql">
         <h4>MySQL</h4>
         <p class="notes">Correlated subqueries supported since 4.1. MySQL historically had poor optimization of correlated subqueries (particularly NOT IN / NOT EXISTS patterns), materializing the outer loop inefficiently. MySQL 8.0 significantly improved the optimizer with hash semi-join and anti-join transformations. For large tables, rewriting as a JOIN or using a CTE is often much faster in MySQL.</p>
         <div class="syntax">-- Above-average salary per dept:
@@ -152,6 +161,8 @@ FROM customers c
 JOIN orders o ON o.customer_id = c.id
     AND o.created_at &gt; DATE_SUB(NOW(), INTERVAL 30 DAY)
 GROUP BY c.id, c.name;</div>
+      </div>
+      <div class="per-db-entry" data-db="postgresql">
         <h4>PostgreSQL</h4>
         <p class="notes">Fully supported. PostgreSQL's optimizer can decorrelate many correlated subqueries automatically, converting them to hash joins or merge joins. EXISTS and NOT EXISTS correlated subqueries are well-optimized. LATERAL joins (PostgreSQL 9.3+) are often a cleaner and more performant alternative for correlated subqueries in the FROM clause.</p>
         <div class="syntax">-- Above-average salary per dept:
@@ -181,6 +192,8 @@ FROM (
     FROM employees
 ) t
 WHERE salary &gt; dept_avg;</div>
+      </div>
+      <div class="per-db-entry" data-db="sqlserver">
         <h4>SQL Server</h4>
         <p class="notes">Fully supported. SQL Server's optimizer generally handles correlated subqueries well, transforming them into apply or join operations internally. APPLY (CROSS APPLY / OUTER APPLY) is the SQL Server equivalent of LATERAL and is often preferred for complex correlated logic in the FROM clause.</p>
         <div class="syntax">-- Correlated subquery:
@@ -208,6 +221,8 @@ SELECT name, dept, salary FROM (
            AVG(salary) OVER (PARTITION BY dept) AS dept_avg
     FROM employees
 ) t WHERE salary &gt; dept_avg;</div>
+      </div>
+      <div class="per-db-entry" data-db="oracle">
         <h4>Oracle</h4>
         <p class="notes">Fully supported. Oracle's cost-based optimizer (CBO) can decorrelate subqueries. The LATERAL keyword (Oracle 12c+) and CROSS APPLY / OUTER APPLY (also 12c+) provide alternatives. Correlated subqueries in SELECT list, WHERE, and HAVING are all valid.</p>
         <div class="syntax">-- Correlated subquery:
@@ -233,6 +248,8 @@ WHERE e.salary &gt; da.avg_salary;
 SELECT name,
     (SELECT dept_name FROM departments WHERE id = e.dept_id) AS dept_name
 FROM employees e;</div>
+      </div>
+      <div class="per-db-entry" data-db="sqlite">
         <h4>SQLite</h4>
         <p class="notes">Correlated subqueries supported. SQLite does not decorrelate them automatically — each row triggers a subquery execution, so performance degrades on large datasets. Rewriting as a JOIN (SQLite 3.8.3+ with improved query planner) or a window function (3.25+) is strongly recommended for production queries over large tables.</p>
         <div class="syntax">-- Correlated subquery:
@@ -250,9 +267,11 @@ SELECT name, dept, salary FROM (
            AVG(salary) OVER (PARTITION BY dept) AS dept_avg
     FROM employees
 ) WHERE salary &gt; dept_avg;</div>
+      </div>
   </div>
   <script src="/search.js" defer></script>
   <script src="/splash.js" defer></script>
   <script src="/track.js" defer></script>
+  <script src="/compare.js" defer></script>
 </body>
 </html>

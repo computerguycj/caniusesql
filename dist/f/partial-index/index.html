@@ -57,6 +57,14 @@
   <p class="command-overview">An index built on a subset of rows defined by a WHERE clause, reducing size and maintenance overhead. Excellent for tables with frequently queried rare values (e.g., active users only, undeleted records). Only supports queries matching the filter predicate.</p>
 
   <h2>Compatibility</h2>
+  <div class="compare-bar">
+    <span class="compare-label">Show:</span>
+    <label><input type="checkbox" value="mysql" checked> MySQL</label>
+    <label><input type="checkbox" value="postgresql" checked> PostgreSQL</label>
+    <label><input type="checkbox" value="sqlserver" checked> SQL Server</label>
+    <label><input type="checkbox" value="oracle" checked> Oracle</label>
+    <label><input type="checkbox" value="sqlite" checked> SQLite</label>
+  </div>
   <table>
     <thead>
       <tr>
@@ -67,31 +75,31 @@
       </tr>
     </thead>
     <tbody>
-          <tr>
+          <tr data-db="mysql">
             <td>MySQL</td>
             <td class="not-supported">✗ Not Supported</td>
             <td>—</td>
             <td class="notes">MySQL does not support partial or filtered indexes with a WHERE clause. The workaround is to use a generated (computed) column that returns NULL for excluded rows, then add an index — NULL values are not stored in MySQL's B-tree indexes, achieving a similar effect. Functional indexes (MySQL 8.0+) are also an option for expression-based selectivity.</td>
           </tr>
-          <tr>
+          <tr data-db="postgresql">
             <td>PostgreSQL</td>
             <td class="supported">✓ Supported</td>
             <td>7.2</td>
             <td class="notes">WHERE clause on CREATE INDEX supported since PostgreSQL 7.2. The partial index is only used by queries whose WHERE clause is compatible with (implies) the index predicate. Works with B-tree, GiST, GIN, and BRIN index types. Extremely useful for sparse conditions (e.g., only ~5% of rows are active).</td>
           </tr>
-          <tr>
+          <tr data-db="sqlserver">
             <td>SQL Server</td>
             <td class="supported">✓ Supported</td>
             <td>2008</td>
             <td class="notes">Called filtered indexes. WHERE clause on CREATE INDEX supported since SQL Server 2008. The filtered index is considered by the optimizer when the query's WHERE clause is compatible with the filter predicate. Statistics are also maintained only for the filtered rows, improving cardinality estimation. Cannot use non-deterministic functions or reference computed columns in the filter.</td>
           </tr>
-          <tr>
+          <tr data-db="oracle">
             <td>Oracle</td>
             <td class="not-supported">✗ Not Supported</td>
             <td>—</td>
             <td class="notes">Oracle does not support a WHERE clause on CREATE INDEX directly. However, Oracle does not index NULL values in a standard B-tree index — a common workaround is to create a function-based index that returns NULL for rows to exclude. Bitmap indexes can also achieve selective indexing. Oracle 21c introduced the concept of invisible indexes and more advanced filtering via expression indexes.</td>
           </tr>
-          <tr>
+          <tr data-db="sqlite">
             <td>SQLite</td>
             <td class="supported">✓ Supported</td>
             <td>3.8.9</td>
@@ -128,6 +136,7 @@ CREATE INDEX idx_pending_orders
 
   <h2>Per-Database Syntax &amp; Notes</h2>
   <div class="per-db-section">
+      <div class="per-db-entry" data-db="mysql">
         <h4>MySQL</h4>
         <p class="notes">MySQL does not support partial or filtered indexes with a WHERE clause. The workaround is to use a generated (computed) column that returns NULL for excluded rows, then add an index — NULL values are not stored in MySQL's B-tree indexes, achieving a similar effect. Functional indexes (MySQL 8.0+) are also an option for expression-based selectivity.</p>
         <div class="syntax">-- Workaround: generated column + index (NULLs not indexed):
@@ -140,6 +149,8 @@ CREATE INDEX idx_active_email ON users (active_email);
 -- Now a query for active users can use the index:
 SELECT * FROM users WHERE active_email = 'alice@example.com';
 -- This is equivalent to: WHERE active = 1 AND email = 'alice@example.com'</div>
+      </div>
+      <div class="per-db-entry" data-db="postgresql">
         <h4>PostgreSQL</h4>
         <p class="notes">WHERE clause on CREATE INDEX supported since PostgreSQL 7.2. The partial index is only used by queries whose WHERE clause is compatible with (implies) the index predicate. Works with B-tree, GiST, GIN, and BRIN index types. Extremely useful for sparse conditions (e.g., only ~5% of rows are active).</p>
         <div class="syntax">-- Index only on active users:
@@ -162,6 +173,8 @@ CREATE UNIQUE INDEX idx_unique_active_username
 CREATE INDEX idx_recent_errors
     ON events (user_id, occurred_at)
     WHERE event_type = 'error' AND occurred_at &gt; NOW() - INTERVAL '90 days';</div>
+      </div>
+      <div class="per-db-entry" data-db="sqlserver">
         <h4>SQL Server</h4>
         <p class="notes">Called filtered indexes. WHERE clause on CREATE INDEX supported since SQL Server 2008. The filtered index is considered by the optimizer when the query's WHERE clause is compatible with the filter predicate. Statistics are also maintained only for the filtered rows, improving cardinality estimation. Cannot use non-deterministic functions or reference computed columns in the filter.</p>
         <div class="syntax">-- Filtered index on pending orders only:
@@ -178,6 +191,8 @@ CREATE UNIQUE INDEX idx_unique_active_email
 CREATE INDEX idx_orders_promo
     ON orders (promo_code)
     WHERE promo_code IS NOT NULL;</div>
+      </div>
+      <div class="per-db-entry" data-db="oracle">
         <h4>Oracle</h4>
         <p class="notes">Oracle does not support a WHERE clause on CREATE INDEX directly. However, Oracle does not index NULL values in a standard B-tree index — a common workaround is to create a function-based index that returns NULL for rows to exclude. Bitmap indexes can also achieve selective indexing. Oracle 21c introduced the concept of invisible indexes and more advanced filtering via expression indexes.</p>
         <div class="syntax">-- Workaround: function-based index returning NULL for excluded rows:
@@ -192,6 +207,8 @@ WHERE CASE WHEN active = 1 THEN email END = 'alice@example.com';
 -- More practical: filter via NOT NULL expression:
 CREATE INDEX idx_pending
     ON orders (CASE WHEN status = 'PENDING' THEN order_id END);</div>
+      </div>
+      <div class="per-db-entry" data-db="sqlite">
         <h4>SQLite</h4>
         <p class="notes">Partial indexes with a WHERE clause supported since SQLite 3.8.9 (2015-03-09). The query's WHERE clause must imply the index predicate for the optimizer to use it. Works with all SQLite column types.</p>
         <div class="syntax">-- Partial index on active users:
@@ -208,9 +225,11 @@ CREATE UNIQUE INDEX idx_unique_active_username
 CREATE INDEX idx_tagged_posts
     ON posts (tag)
     WHERE tag IS NOT NULL;</div>
+      </div>
   </div>
   <script src="/search.js" defer></script>
   <script src="/splash.js" defer></script>
   <script src="/track.js" defer></script>
+  <script src="/compare.js" defer></script>
 </body>
 </html>

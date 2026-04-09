@@ -57,6 +57,14 @@
   <p class="command-overview">Tables that exist only for the duration of a session or transaction, prefixed with CREATE TEMPORARY TABLE. Useful for intermediate results, complex transformations, and storing staging data. Some databases auto-drop on commit; others require explicit cleanup.</p>
 
   <h2>Compatibility</h2>
+  <div class="compare-bar">
+    <span class="compare-label">Show:</span>
+    <label><input type="checkbox" value="mysql" checked> MySQL</label>
+    <label><input type="checkbox" value="postgresql" checked> PostgreSQL</label>
+    <label><input type="checkbox" value="sqlserver" checked> SQL Server</label>
+    <label><input type="checkbox" value="oracle" checked> Oracle</label>
+    <label><input type="checkbox" value="sqlite" checked> SQLite</label>
+  </div>
   <table>
     <thead>
       <tr>
@@ -67,31 +75,31 @@
       </tr>
     </thead>
     <tbody>
-          <tr>
+          <tr data-db="mysql">
             <td>MySQL</td>
             <td class="supported">✓ Supported</td>
             <td>3.23</td>
             <td class="notes">CREATE TEMPORARY TABLE creates a session-scoped table dropped automatically at session end. Temp tables are invisible to other sessions (each session gets its own private copy even if they use the same name). Cannot be referenced twice in the same query (MySQL limitation). Temp tables appear in information_schema and SHOW TABLES for the current session.</td>
           </tr>
-          <tr>
+          <tr data-db="postgresql">
             <td>PostgreSQL</td>
             <td class="supported">✓ Supported</td>
             <td>6.0</td>
             <td class="notes">CREATE TEMPORARY TABLE (or TEMP TABLE). Default lifetime is session; ON COMMIT DROP makes it transaction-scoped; ON COMMIT DELETE ROWS keeps the table structure but truncates it at each commit. PostgreSQL creates temp tables in a per-session temporary schema (pg_temp_NNN) that is searched automatically. Global temporary tables are not supported (each session gets its own isolated table). UNLOGGED tables are a related alternative for fast but non-crash-safe permanent tables.</td>
           </tr>
-          <tr>
+          <tr data-db="sqlserver">
             <td>SQL Server</td>
             <td class="supported">✓ Supported</td>
             <td>6.5</td>
             <td class="notes">Two kinds: local temp tables (#table) are session-scoped and private; global temp tables (##table) are shared across sessions and dropped when the last referencing session closes. Temp tables are physically stored in tempdb. Table variables (@table) are an alternative with different scoping and statistics behavior. Temp tables support indexes and statistics; table variables have limited statistics and no column indexes.</td>
           </tr>
-          <tr>
+          <tr data-db="oracle">
             <td>Oracle</td>
             <td class="supported">✓ Supported</td>
             <td>8i</td>
             <td class="notes">Oracle uses Global Temporary Tables (GTTs): the table structure is permanent (visible in all_tables) but each session's data is private. Data lifetime is either ON COMMIT DELETE ROWS (transaction-scoped, default) or ON COMMIT PRESERVE ROWS (session-scoped). GTTs are created once and reused across sessions — no CREATE per-session. Oracle 18c added private temporary tables (CREATE PRIVATE TEMPORARY TABLE) which exist only for the session duration like other engines.</td>
           </tr>
-          <tr>
+          <tr data-db="sqlite">
             <td>SQLite</td>
             <td class="supported">✓ Supported</td>
             <td>1.0</td>
@@ -127,6 +135,7 @@ SELECT * FROM temp_results;</div>
 
   <h2>Per-Database Syntax &amp; Notes</h2>
   <div class="per-db-section">
+      <div class="per-db-entry" data-db="mysql">
         <h4>MySQL</h4>
         <p class="notes">CREATE TEMPORARY TABLE creates a session-scoped table dropped automatically at session end. Temp tables are invisible to other sessions (each session gets its own private copy even if they use the same name). Cannot be referenced twice in the same query (MySQL limitation). Temp tables appear in information_schema and SHOW TABLES for the current session.</p>
         <div class="syntax">CREATE TEMPORARY TABLE tmp_active_users (
@@ -142,6 +151,8 @@ SELECT * FROM tmp_active_users;
 -- Dropped automatically at session end;
 -- or drop explicitly:
 DROP TEMPORARY TABLE tmp_active_users;</div>
+      </div>
+      <div class="per-db-entry" data-db="postgresql">
         <h4>PostgreSQL</h4>
         <p class="notes">CREATE TEMPORARY TABLE (or TEMP TABLE). Default lifetime is session; ON COMMIT DROP makes it transaction-scoped; ON COMMIT DELETE ROWS keeps the table structure but truncates it at each commit. PostgreSQL creates temp tables in a per-session temporary schema (pg_temp_NNN) that is searched automatically. Global temporary tables are not supported (each session gets its own isolated table). UNLOGGED tables are a related alternative for fast but non-crash-safe permanent tables.</p>
         <div class="syntax">-- Session-scoped (default):
@@ -163,6 +174,8 @@ CREATE TEMP TABLE tmp_batch (
 -- From query:
 CREATE TEMP TABLE tmp_summary AS
 SELECT dept, SUM(salary) FROM employees GROUP BY dept;</div>
+      </div>
+      <div class="per-db-entry" data-db="sqlserver">
         <h4>SQL Server</h4>
         <p class="notes">Two kinds: local temp tables (#table) are session-scoped and private; global temp tables (##table) are shared across sessions and dropped when the last referencing session closes. Temp tables are physically stored in tempdb. Table variables (@table) are an alternative with different scoping and statistics behavior. Temp tables support indexes and statistics; table variables have limited statistics and no column indexes.</p>
         <div class="syntax">-- Local temp table (session-private):
@@ -185,6 +198,8 @@ CREATE TABLE ##shared_work (
 -- Table variable (alternative, no DDL needed):
 DECLARE @results TABLE (id INT, val NVARCHAR(100));
 INSERT INTO @results VALUES (1,'a');</div>
+      </div>
+      <div class="per-db-entry" data-db="oracle">
         <h4>Oracle</h4>
         <p class="notes">Oracle uses Global Temporary Tables (GTTs): the table structure is permanent (visible in all_tables) but each session's data is private. Data lifetime is either ON COMMIT DELETE ROWS (transaction-scoped, default) or ON COMMIT PRESERVE ROWS (session-scoped). GTTs are created once and reused across sessions — no CREATE per-session. Oracle 18c added private temporary tables (CREATE PRIVATE TEMPORARY TABLE) which exist only for the session duration like other engines.</p>
         <div class="syntax">-- Global temporary table (structure persists, data is private):
@@ -205,6 +220,8 @@ CREATE PRIVATE TEMPORARY TABLE ora$ptt_work (
 
 INSERT INTO tmp_active_users SELECT id, username FROM users WHERE active=1;
 SELECT * FROM tmp_active_users;</div>
+      </div>
+      <div class="per-db-entry" data-db="sqlite">
         <h4>SQLite</h4>
         <p class="notes">CREATE TEMPORARY TABLE (or TEMP TABLE) creates a table in the temp database, which is session-scoped and stored in a separate temp file (or in memory). Temp tables are not visible to other database connections. Dropped automatically when the connection closes.</p>
         <div class="syntax">CREATE TEMPORARY TABLE tmp_active_users (
@@ -222,9 +239,11 @@ DROP TABLE IF EXISTS tmp_active_users;
 
 -- In-memory temp table (default connection is :memory:):
 -- All tables are implicitly temp when connection is :memory:</div>
+      </div>
   </div>
   <script src="/search.js" defer></script>
   <script src="/splash.js" defer></script>
   <script src="/track.js" defer></script>
+  <script src="/compare.js" defer></script>
 </body>
 </html>

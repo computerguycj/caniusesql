@@ -57,6 +57,14 @@
   <p class="command-overview">Saved queries that behave like virtual tables, encapsulating complex logic and simplifying access control. Views can be nested (view on view), and some support updatability. Security views are powerful for column-level access control.</p>
 
   <h2>Compatibility</h2>
+  <div class="compare-bar">
+    <span class="compare-label">Show:</span>
+    <label><input type="checkbox" value="mysql" checked> MySQL</label>
+    <label><input type="checkbox" value="postgresql" checked> PostgreSQL</label>
+    <label><input type="checkbox" value="sqlserver" checked> SQL Server</label>
+    <label><input type="checkbox" value="oracle" checked> Oracle</label>
+    <label><input type="checkbox" value="sqlite" checked> SQLite</label>
+  </div>
   <table>
     <thead>
       <tr>
@@ -67,31 +75,31 @@
       </tr>
     </thead>
     <tbody>
-          <tr>
+          <tr data-db="mysql">
             <td>MySQL</td>
             <td class="supported">✓ Supported</td>
             <td>all</td>
             <td class="notes">Standard views supported. No materialized views.</td>
           </tr>
-          <tr>
+          <tr data-db="postgresql">
             <td>PostgreSQL</td>
             <td class="supported">✓ Supported</td>
             <td>all</td>
             <td class="notes">Standard views + MATERIALIZED VIEW (since 9.3) with REFRESH MATERIALIZED VIEW [CONCURRENTLY] (since 9.4).</td>
           </tr>
-          <tr>
+          <tr data-db="sqlserver">
             <td>SQL Server</td>
             <td class="supported">✓ Supported</td>
             <td>all</td>
             <td class="notes">Standard views + indexed views (CREATE UNIQUE CLUSTERED INDEX on a view materializes it, similar to a materialized view).</td>
           </tr>
-          <tr>
+          <tr data-db="oracle">
             <td>Oracle</td>
             <td class="supported">✓ Supported</td>
             <td>all</td>
             <td class="notes">Standard views + MATERIALIZED VIEW (predates PostgreSQL's). Supports ON COMMIT REFRESH and ON DEMAND REFRESH.</td>
           </tr>
-          <tr>
+          <tr data-db="sqlite">
             <td>SQLite</td>
             <td class="supported">✓ Supported</td>
             <td>all</td>
@@ -123,30 +131,41 @@ WHERE condition;</div>
 
   <h2>Per-Database Syntax &amp; Notes</h2>
   <div class="per-db-section">
+      <div class="per-db-entry" data-db="mysql">
         <h4>MySQL</h4>
         <p class="notes">Standard views supported. No materialized views.</p>
         <div class="syntax">CREATE VIEW v AS SELECT col FROM tbl WHERE active = 1;</div>
+      </div>
+      <div class="per-db-entry" data-db="postgresql">
         <h4>PostgreSQL</h4>
         <p class="notes">Standard views + MATERIALIZED VIEW (since 9.3) with REFRESH MATERIALIZED VIEW [CONCURRENTLY] (since 9.4).</p>
         <div class="syntax">CREATE VIEW v AS SELECT col FROM tbl;
 CREATE MATERIALIZED VIEW mv AS SELECT col FROM tbl;
 REFRESH MATERIALIZED VIEW CONCURRENTLY mv;</div>
+      </div>
+      <div class="per-db-entry" data-db="sqlserver">
         <h4>SQL Server</h4>
         <p class="notes">Standard views + indexed views (CREATE UNIQUE CLUSTERED INDEX on a view materializes it, similar to a materialized view).</p>
         <div class="syntax">CREATE VIEW v AS SELECT col FROM tbl;
 -- Materialize it:
 CREATE UNIQUE CLUSTERED INDEX idx ON v (col);</div>
+      </div>
+      <div class="per-db-entry" data-db="oracle">
         <h4>Oracle</h4>
         <p class="notes">Standard views + MATERIALIZED VIEW (predates PostgreSQL's). Supports ON COMMIT REFRESH and ON DEMAND REFRESH.</p>
         <div class="syntax">CREATE VIEW v AS SELECT col FROM tbl;
 CREATE MATERIALIZED VIEW mv
 REFRESH ON DEMAND AS SELECT col FROM tbl;</div>
+      </div>
+      <div class="per-db-entry" data-db="sqlite">
         <h4>SQLite</h4>
         <p class="notes">Views are read-only. INSERT/UPDATE/DELETE through a view requires an INSTEAD OF trigger.</p>
         <div class="syntax">CREATE VIEW v AS SELECT col FROM tbl;</div>
+      </div>
   </div>
   <script src="/search.js" defer></script>
   <script src="/splash.js" defer></script>
   <script src="/track.js" defer></script>
+  <script src="/compare.js" defer></script>
 </body>
 </html>

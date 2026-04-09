@@ -57,6 +57,14 @@
   <p class="command-overview">Divides rows into N roughly equal groups and assigns a bucket number (1 to N) to each row. Useful for creating quartile, quintile, or decile buckets for analysis and bucketed sampling.</p>
 
   <h2>Compatibility</h2>
+  <div class="compare-bar">
+    <span class="compare-label">Show:</span>
+    <label><input type="checkbox" value="mysql" checked> MySQL</label>
+    <label><input type="checkbox" value="postgresql" checked> PostgreSQL</label>
+    <label><input type="checkbox" value="sqlserver" checked> SQL Server</label>
+    <label><input type="checkbox" value="oracle" checked> Oracle</label>
+    <label><input type="checkbox" value="sqlite" checked> SQLite</label>
+  </div>
   <table>
     <thead>
       <tr>
@@ -67,31 +75,31 @@
       </tr>
     </thead>
     <tbody>
-          <tr>
+          <tr data-db="mysql">
             <td>MySQL</td>
             <td class="supported">✓ Supported</td>
             <td>8.0</td>
             <td class="notes">NTILE(n) added in MySQL 8.0. Distributes rows into n buckets. If rows don't divide evenly, earlier buckets get one extra row. NTILE(100) = percentile bucket.</td>
           </tr>
-          <tr>
+          <tr data-db="postgresql">
             <td>PostgreSQL</td>
             <td class="supported">✓ Supported</td>
             <td>8.4</td>
             <td class="notes">Standard NTILE(n). Supports the WINDOW clause shorthand for reusing window definitions.</td>
           </tr>
-          <tr>
+          <tr data-db="sqlserver">
             <td>SQL Server</td>
             <td class="supported">✓ Supported</td>
             <td>2005</td>
             <td class="notes">Standard NTILE(n). Available since SQL Server 2005.</td>
           </tr>
-          <tr>
+          <tr data-db="oracle">
             <td>Oracle</td>
             <td class="supported">✓ Supported</td>
             <td>8i</td>
             <td class="notes">Standard NTILE(n). Available since 8i.</td>
           </tr>
-          <tr>
+          <tr data-db="sqlite">
             <td>SQLite</td>
             <td class="supported">✓ Supported</td>
             <td>3.25.0</td>
@@ -124,6 +132,7 @@ FROM students;</div>
 
   <h2>Per-Database Syntax &amp; Notes</h2>
   <div class="per-db-section">
+      <div class="per-db-entry" data-db="mysql">
         <h4>MySQL</h4>
         <p class="notes">NTILE(n) added in MySQL 8.0. Distributes rows into n buckets. If rows don't divide evenly, earlier buckets get one extra row. NTILE(100) = percentile bucket.</p>
         <div class="syntax">SELECT name, score,
@@ -136,6 +145,8 @@ FROM students;
 SELECT name, dept, salary,
   NTILE(3) OVER (PARTITION BY dept ORDER BY salary DESC) AS salary_tier
 FROM employees;</div>
+      </div>
+      <div class="per-db-entry" data-db="postgresql">
         <h4>PostgreSQL</h4>
         <p class="notes">Standard NTILE(n). Supports the WINDOW clause shorthand for reusing window definitions.</p>
         <div class="syntax">SELECT name, score,
@@ -148,25 +159,33 @@ SELECT name, score,
   NTILE(10) OVER w AS decile
 FROM students
 WINDOW w AS (ORDER BY score DESC);</div>
+      </div>
+      <div class="per-db-entry" data-db="sqlserver">
         <h4>SQL Server</h4>
         <p class="notes">Standard NTILE(n). Available since SQL Server 2005.</p>
         <div class="syntax">SELECT name, score,
   NTILE(4)  OVER (ORDER BY score DESC) AS quartile,
   NTILE(10) OVER (ORDER BY score DESC) AS decile
 FROM students;</div>
+      </div>
+      <div class="per-db-entry" data-db="oracle">
         <h4>Oracle</h4>
         <p class="notes">Standard NTILE(n). Available since 8i.</p>
         <div class="syntax">SELECT name, score,
   NTILE(4) OVER (ORDER BY score DESC) AS quartile
 FROM students;</div>
+      </div>
+      <div class="per-db-entry" data-db="sqlite">
         <h4>SQLite</h4>
         <p class="notes">NTILE(n) added in SQLite 3.25.0.</p>
         <div class="syntax">SELECT name, score,
   NTILE(4) OVER (ORDER BY score DESC) AS quartile
 FROM students;</div>
+      </div>
   </div>
   <script src="/search.js" defer></script>
   <script src="/splash.js" defer></script>
   <script src="/track.js" defer></script>
+  <script src="/compare.js" defer></script>
 </body>
 </html>

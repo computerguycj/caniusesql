@@ -57,6 +57,14 @@
   <p class="command-overview">ANY compares a value against any element from a subquery or list (TRUE if any comparison is TRUE); ALL requires all comparisons to be TRUE. Useful for comparative filters against grouped or multi-row subquery results.</p>
 
   <h2>Compatibility</h2>
+  <div class="compare-bar">
+    <span class="compare-label">Show:</span>
+    <label><input type="checkbox" value="mysql" checked> MySQL</label>
+    <label><input type="checkbox" value="postgresql" checked> PostgreSQL</label>
+    <label><input type="checkbox" value="sqlserver" checked> SQL Server</label>
+    <label><input type="checkbox" value="oracle" checked> Oracle</label>
+    <label><input type="checkbox" value="sqlite" checked> SQLite</label>
+  </div>
   <table>
     <thead>
       <tr>
@@ -67,31 +75,31 @@
       </tr>
     </thead>
     <tbody>
-          <tr>
+          <tr data-db="mysql">
             <td>MySQL</td>
             <td class="supported">✓ Supported</td>
             <td>4.1</td>
             <td class="notes">Both ANY and ALL supported since 4.1. SOME is an alias for ANY. Works with =, &lt;&gt;, &lt;, &lt;=, &gt;, &gt;= operators. = ANY(...) is equivalent to IN(...). &lt;&gt; ALL(...) is equivalent to NOT IN(...). If the subquery returns an empty result, ANY returns false and ALL returns true (vacuous truth). NULL in the subquery results causes the same NULL-propagation issues as IN.</td>
           </tr>
-          <tr>
+          <tr data-db="postgresql">
             <td>PostgreSQL</td>
             <td class="supported">✓ Supported</td>
             <td>6.0</td>
             <td class="notes">Full ANY / ALL / SOME support with all comparison operators. PostgreSQL additionally supports ANY and ALL against arrays (not just subqueries): WHERE val = ANY(ARRAY[1,2,3]) is a common idiom. Array form is often more concise than IN() for literal lists.</td>
           </tr>
-          <tr>
+          <tr data-db="sqlserver">
             <td>SQL Server</td>
             <td class="supported">✓ Supported</td>
             <td>6.5</td>
             <td class="notes">ANY and ALL supported but rarely used in practice. SOME is also accepted as an alias for ANY. SQL Server developers typically use IN / NOT IN / EXISTS patterns instead, which the optimizer handles equivalently. The array form (ANY(ARRAY[...])) is not supported — only the subquery form.</td>
           </tr>
-          <tr>
+          <tr data-db="oracle">
             <td>Oracle</td>
             <td class="supported">✓ Supported</td>
             <td>7</td>
             <td class="notes">ANY and ALL supported with all comparison operators. SOME accepted as alias for ANY. Scalar subquery optimization applies. Like SQL Server, Oracle developers typically use IN / EXISTS / aggregate subquery patterns in practice, but ANY / ALL are fully valid.</td>
           </tr>
-          <tr>
+          <tr data-db="sqlite">
             <td>SQLite</td>
             <td class="not-supported">✗ Not Supported</td>
             <td>—</td>
@@ -130,6 +138,7 @@ WHERE salary &gt; ALL (
 
   <h2>Per-Database Syntax &amp; Notes</h2>
   <div class="per-db-section">
+      <div class="per-db-entry" data-db="mysql">
         <h4>MySQL</h4>
         <p class="notes">Both ANY and ALL supported since 4.1. SOME is an alias for ANY. Works with =, &lt;&gt;, &lt;, &lt;=, &gt;, &gt;= operators. = ANY(...) is equivalent to IN(...). &lt;&gt; ALL(...) is equivalent to NOT IN(...). If the subquery returns an empty result, ANY returns false and ALL returns true (vacuous truth). NULL in the subquery results causes the same NULL-propagation issues as IN.</p>
         <div class="syntax">-- ANY (true if any value matches):
@@ -148,6 +157,8 @@ WHERE category_id = ANY (SELECT id FROM categories WHERE active = 1);
 -- &lt;&gt; ALL is equivalent to NOT IN:
 SELECT * FROM orders
 WHERE status &lt;&gt; ALL (SELECT status FROM cancelled_statuses);</div>
+      </div>
+      <div class="per-db-entry" data-db="postgresql">
         <h4>PostgreSQL</h4>
         <p class="notes">Full ANY / ALL / SOME support with all comparison operators. PostgreSQL additionally supports ANY and ALL against arrays (not just subqueries): WHERE val = ANY(ARRAY[1,2,3]) is a common idiom. Array form is often more concise than IN() for literal lists.</p>
         <div class="syntax">-- Subquery form:
@@ -163,6 +174,8 @@ WHERE status &lt;&gt; ALL(ARRAY['cancelled', 'refunded']);
 
 -- Useful for parameterized queries:
 -- WHERE tag_id = ANY($1::int[])  (pass an array parameter)</div>
+      </div>
+      <div class="per-db-entry" data-db="sqlserver">
         <h4>SQL Server</h4>
         <p class="notes">ANY and ALL supported but rarely used in practice. SOME is also accepted as an alias for ANY. SQL Server developers typically use IN / NOT IN / EXISTS patterns instead, which the optimizer handles equivalently. The array form (ANY(ARRAY[...])) is not supported — only the subquery form.</p>
         <div class="syntax">-- ANY with subquery:
@@ -177,6 +190,8 @@ WHERE salary &gt; ALL (SELECT salary FROM employees WHERE dept = 'Interns');
 SELECT name FROM employees
 WHERE salary &gt; (SELECT MIN(salary) FROM employees WHERE dept = 'Interns');
 -- (MIN achieves the same as &gt; ALL; MAX achieves the same as &gt; ANY)</div>
+      </div>
+      <div class="per-db-entry" data-db="oracle">
         <h4>Oracle</h4>
         <p class="notes">ANY and ALL supported with all comparison operators. SOME accepted as alias for ANY. Scalar subquery optimization applies. Like SQL Server, Oracle developers typically use IN / EXISTS / aggregate subquery patterns in practice, but ANY / ALL are fully valid.</p>
         <div class="syntax">-- ANY:
@@ -191,6 +206,8 @@ WHERE salary &gt; ALL (SELECT salary FROM employees WHERE dept = 'Interns');
 SELECT name FROM employees
 WHERE salary &gt; (SELECT MAX(salary) FROM employees WHERE dept = 'Interns');
 -- (MAX(x) = x &gt; ALL subquery; MIN(x) = x &gt; ANY subquery)</div>
+      </div>
+      <div class="per-db-entry" data-db="sqlite">
         <h4>SQLite</h4>
         <p class="notes">ANY and ALL operators are not supported. Use IN, NOT IN, EXISTS, or subqueries with MIN/MAX aggregates as equivalents.</p>
         <div class="syntax">-- Instead of &gt; ANY(subquery), use &gt; MIN(...):
@@ -204,9 +221,11 @@ WHERE salary &gt; (SELECT MAX(salary) FROM employees WHERE dept = 'Interns');
 -- Instead of = ANY, use IN:
 SELECT * FROM products
 WHERE category_id IN (SELECT id FROM categories WHERE active = 1);</div>
+      </div>
   </div>
   <script src="/search.js" defer></script>
   <script src="/splash.js" defer></script>
   <script src="/track.js" defer></script>
+  <script src="/compare.js" defer></script>
 </body>
 </html>

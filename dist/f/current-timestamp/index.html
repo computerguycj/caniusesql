@@ -57,6 +57,14 @@
   <p class="command-overview">Return the current date, time, or timestamp at query execution time. Useful for filtering by today or recording creation timestamps. CURRENT_TIMESTAMP and NOW() are often synonymous; verify behavior in your engine.</p>
 
   <h2>Compatibility</h2>
+  <div class="compare-bar">
+    <span class="compare-label">Show:</span>
+    <label><input type="checkbox" value="mysql" checked> MySQL</label>
+    <label><input type="checkbox" value="postgresql" checked> PostgreSQL</label>
+    <label><input type="checkbox" value="sqlserver" checked> SQL Server</label>
+    <label><input type="checkbox" value="oracle" checked> Oracle</label>
+    <label><input type="checkbox" value="sqlite" checked> SQLite</label>
+  </div>
   <table>
     <thead>
       <tr>
@@ -67,31 +75,31 @@
       </tr>
     </thead>
     <tbody>
-          <tr>
+          <tr data-db="mysql">
             <td>MySQL</td>
             <td class="supported">✓ Supported</td>
             <td>all</td>
             <td class="notes">NOW() returns datetime in session timezone. CURRENT_TIMESTAMP is a synonym. SYSDATE() returns the time at the moment of execution (differs from NOW() inside stored procs). UTC_TIMESTAMP() for UTC. CURDATE() / CURTIME() for date or time only.</td>
           </tr>
-          <tr>
+          <tr data-db="postgresql">
             <td>PostgreSQL</td>
             <td class="supported">✓ Supported</td>
             <td>all</td>
             <td class="notes">NOW() and CURRENT_TIMESTAMP return timestamptz (with timezone) fixed at transaction start — the same value is returned throughout a transaction. CLOCK_TIMESTAMP() returns the real current time (changes mid-transaction). CURRENT_DATE and CURRENT_TIME also available.</td>
           </tr>
-          <tr>
+          <tr data-db="sqlserver">
             <td>SQL Server</td>
             <td class="supported">✓ Supported</td>
             <td>all</td>
             <td class="notes">GETDATE() returns local server time as datetime. GETUTCDATE() for UTC. SYSDATETIME() returns higher-precision datetime2. SYSUTCDATETIME() for UTC datetime2. CURRENT_TIMESTAMP is a synonym for GETDATE().</td>
           </tr>
-          <tr>
+          <tr data-db="oracle">
             <td>Oracle</td>
             <td class="supported">✓ Supported</td>
             <td>all</td>
             <td class="notes">SYSDATE returns server date/time without timezone (DATE type). SYSTIMESTAMP returns with timezone (TIMESTAMP WITH TIME ZONE). CURRENT_DATE and CURRENT_TIMESTAMP return session timezone values.</td>
           </tr>
-          <tr>
+          <tr data-db="sqlite">
             <td>SQLite</td>
             <td class="supported">✓ Supported</td>
             <td>all</td>
@@ -120,6 +128,7 @@
 
   <h2>Per-Database Syntax &amp; Notes</h2>
   <div class="per-db-section">
+      <div class="per-db-entry" data-db="mysql">
         <h4>MySQL</h4>
         <p class="notes">NOW() returns datetime in session timezone. CURRENT_TIMESTAMP is a synonym. SYSDATE() returns the time at the moment of execution (differs from NOW() inside stored procs). UTC_TIMESTAMP() for UTC. CURDATE() / CURTIME() for date or time only.</p>
         <div class="syntax">SELECT NOW();               -- '2024-03-15 14:23:01'
@@ -127,6 +136,8 @@ SELECT CURRENT_TIMESTAMP;   -- same as NOW()
 SELECT UTC_TIMESTAMP();     -- UTC
 SELECT CURDATE();           -- '2024-03-15'
 SELECT CURTIME();           -- '14:23:01'</div>
+      </div>
+      <div class="per-db-entry" data-db="postgresql">
         <h4>PostgreSQL</h4>
         <p class="notes">NOW() and CURRENT_TIMESTAMP return timestamptz (with timezone) fixed at transaction start — the same value is returned throughout a transaction. CLOCK_TIMESTAMP() returns the real current time (changes mid-transaction). CURRENT_DATE and CURRENT_TIME also available.</p>
         <div class="syntax">SELECT NOW();                  -- transaction start time, with tz
@@ -134,27 +145,35 @@ SELECT CURRENT_TIMESTAMP;      -- same as NOW()
 SELECT CLOCK_TIMESTAMP();      -- actual wall clock (changes mid-tx)
 SELECT CURRENT_DATE;           -- '2024-03-15'
 SELECT CURRENT_TIME;           -- '14:23:01.123456+00'</div>
+      </div>
+      <div class="per-db-entry" data-db="sqlserver">
         <h4>SQL Server</h4>
         <p class="notes">GETDATE() returns local server time as datetime. GETUTCDATE() for UTC. SYSDATETIME() returns higher-precision datetime2. SYSUTCDATETIME() for UTC datetime2. CURRENT_TIMESTAMP is a synonym for GETDATE().</p>
         <div class="syntax">SELECT GETDATE();              -- '2024-03-15 14:23:01.123'
 SELECT GETUTCDATE();           -- UTC datetime
 SELECT SYSDATETIME();          -- datetime2 (higher precision)
 SELECT CURRENT_TIMESTAMP;      -- synonym for GETDATE()</div>
+      </div>
+      <div class="per-db-entry" data-db="oracle">
         <h4>Oracle</h4>
         <p class="notes">SYSDATE returns server date/time without timezone (DATE type). SYSTIMESTAMP returns with timezone (TIMESTAMP WITH TIME ZONE). CURRENT_DATE and CURRENT_TIMESTAMP return session timezone values.</p>
         <div class="syntax">SELECT SYSDATE FROM DUAL;           -- server local, no timezone
 SELECT SYSTIMESTAMP FROM DUAL;      -- with timezone, high precision
 SELECT CURRENT_DATE FROM DUAL;      -- session timezone
 SELECT CURRENT_TIMESTAMP FROM DUAL; -- session timezone with tz</div>
+      </div>
+      <div class="per-db-entry" data-db="sqlite">
         <h4>SQLite</h4>
         <p class="notes">No dedicated function — use datetime(), date(), or time() with 'now'. Always returns UTC. CURRENT_TIMESTAMP, CURRENT_DATE, and CURRENT_TIME are also available as SQL-standard aliases.</p>
         <div class="syntax">SELECT datetime('now');            -- '2024-03-15 14:23:01' (UTC)
 SELECT datetime('now', 'localtime'); -- converted to local time
 SELECT CURRENT_TIMESTAMP;           -- same as datetime('now')
 SELECT date('now');                 -- '2024-03-15'</div>
+      </div>
   </div>
   <script src="/search.js" defer></script>
   <script src="/splash.js" defer></script>
   <script src="/track.js" defer></script>
+  <script src="/compare.js" defer></script>
 </body>
 </html>

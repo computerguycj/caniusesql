@@ -57,6 +57,14 @@
   <p class="command-overview">Rotates rows into columns, turning distinct values from one column into separate output columns. Essential for creating crosstab reports from normalized data. SQL Server has native PIVOT; PostgreSQL uses crosstab() from tablefunc; MySQL uses MAX with CASE.</p>
 
   <h2>Compatibility</h2>
+  <div class="compare-bar">
+    <span class="compare-label">Show:</span>
+    <label><input type="checkbox" value="mysql" checked> MySQL</label>
+    <label><input type="checkbox" value="postgresql" checked> PostgreSQL</label>
+    <label><input type="checkbox" value="sqlserver" checked> SQL Server</label>
+    <label><input type="checkbox" value="oracle" checked> Oracle</label>
+    <label><input type="checkbox" value="sqlite" checked> SQLite</label>
+  </div>
   <table>
     <thead>
       <tr>
@@ -67,31 +75,31 @@
       </tr>
     </thead>
     <tbody>
-          <tr>
+          <tr data-db="mysql">
             <td>MySQL</td>
             <td class="not-supported">✗ Not Supported</td>
             <td>—</td>
             <td class="notes">No PIVOT—use conditional aggregation</td>
           </tr>
-          <tr>
+          <tr data-db="postgresql">
             <td>PostgreSQL</td>
             <td class="not-supported">✗ Not Supported</td>
             <td>—</td>
             <td class="notes">Use tablefunc crosstab()</td>
           </tr>
-          <tr>
+          <tr data-db="sqlserver">
             <td>SQL Server</td>
             <td class="supported">✓ Supported</td>
             <td>2005</td>
             <td class="notes">Since SQL Server 2005</td>
           </tr>
-          <tr>
+          <tr data-db="oracle">
             <td>Oracle</td>
             <td class="supported">✓ Supported</td>
             <td>11g</td>
             <td class="notes">Since Oracle 11g</td>
           </tr>
-          <tr>
+          <tr data-db="sqlite">
             <td>SQLite</td>
             <td class="not-supported">✗ Not Supported</td>
             <td>—</td>
@@ -127,6 +135,7 @@ PIVOT (
 
   <h2>Per-Database Syntax &amp; Notes</h2>
   <div class="per-db-section">
+      <div class="per-db-entry" data-db="mysql">
         <h4>MySQL</h4>
         <p class="notes">No PIVOT—use conditional aggregation</p>
         <div class="syntax">SELECT
@@ -135,6 +144,8 @@ PIVOT (
   …
 FROM sales
 GROUP BY category;</div>
+      </div>
+      <div class="per-db-entry" data-db="postgresql">
         <h4>PostgreSQL</h4>
         <p class="notes">Use tablefunc crosstab()</p>
         <div class="syntax">SELECT *
@@ -142,6 +153,8 @@ FROM crosstab(
   'SELECT category,month,value FROM sales ORDER BY 1,2',
   'VALUES (''Jan''),( ''Feb''),( ''Mar'')'
 ) AS ct(category text, Jan int, Feb int, Mar int);</div>
+      </div>
+      <div class="per-db-entry" data-db="sqlserver">
         <h4>SQL Server</h4>
         <p class="notes">Since SQL Server 2005</p>
         <div class="syntax">SELECT *
@@ -151,6 +164,8 @@ FROM (
 PIVOT(
   SUM(value) FOR month IN ([Jan],[Feb],[Mar])
 ) AS p;</div>
+      </div>
+      <div class="per-db-entry" data-db="oracle">
         <h4>Oracle</h4>
         <p class="notes">Since Oracle 11g</p>
         <div class="syntax">SELECT *
@@ -160,6 +175,8 @@ FROM (
 PIVOT(
   SUM(value) FOR month IN ('Jan' AS Jan,'Feb' AS Feb,'Mar' AS Mar)
 );</div>
+      </div>
+      <div class="per-db-entry" data-db="sqlite">
         <h4>SQLite</h4>
         <p class="notes">No PIVOT—use CASE/ GROUP BY</p>
         <div class="syntax">SELECT
@@ -168,9 +185,11 @@ PIVOT(
   …
 FROM sales
 GROUP BY category;</div>
+      </div>
   </div>
   <script src="/search.js" defer></script>
   <script src="/splash.js" defer></script>
   <script src="/track.js" defer></script>
+  <script src="/compare.js" defer></script>
 </body>
 </html>

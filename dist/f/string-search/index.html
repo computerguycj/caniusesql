@@ -57,6 +57,14 @@
   <p class="command-overview">Returns the 1-based position of a substring within a string, or 0 if not found. Standard SQL equivalent of MySQL LOCATE and SQL Server CHARINDEX.</p>
 
   <h2>Compatibility</h2>
+  <div class="compare-bar">
+    <span class="compare-label">Show:</span>
+    <label><input type="checkbox" value="mysql" checked> MySQL</label>
+    <label><input type="checkbox" value="postgresql" checked> PostgreSQL</label>
+    <label><input type="checkbox" value="sqlserver" checked> SQL Server</label>
+    <label><input type="checkbox" value="oracle" checked> Oracle</label>
+    <label><input type="checkbox" value="sqlite" checked> SQLite</label>
+  </div>
   <table>
     <thead>
       <tr>
@@ -67,31 +75,31 @@
       </tr>
     </thead>
     <tbody>
-          <tr>
+          <tr data-db="mysql">
             <td>MySQL</td>
             <td class="supported">✓ Supported</td>
             <td>all</td>
             <td class="notes">INSTR(str, substr) and LOCATE(substr, str [, start]) are the native functions. POSITION(substr IN str) also works as SQL-standard syntax. Returns 0 if not found (not NULL).</td>
           </tr>
-          <tr>
+          <tr data-db="postgresql">
             <td>PostgreSQL</td>
             <td class="supported">✓ Supported</td>
             <td>all</td>
             <td class="notes">POSITION(substr IN str) is the standard form. STRPOS(str, substr) is a PostgreSQL-specific alias with reversed argument order. Returns 0 if not found. No CHARINDEX or INSTR.</td>
           </tr>
-          <tr>
+          <tr data-db="sqlserver">
             <td>SQL Server</td>
             <td class="supported">✓ Supported</td>
             <td>all</td>
             <td class="notes">CHARINDEX(needle, haystack [, start]) is the primary function. Returns 0 if not found. PATINDEX('%pattern%', str) supports LIKE-style wildcards. No INSTR or POSITION.</td>
           </tr>
-          <tr>
+          <tr data-db="oracle">
             <td>Oracle</td>
             <td class="supported">✓ Supported</td>
             <td>all</td>
             <td class="notes">INSTR(str, substr [, start [, occurrence]]) is the primary function. Unique: supports nth-occurrence search and negative start position (search from end). Returns 0 if not found.</td>
           </tr>
-          <tr>
+          <tr data-db="sqlite">
             <td>SQLite</td>
             <td class="supported">✓ Supported</td>
             <td>all</td>
@@ -125,33 +133,44 @@ INSTR(haystack_col, 'needle')</div>
 
   <h2>Per-Database Syntax &amp; Notes</h2>
   <div class="per-db-section">
+      <div class="per-db-entry" data-db="mysql">
         <h4>MySQL</h4>
         <p class="notes">INSTR(str, substr) and LOCATE(substr, str [, start]) are the native functions. POSITION(substr IN str) also works as SQL-standard syntax. Returns 0 if not found (not NULL).</p>
         <div class="syntax">SELECT INSTR('hello world', 'world');       -- 7
 SELECT LOCATE('world', 'hello world');     -- 7
 SELECT LOCATE('world', 'hello world', 8);  -- 0 (start after pos 8)
 SELECT POSITION('world' IN 'hello world'); -- 7</div>
+      </div>
+      <div class="per-db-entry" data-db="postgresql">
         <h4>PostgreSQL</h4>
         <p class="notes">POSITION(substr IN str) is the standard form. STRPOS(str, substr) is a PostgreSQL-specific alias with reversed argument order. Returns 0 if not found. No CHARINDEX or INSTR.</p>
         <div class="syntax">SELECT POSITION('world' IN 'hello world');  -- 7
 SELECT STRPOS('hello world', 'world');      -- 7</div>
+      </div>
+      <div class="per-db-entry" data-db="sqlserver">
         <h4>SQL Server</h4>
         <p class="notes">CHARINDEX(needle, haystack [, start]) is the primary function. Returns 0 if not found. PATINDEX('%pattern%', str) supports LIKE-style wildcards. No INSTR or POSITION.</p>
         <div class="syntax">SELECT CHARINDEX('world', 'hello world');      -- 7
 SELECT CHARINDEX('world', 'hello world', 8);   -- 0
 SELECT PATINDEX('%wor%', 'hello world');        -- 7</div>
+      </div>
+      <div class="per-db-entry" data-db="oracle">
         <h4>Oracle</h4>
         <p class="notes">INSTR(str, substr [, start [, occurrence]]) is the primary function. Unique: supports nth-occurrence search and negative start position (search from end). Returns 0 if not found.</p>
         <div class="syntax">SELECT INSTR('hello world', 'l')         FROM DUAL; -- 3
 SELECT INSTR('hello world', 'l', 1, 2)  FROM DUAL; -- 4 (2nd occurrence)
 SELECT INSTR('hello world', 'l', -1)    FROM DUAL; -- 10 (search from end)</div>
+      </div>
+      <div class="per-db-entry" data-db="sqlite">
         <h4>SQLite</h4>
         <p class="notes">INSTR(haystack, needle) returns the position of the first occurrence. Returns 0 if not found. Argument order is reversed compared to SQL Server's CHARINDEX.</p>
         <div class="syntax">SELECT INSTR('hello world', 'world');  -- 7
 SELECT INSTR('hello world', 'xyz');    -- 0</div>
+      </div>
   </div>
   <script src="/search.js" defer></script>
   <script src="/splash.js" defer></script>
   <script src="/track.js" defer></script>
+  <script src="/compare.js" defer></script>
 </body>
 </html>

@@ -57,6 +57,14 @@
   <p class="command-overview">PostgreSQL aggregate that computes a continuous percentile value (interpolated). PERCENTILE_CONT(0.5) returns the median. Essential for robust statistical measures.</p>
 
   <h2>Compatibility</h2>
+  <div class="compare-bar">
+    <span class="compare-label">Show:</span>
+    <label><input type="checkbox" value="mysql" checked> MySQL</label>
+    <label><input type="checkbox" value="postgresql" checked> PostgreSQL</label>
+    <label><input type="checkbox" value="sqlserver" checked> SQL Server</label>
+    <label><input type="checkbox" value="oracle" checked> Oracle</label>
+    <label><input type="checkbox" value="sqlite" checked> SQLite</label>
+  </div>
   <table>
     <thead>
       <tr>
@@ -67,31 +75,31 @@
       </tr>
     </thead>
     <tbody>
-          <tr>
+          <tr data-db="mysql">
             <td>MySQL</td>
             <td class="not-supported">✗ Not Supported</td>
             <td>—</td>
             <td class="notes">No PERCENTILE_CONT or PERCENTILE_DISC aggregate functions. Common workarounds: use a window function approach with ROW_NUMBER() and COUNT(*), or (MySQL 8.0+) use the window function versions of percentile approximation. NTILE(100) produces percentile buckets, not values.</td>
           </tr>
-          <tr>
+          <tr data-db="postgresql">
             <td>PostgreSQL</td>
             <td class="supported">✓ Supported</td>
             <td>9.4</td>
             <td class="notes">Both PERCENTILE_CONT and PERCENTILE_DISC are supported as ordered-set aggregate functions using the WITHIN GROUP (ORDER BY ...) syntax. Also available as window functions via FILTER clause. The array form PERCENTILE_CONT(ARRAY[0.25, 0.5, 0.75]) computes multiple percentiles in a single pass. Works on numeric and interval types.</td>
           </tr>
-          <tr>
+          <tr data-db="sqlserver">
             <td>SQL Server</td>
             <td class="supported">✓ Supported</td>
             <td>2012</td>
             <td class="notes">SQL Server implements PERCENTILE_CONT and PERCENTILE_DISC as window functions (with OVER clause), not as aggregate functions. This means they always require an OVER clause and are computed per-row — to get a single value per group, use a subquery or DISTINCT on the result. The WITHIN GROUP clause is NOT used in SQL Server's syntax.</td>
           </tr>
-          <tr>
+          <tr data-db="oracle">
             <td>Oracle</td>
             <td class="supported">✓ Supported</td>
             <td>8.1.6</td>
             <td class="notes">Oracle supports both the aggregate form (WITHIN GROUP, no OVER clause) and the analytic/window function form (WITHIN GROUP + OVER clause). The aggregate form returns one row per group; the analytic form computes the percentile and returns it for every row in the partition. Supports numeric and datetime ORDER BY expressions.</td>
           </tr>
-          <tr>
+          <tr data-db="sqlite">
             <td>SQLite</td>
             <td class="not-supported">✗ Not Supported</td>
             <td>—</td>
@@ -124,6 +132,7 @@ FROM employees;</div>
 
   <h2>Per-Database Syntax &amp; Notes</h2>
   <div class="per-db-section">
+      <div class="per-db-entry" data-db="mysql">
         <h4>MySQL</h4>
         <p class="notes">No PERCENTILE_CONT or PERCENTILE_DISC aggregate functions. Common workarounds: use a window function approach with ROW_NUMBER() and COUNT(*), or (MySQL 8.0+) use the window function versions of percentile approximation. NTILE(100) produces percentile buckets, not values.</p>
         <div class="syntax">-- Workaround: median via ROW_NUMBER (MySQL 8.0+):
@@ -146,6 +155,8 @@ FROM (
     LIMIT 2 - (SELECT COUNT(*) FROM employees) MOD 2
     OFFSET (SELECT (COUNT(*) - 1) / 2 FROM employees)
 ) sub;</div>
+      </div>
+      <div class="per-db-entry" data-db="postgresql">
         <h4>PostgreSQL</h4>
         <p class="notes">Both PERCENTILE_CONT and PERCENTILE_DISC are supported as ordered-set aggregate functions using the WITHIN GROUP (ORDER BY ...) syntax. Also available as window functions via FILTER clause. The array form PERCENTILE_CONT(ARRAY[0.25, 0.5, 0.75]) computes multiple percentiles in a single pass. Works on numeric and interval types.</p>
         <div class="syntax">-- Median (continuous interpolation):
@@ -169,6 +180,8 @@ SELECT dept,
        PERCENTILE_CONT(0.5) WITHIN GROUP (ORDER BY salary) AS median
 FROM employees
 GROUP BY dept;</div>
+      </div>
+      <div class="per-db-entry" data-db="sqlserver">
         <h4>SQL Server</h4>
         <p class="notes">SQL Server implements PERCENTILE_CONT and PERCENTILE_DISC as window functions (with OVER clause), not as aggregate functions. This means they always require an OVER clause and are computed per-row — to get a single value per group, use a subquery or DISTINCT on the result. The WITHIN GROUP clause is NOT used in SQL Server's syntax.</p>
         <div class="syntax">-- SQL Server uses OVER, not aggregate form:
@@ -188,6 +201,8 @@ FROM (
     FROM employees
 ) t
 GROUP BY dept, p50;</div>
+      </div>
+      <div class="per-db-entry" data-db="oracle">
         <h4>Oracle</h4>
         <p class="notes">Oracle supports both the aggregate form (WITHIN GROUP, no OVER clause) and the analytic/window function form (WITHIN GROUP + OVER clause). The aggregate form returns one row per group; the analytic form computes the percentile and returns it for every row in the partition. Supports numeric and datetime ORDER BY expressions.</p>
         <div class="syntax">-- Aggregate form (one result per group):
@@ -202,6 +217,8 @@ SELECT dept, salary,
     PERCENTILE_CONT(0.5) WITHIN GROUP (ORDER BY salary)
         OVER (PARTITION BY dept) AS dept_median
 FROM employees;</div>
+      </div>
+      <div class="per-db-entry" data-db="sqlite">
         <h4>SQLite</h4>
         <p class="notes">No PERCENTILE_CONT or PERCENTILE_DISC. Use the ROW_NUMBER window function workaround to compute a median. For grouped medians, a CTE is typically clearest.</p>
         <div class="syntax">-- Median workaround using ROW_NUMBER (SQLite 3.25+):
@@ -226,9 +243,11 @@ SELECT dept, AVG(CAST(salary AS REAL)) AS median
 FROM ranked
 WHERE rn IN ((cnt+1)/2, (cnt+2)/2)
 GROUP BY dept;</div>
+      </div>
   </div>
   <script src="/search.js" defer></script>
   <script src="/splash.js" defer></script>
   <script src="/track.js" defer></script>
+  <script src="/compare.js" defer></script>
 </body>
 </html>

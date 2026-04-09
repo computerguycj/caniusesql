@@ -57,6 +57,14 @@
   <p class="command-overview">Creates a named namespace within a database for grouping related objects. Simplifies object management and allows multiple teams to work in the same database without name collisions. Schema ownership and privileges can be controlled separately.</p>
 
   <h2>Compatibility</h2>
+  <div class="compare-bar">
+    <span class="compare-label">Show:</span>
+    <label><input type="checkbox" value="mysql" checked> MySQL</label>
+    <label><input type="checkbox" value="postgresql" checked> PostgreSQL</label>
+    <label><input type="checkbox" value="sqlserver" checked> SQL Server</label>
+    <label><input type="checkbox" value="oracle" checked> Oracle</label>
+    <label><input type="checkbox" value="sqlite" checked> SQLite</label>
+  </div>
   <table>
     <thead>
       <tr>
@@ -67,31 +75,31 @@
       </tr>
     </thead>
     <tbody>
-          <tr>
+          <tr data-db="mysql">
             <td>MySQL</td>
             <td class="supported">✓ Supported</td>
             <td>5.0</td>
             <td class="notes">In MySQL, SCHEMA is a synonym for DATABASE — CREATE SCHEMA and CREATE DATABASE are interchangeable. There is no sub-database namespace concept; each schema/database is a fully separate unit. The dot notation (schema.table) is the cross-database reference syntax. This differs from every other engine where schemas are namespaces within a database.</td>
           </tr>
-          <tr>
+          <tr data-db="postgresql">
             <td>PostgreSQL</td>
             <td class="supported">✓ Supported</td>
             <td>7.3</td>
             <td class="notes">Schemas are namespaces within a PostgreSQL database (distinct from databases themselves). The default schema is public. search_path controls which schemas are searched when an unqualified name is used. CREATE SCHEMA ... AUTHORIZATION assigns schema ownership. Objects in different schemas can be queried in the same connection; cross-database queries require foreign data wrappers (postgres_fdw).</td>
           </tr>
-          <tr>
+          <tr data-db="sqlserver">
             <td>SQL Server</td>
             <td class="supported">✓ Supported</td>
             <td>2005</td>
             <td class="notes">Schemas are sub-namespaces within a database (SQL Server 2005 replaced the old owner-based dbo.table model). The default schema is dbo. Each login has a default schema. Permissions can be granted at the schema level, applying to all current and future objects. The four-part name server.database.schema.object can reference objects across databases and linked servers.</td>
           </tr>
-          <tr>
+          <tr data-db="oracle">
             <td>Oracle</td>
             <td class="not-supported">✗ Not Supported</td>
             <td>—</td>
             <td class="notes">Oracle does not have a separate SCHEMA object — in Oracle, every user IS a schema. Creating a user (CREATE USER) creates the schema of the same name. Objects are owned by users/schemas, and the two terms are interchangeable in Oracle. There is no CREATE SCHEMA DDL to create a new namespace independently of a user. The CREATE SCHEMA statement exists in Oracle but only as a convenience to create multiple objects in one transaction, not to create the schema itself.</td>
           </tr>
-          <tr>
+          <tr data-db="sqlite">
             <td>SQLite</td>
             <td class="not-supported">✗ Not Supported</td>
             <td>—</td>
@@ -127,6 +135,7 @@ SELECT * FROM sales.orders;</div>
 
   <h2>Per-Database Syntax &amp; Notes</h2>
   <div class="per-db-section">
+      <div class="per-db-entry" data-db="mysql">
         <h4>MySQL</h4>
         <p class="notes">In MySQL, SCHEMA is a synonym for DATABASE — CREATE SCHEMA and CREATE DATABASE are interchangeable. There is no sub-database namespace concept; each schema/database is a fully separate unit. The dot notation (schema.table) is the cross-database reference syntax. This differs from every other engine where schemas are namespaces within a database.</p>
         <div class="syntax">-- CREATE SCHEMA = CREATE DATABASE in MySQL:
@@ -145,6 +154,8 @@ SELECT * FROM sales.orders;
 CREATE SCHEMA sales
     CHARACTER SET utf8mb4
     COLLATE utf8mb4_unicode_ci;</div>
+      </div>
+      <div class="per-db-entry" data-db="postgresql">
         <h4>PostgreSQL</h4>
         <p class="notes">Schemas are namespaces within a PostgreSQL database (distinct from databases themselves). The default schema is public. search_path controls which schemas are searched when an unqualified name is used. CREATE SCHEMA ... AUTHORIZATION assigns schema ownership. Objects in different schemas can be queried in the same connection; cross-database queries require foreign data wrappers (postgres_fdw).</p>
         <div class="syntax">-- Create a schema:
@@ -166,6 +177,8 @@ SELECT * FROM orders;  -- resolves to sales.orders
 -- Grant schema usage:
 GRANT USAGE ON SCHEMA sales TO reporting_role;
 GRANT SELECT ON ALL TABLES IN SCHEMA sales TO reporting_role;</div>
+      </div>
+      <div class="per-db-entry" data-db="sqlserver">
         <h4>SQL Server</h4>
         <p class="notes">Schemas are sub-namespaces within a database (SQL Server 2005 replaced the old owner-based dbo.table model). The default schema is dbo. Each login has a default schema. Permissions can be granted at the schema level, applying to all current and future objects. The four-part name server.database.schema.object can reference objects across databases and linked servers.</p>
         <div class="syntax">-- Create a schema:
@@ -186,6 +199,8 @@ GRANT EXECUTE ON SCHEMA::sales TO api_user;
 
 -- Four-part reference:
 SELECT * FROM myserver.mydb.sales.orders;</div>
+      </div>
+      <div class="per-db-entry" data-db="oracle">
         <h4>Oracle</h4>
         <p class="notes">Oracle does not have a separate SCHEMA object — in Oracle, every user IS a schema. Creating a user (CREATE USER) creates the schema of the same name. Objects are owned by users/schemas, and the two terms are interchangeable in Oracle. There is no CREATE SCHEMA DDL to create a new namespace independently of a user. The CREATE SCHEMA statement exists in Oracle but only as a convenience to create multiple objects in one transaction, not to create the schema itself.</p>
         <div class="syntax">-- In Oracle, schema = user:
@@ -206,6 +221,8 @@ SELECT * FROM sales.orders;
 
 -- Grant access:
 GRANT SELECT ON sales.orders TO reporting_user;</div>
+      </div>
+      <div class="per-db-entry" data-db="sqlite">
         <h4>SQLite</h4>
         <p class="notes">SQLite has no schema namespace concept within a database file. Each SQLite database file is a single namespace. The ATTACH DATABASE statement allows attaching multiple database files to one connection, and the attached databases are referenced by alias — this is the closest equivalent to cross-schema access.</p>
         <div class="syntax">-- No schemas, but ATTACH DATABASE gives a similar namespace:
@@ -222,9 +239,11 @@ SELECT * FROM main.products;
 
 -- List attached databases:
 PRAGMA database_list;</div>
+      </div>
   </div>
   <script src="/search.js" defer></script>
   <script src="/splash.js" defer></script>
   <script src="/track.js" defer></script>
+  <script src="/compare.js" defer></script>
 </body>
 </html>

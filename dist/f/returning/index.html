@@ -57,6 +57,14 @@
   <p class="command-overview">Returns columns from modified rows (INSERT, UPDATE, DELETE) as part of the statement result, avoiding a separate SELECT to fetch generated values. PostgreSQL, SQLite, and SQL Server support it; MySQL does not natively.</p>
 
   <h2>Compatibility</h2>
+  <div class="compare-bar">
+    <span class="compare-label">Show:</span>
+    <label><input type="checkbox" value="mysql" checked> MySQL</label>
+    <label><input type="checkbox" value="postgresql" checked> PostgreSQL</label>
+    <label><input type="checkbox" value="sqlserver" checked> SQL Server</label>
+    <label><input type="checkbox" value="oracle" checked> Oracle</label>
+    <label><input type="checkbox" value="sqlite" checked> SQLite</label>
+  </div>
   <table>
     <thead>
       <tr>
@@ -67,31 +75,31 @@
       </tr>
     </thead>
     <tbody>
-          <tr>
+          <tr data-db="mysql">
             <td>MySQL</td>
             <td class="not-supported">✗ Not Supported</td>
             <td>—</td>
             <td class="notes">Not supported. Use LAST_INSERT_ID() for the auto-increment key after INSERT; no equivalent for UPDATE or DELETE.</td>
           </tr>
-          <tr>
+          <tr data-db="postgresql">
             <td>PostgreSQL</td>
             <td class="supported">✓ Supported</td>
             <td>8.2</td>
             <td class="notes">Full RETURNING on INSERT, UPDATE, and DELETE. Can return any expression. Also supported in MERGE (PG 15+). Returns post-change values for UPDATE, deleted values for DELETE.</td>
           </tr>
-          <tr>
+          <tr data-db="sqlserver">
             <td>SQL Server</td>
             <td class="supported">✓ Supported</td>
             <td>2005</td>
             <td class="notes">OUTPUT clause with INSERTED.* (post-change) and DELETED.* (pre-change). Different syntax but functionally equivalent. Can redirect output into a table variable with OUTPUT ... INTO.</td>
           </tr>
-          <tr>
+          <tr data-db="oracle">
             <td>Oracle</td>
             <td class="supported">✓ Supported</td>
             <td>all</td>
             <td class="notes">RETURNING ... INTO :bind_var. Requires PL/SQL host/bind variables — cannot return a bare result set in plain SQL. Effectively PL/SQL-only; single-row practical for INSERT.</td>
           </tr>
-          <tr>
+          <tr data-db="sqlite">
             <td>SQLite</td>
             <td class="supported">✓ Supported</td>
             <td>3.35.0</td>
@@ -124,33 +132,44 @@ DELETE FROM sessions WHERE expired_at &lt; NOW() RETURNING session_id;</div>
 
   <h2>Per-Database Syntax &amp; Notes</h2>
   <div class="per-db-section">
+      <div class="per-db-entry" data-db="mysql">
         <h4>MySQL</h4>
         <p class="notes">Not supported. Use LAST_INSERT_ID() for the auto-increment key after INSERT; no equivalent for UPDATE or DELETE.</p>
         <div class="syntax">INSERT INTO tbl (name) VALUES ('Alice');
 SELECT LAST_INSERT_ID();  -- only for the generated key</div>
+      </div>
+      <div class="per-db-entry" data-db="postgresql">
         <h4>PostgreSQL</h4>
         <p class="notes">Full RETURNING on INSERT, UPDATE, and DELETE. Can return any expression. Also supported in MERGE (PG 15+). Returns post-change values for UPDATE, deleted values for DELETE.</p>
         <div class="syntax">INSERT INTO users (name) VALUES ('Alice') RETURNING id, created_at;
 UPDATE orders SET status = 'shipped' WHERE id = 42 RETURNING *;
 DELETE FROM sessions WHERE expired_at &lt; NOW() RETURNING session_id;</div>
+      </div>
+      <div class="per-db-entry" data-db="sqlserver">
         <h4>SQL Server</h4>
         <p class="notes">OUTPUT clause with INSERTED.* (post-change) and DELETED.* (pre-change). Different syntax but functionally equivalent. Can redirect output into a table variable with OUTPUT ... INTO.</p>
         <div class="syntax">INSERT INTO users (name) OUTPUT INSERTED.id, INSERTED.name VALUES ('Alice');
 UPDATE orders SET status = 'shipped' OUTPUT INSERTED.*, DELETED.status WHERE id = 42;
 DELETE FROM sessions OUTPUT DELETED.session_id WHERE expired_at &lt; GETDATE();</div>
+      </div>
+      <div class="per-db-entry" data-db="oracle">
         <h4>Oracle</h4>
         <p class="notes">RETURNING ... INTO :bind_var. Requires PL/SQL host/bind variables — cannot return a bare result set in plain SQL. Effectively PL/SQL-only; single-row practical for INSERT.</p>
         <div class="syntax">-- PL/SQL context only:
 INSERT INTO users (name) VALUES ('Alice')
 RETURNING id INTO :new_id;
 -- :new_id is a bind variable in application code</div>
+      </div>
+      <div class="per-db-entry" data-db="sqlite">
         <h4>SQLite</h4>
         <p class="notes">RETURNING clause added in SQLite 3.35.0 (March 2021). Syntax matches PostgreSQL.</p>
         <div class="syntax">INSERT INTO users (name) VALUES ('Alice') RETURNING id;
 UPDATE orders SET status = 'shipped' WHERE id = 42 RETURNING *;</div>
+      </div>
   </div>
   <script src="/search.js" defer></script>
   <script src="/splash.js" defer></script>
   <script src="/track.js" defer></script>
+  <script src="/compare.js" defer></script>
 </body>
 </html>

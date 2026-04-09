@@ -57,6 +57,14 @@
   <p class="command-overview">Converts string case to upper or lower. Useful for case-insensitive comparisons and data normalization. Note: case conversion rules vary by locale for non-ASCII characters (Unicode case mapping differs from locale-specific rules).</p>
 
   <h2>Compatibility</h2>
+  <div class="compare-bar">
+    <span class="compare-label">Show:</span>
+    <label><input type="checkbox" value="mysql" checked> MySQL</label>
+    <label><input type="checkbox" value="postgresql" checked> PostgreSQL</label>
+    <label><input type="checkbox" value="sqlserver" checked> SQL Server</label>
+    <label><input type="checkbox" value="oracle" checked> Oracle</label>
+    <label><input type="checkbox" value="sqlite" checked> SQLite</label>
+  </div>
   <table>
     <thead>
       <tr>
@@ -67,31 +75,31 @@
       </tr>
     </thead>
     <tbody>
-          <tr>
+          <tr data-db="mysql">
             <td>MySQL</td>
             <td class="supported">✓ Supported</td>
             <td>all</td>
             <td class="notes">UPPER() and LOWER(). Case conversion is locale-aware based on the column's collation. UCASE() and LCASE() are deprecated synonyms.</td>
           </tr>
-          <tr>
+          <tr data-db="postgresql">
             <td>PostgreSQL</td>
             <td class="supported">✓ Supported</td>
             <td>all</td>
             <td class="notes">UPPER() and LOWER(). Locale/collation-aware. For case-insensitive comparisons, prefer ILIKE or citext extension rather than manually lowercasing.</td>
           </tr>
-          <tr>
+          <tr data-db="sqlserver">
             <td>SQL Server</td>
             <td class="supported">✓ Supported</td>
             <td>all</td>
             <td class="notes">UPPER() and LOWER(). Behavior is collation-dependent. Turkish collation (tr_TR) is the classic gotcha — 'i'.UPPER() ≠ 'I' under Turkish collation rules.</td>
           </tr>
-          <tr>
+          <tr data-db="oracle">
             <td>Oracle</td>
             <td class="supported">✓ Supported</td>
             <td>all</td>
             <td class="notes">UPPER() and LOWER(). NLS_LANGUAGE session parameter affects case conversion for locale-specific characters.</td>
           </tr>
-          <tr>
+          <tr data-db="sqlite">
             <td>SQLite</td>
             <td class="supported">✓ Supported</td>
             <td>all</td>
@@ -121,29 +129,40 @@ FROM users;</div>
 
   <h2>Per-Database Syntax &amp; Notes</h2>
   <div class="per-db-section">
+      <div class="per-db-entry" data-db="mysql">
         <h4>MySQL</h4>
         <p class="notes">UPPER() and LOWER(). Case conversion is locale-aware based on the column's collation. UCASE() and LCASE() are deprecated synonyms.</p>
         <div class="syntax">SELECT UPPER('hello world');   -- 'HELLO WORLD'
 SELECT LOWER('HELLO WORLD');   -- 'hello world'</div>
+      </div>
+      <div class="per-db-entry" data-db="postgresql">
         <h4>PostgreSQL</h4>
         <p class="notes">UPPER() and LOWER(). Locale/collation-aware. For case-insensitive comparisons, prefer ILIKE or citext extension rather than manually lowercasing.</p>
         <div class="syntax">SELECT UPPER('hello world');   -- 'HELLO WORLD'
 SELECT LOWER('HELLO WORLD');   -- 'hello world'</div>
+      </div>
+      <div class="per-db-entry" data-db="sqlserver">
         <h4>SQL Server</h4>
         <p class="notes">UPPER() and LOWER(). Behavior is collation-dependent. Turkish collation (tr_TR) is the classic gotcha — 'i'.UPPER() ≠ 'I' under Turkish collation rules.</p>
         <div class="syntax">SELECT UPPER('hello world');   -- 'HELLO WORLD'
 SELECT LOWER('HELLO WORLD');   -- 'hello world'</div>
+      </div>
+      <div class="per-db-entry" data-db="oracle">
         <h4>Oracle</h4>
         <p class="notes">UPPER() and LOWER(). NLS_LANGUAGE session parameter affects case conversion for locale-specific characters.</p>
         <div class="syntax">SELECT UPPER('hello world') FROM DUAL;  -- 'HELLO WORLD'
 SELECT LOWER('HELLO WORLD') FROM DUAL;  -- 'hello world'</div>
+      </div>
+      <div class="per-db-entry" data-db="sqlite">
         <h4>SQLite</h4>
         <p class="notes">UPPER() and LOWER() only work on ASCII characters by default. Non-ASCII characters (accented letters, etc.) are NOT case-converted without loading the ICU extension.</p>
         <div class="syntax">SELECT UPPER('hello');         -- 'HELLO'
 SELECT UPPER('café');          -- 'CAFé' (é not converted without ICU)</div>
+      </div>
   </div>
   <script src="/search.js" defer></script>
   <script src="/splash.js" defer></script>
   <script src="/track.js" defer></script>
+  <script src="/compare.js" defer></script>
 </body>
 </html>

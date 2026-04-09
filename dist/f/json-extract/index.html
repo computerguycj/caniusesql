@@ -57,6 +57,14 @@
   <p class="command-overview">Extracts values from JSON data: JSON_EXTRACT returns the raw JSON (including delimiters) while JSON_VALUE returns a scalar string. JSON_VALUE in SQL Server is the equivalent of JSON_EXTRACT in PostgreSQL. Essential for querying semi-structured data.</p>
 
   <h2>Compatibility</h2>
+  <div class="compare-bar">
+    <span class="compare-label">Show:</span>
+    <label><input type="checkbox" value="mysql" checked> MySQL</label>
+    <label><input type="checkbox" value="postgresql" checked> PostgreSQL</label>
+    <label><input type="checkbox" value="sqlserver" checked> SQL Server</label>
+    <label><input type="checkbox" value="oracle" checked> Oracle</label>
+    <label><input type="checkbox" value="sqlite" checked> SQLite</label>
+  </div>
   <table>
     <thead>
       <tr>
@@ -67,31 +75,31 @@
       </tr>
     </thead>
     <tbody>
-          <tr>
+          <tr data-db="mysql">
             <td>MySQL</td>
             <td class="supported">✓ Supported</td>
             <td>5.7.8</td>
             <td class="notes">JSON_EXTRACT(col, path) returns a JSON-encoded value. The -&gt; operator is shorthand for JSON_EXTRACT; -&gt;&gt; is shorthand for JSON_UNQUOTE(JSON_EXTRACT(...)) and returns unquoted text. Paths use $.key, $.key.subkey, $.array[n] notation.</td>
           </tr>
-          <tr>
+          <tr data-db="postgresql">
             <td>PostgreSQL</td>
             <td class="supported">✓ Supported</td>
             <td>9.3</td>
             <td class="notes">The -&gt; operator returns a JSON value; -&gt;&gt; returns text. For nested paths use #&gt; (JSON) and #&gt;&gt; (text) with an array of keys. jsonb columns support the same operators plus GIN-indexable containment operators (@&gt;, &lt;@, ?, ?|, ?&amp;). json_extract_path() and jsonb_extract_path_text() are function equivalents.</td>
           </tr>
-          <tr>
+          <tr data-db="sqlserver">
             <td>SQL Server</td>
             <td class="supported">✓ Supported</td>
             <td>2016</td>
             <td class="notes">JSON_VALUE(col, path) extracts a scalar (returns NVARCHAR). JSON_QUERY(col, path) extracts an object or array (returns NVARCHAR containing JSON). Passing the wrong function for the value type returns NULL silently. No -&gt; operators — all access is function-based with $.key path strings.</td>
           </tr>
-          <tr>
+          <tr data-db="oracle">
             <td>Oracle</td>
             <td class="supported">✓ Supported</td>
             <td>12c</td>
             <td class="notes">JSON_VALUE(col, path) extracts a scalar; JSON_QUERY(col, path) extracts objects or arrays. The RETURNING clause controls the output type. Error handling clauses (NULL ON ERROR, ERROR ON ERROR) prevent silent failures. Oracle 21c added JSON_TRANSFORM and dot-notation access on JSON type columns.</td>
           </tr>
-          <tr>
+          <tr data-db="sqlite">
             <td>SQLite</td>
             <td class="supported">✓ Supported</td>
             <td>3.9.0</td>
@@ -130,6 +138,7 @@ FROM users;</div>
 
   <h2>Per-Database Syntax &amp; Notes</h2>
   <div class="per-db-section">
+      <div class="per-db-entry" data-db="mysql">
         <h4>MySQL</h4>
         <p class="notes">JSON_EXTRACT(col, path) returns a JSON-encoded value. The -&gt; operator is shorthand for JSON_EXTRACT; -&gt;&gt; is shorthand for JSON_UNQUOTE(JSON_EXTRACT(...)) and returns unquoted text. Paths use $.key, $.key.subkey, $.array[n] notation.</p>
         <div class="syntax">-- Function form:
@@ -145,6 +154,8 @@ FROM users;
 -- Array index:
 SELECT JSON_EXTRACT(data, '$.tags[0]') AS first_tag
 FROM posts;</div>
+      </div>
+      <div class="per-db-entry" data-db="postgresql">
         <h4>PostgreSQL</h4>
         <p class="notes">The -&gt; operator returns a JSON value; -&gt;&gt; returns text. For nested paths use #&gt; (JSON) and #&gt;&gt; (text) with an array of keys. jsonb columns support the same operators plus GIN-indexable containment operators (@&gt;, &lt;@, ?, ?|, ?&amp;). json_extract_path() and jsonb_extract_path_text() are function equivalents.</p>
         <div class="syntax">-- Single key, JSON result:
@@ -166,6 +177,8 @@ FROM users;
 -- Function form:
 SELECT jsonb_extract_path_text(data, 'address', 'city') AS city
 FROM users;</div>
+      </div>
+      <div class="per-db-entry" data-db="sqlserver">
         <h4>SQL Server</h4>
         <p class="notes">JSON_VALUE(col, path) extracts a scalar (returns NVARCHAR). JSON_QUERY(col, path) extracts an object or array (returns NVARCHAR containing JSON). Passing the wrong function for the value type returns NULL silently. No -&gt; operators — all access is function-based with $.key path strings.</p>
         <div class="syntax">-- Scalar extraction:
@@ -182,6 +195,8 @@ FROM users;
 SELECT *
 FROM users
 WHERE JSON_VALUE(data, '$.active') = 'true';</div>
+      </div>
+      <div class="per-db-entry" data-db="oracle">
         <h4>Oracle</h4>
         <p class="notes">JSON_VALUE(col, path) extracts a scalar; JSON_QUERY(col, path) extracts objects or arrays. The RETURNING clause controls the output type. Error handling clauses (NULL ON ERROR, ERROR ON ERROR) prevent silent failures. Oracle 21c added JSON_TRANSFORM and dot-notation access on JSON type columns.</p>
         <div class="syntax">-- Scalar:
@@ -197,6 +212,8 @@ FROM users;
 -- Dot notation (21c+ native JSON type):
 SELECT u.data.name.string()  AS name
 FROM users u;</div>
+      </div>
+      <div class="per-db-entry" data-db="sqlite">
         <h4>SQLite</h4>
         <p class="notes">json_extract(col, path) is the core function, available since 3.9.0. The -&gt; and -&gt;&gt; operators (matching MySQL semantics) were added in SQLite 3.38.0 (2022-02-22). -&gt;&gt; always returns an SQL value (text/integer/real), never a JSON-encoded string.</p>
         <div class="syntax">-- Function form (3.9.0+):
@@ -212,9 +229,11 @@ FROM users;
 -- Array element:
 SELECT json_extract(data, '$.tags[0]') AS first_tag
 FROM posts;</div>
+      </div>
   </div>
   <script src="/search.js" defer></script>
   <script src="/splash.js" defer></script>
   <script src="/track.js" defer></script>
+  <script src="/compare.js" defer></script>
 </body>
 </html>

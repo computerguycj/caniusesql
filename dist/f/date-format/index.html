@@ -57,6 +57,14 @@
   <p class="command-overview">Formats a date or timestamp into a string using format specifiers. MySQL uses DATE_FORMAT(), SQLite uses STRFTIME(), SQL Server uses FORMAT(). Useful for generating human-readable date strings in queries.</p>
 
   <h2>Compatibility</h2>
+  <div class="compare-bar">
+    <span class="compare-label">Show:</span>
+    <label><input type="checkbox" value="mysql" checked> MySQL</label>
+    <label><input type="checkbox" value="postgresql" checked> PostgreSQL</label>
+    <label><input type="checkbox" value="sqlserver" checked> SQL Server</label>
+    <label><input type="checkbox" value="oracle" checked> Oracle</label>
+    <label><input type="checkbox" value="sqlite" checked> SQLite</label>
+  </div>
   <table>
     <thead>
       <tr>
@@ -67,31 +75,31 @@
       </tr>
     </thead>
     <tbody>
-          <tr>
+          <tr data-db="mysql">
             <td>MySQL</td>
             <td class="supported">✓ Supported</td>
             <td>all</td>
             <td class="notes">DATE_FORMAT(date, format) uses % format codes: %Y (4-digit year), %m (month 01-12), %d (day 01-31), %H (hour 00-23), %i (minute), %s (second). TIME_FORMAT() for time-only values.</td>
           </tr>
-          <tr>
+          <tr data-db="postgresql">
             <td>PostgreSQL</td>
             <td class="supported">✓ Supported</td>
             <td>all</td>
             <td class="notes">TO_CHAR(timestamp, format) uses its own format codes: YYYY (year), MM (month), DD (day), HH24 (hour), MI (minute), SS (second). TO_DATE() and TO_TIMESTAMP() for parsing. Very rich format string options including ordinals (DDth), spelled-out months (Month), etc.</td>
           </tr>
-          <tr>
+          <tr data-db="sqlserver">
             <td>SQL Server</td>
             <td class="supported">✓ Supported</td>
             <td>2012</td>
             <td class="notes">FORMAT(value, format [, culture]) uses .NET format strings. Flexible but slow on large datasets — avoid in WHERE clauses or high-volume queries. Pre-2012: use CONVERT(VARCHAR, date, style) with numeric style codes (103 = dd/mm/yyyy, 120 = yyyy-mm-dd hh:mi:ss).</td>
           </tr>
-          <tr>
+          <tr data-db="oracle">
             <td>Oracle</td>
             <td class="supported">✓ Supported</td>
             <td>all</td>
             <td class="notes">TO_CHAR(date, format) using Oracle format codes: YYYY, MM, DD, HH24, MI, SS. TO_DATE(str, format) for parsing. Format codes differ from PostgreSQL's despite the same function name — Oracle uses HH24 for 24h hour, PostgreSQL also uses HH24, so that one is compatible.</td>
           </tr>
-          <tr>
+          <tr data-db="sqlite">
             <td>SQLite</td>
             <td class="supported">✓ Supported</td>
             <td>all</td>
@@ -124,18 +132,23 @@ DATE_FORMAT(date_col, '%Y-%m-%d')             -- MySQL</div>
 
   <h2>Per-Database Syntax &amp; Notes</h2>
   <div class="per-db-section">
+      <div class="per-db-entry" data-db="mysql">
         <h4>MySQL</h4>
         <p class="notes">DATE_FORMAT(date, format) uses % format codes: %Y (4-digit year), %m (month 01-12), %d (day 01-31), %H (hour 00-23), %i (minute), %s (second). TIME_FORMAT() for time-only values.</p>
         <div class="syntax">SELECT DATE_FORMAT(NOW(), '%Y-%m-%d');           -- '2024-03-15'
 SELECT DATE_FORMAT(NOW(), '%d/%m/%Y');           -- '15/03/2024'
 SELECT DATE_FORMAT(NOW(), '%Y-%m-%d %H:%i:%s');  -- '2024-03-15 14:30:00'
 SELECT DATE_FORMAT(NOW(), '%W, %M %e, %Y');      -- 'Friday, March 15, 2024'</div>
+      </div>
+      <div class="per-db-entry" data-db="postgresql">
         <h4>PostgreSQL</h4>
         <p class="notes">TO_CHAR(timestamp, format) uses its own format codes: YYYY (year), MM (month), DD (day), HH24 (hour), MI (minute), SS (second). TO_DATE() and TO_TIMESTAMP() for parsing. Very rich format string options including ordinals (DDth), spelled-out months (Month), etc.</p>
         <div class="syntax">SELECT TO_CHAR(NOW(), 'YYYY-MM-DD');              -- '2024-03-15'
 SELECT TO_CHAR(NOW(), 'DD/MM/YYYY');              -- '15/03/2024'
 SELECT TO_CHAR(NOW(), 'YYYY-MM-DD HH24:MI:SS');  -- '2024-03-15 14:30:00'
 SELECT TO_CHAR(NOW(), 'FMMonth DDth, YYYY');      -- 'March 15th, 2024'</div>
+      </div>
+      <div class="per-db-entry" data-db="sqlserver">
         <h4>SQL Server</h4>
         <p class="notes">FORMAT(value, format [, culture]) uses .NET format strings. Flexible but slow on large datasets — avoid in WHERE clauses or high-volume queries. Pre-2012: use CONVERT(VARCHAR, date, style) with numeric style codes (103 = dd/mm/yyyy, 120 = yyyy-mm-dd hh:mi:ss).</p>
         <div class="syntax">SELECT FORMAT(GETDATE(), 'yyyy-MM-dd');               -- '2024-03-15'
@@ -143,21 +156,27 @@ SELECT FORMAT(GETDATE(), 'dd/MM/yyyy');               -- '15/03/2024'
 SELECT FORMAT(GETDATE(), 'D', 'en-US');               -- 'Friday, March 15, 2024'
 -- Pre-2012 / high-performance alternative:
 SELECT CONVERT(VARCHAR, GETDATE(), 120);              -- '2024-03-15 14:30:00'</div>
+      </div>
+      <div class="per-db-entry" data-db="oracle">
         <h4>Oracle</h4>
         <p class="notes">TO_CHAR(date, format) using Oracle format codes: YYYY, MM, DD, HH24, MI, SS. TO_DATE(str, format) for parsing. Format codes differ from PostgreSQL's despite the same function name — Oracle uses HH24 for 24h hour, PostgreSQL also uses HH24, so that one is compatible.</p>
         <div class="syntax">SELECT TO_CHAR(SYSDATE, 'YYYY-MM-DD')           FROM DUAL; -- '2024-03-15'
 SELECT TO_CHAR(SYSDATE, 'DD/MM/YYYY')           FROM DUAL; -- '15/03/2024'
 SELECT TO_CHAR(SYSDATE, 'YYYY-MM-DD HH24:MI:SS') FROM DUAL;
 SELECT TO_CHAR(SYSDATE, 'Day, Month DD YYYY')    FROM DUAL;</div>
+      </div>
+      <div class="per-db-entry" data-db="sqlite">
         <h4>SQLite</h4>
         <p class="notes">strftime(format, date) uses % format codes similar to C's strftime: %Y, %m, %d, %H, %M, %S. date() and time() return fixed ISO 8601 formats. No TO_CHAR or DATE_FORMAT.</p>
         <div class="syntax">SELECT strftime('%Y-%m-%d', 'now');              -- '2024-03-15'
 SELECT strftime('%d/%m/%Y', 'now');              -- '15/03/2024'
 SELECT strftime('%Y-%m-%d %H:%M:%S', 'now');    -- '2024-03-15 14:30:00'
 SELECT date('now');                              -- '2024-03-15' (ISO 8601 only)</div>
+      </div>
   </div>
   <script src="/search.js" defer></script>
   <script src="/splash.js" defer></script>
   <script src="/track.js" defer></script>
+  <script src="/compare.js" defer></script>
 </body>
 </html>

@@ -57,6 +57,14 @@
   <p class="command-overview">Insert a row if it does not exist, or update it if it does. PostgreSQL uses INSERT ... ON CONFLICT DO UPDATE; MySQL uses INSERT ... ON DUPLICATE KEY UPDATE; SQL Server uses MERGE. Essential for idempotent data ingestion pipelines.</p>
 
   <h2>Compatibility</h2>
+  <div class="compare-bar">
+    <span class="compare-label">Show:</span>
+    <label><input type="checkbox" value="mysql" checked> MySQL</label>
+    <label><input type="checkbox" value="postgresql" checked> PostgreSQL</label>
+    <label><input type="checkbox" value="sqlserver" checked> SQL Server</label>
+    <label><input type="checkbox" value="oracle" checked> Oracle</label>
+    <label><input type="checkbox" value="sqlite" checked> SQLite</label>
+  </div>
   <table>
     <thead>
       <tr>
@@ -67,31 +75,31 @@
       </tr>
     </thead>
     <tbody>
-          <tr>
+          <tr data-db="mysql">
             <td>MySQL</td>
             <td class="supported">✓ Supported</td>
             <td>5.1</td>
             <td class="notes">ON DUPLICATE KEY UPDATE</td>
           </tr>
-          <tr>
+          <tr data-db="postgresql">
             <td>PostgreSQL</td>
             <td class="supported">✓ Supported</td>
             <td>9.5</td>
             <td class="notes">ON CONFLICT DO UPDATE</td>
           </tr>
-          <tr>
+          <tr data-db="sqlserver">
             <td>SQL Server</td>
             <td class="supported">✓ Supported</td>
             <td>2008</td>
             <td class="notes">Via MERGE</td>
           </tr>
-          <tr>
+          <tr data-db="oracle">
             <td>Oracle</td>
             <td class="supported">✓ Supported</td>
             <td>9i</td>
             <td class="notes">Via MERGE</td>
           </tr>
-          <tr>
+          <tr data-db="sqlite">
             <td>SQLite</td>
             <td class="supported">✓ Supported</td>
             <td>3.24.0</td>
@@ -123,24 +131,35 @@ SET col1 = EXCLUDED.col1;</div>
 
   <h2>Per-Database Syntax &amp; Notes</h2>
   <div class="per-db-section">
+      <div class="per-db-entry" data-db="mysql">
         <h4>MySQL</h4>
         <p class="notes">ON DUPLICATE KEY UPDATE</p>
         <div class="syntax">INSERT INTO tbl (…) VALUES (…) ON DUPLICATE KEY UPDATE …;</div>
+      </div>
+      <div class="per-db-entry" data-db="postgresql">
         <h4>PostgreSQL</h4>
         <p class="notes">ON CONFLICT DO UPDATE</p>
         <div class="syntax">INSERT INTO tbl (…) VALUES (…) ON CONFLICT(pk) DO UPDATE SET …;</div>
+      </div>
+      <div class="per-db-entry" data-db="sqlserver">
         <h4>SQL Server</h4>
         <p class="notes">Via MERGE</p>
         <div class="syntax">MERGE … WHEN MATCHED THEN UPDATE WHEN NOT MATCHED THEN INSERT;</div>
+      </div>
+      <div class="per-db-entry" data-db="oracle">
         <h4>Oracle</h4>
         <p class="notes">Via MERGE</p>
         <div class="syntax">MERGE … WHEN MATCHED THEN UPDATE WHEN NOT MATCHED THEN INSERT;</div>
+      </div>
+      <div class="per-db-entry" data-db="sqlite">
         <h4>SQLite</h4>
         <p class="notes">INSERT…ON CONFLICT</p>
         <div class="syntax">INSERT INTO tbl (…) VALUES (…) ON CONFLICT(pk) DO UPDATE SET …;</div>
+      </div>
   </div>
   <script src="/search.js" defer></script>
   <script src="/splash.js" defer></script>
   <script src="/track.js" defer></script>
+  <script src="/compare.js" defer></script>
 </body>
 </html>

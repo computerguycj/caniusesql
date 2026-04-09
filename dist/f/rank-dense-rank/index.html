@@ -57,6 +57,14 @@
   <p class="command-overview">Window functions that assign ordinal ranks to rows: ROW_NUMBER (sequential), RANK (with gaps), DENSE_RANK (without gaps). Essential for top-N queries, deduplication, and sorting by competition rank. Combine with DISTINCT ON in PostgreSQL for efficient top-N per group.</p>
 
   <h2>Compatibility</h2>
+  <div class="compare-bar">
+    <span class="compare-label">Show:</span>
+    <label><input type="checkbox" value="mysql" checked> MySQL</label>
+    <label><input type="checkbox" value="postgresql" checked> PostgreSQL</label>
+    <label><input type="checkbox" value="sqlserver" checked> SQL Server</label>
+    <label><input type="checkbox" value="oracle" checked> Oracle</label>
+    <label><input type="checkbox" value="sqlite" checked> SQLite</label>
+  </div>
   <table>
     <thead>
       <tr>
@@ -67,31 +75,31 @@
       </tr>
     </thead>
     <tbody>
-          <tr>
+          <tr data-db="mysql">
             <td>MySQL</td>
             <td class="supported">✓ Supported</td>
             <td>8.0</td>
             <td class="notes">RANK(), DENSE_RANK(), and PERCENT_RANK() all added in MySQL 8.0. Not available in 5.7 or earlier — requires workarounds with user variables.</td>
           </tr>
-          <tr>
+          <tr data-db="postgresql">
             <td>PostgreSQL</td>
             <td class="supported">✓ Supported</td>
             <td>8.4</td>
             <td class="notes">RANK(), DENSE_RANK(), PERCENT_RANK(), CUME_DIST() all supported. Standard OVER clause with PARTITION BY and ORDER BY.</td>
           </tr>
-          <tr>
+          <tr data-db="sqlserver">
             <td>SQL Server</td>
             <td class="supported">✓ Supported</td>
             <td>2005</td>
             <td class="notes">RANK(), DENSE_RANK(), NTILE(), PERCENT_RANK() all available since 2005. Standard syntax.</td>
           </tr>
-          <tr>
+          <tr data-db="oracle">
             <td>Oracle</td>
             <td class="supported">✓ Supported</td>
             <td>8i</td>
             <td class="notes">RANK() and DENSE_RANK() have two forms in Oracle: the standard analytic (window) form with OVER(), and a unique aggregate form — RANK(value) WITHIN GROUP (ORDER BY col) — which computes the hypothetical rank of a given value without a full window scan.</td>
           </tr>
-          <tr>
+          <tr data-db="sqlite">
             <td>SQLite</td>
             <td class="supported">✓ Supported</td>
             <td>3.25.0</td>
@@ -125,6 +133,7 @@ FROM scores;</div>
 
   <h2>Per-Database Syntax &amp; Notes</h2>
   <div class="per-db-section">
+      <div class="per-db-entry" data-db="mysql">
         <h4>MySQL</h4>
         <p class="notes">RANK(), DENSE_RANK(), and PERCENT_RANK() all added in MySQL 8.0. Not available in 5.7 or earlier — requires workarounds with user variables.</p>
         <div class="syntax">SELECT
@@ -139,6 +148,8 @@ FROM scores;
 SELECT name, dept, score,
   RANK() OVER (PARTITION BY dept ORDER BY score DESC) AS dept_rank
 FROM scores;</div>
+      </div>
+      <div class="per-db-entry" data-db="postgresql">
         <h4>PostgreSQL</h4>
         <p class="notes">RANK(), DENSE_RANK(), PERCENT_RANK(), CUME_DIST() all supported. Standard OVER clause with PARTITION BY and ORDER BY.</p>
         <div class="syntax">SELECT
@@ -152,6 +163,8 @@ FROM scores;
 SELECT name, dept, score,
   DENSE_RANK() OVER (PARTITION BY dept ORDER BY score DESC) AS dept_rank
 FROM scores;</div>
+      </div>
+      <div class="per-db-entry" data-db="sqlserver">
         <h4>SQL Server</h4>
         <p class="notes">RANK(), DENSE_RANK(), NTILE(), PERCENT_RANK() all available since 2005. Standard syntax.</p>
         <div class="syntax">SELECT
@@ -164,6 +177,8 @@ FROM scores;
 SELECT name, dept, score,
   RANK() OVER (PARTITION BY dept ORDER BY score DESC) AS dept_rank
 FROM scores;</div>
+      </div>
+      <div class="per-db-entry" data-db="oracle">
         <h4>Oracle</h4>
         <p class="notes">RANK() and DENSE_RANK() have two forms in Oracle: the standard analytic (window) form with OVER(), and a unique aggregate form — RANK(value) WITHIN GROUP (ORDER BY col) — which computes the hypothetical rank of a given value without a full window scan.</p>
         <div class="syntax">-- Analytic (standard) form:
@@ -175,6 +190,8 @@ FROM scores;
 -- Hypothetical aggregate (Oracle-unique):
 SELECT RANK(85) WITHIN GROUP (ORDER BY score DESC) AS hyp_rank
 FROM scores;</div>
+      </div>
+      <div class="per-db-entry" data-db="sqlite">
         <h4>SQLite</h4>
         <p class="notes">RANK() and DENSE_RANK() added in SQLite 3.25.0 (September 2018). Standard syntax.</p>
         <div class="syntax">SELECT
@@ -183,9 +200,11 @@ FROM scores;</div>
   RANK()       OVER (ORDER BY score DESC) AS rnk,
   DENSE_RANK() OVER (ORDER BY score DESC) AS dense_rnk
 FROM scores;</div>
+      </div>
   </div>
   <script src="/search.js" defer></script>
   <script src="/splash.js" defer></script>
   <script src="/track.js" defer></script>
+  <script src="/compare.js" defer></script>
 </body>
 </html>

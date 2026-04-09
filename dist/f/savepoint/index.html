@@ -57,6 +57,14 @@
   <p class="command-overview">A named marker within a transaction allowing partial rollback without aborting the entire transaction. Useful for recovering from errors mid-transaction. Can be nested in some databases. Release savepoints once no longer needed to free resources.</p>
 
   <h2>Compatibility</h2>
+  <div class="compare-bar">
+    <span class="compare-label">Show:</span>
+    <label><input type="checkbox" value="mysql" checked> MySQL</label>
+    <label><input type="checkbox" value="postgresql" checked> PostgreSQL</label>
+    <label><input type="checkbox" value="sqlserver" checked> SQL Server</label>
+    <label><input type="checkbox" value="oracle" checked> Oracle</label>
+    <label><input type="checkbox" value="sqlite" checked> SQLite</label>
+  </div>
   <table>
     <thead>
       <tr>
@@ -67,31 +75,31 @@
       </tr>
     </thead>
     <tbody>
-          <tr>
+          <tr data-db="mysql">
             <td>MySQL</td>
             <td class="supported">✓ Supported</td>
             <td>4.0.14</td>
             <td class="notes">SAVEPOINT, ROLLBACK TO SAVEPOINT, and RELEASE SAVEPOINT supported for InnoDB tables since MySQL 4.0.14. Not available for MyISAM (which has no transaction support). Savepoints are session-scoped and discarded on COMMIT or full ROLLBACK. Nested savepoints with the same name replace the previous one.</td>
           </tr>
-          <tr>
+          <tr data-db="postgresql">
             <td>PostgreSQL</td>
             <td class="supported">✓ Supported</td>
             <td>8.0</td>
             <td class="notes">SAVEPOINT, ROLLBACK TO SAVEPOINT, and RELEASE SAVEPOINT fully supported. PostgreSQL also uses savepoints internally to implement subtransactions. In PostgreSQL, any error inside a transaction puts it into an error state that blocks further commands — ROLLBACK TO SAVEPOINT is the only way to recover a usable transaction state after an error without aborting everything. This makes savepoints especially important in PostgreSQL for error handling inside application code.</td>
           </tr>
-          <tr>
+          <tr data-db="sqlserver">
             <td>SQL Server</td>
             <td class="supported">✓ Supported</td>
             <td>6.5</td>
             <td class="notes">SAVE TRANSACTION (note: SAVE, not SAVEPOINT) creates a savepoint. ROLLBACK TRANSACTION &lt;name&gt; rolls back to the savepoint without ending the transaction. SAVE TRANSACTION does not support a full RELEASE equivalent. Nested BEGIN TRANSACTION increments @@TRANCOUNT but the outermost COMMIT is the only one that actually commits — inner COMMITs decrement @@TRANCOUNT only.</td>
           </tr>
-          <tr>
+          <tr data-db="oracle">
             <td>Oracle</td>
             <td class="supported">✓ Supported</td>
             <td>7</td>
             <td class="notes">SAVEPOINT and ROLLBACK TO SAVEPOINT supported. Oracle auto-starts transactions (no explicit BEGIN needed — the first DML statement starts a transaction). RELEASE SAVEPOINT is not supported in Oracle — savepoints are implicitly released on COMMIT. Oracle's autonomous transactions (PRAGMA AUTONOMOUS_TRANSACTION) are a related but distinct concept.</td>
           </tr>
-          <tr>
+          <tr data-db="sqlite">
             <td>SQLite</td>
             <td class="supported">✓ Supported</td>
             <td>3.6.8</td>
@@ -130,6 +138,7 @@ COMMIT;</div>
 
   <h2>Per-Database Syntax &amp; Notes</h2>
   <div class="per-db-section">
+      <div class="per-db-entry" data-db="mysql">
         <h4>MySQL</h4>
         <p class="notes">SAVEPOINT, ROLLBACK TO SAVEPOINT, and RELEASE SAVEPOINT supported for InnoDB tables since MySQL 4.0.14. Not available for MyISAM (which has no transaction support). Savepoints are session-scoped and discarded on COMMIT or full ROLLBACK. Nested savepoints with the same name replace the previous one.</p>
         <div class="syntax">START TRANSACTION;
@@ -147,6 +156,8 @@ ROLLBACK TO SAVEPOINT sp1;
 RELEASE SAVEPOINT sp1;
 
 COMMIT;</div>
+      </div>
+      <div class="per-db-entry" data-db="postgresql">
         <h4>PostgreSQL</h4>
         <p class="notes">SAVEPOINT, ROLLBACK TO SAVEPOINT, and RELEASE SAVEPOINT fully supported. PostgreSQL also uses savepoints internally to implement subtransactions. In PostgreSQL, any error inside a transaction puts it into an error state that blocks further commands — ROLLBACK TO SAVEPOINT is the only way to recover a usable transaction state after an error without aborting everything. This makes savepoints especially important in PostgreSQL for error handling inside application code.</p>
         <div class="syntax">BEGIN;
@@ -166,6 +177,8 @@ COMMIT;
 
 -- Release (optional, frees the savepoint name):
 RELEASE SAVEPOINT after_order;</div>
+      </div>
+      <div class="per-db-entry" data-db="sqlserver">
         <h4>SQL Server</h4>
         <p class="notes">SAVE TRANSACTION (note: SAVE, not SAVEPOINT) creates a savepoint. ROLLBACK TRANSACTION &lt;name&gt; rolls back to the savepoint without ending the transaction. SAVE TRANSACTION does not support a full RELEASE equivalent. Nested BEGIN TRANSACTION increments @@TRANCOUNT but the outermost COMMIT is the only one that actually commits — inner COMMITs decrement @@TRANCOUNT only.</p>
         <div class="syntax">BEGIN TRANSACTION;
@@ -183,6 +196,8 @@ ROLLBACK TRANSACTION after_order;
 -- SAVE TRAN sp1 / ROLLBACK TRAN sp1
 
 COMMIT TRANSACTION;</div>
+      </div>
+      <div class="per-db-entry" data-db="oracle">
         <h4>Oracle</h4>
         <p class="notes">SAVEPOINT and ROLLBACK TO SAVEPOINT supported. Oracle auto-starts transactions (no explicit BEGIN needed — the first DML statement starts a transaction). RELEASE SAVEPOINT is not supported in Oracle — savepoints are implicitly released on COMMIT. Oracle's autonomous transactions (PRAGMA AUTONOMOUS_TRANSACTION) are a related but distinct concept.</p>
         <div class="syntax">-- No explicit BEGIN in Oracle:
@@ -197,6 +212,8 @@ ROLLBACK TO SAVEPOINT after_order;
 
 COMMIT;
 -- Savepoint is implicitly released on COMMIT</div>
+      </div>
+      <div class="per-db-entry" data-db="sqlite">
         <h4>SQLite</h4>
         <p class="notes">SAVEPOINT, ROLLBACK TO, and RELEASE supported since SQLite 3.6.8. SQLite's SAVEPOINT also doubles as a BEGIN — nesting SAVEPOINTs creates subtransactions. RELEASE is equivalent to committing the savepoint's work into the outer transaction (like COMMIT for the savepoint). Rolling back to a savepoint and then RELEASEing it is not the same as canceling it — RELEASE after ROLLBACK TO simply removes the savepoint marker.</p>
         <div class="syntax">BEGIN;
@@ -221,9 +238,11 @@ SAVEPOINT outer;
         INSERT INTO t VALUES (2);
     RELEASE inner;  -- commits inner work into outer
 ROLLBACK TO outer;  -- undoes everything including inner</div>
+      </div>
   </div>
   <script src="/search.js" defer></script>
   <script src="/splash.js" defer></script>
   <script src="/track.js" defer></script>
+  <script src="/compare.js" defer></script>
 </body>
 </html>

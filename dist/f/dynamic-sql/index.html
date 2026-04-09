@@ -57,6 +57,14 @@
   <p class="command-overview">Pre-compiled SQL templates that can be executed with different parameter values, improving performance for repeated queries and preventing SQL injection. Parameters are bound rather than concatenated, separating code from data.</p>
 
   <h2>Compatibility</h2>
+  <div class="compare-bar">
+    <span class="compare-label">Show:</span>
+    <label><input type="checkbox" value="mysql" checked> MySQL</label>
+    <label><input type="checkbox" value="postgresql" checked> PostgreSQL</label>
+    <label><input type="checkbox" value="sqlserver" checked> SQL Server</label>
+    <label><input type="checkbox" value="oracle" checked> Oracle</label>
+    <label><input type="checkbox" value="sqlite" checked> SQLite</label>
+  </div>
   <table>
     <thead>
       <tr>
@@ -67,31 +75,31 @@
       </tr>
     </thead>
     <tbody>
-          <tr>
+          <tr data-db="mysql">
             <td>MySQL</td>
             <td class="supported">✓ Supported</td>
             <td>5.0</td>
             <td class="notes">PREPARE/EXECUTE/DEALLOCATE PREPARE syntax works inside stored routines and at the session level. Parameterized via USING.</td>
           </tr>
-          <tr>
+          <tr data-db="postgresql">
             <td>PostgreSQL</td>
             <td class="supported">✓ Supported</td>
             <td>7.4</td>
             <td class="notes">EXECUTE inside PL/pgSQL runs dynamic SQL. USING clause passes parameters safely. format() with %I/%L helps prevent injection.</td>
           </tr>
-          <tr>
+          <tr data-db="sqlserver">
             <td>SQL Server</td>
             <td class="supported">✓ Supported</td>
             <td>2005</td>
             <td class="notes">sp_executesql is preferred over EXEC(@sql) because it supports parameterization and plan reuse. Always use sp_executesql for user-supplied values.</td>
           </tr>
-          <tr>
+          <tr data-db="oracle">
             <td>Oracle</td>
             <td class="supported">✓ Supported</td>
             <td>8i</td>
             <td class="notes">EXECUTE IMMEDIATE is the standard PL/SQL mechanism. DBMS_SQL package provides a lower-level cursor API for cases where column count is unknown at compile time.</td>
           </tr>
-          <tr>
+          <tr data-db="sqlite">
             <td>SQLite</td>
             <td class="not-supported">✗ Not Supported</td>
             <td>—</td>
@@ -121,12 +129,15 @@ EXEC sp_executesql N'SELECT * FROM ' + @tbl;</div>
 
   <h2>Per-Database Syntax &amp; Notes</h2>
   <div class="per-db-section">
+      <div class="per-db-entry" data-db="mysql">
         <h4>MySQL</h4>
         <p class="notes">PREPARE/EXECUTE/DEALLOCATE PREPARE syntax works inside stored routines and at the session level. Parameterized via USING.</p>
         <div class="syntax">SET @sql = CONCAT('SELECT * FROM ', tbl_name);
 PREPARE stmt FROM @sql;
 EXECUTE stmt USING @param;
 DEALLOCATE PREPARE stmt;</div>
+      </div>
+      <div class="per-db-entry" data-db="postgresql">
         <h4>PostgreSQL</h4>
         <p class="notes">EXECUTE inside PL/pgSQL runs dynamic SQL. USING clause passes parameters safely. format() with %I/%L helps prevent injection.</p>
         <div class="syntax">DO $$
@@ -136,10 +147,14 @@ BEGIN
   EXECUTE sql;
 END;
 $$;</div>
+      </div>
+      <div class="per-db-entry" data-db="sqlserver">
         <h4>SQL Server</h4>
         <p class="notes">sp_executesql is preferred over EXEC(@sql) because it supports parameterization and plan reuse. Always use sp_executesql for user-supplied values.</p>
         <div class="syntax">DECLARE @sql NVARCHAR(MAX) = N'SELECT * FROM dbo.Orders WHERE id = @id';
 EXEC sp_executesql @sql, N'@id INT', @id = 42;</div>
+      </div>
+      <div class="per-db-entry" data-db="oracle">
         <h4>Oracle</h4>
         <p class="notes">EXECUTE IMMEDIATE is the standard PL/SQL mechanism. DBMS_SQL package provides a lower-level cursor API for cases where column count is unknown at compile time.</p>
         <div class="syntax">DECLARE
@@ -148,9 +163,11 @@ BEGIN
   sql_str := 'UPDATE orders SET status = :1 WHERE id = :2';
   EXECUTE IMMEDIATE sql_str USING 'closed', 99;
 END;</div>
+      </div>
   </div>
   <script src="/search.js" defer></script>
   <script src="/splash.js" defer></script>
   <script src="/track.js" defer></script>
+  <script src="/compare.js" defer></script>
 </body>
 </html>

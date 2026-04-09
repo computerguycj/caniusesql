@@ -57,6 +57,14 @@
   <p class="command-overview">A sequence of statements treated as a single atomic unit that either all succeed or all fail. Use BEGIN/COMMIT/ROLLBACK to control boundaries. Essential for data integrity in multi-step operations. Keep transactions short to reduce lock contention.</p>
 
   <h2>Compatibility</h2>
+  <div class="compare-bar">
+    <span class="compare-label">Show:</span>
+    <label><input type="checkbox" value="mysql" checked> MySQL</label>
+    <label><input type="checkbox" value="postgresql" checked> PostgreSQL</label>
+    <label><input type="checkbox" value="sqlserver" checked> SQL Server</label>
+    <label><input type="checkbox" value="oracle" checked> Oracle</label>
+    <label><input type="checkbox" value="sqlite" checked> SQLite</label>
+  </div>
   <table>
     <thead>
       <tr>
@@ -67,31 +75,31 @@
       </tr>
     </thead>
     <tbody>
-          <tr>
+          <tr data-db="mysql">
             <td>MySQL</td>
             <td class="supported">✓ Supported</td>
             <td>all</td>
             <td class="notes">AUTOCOMMIT=ON by default</td>
           </tr>
-          <tr>
+          <tr data-db="postgresql">
             <td>PostgreSQL</td>
             <td class="supported">✓ Supported</td>
             <td>all</td>
             <td class="notes">Standard</td>
           </tr>
-          <tr>
+          <tr data-db="sqlserver">
             <td>SQL Server</td>
             <td class="supported">✓ Supported</td>
             <td>all</td>
             <td class="notes">BEGIN TRAN / COMMIT</td>
           </tr>
-          <tr>
+          <tr data-db="oracle">
             <td>Oracle</td>
             <td class="supported">✓ Supported</td>
             <td>all</td>
             <td class="notes">AUTOCOMMIT=OFF by default</td>
           </tr>
-          <tr>
+          <tr data-db="sqlite">
             <td>SQLite</td>
             <td class="supported">✓ Supported</td>
             <td>all</td>
@@ -123,39 +131,50 @@ COMMIT;</div>
 
   <h2>Per-Database Syntax &amp; Notes</h2>
   <div class="per-db-section">
+      <div class="per-db-entry" data-db="mysql">
         <h4>MySQL</h4>
         <p class="notes">AUTOCOMMIT=ON by default</p>
         <div class="syntax">START TRANSACTION;
 …
 COMMIT;
 -- or ROLLBACK;</div>
+      </div>
+      <div class="per-db-entry" data-db="postgresql">
         <h4>PostgreSQL</h4>
         <p class="notes">Standard</p>
         <div class="syntax">BEGIN;
 …
 COMMIT;
 -- or ROLLBACK;</div>
+      </div>
+      <div class="per-db-entry" data-db="sqlserver">
         <h4>SQL Server</h4>
         <p class="notes">BEGIN TRAN / COMMIT</p>
         <div class="syntax">BEGIN TRANSACTION;
 …
 COMMIT TRANSACTION;
 -- or ROLLBACK TRANSACTION;</div>
+      </div>
+      <div class="per-db-entry" data-db="oracle">
         <h4>Oracle</h4>
         <p class="notes">AUTOCOMMIT=OFF by default</p>
         <div class="syntax">SAVEPOINT sp1;
 …
 COMMIT;
 -- or ROLLBACK TO sp1;</div>
+      </div>
+      <div class="per-db-entry" data-db="sqlite">
         <h4>SQLite</h4>
         <p class="notes">AUTOCOMMIT=ON by default</p>
         <div class="syntax">BEGIN;
 …
 COMMIT;
 -- or ROLLBACK;</div>
+      </div>
   </div>
   <script src="/search.js" defer></script>
   <script src="/splash.js" defer></script>
   <script src="/track.js" defer></script>
+  <script src="/compare.js" defer></script>
 </body>
 </html>

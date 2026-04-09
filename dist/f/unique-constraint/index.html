@@ -57,6 +57,14 @@
   <p class="command-overview">Enforces that all values in a column (or combination of columns) are distinct across the table. Unlike primary keys, multiple NULLs are allowed (in most databases). Useful for enforcing business rules like one active subscription per customer.</p>
 
   <h2>Compatibility</h2>
+  <div class="compare-bar">
+    <span class="compare-label">Show:</span>
+    <label><input type="checkbox" value="mysql" checked> MySQL</label>
+    <label><input type="checkbox" value="postgresql" checked> PostgreSQL</label>
+    <label><input type="checkbox" value="sqlserver" checked> SQL Server</label>
+    <label><input type="checkbox" value="oracle" checked> Oracle</label>
+    <label><input type="checkbox" value="sqlite" checked> SQLite</label>
+  </div>
   <table>
     <thead>
       <tr>
@@ -67,31 +75,31 @@
       </tr>
     </thead>
     <tbody>
-          <tr>
+          <tr data-db="mysql">
             <td>MySQL</td>
             <td class="supported">✓ Supported</td>
             <td>all</td>
             <td class="notes">UNIQUE constraints allow multiple NULLs (NULL is not considered equal to NULL). Creating a UNIQUE constraint also creates a UNIQUE index. Composite unique constraints supported. Can be used as a FK target.</td>
           </tr>
-          <tr>
+          <tr data-db="postgresql">
             <td>PostgreSQL</td>
             <td class="supported">✓ Supported</td>
             <td>all</td>
             <td class="notes">NULLs are not considered equal — multiple NULLs are allowed. PG 15+ adds NULLS NOT DISTINCT option to treat NULLs as equal (only one NULL allowed). Unique constraints create an underlying unique index. UNIQUE NULLS NOT DISTINCT is the standard way to enforce at-most-one NULL.</td>
           </tr>
-          <tr>
+          <tr data-db="sqlserver">
             <td>SQL Server</td>
             <td class="supported">✓ Supported</td>
             <td>all</td>
             <td class="notes">Only ONE NULL allowed per unique-constrained column (SQL Server treats NULLs as equal for uniqueness purposes — opposite of standard SQL). A filtered unique index (WHERE col IS NOT NULL) can work around this if you need multiple NULLs.</td>
           </tr>
-          <tr>
+          <tr data-db="oracle">
             <td>Oracle</td>
             <td class="supported">✓ Supported</td>
             <td>all</td>
             <td class="notes">Multiple NULLs allowed (NULL != NULL). Composite unique constraint with all-NULL rows are allowed (partial NULLs enforce uniqueness on non-NULL combinations). Creating a UNIQUE constraint creates a unique index.</td>
           </tr>
-          <tr>
+          <tr data-db="sqlite">
             <td>SQLite</td>
             <td class="supported">✓ Supported</td>
             <td>all</td>
@@ -125,6 +133,7 @@
 
   <h2>Per-Database Syntax &amp; Notes</h2>
   <div class="per-db-section">
+      <div class="per-db-entry" data-db="mysql">
         <h4>MySQL</h4>
         <p class="notes">UNIQUE constraints allow multiple NULLs (NULL is not considered equal to NULL). Creating a UNIQUE constraint also creates a UNIQUE index. Composite unique constraints supported. Can be used as a FK target.</p>
         <div class="syntax">CREATE TABLE users (
@@ -138,6 +147,8 @@ ALTER TABLE users ADD CONSTRAINT uq_name_email UNIQUE (username, email);
 
 -- Drop:
 ALTER TABLE users DROP INDEX uq_name_email;</div>
+      </div>
+      <div class="per-db-entry" data-db="postgresql">
         <h4>PostgreSQL</h4>
         <p class="notes">NULLs are not considered equal — multiple NULLs are allowed. PG 15+ adds NULLS NOT DISTINCT option to treat NULLs as equal (only one NULL allowed). Unique constraints create an underlying unique index. UNIQUE NULLS NOT DISTINCT is the standard way to enforce at-most-one NULL.</p>
         <div class="syntax">CREATE TABLE users (
@@ -150,6 +161,8 @@ CREATE UNIQUE INDEX ON users (email) NULLS NOT DISTINCT;
 
 -- Composite:
 ALTER TABLE users ADD CONSTRAINT uq_name UNIQUE (first_name, last_name);</div>
+      </div>
+      <div class="per-db-entry" data-db="sqlserver">
         <h4>SQL Server</h4>
         <p class="notes">Only ONE NULL allowed per unique-constrained column (SQL Server treats NULLs as equal for uniqueness purposes — opposite of standard SQL). A filtered unique index (WHERE col IS NOT NULL) can work around this if you need multiple NULLs.</p>
         <div class="syntax">CREATE TABLE users (
@@ -162,6 +175,8 @@ CREATE UNIQUE INDEX uq_email ON users(email) WHERE email IS NOT NULL;
 
 -- Drop:
 ALTER TABLE users DROP CONSTRAINT uq_users_email;</div>
+      </div>
+      <div class="per-db-entry" data-db="oracle">
         <h4>Oracle</h4>
         <p class="notes">Multiple NULLs allowed (NULL != NULL). Composite unique constraint with all-NULL rows are allowed (partial NULLs enforce uniqueness on non-NULL combinations). Creating a UNIQUE constraint creates a unique index.</p>
         <div class="syntax">CREATE TABLE users (
@@ -174,6 +189,8 @@ ALTER TABLE users ADD CONSTRAINT uq_email UNIQUE (email);
 
 -- Disable without dropping:
 ALTER TABLE users DISABLE CONSTRAINT uq_email;</div>
+      </div>
+      <div class="per-db-entry" data-db="sqlite">
         <h4>SQLite</h4>
         <p class="notes">Multiple NULLs allowed in UNIQUE columns (NULL != NULL). A UNIQUE constraint on a column creates an implicit index. Constraints cannot be removed after creation without recreating the table.</p>
         <div class="syntax">CREATE TABLE users (
@@ -187,9 +204,11 @@ CREATE TABLE memberships (
   group_id INT,
   UNIQUE (user_id, group_id)
 );</div>
+      </div>
   </div>
   <script src="/search.js" defer></script>
   <script src="/splash.js" defer></script>
   <script src="/track.js" defer></script>
+  <script src="/compare.js" defer></script>
 </body>
 </html>

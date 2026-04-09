@@ -178,6 +178,74 @@
   }
 
   /* ------------------------------------------------------------------
+     Copy-to-clipboard buttons
+     ------------------------------------------------------------------ */
+
+  function initCopyButtons() {
+    var blocks = document.querySelectorAll('.syntax');
+    for (var i = 0; i < blocks.length; i++) {
+      wrapSyntaxBlock(blocks[i]);
+    }
+
+    document.addEventListener('click', function (event) {
+      var btn = event.target;
+      if (!btn || btn.className.indexOf('copy-btn') === -1) return;
+      var wrapper = btn.parentElement;
+      if (!wrapper) return;
+      var block = wrapper.querySelector('.syntax');
+      if (!block) return;
+      var text = block.textContent || '';
+      if (!navigator.clipboard) return;  // non-HTTPS or old browser — silent fail
+      navigator.clipboard.writeText(text).then(function () {
+        btn.textContent = 'Copied!';
+        btn.classList.add('copied');
+        setTimeout(function () {
+          btn.textContent = 'Copy';
+          btn.classList.remove('copied');
+        }, 1500);
+      }).catch(function () {
+        // Clipboard write failed — silent fail.
+      });
+    });
+  }
+
+  function wrapSyntaxBlock(block) {
+    var wrapper = document.createElement('div');
+    wrapper.className = 'syntax-wrapper';
+    block.parentNode.insertBefore(wrapper, block);
+    wrapper.appendChild(block);
+
+    var btn = document.createElement('button');
+    btn.className = 'copy-btn';
+    btn.type = 'button';
+    btn.setAttribute('aria-label', 'Copy to clipboard');
+    btn.textContent = 'Copy';
+    wrapper.appendChild(btn);
+  }
+
+  /* ------------------------------------------------------------------
+     "/" keyboard shortcut — focus search
+     ------------------------------------------------------------------ */
+
+  function initSlashShortcut() {
+    document.addEventListener('keydown', function (event) {
+      if (event.key !== '/') return;
+      var active = document.activeElement;
+      if (active) {
+        var tag = active.tagName;
+        if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT') return;
+        var ce = active.getAttribute('contenteditable');
+        if (ce !== null && ce !== 'false') return;
+      }
+      var input = document.querySelector('.site-search');
+      if (!input) return;
+      event.preventDefault();
+      input.focus();
+      input.select();
+    });
+  }
+
+  /* ------------------------------------------------------------------
      Init
      ------------------------------------------------------------------ */
 
@@ -188,6 +256,8 @@
         attachToInput(inputs[i]);
       }
     });
+    initCopyButtons();
+    initSlashShortcut();
   });
 
 }());

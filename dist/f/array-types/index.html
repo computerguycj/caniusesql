@@ -57,6 +57,14 @@
   <p class="command-overview">Columns that hold arrays of a single base type, available in PostgreSQL natively. Useful for denormalized data (tags, categories) without a separate junction table. Avoid for normalized relationships -- use proper relational tables instead.</p>
 
   <h2>Compatibility</h2>
+  <div class="compare-bar">
+    <span class="compare-label">Show:</span>
+    <label><input type="checkbox" value="mysql" checked> MySQL</label>
+    <label><input type="checkbox" value="postgresql" checked> PostgreSQL</label>
+    <label><input type="checkbox" value="sqlserver" checked> SQL Server</label>
+    <label><input type="checkbox" value="oracle" checked> Oracle</label>
+    <label><input type="checkbox" value="sqlite" checked> SQLite</label>
+  </div>
   <table>
     <thead>
       <tr>
@@ -67,31 +75,31 @@
       </tr>
     </thead>
     <tbody>
-          <tr>
+          <tr data-db="mysql">
             <td>MySQL</td>
             <td class="not-supported">✗ Not Supported</td>
             <td>—</td>
             <td class="notes">MySQL has no native array data type. Common alternatives: (1) a normalized child table (preferred); (2) a JSON column storing a JSON array; (3) a comma-separated string (discouraged — hard to query). The JSON approach gives the most array-like functionality with json_contains(), json_extract(), and json_array_append().</td>
           </tr>
-          <tr>
+          <tr data-db="postgresql">
             <td>PostgreSQL</td>
             <td class="supported">✓ Supported</td>
             <td>7.1</td>
             <td class="notes">First-class array type for every base type: integer[], text[], boolean[], numeric[], timestamptz[], etc. Arrays are zero-indexed in the C tradition internally but one-indexed in SQL access (arr[1] is the first element). Multidimensional arrays supported. GIN indexes enable fast containment queries (@&gt;, &amp;&amp;). unnest() expands an array to rows. array_agg() is the inverse — collapses rows into an array.</td>
           </tr>
-          <tr>
+          <tr data-db="sqlserver">
             <td>SQL Server</td>
             <td class="not-supported">✗ Not Supported</td>
             <td>—</td>
             <td class="notes">SQL Server has no native array type. Alternatives: (1) a normalized child table; (2) a JSON column (SQL Server 2016+); (3) a delimited string with STRING_SPLIT; (4) an XML column with nodes() querying.</td>
           </tr>
-          <tr>
+          <tr data-db="oracle">
             <td>Oracle</td>
             <td class="supported">✓ Supported</td>
             <td>8i</td>
             <td class="notes">Oracle supports arrays through VARRAY (variable-size array with a fixed maximum) and nested tables (unbounded, stored out-of-line). Both require defining a named type. The SQL/JSON path operators (12c+) on JSON columns are commonly preferred over VARRAY for flexible multi-value storage in modern Oracle. VARRAYs are stored inline in the row; nested tables require a separate storage clause.</td>
           </tr>
-          <tr>
+          <tr data-db="sqlite">
             <td>SQLite</td>
             <td class="not-supported">✗ Not Supported</td>
             <td>—</td>
@@ -128,6 +136,7 @@ VALUES (ARRAY['featured','sale'], ARRAY[4,5,3]);</div>
 
   <h2>Per-Database Syntax &amp; Notes</h2>
   <div class="per-db-section">
+      <div class="per-db-entry" data-db="mysql">
         <h4>MySQL</h4>
         <p class="notes">MySQL has no native array data type. Common alternatives: (1) a normalized child table (preferred); (2) a JSON column storing a JSON array; (3) a comma-separated string (discouraged — hard to query). The JSON approach gives the most array-like functionality with json_contains(), json_extract(), and json_array_append().</p>
         <div class="syntax">-- JSON array alternative:
@@ -145,6 +154,8 @@ WHERE JSON_CONTAINS(tags, JSON_QUOTE('featured'));
 UPDATE products
 SET tags = JSON_ARRAY_APPEND(tags, '$', 'new-tag')
 WHERE id = 1;</div>
+      </div>
+      <div class="per-db-entry" data-db="postgresql">
         <h4>PostgreSQL</h4>
         <p class="notes">First-class array type for every base type: integer[], text[], boolean[], numeric[], timestamptz[], etc. Arrays are zero-indexed in the C tradition internally but one-indexed in SQL access (arr[1] is the first element). Multidimensional arrays supported. GIN indexes enable fast containment queries (@&gt;, &amp;&amp;). unnest() expands an array to rows. array_agg() is the inverse — collapses rows into an array.</p>
         <div class="syntax">CREATE TABLE products (
@@ -176,6 +187,8 @@ SELECT array_length(tags, 1),
        array_append(tags, 'clearance'),
        array_remove(tags, 'sale')
 FROM products;</div>
+      </div>
+      <div class="per-db-entry" data-db="sqlserver">
         <h4>SQL Server</h4>
         <p class="notes">SQL Server has no native array type. Alternatives: (1) a normalized child table; (2) a JSON column (SQL Server 2016+); (3) a delimited string with STRING_SPLIT; (4) an XML column with nodes() querying.</p>
         <div class="syntax">-- JSON array alternative (2016+):
@@ -198,6 +211,8 @@ CROSS APPLY (
     SELECT CAST('&lt;t&gt;' + REPLACE(p.tags_csv,',','&lt;/t&gt;&lt;t&gt;') + '&lt;/t&gt;' AS XML)
 ) x(xml_val)
 CROSS APPLY xml_val.nodes('/t') t(c);</div>
+      </div>
+      <div class="per-db-entry" data-db="oracle">
         <h4>Oracle</h4>
         <p class="notes">Oracle supports arrays through VARRAY (variable-size array with a fixed maximum) and nested tables (unbounded, stored out-of-line). Both require defining a named type. The SQL/JSON path operators (12c+) on JSON columns are commonly preferred over VARRAY for flexible multi-value storage in modern Oracle. VARRAYs are stored inline in the row; nested tables require a separate storage clause.</p>
         <div class="syntax">-- Define a VARRAY type:
@@ -219,6 +234,8 @@ WHERE t.COLUMN_VALUE = 'featured';
 
 -- Nested table (unbounded, out-of-line storage):
 CREATE TYPE tag_table AS TABLE OF VARCHAR2(50);</div>
+      </div>
+      <div class="per-db-entry" data-db="sqlite">
         <h4>SQLite</h4>
         <p class="notes">SQLite has no native array type. SQLite's flexible type system (type affinity) means you can store a JSON array in any TEXT column. The json_each() function provides array iteration. For simple cases, a comma-separated string with json_each on a JSON conversion is the lightest workaround.</p>
         <div class="syntax">-- JSON array in a TEXT column:
@@ -239,9 +256,11 @@ WHERE j.value = 'featured';
 UPDATE products
 SET tags = json_insert(tags, '$[#]', 'clearance')
 WHERE id = 1;</div>
+      </div>
   </div>
   <script src="/search.js" defer></script>
   <script src="/splash.js" defer></script>
   <script src="/track.js" defer></script>
+  <script src="/compare.js" defer></script>
 </body>
 </html>

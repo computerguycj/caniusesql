@@ -57,6 +57,14 @@
   <p class="command-overview">A situation where two or more transactions are each waiting for locks held by the others, causing all to stall. Databases detect deadlocks and abort one victim transaction -- your application must handle this and retry. Minimize by acquiring locks in a consistent order.</p>
 
   <h2>Compatibility</h2>
+  <div class="compare-bar">
+    <span class="compare-label">Show:</span>
+    <label><input type="checkbox" value="mysql" checked> MySQL</label>
+    <label><input type="checkbox" value="postgresql" checked> PostgreSQL</label>
+    <label><input type="checkbox" value="sqlserver" checked> SQL Server</label>
+    <label><input type="checkbox" value="oracle" checked> Oracle</label>
+    <label><input type="checkbox" value="sqlite" checked> SQLite</label>
+  </div>
   <table>
     <thead>
       <tr>
@@ -67,31 +75,31 @@
       </tr>
     </thead>
     <tbody>
-          <tr>
+          <tr data-db="mysql">
             <td>MySQL</td>
             <td class="supported">✓ Supported</td>
             <td>5.0</td>
             <td class="notes">InnoDB automatically detects deadlocks and rolls back the transaction with the least undo work (the 'cheaper' victim). Error code 1213 (ER_LOCK_DEADLOCK). The application must catch this and retry the transaction.</td>
           </tr>
-          <tr>
+          <tr data-db="postgresql">
             <td>PostgreSQL</td>
             <td class="supported">✓ Supported</td>
             <td>7.4</td>
             <td class="notes">PostgreSQL detects deadlocks using a wait-for graph checked after a configurable lock_timeout or deadlock_timeout (default 1 second). One transaction is chosen as victim and receives error code 40P01. The application must catch and retry.</td>
           </tr>
-          <tr>
+          <tr data-db="sqlserver">
             <td>SQL Server</td>
             <td class="supported">✓ Supported</td>
             <td>2000</td>
             <td class="notes">Deadlock monitor runs every 5 seconds by default (escalating to 100ms when deadlocks are detected). Victim is chosen by lowest deadlock priority, then cheapest rollback. Error 1205. Use SET DEADLOCK_PRIORITY to influence victim selection.</td>
           </tr>
-          <tr>
+          <tr data-db="oracle">
             <td>Oracle</td>
             <td class="supported">✓ Supported</td>
             <td>7</td>
             <td class="notes">Oracle detects deadlocks and immediately rolls back only the statement that caused the deadlock (not the entire transaction). ORA-00060 is raised. The transaction remains open and the application can choose to commit, roll back further, or retry the statement.</td>
           </tr>
-          <tr>
+          <tr data-db="sqlite">
             <td>SQLite</td>
             <td class="supported">✓ Supported</td>
             <td>3.0.0</td>
@@ -121,34 +129,45 @@
 
   <h2>Per-Database Syntax &amp; Notes</h2>
   <div class="per-db-section">
+      <div class="per-db-entry" data-db="mysql">
         <h4>MySQL</h4>
         <p class="notes">InnoDB automatically detects deadlocks and rolls back the transaction with the least undo work (the 'cheaper' victim). Error code 1213 (ER_LOCK_DEADLOCK). The application must catch this and retry the transaction.</p>
         <div class="syntax">-- Application retry pattern:
 -- Catch error 1213, then re-execute the full transaction
 SHOW ENGINE INNODB STATUS;  -- inspect recent deadlock detail</div>
+      </div>
+      <div class="per-db-entry" data-db="postgresql">
         <h4>PostgreSQL</h4>
         <p class="notes">PostgreSQL detects deadlocks using a wait-for graph checked after a configurable lock_timeout or deadlock_timeout (default 1 second). One transaction is chosen as victim and receives error code 40P01. The application must catch and retry.</p>
         <div class="syntax">-- Set deadlock detection interval:
 SET deadlock_timeout = '500ms';
 -- Application catches SQLSTATE 40P01 and retries</div>
+      </div>
+      <div class="per-db-entry" data-db="sqlserver">
         <h4>SQL Server</h4>
         <p class="notes">Deadlock monitor runs every 5 seconds by default (escalating to 100ms when deadlocks are detected). Victim is chosen by lowest deadlock priority, then cheapest rollback. Error 1205. Use SET DEADLOCK_PRIORITY to influence victim selection.</p>
         <div class="syntax">SET DEADLOCK_PRIORITY LOW;  -- make this session prefer to be victim
 -- Catch error 1205 in application and retry
 -- Trace flag 1222 or Extended Events for deadlock graph logging</div>
+      </div>
+      <div class="per-db-entry" data-db="oracle">
         <h4>Oracle</h4>
         <p class="notes">Oracle detects deadlocks and immediately rolls back only the statement that caused the deadlock (not the entire transaction). ORA-00060 is raised. The transaction remains open and the application can choose to commit, roll back further, or retry the statement.</p>
         <div class="syntax">-- Catch ORA-00060
 -- Oracle rolls back only the deadlocking statement
 -- Application decides whether to retry the statement or rollback the transaction</div>
+      </div>
+      <div class="per-db-entry" data-db="sqlite">
         <h4>SQLite</h4>
         <p class="notes">SQLite's locking model (database-level write lock) makes traditional row-level deadlocks impossible. SQLITE_BUSY (error 5) is returned when a write lock cannot be acquired. Use busy_timeout to configure how long to wait before returning SQLITE_BUSY.</p>
         <div class="syntax">-- Set busy timeout:
 PRAGMA busy_timeout = 5000;  -- wait up to 5 seconds
 -- Or handle SQLITE_BUSY (error 5) in application</div>
+      </div>
   </div>
   <script src="/search.js" defer></script>
   <script src="/splash.js" defer></script>
   <script src="/track.js" defer></script>
+  <script src="/compare.js" defer></script>
 </body>
 </html>

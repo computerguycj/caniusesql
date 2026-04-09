@@ -57,6 +57,14 @@
   <p class="command-overview">A column (or set of columns) that references the primary key of another table, enforcing referential integrity. The foreign key table is the child; the referenced table is the parent. Prevents orphaned rows and enables JOINs. Disabled by some bulk-load operations.</p>
 
   <h2>Compatibility</h2>
+  <div class="compare-bar">
+    <span class="compare-label">Show:</span>
+    <label><input type="checkbox" value="mysql" checked> MySQL</label>
+    <label><input type="checkbox" value="postgresql" checked> PostgreSQL</label>
+    <label><input type="checkbox" value="sqlserver" checked> SQL Server</label>
+    <label><input type="checkbox" value="oracle" checked> Oracle</label>
+    <label><input type="checkbox" value="sqlite" checked> SQLite</label>
+  </div>
   <table>
     <thead>
       <tr>
@@ -67,31 +75,31 @@
       </tr>
     </thead>
     <tbody>
-          <tr>
+          <tr data-db="mysql">
             <td>MySQL</td>
             <td class="supported">✓ Supported</td>
             <td>all</td>
             <td class="notes">Foreign keys are only enforced by the InnoDB engine — MyISAM silently ignores FK constraints. ON DELETE / ON UPDATE actions: RESTRICT, CASCADE, SET NULL, NO ACTION, SET DEFAULT. Both columns must have compatible types and the parent column must be indexed.</td>
           </tr>
-          <tr>
+          <tr data-db="postgresql">
             <td>PostgreSQL</td>
             <td class="supported">✓ Supported</td>
             <td>all</td>
             <td class="notes">Full FK support with DEFERRABLE / INITIALLY DEFERRED options — you can defer constraint checking to end of transaction, useful for circular references or batch inserts. ON DELETE actions: NO ACTION, RESTRICT, CASCADE, SET NULL, SET DEFAULT.</td>
           </tr>
-          <tr>
+          <tr data-db="sqlserver">
             <td>SQL Server</td>
             <td class="supported">✓ Supported</td>
             <td>all</td>
             <td class="notes">Standard FK support. ON DELETE / ON UPDATE: NO ACTION, CASCADE, SET NULL, SET DEFAULT. FKs can be temporarily disabled with ALTER TABLE ... NOCHECK CONSTRAINT for bulk loads. Cannot cascade to the same table through multiple paths (no multiple cascade paths).</td>
           </tr>
-          <tr>
+          <tr data-db="oracle">
             <td>Oracle</td>
             <td class="supported">✓ Supported</td>
             <td>all</td>
             <td class="notes">Standard FK support. ON DELETE CASCADE and ON DELETE SET NULL supported; ON UPDATE CASCADE is NOT supported in Oracle. FKs can be disabled/enabled without dropping. An index on the FK column is recommended (Oracle does not auto-create it, unlike other engines).</td>
           </tr>
-          <tr>
+          <tr data-db="sqlite">
             <td>SQLite</td>
             <td class="supported">✓ Supported</td>
             <td>3.6.19</td>
@@ -126,6 +134,7 @@
 
   <h2>Per-Database Syntax &amp; Notes</h2>
   <div class="per-db-section">
+      <div class="per-db-entry" data-db="mysql">
         <h4>MySQL</h4>
         <p class="notes">Foreign keys are only enforced by the InnoDB engine — MyISAM silently ignores FK constraints. ON DELETE / ON UPDATE actions: RESTRICT, CASCADE, SET NULL, NO ACTION, SET DEFAULT. Both columns must have compatible types and the parent column must be indexed.</p>
         <div class="syntax">CREATE TABLE orders (
@@ -138,6 +147,8 @@
 
 -- Disable FK checks for bulk loads:
 SET FOREIGN_KEY_CHECKS = 0;</div>
+      </div>
+      <div class="per-db-entry" data-db="postgresql">
         <h4>PostgreSQL</h4>
         <p class="notes">Full FK support with DEFERRABLE / INITIALLY DEFERRED options — you can defer constraint checking to end of transaction, useful for circular references or batch inserts. ON DELETE actions: NO ACTION, RESTRICT, CASCADE, SET NULL, SET DEFAULT.</p>
         <div class="syntax">CREATE TABLE orders (
@@ -149,6 +160,8 @@ SET FOREIGN_KEY_CHECKS = 0;</div>
 ALTER TABLE orders ADD CONSTRAINT fk_customer
   FOREIGN KEY (customer_id) REFERENCES customers(id)
   DEFERRABLE INITIALLY DEFERRED;</div>
+      </div>
+      <div class="per-db-entry" data-db="sqlserver">
         <h4>SQL Server</h4>
         <p class="notes">Standard FK support. ON DELETE / ON UPDATE: NO ACTION, CASCADE, SET NULL, SET DEFAULT. FKs can be temporarily disabled with ALTER TABLE ... NOCHECK CONSTRAINT for bulk loads. Cannot cascade to the same table through multiple paths (no multiple cascade paths).</p>
         <div class="syntax">CREATE TABLE orders (
@@ -161,6 +174,8 @@ ALTER TABLE orders ADD CONSTRAINT fk_customer
 
 -- Disable for bulk load:
 ALTER TABLE orders NOCHECK CONSTRAINT fk_orders_customer;</div>
+      </div>
+      <div class="per-db-entry" data-db="oracle">
         <h4>Oracle</h4>
         <p class="notes">Standard FK support. ON DELETE CASCADE and ON DELETE SET NULL supported; ON UPDATE CASCADE is NOT supported in Oracle. FKs can be disabled/enabled without dropping. An index on the FK column is recommended (Oracle does not auto-create it, unlike other engines).</p>
         <div class="syntax">CREATE TABLE orders (
@@ -173,6 +188,8 @@ ALTER TABLE orders NOCHECK CONSTRAINT fk_orders_customer;</div>
 
 -- Recommended: index the FK column manually
 CREATE INDEX idx_orders_cust ON orders(customer_id);</div>
+      </div>
+      <div class="per-db-entry" data-db="sqlite">
         <h4>SQLite</h4>
         <p class="notes">Foreign key enforcement is DISABLED by default and must be enabled per connection with PRAGMA foreign_keys = ON. Without this pragma, FK constraints are parsed but silently ignored. This is a common gotcha for SQLite users.</p>
         <div class="syntax">-- REQUIRED: enable FK enforcement first
@@ -182,9 +199,11 @@ CREATE TABLE orders (
   id          INTEGER PRIMARY KEY,
   customer_id INTEGER REFERENCES customers(id) ON DELETE CASCADE
 );</div>
+      </div>
   </div>
   <script src="/search.js" defer></script>
   <script src="/splash.js" defer></script>
   <script src="/track.js" defer></script>
+  <script src="/compare.js" defer></script>
 </body>
 </html>

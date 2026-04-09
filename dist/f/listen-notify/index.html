@@ -57,6 +57,14 @@
   <p class="command-overview">PostgreSQL publish/subscribe mechanism for asynchronous notifications between database sessions: LISTEN registers interest in a channel, NOTIFY sends a notification to all subscribers. Useful for cache invalidation, background job triggering, and event-driven architectures without polling.</p>
 
   <h2>Compatibility</h2>
+  <div class="compare-bar">
+    <span class="compare-label">Show:</span>
+    <label><input type="checkbox" value="mysql" checked> MySQL</label>
+    <label><input type="checkbox" value="postgresql" checked> PostgreSQL</label>
+    <label><input type="checkbox" value="sqlserver" checked> SQL Server</label>
+    <label><input type="checkbox" value="oracle" checked> Oracle</label>
+    <label><input type="checkbox" value="sqlite" checked> SQLite</label>
+  </div>
   <table>
     <thead>
       <tr>
@@ -67,31 +75,31 @@
       </tr>
     </thead>
     <tbody>
-          <tr>
+          <tr data-db="mysql">
             <td>MySQL</td>
             <td class="not-supported">✗ Not Supported</td>
             <td>—</td>
             <td class="notes">Not supported. Use application-layer messaging (Redis pub/sub, etc.).</td>
           </tr>
-          <tr>
+          <tr data-db="postgresql">
             <td>PostgreSQL</td>
             <td class="supported">✓ Supported</td>
             <td>all</td>
             <td class="notes">LISTEN channel registers interest. NOTIFY channel [, payload] fires on transaction commit. Clients receive notifications via the connection. pg_notify(channel, payload) can be called from triggers or functions. Payload limited to ~8000 bytes. Works within a single database only.</td>
           </tr>
-          <tr>
+          <tr data-db="sqlserver">
             <td>SQL Server</td>
             <td class="not-supported">✗ Not Supported</td>
             <td>—</td>
             <td class="notes">Not supported as SQL. Service Broker provides similar functionality but with a very different architecture and syntax.</td>
           </tr>
-          <tr>
+          <tr data-db="oracle">
             <td>Oracle</td>
             <td class="not-supported">✗ Not Supported</td>
             <td>—</td>
             <td class="notes">Not supported as SQL. DBMS_ALERT and DBMS_PIPE PL/SQL packages provide async signaling but are PL/SQL-only.</td>
           </tr>
-          <tr>
+          <tr data-db="sqlite">
             <td>SQLite</td>
             <td class="not-supported">✗ Not Supported</td>
             <td>—</td>
@@ -124,9 +132,12 @@ NOTIFY order_updates, '{&quot;id&quot;: 42}';</div>
 
   <h2>Per-Database Syntax &amp; Notes</h2>
   <div class="per-db-section">
+      <div class="per-db-entry" data-db="mysql">
         <h4>MySQL</h4>
         <p class="notes">Not supported. Use application-layer messaging (Redis pub/sub, etc.).</p>
         <div class="syntax">-- Not supported.</div>
+      </div>
+      <div class="per-db-entry" data-db="postgresql">
         <h4>PostgreSQL</h4>
         <p class="notes">LISTEN channel registers interest. NOTIFY channel [, payload] fires on transaction commit. Clients receive notifications via the connection. pg_notify(channel, payload) can be called from triggers or functions. Payload limited to ~8000 bytes. Works within a single database only.</p>
         <div class="syntax">-- Session 1:
@@ -137,18 +148,26 @@ NOTIFY order_updates, '{&quot;id&quot;: 42, &quot;status&quot;: &quot;shipped&qu
 
 -- From inside a trigger:
 SELECT pg_notify('order_updates', row_to_json(NEW)::text);</div>
+      </div>
+      <div class="per-db-entry" data-db="sqlserver">
         <h4>SQL Server</h4>
         <p class="notes">Not supported as SQL. Service Broker provides similar functionality but with a very different architecture and syntax.</p>
         <div class="syntax">-- Not supported. See Service Broker.</div>
+      </div>
+      <div class="per-db-entry" data-db="oracle">
         <h4>Oracle</h4>
         <p class="notes">Not supported as SQL. DBMS_ALERT and DBMS_PIPE PL/SQL packages provide async signaling but are PL/SQL-only.</p>
         <div class="syntax">-- Not supported as SQL. See DBMS_ALERT.</div>
+      </div>
+      <div class="per-db-entry" data-db="sqlite">
         <h4>SQLite</h4>
         <p class="notes">Not supported. SQLite is a single-process embedded database with no server process to hold pub/sub channels.</p>
         <div class="syntax">-- Not supported.</div>
+      </div>
   </div>
   <script src="/search.js" defer></script>
   <script src="/splash.js" defer></script>
   <script src="/track.js" defer></script>
+  <script src="/compare.js" defer></script>
 </body>
 </html>

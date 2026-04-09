@@ -57,6 +57,14 @@
   <p class="command-overview">Calculates the difference between two dates or timestamps, returning the count of the specified unit (days, months, years). The unit specified varies by database -- MySQL uses DATEDIFF, PostgreSQL uses AGE and EXTRACT, SQL Server uses DATEDIFF.</p>
 
   <h2>Compatibility</h2>
+  <div class="compare-bar">
+    <span class="compare-label">Show:</span>
+    <label><input type="checkbox" value="mysql" checked> MySQL</label>
+    <label><input type="checkbox" value="postgresql" checked> PostgreSQL</label>
+    <label><input type="checkbox" value="sqlserver" checked> SQL Server</label>
+    <label><input type="checkbox" value="oracle" checked> Oracle</label>
+    <label><input type="checkbox" value="sqlite" checked> SQLite</label>
+  </div>
   <table>
     <thead>
       <tr>
@@ -67,31 +75,31 @@
       </tr>
     </thead>
     <tbody>
-          <tr>
+          <tr data-db="mysql">
             <td>MySQL</td>
             <td class="supported">✓ Supported</td>
             <td>all</td>
             <td class="notes">DATEDIFF(end, start) returns integer days only — no unit argument. For other units use TIMESTAMPDIFF(unit, start, end). Units: MICROSECOND, SECOND, MINUTE, HOUR, DAY, WEEK, MONTH, QUARTER, YEAR. Note argument order is reversed between DATEDIFF and TIMESTAMPDIFF.</td>
           </tr>
-          <tr>
+          <tr data-db="postgresql">
             <td>PostgreSQL</td>
             <td class="supported">✓ Supported</td>
             <td>all</td>
             <td class="notes">No DATEDIFF function. Use subtraction: date2 - date1 returns integer days for DATE types, INTERVAL for TIMESTAMP types. EXTRACT(epoch FROM ts2 - ts1) converts interval to seconds. AGE(ts2, ts1) returns human-readable interval.</td>
           </tr>
-          <tr>
+          <tr data-db="sqlserver">
             <td>SQL Server</td>
             <td class="supported">✓ Supported</td>
             <td>all</td>
             <td class="notes">DATEDIFF(unit, start, end) with explicit unit. Units: year, quarter, month, week, day, hour, minute, second, millisecond, microsecond, nanosecond. Counts boundary crossings, not exact elapsed time — DATEDIFF(year, '2023-12-31', '2024-01-01') returns 1.</td>
           </tr>
-          <tr>
+          <tr data-db="oracle">
             <td>Oracle</td>
             <td class="supported">✓ Supported</td>
             <td>all</td>
             <td class="notes">No DATEDIFF function. DATE subtraction returns fractional days (a NUMBER). MONTHS_BETWEEN(d1, d2) returns fractional months. For hours/minutes, multiply day difference by 24 or 1440.</td>
           </tr>
-          <tr>
+          <tr data-db="sqlite">
             <td>SQLite</td>
             <td class="supported">✓ Supported</td>
             <td>all</td>
@@ -124,38 +132,49 @@ end_date - start_date  -- returns integer days for dates</div>
 
   <h2>Per-Database Syntax &amp; Notes</h2>
   <div class="per-db-section">
+      <div class="per-db-entry" data-db="mysql">
         <h4>MySQL</h4>
         <p class="notes">DATEDIFF(end, start) returns integer days only — no unit argument. For other units use TIMESTAMPDIFF(unit, start, end). Units: MICROSECOND, SECOND, MINUTE, HOUR, DAY, WEEK, MONTH, QUARTER, YEAR. Note argument order is reversed between DATEDIFF and TIMESTAMPDIFF.</p>
         <div class="syntax">SELECT DATEDIFF('2024-03-15', '2024-01-01');              -- 74 (days)
 SELECT TIMESTAMPDIFF(MONTH, '2024-01-01', '2024-03-15');  -- 2
 SELECT TIMESTAMPDIFF(HOUR,  '2024-01-01', NOW());         -- hours since Jan 1</div>
+      </div>
+      <div class="per-db-entry" data-db="postgresql">
         <h4>PostgreSQL</h4>
         <p class="notes">No DATEDIFF function. Use subtraction: date2 - date1 returns integer days for DATE types, INTERVAL for TIMESTAMP types. EXTRACT(epoch FROM ts2 - ts1) converts interval to seconds. AGE(ts2, ts1) returns human-readable interval.</p>
         <div class="syntax">SELECT '2024-03-15'::date - '2024-01-01'::date;          -- 74 (integer days)
 SELECT AGE('2024-03-15'::date, '2024-01-01'::date);      -- 2 mons 14 days
 SELECT EXTRACT(epoch FROM NOW() - '2024-01-01'::date);   -- seconds
 SELECT EXTRACT(day FROM '2024-03-15'::date - '2024-01-01'::date);</div>
+      </div>
+      <div class="per-db-entry" data-db="sqlserver">
         <h4>SQL Server</h4>
         <p class="notes">DATEDIFF(unit, start, end) with explicit unit. Units: year, quarter, month, week, day, hour, minute, second, millisecond, microsecond, nanosecond. Counts boundary crossings, not exact elapsed time — DATEDIFF(year, '2023-12-31', '2024-01-01') returns 1.</p>
         <div class="syntax">SELECT DATEDIFF(day,   '2024-01-01', '2024-03-15');  -- 74
 SELECT DATEDIFF(month, '2024-01-01', '2024-03-15');  -- 2
 SELECT DATEDIFF(year,  '2023-12-31', '2024-01-01');  -- 1 (boundary crossing!)
 SELECT DATEDIFF(hour,  '2024-01-01', GETDATE());</div>
+      </div>
+      <div class="per-db-entry" data-db="oracle">
         <h4>Oracle</h4>
         <p class="notes">No DATEDIFF function. DATE subtraction returns fractional days (a NUMBER). MONTHS_BETWEEN(d1, d2) returns fractional months. For hours/minutes, multiply day difference by 24 or 1440.</p>
         <div class="syntax">SELECT SYSDATE - DATE '2024-01-01'               FROM DUAL; -- fractional days
 SELECT MONTHS_BETWEEN(DATE '2024-03-15', DATE '2024-01-01') FROM DUAL; -- 2.45...
 SELECT TRUNC(SYSDATE - DATE '2024-01-01')        FROM DUAL; -- whole days
 SELECT (SYSDATE - DATE '2024-01-01') * 24        FROM DUAL; -- hours</div>
+      </div>
+      <div class="per-db-entry" data-db="sqlite">
         <h4>SQLite</h4>
         <p class="notes">No DATEDIFF function. Use julianday() subtraction for day differences. julianday() converts any date/timestamp to a floating-point Julian day number, so subtraction gives fractional days.</p>
         <div class="syntax">SELECT julianday('2024-03-15') - julianday('2024-01-01');  -- 74.0
 SELECT CAST(julianday('now') - julianday('2024-01-01') AS INTEGER);  -- whole days
 -- Hours:
 SELECT (julianday('now') - julianday('2024-01-01')) * 24;</div>
+      </div>
   </div>
   <script src="/search.js" defer></script>
   <script src="/splash.js" defer></script>
   <script src="/track.js" defer></script>
+  <script src="/compare.js" defer></script>
 </body>
 </html>

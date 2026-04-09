@@ -57,6 +57,14 @@
   <p class="command-overview">Explicitly converts a value from one data type to another, failing at runtime if the conversion is not possible. Preferred over implicit conversion for clarity and to avoid engine-specific coercion behaviors. Equivalent to double-colon syntax in PostgreSQL.</p>
 
   <h2>Compatibility</h2>
+  <div class="compare-bar">
+    <span class="compare-label">Show:</span>
+    <label><input type="checkbox" value="mysql" checked> MySQL</label>
+    <label><input type="checkbox" value="postgresql" checked> PostgreSQL</label>
+    <label><input type="checkbox" value="sqlserver" checked> SQL Server</label>
+    <label><input type="checkbox" value="oracle" checked> Oracle</label>
+    <label><input type="checkbox" value="sqlite" checked> SQLite</label>
+  </div>
   <table>
     <thead>
       <tr>
@@ -67,31 +75,31 @@
       </tr>
     </thead>
     <tbody>
-          <tr>
+          <tr data-db="mysql">
             <td>MySQL</td>
             <td class="supported">✓ Supported</td>
             <td>all</td>
             <td class="notes">CAST(expr AS type). Also CONVERT(expr, type). Supports a limited set of target types (CHAR, SIGNED, UNSIGNED, DATE, DATETIME, DECIMAL, JSON, BINARY).</td>
           </tr>
-          <tr>
+          <tr data-db="postgresql">
             <td>PostgreSQL</td>
             <td class="supported">✓ Supported</td>
             <td>all</td>
             <td class="notes">CAST(expr AS type). Also :: shorthand cast operator (expr::type) which is very commonly used in practice and works anywhere an expression is valid.</td>
           </tr>
-          <tr>
+          <tr data-db="sqlserver">
             <td>SQL Server</td>
             <td class="supported">✓ Supported</td>
             <td>all</td>
             <td class="notes">CAST(expr AS type). Also CONVERT(type, expr [, style]) which adds optional style codes for date/number formatting.</td>
           </tr>
-          <tr>
+          <tr data-db="oracle">
             <td>Oracle</td>
             <td class="supported">✓ Supported</td>
             <td>all</td>
             <td class="notes">CAST standard. TO_DATE(), TO_NUMBER(), TO_CHAR() are the traditional Oracle conversion functions for common types.</td>
           </tr>
-          <tr>
+          <tr data-db="sqlite">
             <td>SQLite</td>
             <td class="supported">✓ Supported</td>
             <td>all</td>
@@ -120,32 +128,43 @@
 
   <h2>Per-Database Syntax &amp; Notes</h2>
   <div class="per-db-section">
+      <div class="per-db-entry" data-db="mysql">
         <h4>MySQL</h4>
         <p class="notes">CAST(expr AS type). Also CONVERT(expr, type). Supports a limited set of target types (CHAR, SIGNED, UNSIGNED, DATE, DATETIME, DECIMAL, JSON, BINARY).</p>
         <div class="syntax">SELECT CAST(price AS CHAR) FROM tbl;
 SELECT CONVERT(price, CHAR) FROM tbl;</div>
+      </div>
+      <div class="per-db-entry" data-db="postgresql">
         <h4>PostgreSQL</h4>
         <p class="notes">CAST(expr AS type). Also :: shorthand cast operator (expr::type) which is very commonly used in practice and works anywhere an expression is valid.</p>
         <div class="syntax">SELECT CAST(price AS TEXT) FROM tbl;
 SELECT price::text FROM tbl;  -- :: shorthand
 SELECT '2024-01-01'::date;
 SELECT '42'::int + 1;</div>
+      </div>
+      <div class="per-db-entry" data-db="sqlserver">
         <h4>SQL Server</h4>
         <p class="notes">CAST(expr AS type). Also CONVERT(type, expr [, style]) which adds optional style codes for date/number formatting.</p>
         <div class="syntax">SELECT CAST(price AS NVARCHAR(20)) FROM tbl;
 SELECT CONVERT(VARCHAR, GETDATE(), 103);  -- style 103 = dd/mm/yyyy</div>
+      </div>
+      <div class="per-db-entry" data-db="oracle">
         <h4>Oracle</h4>
         <p class="notes">CAST standard. TO_DATE(), TO_NUMBER(), TO_CHAR() are the traditional Oracle conversion functions for common types.</p>
         <div class="syntax">SELECT CAST(price AS VARCHAR2(20)) FROM tbl;
 SELECT TO_CHAR(hire_date, 'YYYY-MM-DD') FROM tbl;
 SELECT TO_NUMBER('42.5') FROM DUAL;</div>
+      </div>
+      <div class="per-db-entry" data-db="sqlite">
         <h4>SQLite</h4>
         <p class="notes">CAST(expr AS type). SQLite uses flexible type affinity; CAST influences storage affinity rather than strictly enforcing types.</p>
         <div class="syntax">SELECT CAST(price AS TEXT) FROM tbl;
 SELECT CAST('3.14' AS REAL);</div>
+      </div>
   </div>
   <script src="/search.js" defer></script>
   <script src="/splash.js" defer></script>
   <script src="/track.js" defer></script>
+  <script src="/compare.js" defer></script>
 </body>
 </html>

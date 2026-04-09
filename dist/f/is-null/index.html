@@ -57,6 +57,14 @@
   <p class="command-overview">The correct way to test for NULL values, since NULL = NULL evaluates to NULL (unknown) rather than TRUE. IS NOT NULL selects rows where a value is present. Always use this syntax -- never use equals NULL or not-equals NULL.</p>
 
   <h2>Compatibility</h2>
+  <div class="compare-bar">
+    <span class="compare-label">Show:</span>
+    <label><input type="checkbox" value="mysql" checked> MySQL</label>
+    <label><input type="checkbox" value="postgresql" checked> PostgreSQL</label>
+    <label><input type="checkbox" value="sqlserver" checked> SQL Server</label>
+    <label><input type="checkbox" value="oracle" checked> Oracle</label>
+    <label><input type="checkbox" value="sqlite" checked> SQLite</label>
+  </div>
   <table>
     <thead>
       <tr>
@@ -67,31 +75,31 @@
       </tr>
     </thead>
     <tbody>
-          <tr>
+          <tr data-db="mysql">
             <td>MySQL</td>
             <td class="supported">✓ Supported</td>
             <td>all</td>
             <td class="notes">IS NULL and IS NOT NULL standard. Also has the null-safe equality operator &lt;=&gt; (col &lt;=&gt; NULL is equivalent to col IS NULL), useful in joins where NULL should equal NULL.</td>
           </tr>
-          <tr>
+          <tr data-db="postgresql">
             <td>PostgreSQL</td>
             <td class="supported">✓ Supported</td>
             <td>all</td>
             <td class="notes">IS NULL and IS NOT NULL standard. IS DISTINCT FROM / IS NOT DISTINCT FROM are the null-safe equality operators: (a IS DISTINCT FROM b) is true when they differ even if one is NULL.</td>
           </tr>
-          <tr>
+          <tr data-db="sqlserver">
             <td>SQL Server</td>
             <td class="supported">✓ Supported</td>
             <td>all</td>
             <td class="notes">IS NULL and IS NOT NULL standard. For null-safe comparison use SET ANSI_NULLS OFF (deprecated) or ISNULL()/COALESCE(). No dedicated null-safe equality operator.</td>
           </tr>
-          <tr>
+          <tr data-db="oracle">
             <td>Oracle</td>
             <td class="supported">✓ Supported</td>
             <td>all</td>
             <td class="notes">IS NULL and IS NOT NULL standard. Critical Oracle quirk: empty string '' is treated as NULL — there is no distinction between empty string and NULL in Oracle.</td>
           </tr>
-          <tr>
+          <tr data-db="sqlite">
             <td>SQLite</td>
             <td class="supported">✓ Supported</td>
             <td>all</td>
@@ -121,38 +129,49 @@ SELECT * FROM users WHERE phone IS NOT NULL;</div>
 
   <h2>Per-Database Syntax &amp; Notes</h2>
   <div class="per-db-section">
+      <div class="per-db-entry" data-db="mysql">
         <h4>MySQL</h4>
         <p class="notes">IS NULL and IS NOT NULL standard. Also has the null-safe equality operator &lt;=&gt; (col &lt;=&gt; NULL is equivalent to col IS NULL), useful in joins where NULL should equal NULL.</p>
         <div class="syntax">SELECT * FROM users WHERE phone IS NULL;
 SELECT * FROM users WHERE phone IS NOT NULL;
 SELECT * FROM tbl WHERE col &lt;=&gt; NULL;    -- null-safe equals
 SELECT * FROM tbl WHERE NOT (col &lt;=&gt; 'val');  -- null-safe not-equals</div>
+      </div>
+      <div class="per-db-entry" data-db="postgresql">
         <h4>PostgreSQL</h4>
         <p class="notes">IS NULL and IS NOT NULL standard. IS DISTINCT FROM / IS NOT DISTINCT FROM are the null-safe equality operators: (a IS DISTINCT FROM b) is true when they differ even if one is NULL.</p>
         <div class="syntax">SELECT * FROM users WHERE phone IS NULL;
 SELECT * FROM users WHERE phone IS NOT NULL;
 SELECT * FROM tbl WHERE a IS NOT DISTINCT FROM b;  -- null-safe equals
 SELECT * FROM tbl WHERE a IS DISTINCT FROM b;       -- null-safe not-equals</div>
+      </div>
+      <div class="per-db-entry" data-db="sqlserver">
         <h4>SQL Server</h4>
         <p class="notes">IS NULL and IS NOT NULL standard. For null-safe comparison use SET ANSI_NULLS OFF (deprecated) or ISNULL()/COALESCE(). No dedicated null-safe equality operator.</p>
         <div class="syntax">SELECT * FROM users WHERE phone IS NULL;
 SELECT * FROM users WHERE phone IS NOT NULL;
 -- Null-safe equals workaround:
 SELECT * FROM tbl WHERE (a = b OR (a IS NULL AND b IS NULL));</div>
+      </div>
+      <div class="per-db-entry" data-db="oracle">
         <h4>Oracle</h4>
         <p class="notes">IS NULL and IS NOT NULL standard. Critical Oracle quirk: empty string '' is treated as NULL — there is no distinction between empty string and NULL in Oracle.</p>
         <div class="syntax">SELECT * FROM users WHERE phone IS NULL;
 -- In Oracle, these are equivalent:
 SELECT * FROM tbl WHERE col IS NULL;
 SELECT * FROM tbl WHERE col = '';   -- '' IS NULL in Oracle</div>
+      </div>
+      <div class="per-db-entry" data-db="sqlite">
         <h4>SQLite</h4>
         <p class="notes">IS NULL and IS NOT NULL standard. SQLite also supports IS as a null-safe equality operator: (a IS b) is true when both are NULL or both have the same value.</p>
         <div class="syntax">SELECT * FROM users WHERE phone IS NULL;
 SELECT * FROM tbl WHERE a IS b;      -- null-safe equals
 SELECT * FROM tbl WHERE a IS NOT b;  -- null-safe not-equals</div>
+      </div>
   </div>
   <script src="/search.js" defer></script>
   <script src="/splash.js" defer></script>
   <script src="/track.js" defer></script>
+  <script src="/compare.js" defer></script>
 </body>
 </html>

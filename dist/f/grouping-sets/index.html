@@ -57,6 +57,14 @@
   <p class="command-overview">An explicit GROUP BY variant that specifies exactly which grouping combinations to compute. More flexible than ROLLUP or CUBE, and clearer in intent. SELECT region, city, SUM(sales) GROUP BY GROUPING SETS((region), (region, city), ()) computes totals at multiple levels.</p>
 
   <h2>Compatibility</h2>
+  <div class="compare-bar">
+    <span class="compare-label">Show:</span>
+    <label><input type="checkbox" value="mysql" checked> MySQL</label>
+    <label><input type="checkbox" value="postgresql" checked> PostgreSQL</label>
+    <label><input type="checkbox" value="sqlserver" checked> SQL Server</label>
+    <label><input type="checkbox" value="oracle" checked> Oracle</label>
+    <label><input type="checkbox" value="sqlite" checked> SQLite</label>
+  </div>
   <table>
     <thead>
       <tr>
@@ -67,31 +75,31 @@
       </tr>
     </thead>
     <tbody>
-          <tr>
+          <tr data-db="mysql">
             <td>MySQL</td>
             <td class="not-supported">✗ Not Supported</td>
             <td>—</td>
             <td class="notes">GROUPING SETS is not supported. MySQL only supports ROLLUP via GROUP BY ... WITH ROLLUP or GROUP BY ROLLUP(...). For specific grouping combinations, use UNION ALL.</td>
           </tr>
-          <tr>
+          <tr data-db="postgresql">
             <td>PostgreSQL</td>
             <td class="supported">✓ Supported</td>
             <td>9.5</td>
             <td class="notes">Standard GROUPING SETS syntax. Can be combined with ROLLUP and CUBE in the same GROUP BY clause. GROUPING(col) identifies which rows are grouping-generated. An empty set () produces the grand total. Equivalent to the corresponding UNION ALL but computed in a single scan.</td>
           </tr>
-          <tr>
+          <tr data-db="sqlserver">
             <td>SQL Server</td>
             <td class="supported">✓ Supported</td>
             <td>2008</td>
             <td class="notes">Standard GROUPING SETS syntax since SQL Server 2008. GROUPING() and GROUPING_ID() supported. Useful for reporting queries that need specific subtotal combinations without the full output of CUBE.</td>
           </tr>
-          <tr>
+          <tr data-db="oracle">
             <td>Oracle</td>
             <td class="supported">✓ Supported</td>
             <td>8i</td>
             <td class="notes">Standard GROUPING SETS syntax since Oracle 8i. Can be combined with ROLLUP and CUBE. GROUPING() and GROUPING_ID() supported.</td>
           </tr>
-          <tr>
+          <tr data-db="sqlite">
             <td>SQLite</td>
             <td class="not-supported">✗ Not Supported</td>
             <td>—</td>
@@ -126,6 +134,7 @@ GROUP BY GROUPING SETS (
 
   <h2>Per-Database Syntax &amp; Notes</h2>
   <div class="per-db-section">
+      <div class="per-db-entry" data-db="mysql">
         <h4>MySQL</h4>
         <p class="notes">GROUPING SETS is not supported. MySQL only supports ROLLUP via GROUP BY ... WITH ROLLUP or GROUP BY ROLLUP(...). For specific grouping combinations, use UNION ALL.</p>
         <div class="syntax">-- UNION ALL workaround:
@@ -137,6 +146,8 @@ FROM orders GROUP BY region
 UNION ALL
 SELECT NULL, NULL, SUM(sales)
 FROM orders;</div>
+      </div>
+      <div class="per-db-entry" data-db="postgresql">
         <h4>PostgreSQL</h4>
         <p class="notes">Standard GROUPING SETS syntax. Can be combined with ROLLUP and CUBE in the same GROUP BY clause. GROUPING(col) identifies which rows are grouping-generated. An empty set () produces the grand total. Equivalent to the corresponding UNION ALL but computed in a single scan.</p>
         <div class="syntax">-- Explicit sets:
@@ -163,6 +174,8 @@ SELECT
   SUM(sales) AS total_sales
 FROM orders
 GROUP BY GROUPING SETS ((region, product), (region), ());</div>
+      </div>
+      <div class="per-db-entry" data-db="sqlserver">
         <h4>SQL Server</h4>
         <p class="notes">Standard GROUPING SETS syntax since SQL Server 2008. GROUPING() and GROUPING_ID() supported. Useful for reporting queries that need specific subtotal combinations without the full output of CUBE.</p>
         <div class="syntax">SELECT region, product, SUM(sales) AS total_sales
@@ -179,6 +192,8 @@ SELECT region, product,
        GROUPING_ID(region, product)  AS level
 FROM orders
 GROUP BY GROUPING SETS ((region, product), (region), ());</div>
+      </div>
+      <div class="per-db-entry" data-db="oracle">
         <h4>Oracle</h4>
         <p class="notes">Standard GROUPING SETS syntax since Oracle 8i. Can be combined with ROLLUP and CUBE. GROUPING() and GROUPING_ID() supported.</p>
         <div class="syntax">SELECT region, product, SUM(sales) AS total_sales
@@ -196,6 +211,8 @@ GROUP BY GROUPING SETS (
     ROLLUP(region, product),
     (channel)
 );</div>
+      </div>
+      <div class="per-db-entry" data-db="sqlite">
         <h4>SQLite</h4>
         <p class="notes">GROUPING SETS is not supported. Use UNION ALL to combine individual GROUP BY queries for each desired grouping.</p>
         <div class="syntax">-- UNION ALL workaround:
@@ -207,9 +224,11 @@ FROM orders GROUP BY region
 UNION ALL
 SELECT NULL, NULL, SUM(sales)
 FROM orders;</div>
+      </div>
   </div>
   <script src="/search.js" defer></script>
   <script src="/splash.js" defer></script>
   <script src="/track.js" defer></script>
+  <script src="/compare.js" defer></script>
 </body>
 </html>

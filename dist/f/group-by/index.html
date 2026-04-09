@@ -57,6 +57,14 @@
   <p class="command-overview">Aggregates rows into groups, collapsing them to one row per group while enabling aggregate functions like COUNT and SUM. All non-aggregated SELECT columns must appear in the GROUP BY clause. Inconsistencies between SQL standards and MySQL default behavior can produce unexpected values.</p>
 
   <h2>Compatibility</h2>
+  <div class="compare-bar">
+    <span class="compare-label">Show:</span>
+    <label><input type="checkbox" value="mysql" checked> MySQL</label>
+    <label><input type="checkbox" value="postgresql" checked> PostgreSQL</label>
+    <label><input type="checkbox" value="sqlserver" checked> SQL Server</label>
+    <label><input type="checkbox" value="oracle" checked> Oracle</label>
+    <label><input type="checkbox" value="sqlite" checked> SQLite</label>
+  </div>
   <table>
     <thead>
       <tr>
@@ -67,31 +75,31 @@
       </tr>
     </thead>
     <tbody>
-          <tr>
+          <tr data-db="mysql">
             <td>MySQL</td>
             <td class="supported">✓ Supported</td>
             <td>all</td>
             <td class="notes">ROLLUP extension</td>
           </tr>
-          <tr>
+          <tr data-db="postgresql">
             <td>PostgreSQL</td>
             <td class="supported">✓ Supported</td>
             <td>all</td>
             <td class="notes">Standard + CUBE/ROLLUP</td>
           </tr>
-          <tr>
+          <tr data-db="sqlserver">
             <td>SQL Server</td>
             <td class="supported">✓ Supported</td>
             <td>2005</td>
             <td class="notes">Grouping sets</td>
           </tr>
-          <tr>
+          <tr data-db="oracle">
             <td>Oracle</td>
             <td class="supported">✓ Supported</td>
             <td>all</td>
             <td class="notes">Grouping sets/CUBE</td>
           </tr>
-          <tr>
+          <tr data-db="sqlite">
             <td>SQLite</td>
             <td class="supported">✓ Supported</td>
             <td>all</td>
@@ -123,35 +131,46 @@ HAVING COUNT(*) &gt; 1;</div>
 
   <h2>Per-Database Syntax &amp; Notes</h2>
   <div class="per-db-section">
+      <div class="per-db-entry" data-db="mysql">
         <h4>MySQL</h4>
         <p class="notes">ROLLUP extension</p>
         <div class="syntax">SELECT col, COUNT(*)
 FROM tbl
 GROUP BY col WITH ROLLUP;</div>
+      </div>
+      <div class="per-db-entry" data-db="postgresql">
         <h4>PostgreSQL</h4>
         <p class="notes">Standard + CUBE/ROLLUP</p>
         <div class="syntax">SELECT col, COUNT(*)
 FROM tbl
 GROUP BY CUBE(col1,col2);</div>
+      </div>
+      <div class="per-db-entry" data-db="sqlserver">
         <h4>SQL Server</h4>
         <p class="notes">Grouping sets</p>
         <div class="syntax">SELECT col, COUNT(*)
 FROM tbl
 GROUP BY GROUPING SETS((col),(col2));</div>
+      </div>
+      <div class="per-db-entry" data-db="oracle">
         <h4>Oracle</h4>
         <p class="notes">Grouping sets/CUBE</p>
         <div class="syntax">SELECT col, COUNT(*)
 FROM tbl
 GROUP BY ROLLUP(col1,col2);</div>
+      </div>
+      <div class="per-db-entry" data-db="sqlite">
         <h4>SQLite</h4>
         <p class="notes">Basic only</p>
         <div class="syntax">SELECT col, COUNT(*)
 FROM tbl
 GROUP BY col
 HAVING COUNT(*)&gt;1;</div>
+      </div>
   </div>
   <script src="/search.js" defer></script>
   <script src="/splash.js" defer></script>
   <script src="/track.js" defer></script>
+  <script src="/compare.js" defer></script>
 </body>
 </html>

@@ -57,6 +57,14 @@
   <p class="command-overview">The SQL conditional expression, supporting searched CASE (WHEN condition THEN result) and simple CASE (WHEN expression = value THEN result). Used for pivot-like transformations, conditional aggregation, and business rule encoding. Evaluate NULLIF and COALESCE first for simpler cases.</p>
 
   <h2>Compatibility</h2>
+  <div class="compare-bar">
+    <span class="compare-label">Show:</span>
+    <label><input type="checkbox" value="mysql" checked> MySQL</label>
+    <label><input type="checkbox" value="postgresql" checked> PostgreSQL</label>
+    <label><input type="checkbox" value="sqlserver" checked> SQL Server</label>
+    <label><input type="checkbox" value="oracle" checked> Oracle</label>
+    <label><input type="checkbox" value="sqlite" checked> SQLite</label>
+  </div>
   <table>
     <thead>
       <tr>
@@ -67,31 +75,31 @@
       </tr>
     </thead>
     <tbody>
-          <tr>
+          <tr data-db="mysql">
             <td>MySQL</td>
             <td class="supported">✓ Supported</td>
             <td>all</td>
             <td class="notes">Both simple and searched CASE. Also supports IF(condition, true_val, false_val) and IIF() as a 2-arg shorthand.</td>
           </tr>
-          <tr>
+          <tr data-db="postgresql">
             <td>PostgreSQL</td>
             <td class="supported">✓ Supported</td>
             <td>all</td>
             <td class="notes">Both simple and searched CASE. CASE can appear in SELECT, WHERE, ORDER BY, HAVING, and aggregate arguments.</td>
           </tr>
-          <tr>
+          <tr data-db="sqlserver">
             <td>SQL Server</td>
             <td class="supported">✓ Supported</td>
             <td>all</td>
             <td class="notes">Both simple and searched CASE. Also IIF(condition, true_val, false_val) since SQL Server 2012.</td>
           </tr>
-          <tr>
+          <tr data-db="oracle">
             <td>Oracle</td>
             <td class="supported">✓ Supported</td>
             <td>all</td>
             <td class="notes">Both simple and searched CASE. Legacy DECODE(expr, search, result, ...) function also works.</td>
           </tr>
-          <tr>
+          <tr data-db="sqlite">
             <td>SQLite</td>
             <td class="supported">✓ Supported</td>
             <td>all</td>
@@ -130,27 +138,38 @@ FROM tbl;</div>
 
   <h2>Per-Database Syntax &amp; Notes</h2>
   <div class="per-db-section">
+      <div class="per-db-entry" data-db="mysql">
         <h4>MySQL</h4>
         <p class="notes">Both simple and searched CASE. Also supports IF(condition, true_val, false_val) and IIF() as a 2-arg shorthand.</p>
         <div class="syntax">SELECT CASE WHEN x &gt; 0 THEN 'pos' ELSE 'neg' END FROM tbl;
 SELECT IF(x &gt; 0, 'pos', 'neg') FROM tbl;</div>
+      </div>
+      <div class="per-db-entry" data-db="postgresql">
         <h4>PostgreSQL</h4>
         <p class="notes">Both simple and searched CASE. CASE can appear in SELECT, WHERE, ORDER BY, HAVING, and aggregate arguments.</p>
         <div class="syntax">SELECT CASE WHEN x &gt; 0 THEN 'pos' ELSE 'neg' END FROM tbl;</div>
+      </div>
+      <div class="per-db-entry" data-db="sqlserver">
         <h4>SQL Server</h4>
         <p class="notes">Both simple and searched CASE. Also IIF(condition, true_val, false_val) since SQL Server 2012.</p>
         <div class="syntax">SELECT CASE WHEN x &gt; 0 THEN 'pos' ELSE 'neg' END FROM tbl;
 SELECT IIF(x &gt; 0, 'pos', 'neg') FROM tbl;</div>
+      </div>
+      <div class="per-db-entry" data-db="oracle">
         <h4>Oracle</h4>
         <p class="notes">Both simple and searched CASE. Legacy DECODE(expr, search, result, ...) function also works.</p>
         <div class="syntax">SELECT CASE WHEN x &gt; 0 THEN 'pos' ELSE 'neg' END FROM tbl;
 SELECT DECODE(x, 1, 'one', 2, 'two', 'other') FROM tbl;</div>
+      </div>
+      <div class="per-db-entry" data-db="sqlite">
         <h4>SQLite</h4>
         <p class="notes">Both simple and searched CASE fully supported.</p>
         <div class="syntax">SELECT CASE WHEN x &gt; 0 THEN 'pos' ELSE 'neg' END FROM tbl;</div>
+      </div>
   </div>
   <script src="/search.js" defer></script>
   <script src="/splash.js" defer></script>
   <script src="/track.js" defer></script>
+  <script src="/compare.js" defer></script>
 </body>
 </html>

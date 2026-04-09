@@ -57,6 +57,14 @@
   <p class="command-overview">Returns all rows from the left table and matched rows from the right; non-matching right rows produce NULLs. Essential for finding records with or without a related match (e.g., orders with no invoice). NULLs in the result can be misleading -- distinguish between no match and legitimate missing value.</p>
 
   <h2>Compatibility</h2>
+  <div class="compare-bar">
+    <span class="compare-label">Show:</span>
+    <label><input type="checkbox" value="mysql" checked> MySQL</label>
+    <label><input type="checkbox" value="postgresql" checked> PostgreSQL</label>
+    <label><input type="checkbox" value="sqlserver" checked> SQL Server</label>
+    <label><input type="checkbox" value="oracle" checked> Oracle</label>
+    <label><input type="checkbox" value="sqlite" checked> SQLite</label>
+  </div>
   <table>
     <thead>
       <tr>
@@ -67,31 +75,31 @@
       </tr>
     </thead>
     <tbody>
-          <tr>
+          <tr data-db="mysql">
             <td>MySQL</td>
             <td class="supported">✓ Supported</td>
             <td>all</td>
             <td class="notes">OUTER keyword is optional (LEFT JOIN = LEFT OUTER JOIN).</td>
           </tr>
-          <tr>
+          <tr data-db="postgresql">
             <td>PostgreSQL</td>
             <td class="supported">✓ Supported</td>
             <td>all</td>
             <td class="notes">OUTER keyword is optional (LEFT JOIN = LEFT OUTER JOIN).</td>
           </tr>
-          <tr>
+          <tr data-db="sqlserver">
             <td>SQL Server</td>
             <td class="supported">✓ Supported</td>
             <td>all</td>
             <td class="notes">OUTER keyword is optional (LEFT JOIN = LEFT OUTER JOIN).</td>
           </tr>
-          <tr>
+          <tr data-db="oracle">
             <td>Oracle</td>
             <td class="supported">✓ Supported</td>
             <td>all</td>
             <td class="notes">OUTER keyword is optional. Legacy syntax: WHERE a.id = b.a_id(+)</td>
           </tr>
-          <tr>
+          <tr data-db="sqlite">
             <td>SQLite</td>
             <td class="supported">✓ Supported</td>
             <td>all</td>
@@ -122,24 +130,35 @@ LEFT JOIN table_b b ON a.id = b.a_id;</div>
 
   <h2>Per-Database Syntax &amp; Notes</h2>
   <div class="per-db-section">
+      <div class="per-db-entry" data-db="mysql">
         <h4>MySQL</h4>
         <p class="notes">OUTER keyword is optional (LEFT JOIN = LEFT OUTER JOIN).</p>
         <div class="syntax">SELECT a.col, b.col FROM a LEFT JOIN b ON a.id = b.a_id;</div>
+      </div>
+      <div class="per-db-entry" data-db="postgresql">
         <h4>PostgreSQL</h4>
         <p class="notes">OUTER keyword is optional (LEFT JOIN = LEFT OUTER JOIN).</p>
         <div class="syntax">SELECT a.col, b.col FROM a LEFT JOIN b ON a.id = b.a_id;</div>
+      </div>
+      <div class="per-db-entry" data-db="sqlserver">
         <h4>SQL Server</h4>
         <p class="notes">OUTER keyword is optional (LEFT JOIN = LEFT OUTER JOIN).</p>
         <div class="syntax">SELECT a.col, b.col FROM a LEFT JOIN b ON a.id = b.a_id;</div>
+      </div>
+      <div class="per-db-entry" data-db="oracle">
         <h4>Oracle</h4>
         <p class="notes">OUTER keyword is optional. Legacy syntax: WHERE a.id = b.a_id(+)</p>
         <div class="syntax">SELECT a.col, b.col FROM a LEFT JOIN b ON a.id = b.a_id;</div>
+      </div>
+      <div class="per-db-entry" data-db="sqlite">
         <h4>SQLite</h4>
         <p class="notes">OUTER keyword is optional (LEFT JOIN = LEFT OUTER JOIN).</p>
         <div class="syntax">SELECT a.col, b.col FROM a LEFT JOIN b ON a.id = b.a_id;</div>
+      </div>
   </div>
   <script src="/search.js" defer></script>
   <script src="/splash.js" defer></script>
   <script src="/track.js" defer></script>
+  <script src="/compare.js" defer></script>
 </body>
 </html>

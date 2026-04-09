@@ -69,7 +69,7 @@
       '#caniusesql-splash.fade-out{opacity:0;pointer-events:none;}',
       '#caniusesql-splash-card{',
       '  background:#1e272e;',
-      '  border:1px solid #3498db;',
+      '  border:1px solid var(--color-primary);',
       '  border-radius:10px;',
       '  padding:32px 40px;',
       '  max-width:480px;',
@@ -90,7 +90,7 @@
       '@keyframes splash-cursor{0%,100%{opacity:1}50%{opacity:0}}',
       '.splash-cursor{',
       '  display:inline-block;width:8px;height:14px;',
-      '  background:#3498db;vertical-align:text-bottom;',
+      '  background:var(--color-primary);vertical-align:text-bottom;',
       '  animation:splash-cursor 1s step-start infinite;',
       '}',
     ].join('\n');

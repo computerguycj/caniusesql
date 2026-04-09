@@ -57,6 +57,14 @@
   <p class="command-overview">Returns NULL if the two arguments are equal; otherwise returns the first argument. Useful for avoiding division by zero (NULLIF(col, 0)) and for masking sentinel values. Combined with COALESCE for default substitution.</p>
 
   <h2>Compatibility</h2>
+  <div class="compare-bar">
+    <span class="compare-label">Show:</span>
+    <label><input type="checkbox" value="mysql" checked> MySQL</label>
+    <label><input type="checkbox" value="postgresql" checked> PostgreSQL</label>
+    <label><input type="checkbox" value="sqlserver" checked> SQL Server</label>
+    <label><input type="checkbox" value="oracle" checked> Oracle</label>
+    <label><input type="checkbox" value="sqlite" checked> SQLite</label>
+  </div>
   <table>
     <thead>
       <tr>
@@ -67,31 +75,31 @@
       </tr>
     </thead>
     <tbody>
-          <tr>
+          <tr data-db="mysql">
             <td>MySQL</td>
             <td class="supported">✓ Supported</td>
             <td>3.23</td>
             <td class="notes">NULLIF(expr1, expr2) is fully supported. Standard SQL behavior: returns NULL when expr1 = expr2, returns expr1 otherwise. The comparison is type-sensitive — NULLIF('0', 0) compares after implicit conversion.</td>
           </tr>
-          <tr>
+          <tr data-db="postgresql">
             <td>PostgreSQL</td>
             <td class="supported">✓ Supported</td>
             <td>6.0</td>
             <td class="notes">Standard NULLIF(expr1, expr2) supported. Return type is the type of expr1. Useful combined with COALESCE for conditional NULL substitution. Works on any comparable data type including text, dates, and numeric.</td>
           </tr>
-          <tr>
+          <tr data-db="sqlserver">
             <td>SQL Server</td>
             <td class="supported">✓ Supported</td>
             <td>2000</td>
             <td class="notes">Standard NULLIF(expr1, expr2) supported. Commonly used to guard against division-by-zero in SQL Server, where dividing by zero raises an error (not a NULL). NULLIF is often preferred over CASE WHEN ... THEN NULL for readability.</td>
           </tr>
-          <tr>
+          <tr data-db="oracle">
             <td>Oracle</td>
             <td class="supported">✓ Supported</td>
             <td>9i</td>
             <td class="notes">Standard NULLIF(expr1, expr2) supported since Oracle 9i. In Oracle, dividing by zero raises ORA-01476, so NULLIF is the standard guard. Works on NUMBER, VARCHAR2, DATE, and other comparable types.</td>
           </tr>
-          <tr>
+          <tr data-db="sqlite">
             <td>SQLite</td>
             <td class="supported">✓ Supported</td>
             <td>3.0</td>
@@ -126,6 +134,7 @@ FROM users;</div>
 
   <h2>Per-Database Syntax &amp; Notes</h2>
   <div class="per-db-section">
+      <div class="per-db-entry" data-db="mysql">
         <h4>MySQL</h4>
         <p class="notes">NULLIF(expr1, expr2) is fully supported. Standard SQL behavior: returns NULL when expr1 = expr2, returns expr1 otherwise. The comparison is type-sensitive — NULLIF('0', 0) compares after implicit conversion.</p>
         <div class="syntax">-- Division-by-zero guard:
@@ -139,6 +148,8 @@ FROM contacts;
 
 -- NULLIF is equivalent to CASE:
 -- NULLIF(a, b) = CASE WHEN a = b THEN NULL ELSE a END</div>
+      </div>
+      <div class="per-db-entry" data-db="postgresql">
         <h4>PostgreSQL</h4>
         <p class="notes">Standard NULLIF(expr1, expr2) supported. Return type is the type of expr1. Useful combined with COALESCE for conditional NULL substitution. Works on any comparable data type including text, dates, and numeric.</p>
         <div class="syntax">-- Division-by-zero guard:
@@ -152,6 +163,8 @@ FROM users;
 -- Date comparison:
 SELECT NULLIF(end_date, '9999-12-31'::date) AS actual_end
 FROM contracts;</div>
+      </div>
+      <div class="per-db-entry" data-db="sqlserver">
         <h4>SQL Server</h4>
         <p class="notes">Standard NULLIF(expr1, expr2) supported. Commonly used to guard against division-by-zero in SQL Server, where dividing by zero raises an error (not a NULL). NULLIF is often preferred over CASE WHEN ... THEN NULL for readability.</p>
         <div class="syntax">-- Division-by-zero guard (SS raises error on /0):
@@ -164,6 +177,8 @@ FROM contacts;
 
 -- Equivalent CASE:
 -- SELECT CASE WHEN a = b THEN NULL ELSE a END</div>
+      </div>
+      <div class="per-db-entry" data-db="oracle">
         <h4>Oracle</h4>
         <p class="notes">Standard NULLIF(expr1, expr2) supported since Oracle 9i. In Oracle, dividing by zero raises ORA-01476, so NULLIF is the standard guard. Works on NUMBER, VARCHAR2, DATE, and other comparable types.</p>
         <div class="syntax">-- Division-by-zero guard:
@@ -174,6 +189,8 @@ FROM financials;
 -- so NULLIF(col, '') on VARCHAR2 is typically redundant.
 SELECT NULLIF(status_code, 'N/A') AS status
 FROM tickets;</div>
+      </div>
+      <div class="per-db-entry" data-db="sqlite">
         <h4>SQLite</h4>
         <p class="notes">Standard NULLIF(expr1, expr2) supported. SQLite returns NULL for integer division by zero rather than raising an error, but NULLIF is still useful for explicit intent and portability. Works with any SQLite type affinity.</p>
         <div class="syntax">-- Division-by-zero guard:
@@ -183,9 +200,11 @@ FROM inventory;
 -- Convert sentinel value to NULL:
 SELECT NULLIF(category, 'UNKNOWN') AS category
 FROM products;</div>
+      </div>
   </div>
   <script src="/search.js" defer></script>
   <script src="/splash.js" defer></script>
   <script src="/track.js" defer></script>
+  <script src="/compare.js" defer></script>
 </body>
 </html>

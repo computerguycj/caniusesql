@@ -57,6 +57,14 @@
   <p class="command-overview">Globally unique identifiers that can be generated independently across systems without coordination, unlike auto-increment. UUIDs avoid ID conflicts in distributed systems but are larger (16 bytes), slower to index, and harder to debug. Consider UUID v7 for time-ordered IDs.</p>
 
   <h2>Compatibility</h2>
+  <div class="compare-bar">
+    <span class="compare-label">Show:</span>
+    <label><input type="checkbox" value="mysql" checked> MySQL</label>
+    <label><input type="checkbox" value="postgresql" checked> PostgreSQL</label>
+    <label><input type="checkbox" value="sqlserver" checked> SQL Server</label>
+    <label><input type="checkbox" value="oracle" checked> Oracle</label>
+    <label><input type="checkbox" value="sqlite" checked> SQLite</label>
+  </div>
   <table>
     <thead>
       <tr>
@@ -67,31 +75,31 @@
       </tr>
     </thead>
     <tbody>
-          <tr>
+          <tr data-db="mysql">
             <td>MySQL</td>
             <td class="not-supported">✗ Not Supported</td>
             <td>—</td>
             <td class="notes">No native UUID column type. Common options: CHAR(36) for human-readable storage, or BINARY(16) with UUID_TO_BIN() / BIN_TO_UUID() (8.0+) for efficient indexed storage. BINARY(16) is strongly preferred for primary keys.</td>
           </tr>
-          <tr>
+          <tr data-db="postgresql">
             <td>PostgreSQL</td>
             <td class="supported">✓ Supported</td>
             <td>8.3</td>
             <td class="notes">Native UUID type stores 16 bytes internally (no hyphen overhead). Displays as the standard 8-4-4-4-12 hyphenated string. Supports equality, indexing, and default expressions with gen_random_uuid().</td>
           </tr>
-          <tr>
+          <tr data-db="sqlserver">
             <td>SQL Server</td>
             <td class="supported">✓ Supported</td>
             <td>2000</td>
             <td class="notes">UNIQUEIDENTIFIER is the native 16-byte UUID type. Supports NEWID() and NEWSEQUENTIALID() as defaults. Note: SQL Server stores bytes in a mixed-endian order that differs from RFC 4122, which affects cross-platform comparisons.</td>
           </tr>
-          <tr>
+          <tr data-db="oracle">
             <td>Oracle</td>
             <td class="not-supported">✗ Not Supported</td>
             <td>—</td>
             <td class="notes">No native UUID column type. SYS_GUID() returns RAW(16), and RAW(16) is the conventional storage type for UUIDs. The standard hyphenated format requires manual conversion.</td>
           </tr>
-          <tr>
+          <tr data-db="sqlite">
             <td>SQLite</td>
             <td class="not-supported">✗ Not Supported</td>
             <td>—</td>
@@ -123,6 +131,7 @@ CREATE TABLE t (
 
   <h2>Per-Database Syntax &amp; Notes</h2>
   <div class="per-db-section">
+      <div class="per-db-entry" data-db="mysql">
         <h4>MySQL</h4>
         <p class="notes">No native UUID column type. Common options: CHAR(36) for human-readable storage, or BINARY(16) with UUID_TO_BIN() / BIN_TO_UUID() (8.0+) for efficient indexed storage. BINARY(16) is strongly preferred for primary keys.</p>
         <div class="syntax">-- Efficient storage (8.0+):
@@ -130,18 +139,24 @@ CREATE TABLE t (
   id BINARY(16) DEFAULT (UUID_TO_BIN(UUID(), 1)) PRIMARY KEY
 );
 SELECT BIN_TO_UUID(id) FROM t;</div>
+      </div>
+      <div class="per-db-entry" data-db="postgresql">
         <h4>PostgreSQL</h4>
         <p class="notes">Native UUID type stores 16 bytes internally (no hyphen overhead). Displays as the standard 8-4-4-4-12 hyphenated string. Supports equality, indexing, and default expressions with gen_random_uuid().</p>
         <div class="syntax">CREATE TABLE t (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid()
 );
 SELECT * FROM t WHERE id = 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11';</div>
+      </div>
+      <div class="per-db-entry" data-db="sqlserver">
         <h4>SQL Server</h4>
         <p class="notes">UNIQUEIDENTIFIER is the native 16-byte UUID type. Supports NEWID() and NEWSEQUENTIALID() as defaults. Note: SQL Server stores bytes in a mixed-endian order that differs from RFC 4122, which affects cross-platform comparisons.</p>
         <div class="syntax">CREATE TABLE t (
   id UNIQUEIDENTIFIER DEFAULT NEWID() PRIMARY KEY
 );
 SELECT * FROM t WHERE id = 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11';</div>
+      </div>
+      <div class="per-db-entry" data-db="oracle">
         <h4>Oracle</h4>
         <p class="notes">No native UUID column type. SYS_GUID() returns RAW(16), and RAW(16) is the conventional storage type for UUIDs. The standard hyphenated format requires manual conversion.</p>
         <div class="syntax">CREATE TABLE t (
@@ -151,15 +166,19 @@ SELECT * FROM t WHERE id = 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11';</div>
 SELECT LOWER(REGEXP_REPLACE(RAWTOHEX(id),
   '([A-F0-9]{8})([A-F0-9]{4})([A-F0-9]{4})([A-F0-9]{4})([A-F0-9]{12})',
   '\1-\2-\3-\4-\5')) FROM t;</div>
+      </div>
+      <div class="per-db-entry" data-db="sqlite">
         <h4>SQLite</h4>
         <p class="notes">No native UUID type. Store as TEXT (36-char hyphenated string) or BLOB (16 bytes). TEXT is more portable; BLOB is more space-efficient.</p>
         <div class="syntax">CREATE TABLE t (
   id TEXT PRIMARY KEY
 );
 -- Application generates and inserts the UUID string</div>
+      </div>
   </div>
   <script src="/search.js" defer></script>
   <script src="/splash.js" defer></script>
   <script src="/track.js" defer></script>
+  <script src="/compare.js" defer></script>
 </body>
 </html>

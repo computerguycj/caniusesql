@@ -57,6 +57,14 @@
   <p class="command-overview">The inverse of pivot: transforms columns into rows, useful for normalizing denormalized reports back into a normalized form for analysis. SQL Server has native UNPIVOT; other databases use UNION ALL or table-valued constructors.</p>
 
   <h2>Compatibility</h2>
+  <div class="compare-bar">
+    <span class="compare-label">Show:</span>
+    <label><input type="checkbox" value="mysql" checked> MySQL</label>
+    <label><input type="checkbox" value="postgresql" checked> PostgreSQL</label>
+    <label><input type="checkbox" value="sqlserver" checked> SQL Server</label>
+    <label><input type="checkbox" value="oracle" checked> Oracle</label>
+    <label><input type="checkbox" value="sqlite" checked> SQLite</label>
+  </div>
   <table>
     <thead>
       <tr>
@@ -67,31 +75,31 @@
       </tr>
     </thead>
     <tbody>
-          <tr>
+          <tr data-db="mysql">
             <td>MySQL</td>
             <td class="not-supported">✗ Not Supported</td>
             <td>—</td>
             <td class="notes">No UNPIVOT operator. The universal UNION ALL workaround works in all MySQL versions. In MySQL 8.0+, a JSON-based approach using JSON_TABLE can dynamically unpivot a JSON object into rows.</td>
           </tr>
-          <tr>
+          <tr data-db="postgresql">
             <td>PostgreSQL</td>
             <td class="not-supported">✗ Not Supported</td>
             <td>—</td>
             <td class="notes">PostgreSQL has no UNPIVOT keyword. The idiomatic approach uses a VALUES clause with a CROSS JOIN LATERAL or a CROSS JOIN (VALUES ...) to enumerate the column-to-row mapping. This is concise and avoids repeating the FROM clause for each union branch.</td>
           </tr>
-          <tr>
+          <tr data-db="sqlserver">
             <td>SQL Server</td>
             <td class="supported">✓ Supported</td>
             <td>2005</td>
             <td class="notes">UNPIVOT operator available since SQL Server 2005. Syntax mirrors PIVOT: specify the value column name, the key column name, and the list of source columns. UNPIVOT automatically excludes NULL values — rows where the source column is NULL do not appear in the output. For dynamic column lists (unknown at query time), use dynamic SQL.</td>
           </tr>
-          <tr>
+          <tr data-db="oracle">
             <td>Oracle</td>
             <td class="supported">✓ Supported</td>
             <td>11g</td>
             <td class="notes">UNPIVOT operator available since Oracle 11g. Supports INCLUDE NULLS / EXCLUDE NULLS clause (EXCLUDE NULLS is the default, unlike the behavior implied by UNION ALL which includes NULLs unless filtered). Can unpivot multiple value columns simultaneously.</td>
           </tr>
-          <tr>
+          <tr data-db="sqlite">
             <td>SQLite</td>
             <td class="not-supported">✗ Not Supported</td>
             <td>—</td>
@@ -134,6 +142,7 @@ SELECT product_id, 'q4', q4 FROM quarterly_sales;</div>
 
   <h2>Per-Database Syntax &amp; Notes</h2>
   <div class="per-db-section">
+      <div class="per-db-entry" data-db="mysql">
         <h4>MySQL</h4>
         <p class="notes">No UNPIVOT operator. The universal UNION ALL workaround works in all MySQL versions. In MySQL 8.0+, a JSON-based approach using JSON_TABLE can dynamically unpivot a JSON object into rows.</p>
         <div class="syntax">-- UNION ALL workaround (works in all versions):
@@ -149,6 +158,8 @@ UNION ALL
 SELECT product_id, 'q4', q4
 FROM quarterly_sales WHERE q4 IS NOT NULL
 ORDER BY product_id, quarter;</div>
+      </div>
+      <div class="per-db-entry" data-db="postgresql">
         <h4>PostgreSQL</h4>
         <p class="notes">PostgreSQL has no UNPIVOT keyword. The idiomatic approach uses a VALUES clause with a CROSS JOIN LATERAL or a CROSS JOIN (VALUES ...) to enumerate the column-to-row mapping. This is concise and avoids repeating the FROM clause for each union branch.</p>
         <div class="syntax">-- VALUES + CROSS JOIN (PostgreSQL idiomatic approach):
@@ -170,6 +181,8 @@ UNION ALL
 SELECT product_id, 'q3', q3 FROM quarterly_sales
 UNION ALL
 SELECT product_id, 'q4', q4 FROM quarterly_sales;</div>
+      </div>
+      <div class="per-db-entry" data-db="sqlserver">
         <h4>SQL Server</h4>
         <p class="notes">UNPIVOT operator available since SQL Server 2005. Syntax mirrors PIVOT: specify the value column name, the key column name, and the list of source columns. UNPIVOT automatically excludes NULL values — rows where the source column is NULL do not appear in the output. For dynamic column lists (unknown at query time), use dynamic SQL.</p>
         <div class="syntax">-- Standard UNPIVOT:
@@ -193,6 +206,8 @@ CROSS APPLY (VALUES
     ('q4', s.q4)
 ) AS v(quarter, sales)
 WHERE v.sales IS NOT NULL;</div>
+      </div>
+      <div class="per-db-entry" data-db="oracle">
         <h4>Oracle</h4>
         <p class="notes">UNPIVOT operator available since Oracle 11g. Supports INCLUDE NULLS / EXCLUDE NULLS clause (EXCLUDE NULLS is the default, unlike the behavior implied by UNION ALL which includes NULLs unless filtered). Can unpivot multiple value columns simultaneously.</p>
         <div class="syntax">-- Standard UNPIVOT:
@@ -217,6 +232,8 @@ UNPIVOT (
     sales FOR quarter IN (q1 AS 'Q1 Sales', q2 AS 'Q2 Sales',
                           q3 AS 'Q3 Sales', q4 AS 'Q4 Sales')
 );</div>
+      </div>
+      <div class="per-db-entry" data-db="sqlite">
         <h4>SQLite</h4>
         <p class="notes">No UNPIVOT operator. Use the UNION ALL workaround or, in SQLite 3.8.3+, the VALUES table constructor with a CROSS JOIN.</p>
         <div class="syntax">-- UNION ALL workaround:
@@ -237,9 +254,11 @@ SELECT s.product_id, v.quarter, v.sales
 FROM quarterly_sales s
 JOIN (VALUES ('q1'), ('q2'), ('q3'), ('q4')) AS v(quarter)
 ON 1=1  -- cross join via VALUES</div>
+      </div>
   </div>
   <script src="/search.js" defer></script>
   <script src="/splash.js" defer></script>
   <script src="/track.js" defer></script>
+  <script src="/compare.js" defer></script>
 </body>
 </html>

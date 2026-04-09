@@ -57,6 +57,14 @@
   <p class="command-overview">Assigns a unique sequential integer to each row within a partition, starting at 1. Useful for deduplication (taking the first row per group) and pagination. Combine with DISTINCT ON in PostgreSQL for efficient top-N per group.</p>
 
   <h2>Compatibility</h2>
+  <div class="compare-bar">
+    <span class="compare-label">Show:</span>
+    <label><input type="checkbox" value="mysql" checked> MySQL</label>
+    <label><input type="checkbox" value="postgresql" checked> PostgreSQL</label>
+    <label><input type="checkbox" value="sqlserver" checked> SQL Server</label>
+    <label><input type="checkbox" value="oracle" checked> Oracle</label>
+    <label><input type="checkbox" value="sqlite" checked> SQLite</label>
+  </div>
   <table>
     <thead>
       <tr>
@@ -67,31 +75,31 @@
       </tr>
     </thead>
     <tbody>
-          <tr>
+          <tr data-db="mysql">
             <td>MySQL</td>
             <td class="supported">✓ Supported</td>
             <td>8.0</td>
             <td class="notes">ROW_NUMBER() fully supported since MySQL 8.0. Not available in MySQL 5.x — use user-defined variables as a workaround.</td>
           </tr>
-          <tr>
+          <tr data-db="postgresql">
             <td>PostgreSQL</td>
             <td class="supported">✓ Supported</td>
             <td>8.4</td>
             <td class="notes">ROW_NUMBER() fully supported. Commonly used with a CTE to filter to a specific rank (top-N per group pattern).</td>
           </tr>
-          <tr>
+          <tr data-db="sqlserver">
             <td>SQL Server</td>
             <td class="supported">✓ Supported</td>
             <td>2005</td>
             <td class="notes">ROW_NUMBER() fully supported since SQL Server 2005. The ORDER BY inside OVER() is required for ROW_NUMBER (unlike some other window functions).</td>
           </tr>
-          <tr>
+          <tr data-db="oracle">
             <td>Oracle</td>
             <td class="supported">✓ Supported</td>
             <td>8i</td>
             <td class="notes">ROW_NUMBER() fully supported. Oracle also has ROWNUM (a pseudocolumn, not a window function) which assigns numbers before ORDER BY is applied — they behave differently.</td>
           </tr>
-          <tr>
+          <tr data-db="sqlite">
             <td>SQLite</td>
             <td class="supported">✓ Supported</td>
             <td>3.25.0</td>
@@ -123,6 +131,7 @@ FROM employees;</div>
 
   <h2>Per-Database Syntax &amp; Notes</h2>
   <div class="per-db-section">
+      <div class="per-db-entry" data-db="mysql">
         <h4>MySQL</h4>
         <p class="notes">ROW_NUMBER() fully supported since MySQL 8.0. Not available in MySQL 5.x — use user-defined variables as a workaround.</p>
         <div class="syntax">SELECT name, ROW_NUMBER() OVER (PARTITION BY dept_id ORDER BY salary DESC) AS rn
@@ -130,6 +139,8 @@ FROM employees;
 
 -- Pre-8.0 workaround:
 SELECT name, @rn := @rn + 1 AS rn FROM employees, (SELECT @rn := 0) r;</div>
+      </div>
+      <div class="per-db-entry" data-db="postgresql">
         <h4>PostgreSQL</h4>
         <p class="notes">ROW_NUMBER() fully supported. Commonly used with a CTE to filter to a specific rank (top-N per group pattern).</p>
         <div class="syntax">SELECT name, ROW_NUMBER() OVER (PARTITION BY dept_id ORDER BY salary DESC) AS rn
@@ -141,10 +152,14 @@ WITH ranked AS (
   FROM employees
 )
 SELECT * FROM ranked WHERE rn = 1;</div>
+      </div>
+      <div class="per-db-entry" data-db="sqlserver">
         <h4>SQL Server</h4>
         <p class="notes">ROW_NUMBER() fully supported since SQL Server 2005. The ORDER BY inside OVER() is required for ROW_NUMBER (unlike some other window functions).</p>
         <div class="syntax">SELECT name, ROW_NUMBER() OVER (PARTITION BY dept_id ORDER BY salary DESC) AS rn
 FROM employees;</div>
+      </div>
+      <div class="per-db-entry" data-db="oracle">
         <h4>Oracle</h4>
         <p class="notes">ROW_NUMBER() fully supported. Oracle also has ROWNUM (a pseudocolumn, not a window function) which assigns numbers before ORDER BY is applied — they behave differently.</p>
         <div class="syntax">SELECT name, ROW_NUMBER() OVER (PARTITION BY dept_id ORDER BY salary DESC) AS rn
@@ -152,13 +167,17 @@ FROM employees;
 
 -- ROWNUM is NOT the same:
 SELECT ROWNUM, name FROM employees;  -- assigned before sorting</div>
+      </div>
+      <div class="per-db-entry" data-db="sqlite">
         <h4>SQLite</h4>
         <p class="notes">ROW_NUMBER() fully supported since SQLite 3.25.0 (September 2018).</p>
         <div class="syntax">SELECT name, ROW_NUMBER() OVER (PARTITION BY dept_id ORDER BY salary DESC) AS rn
 FROM employees;</div>
+      </div>
   </div>
   <script src="/search.js" defer></script>
   <script src="/splash.js" defer></script>
   <script src="/track.js" defer></script>
+  <script src="/compare.js" defer></script>
 </body>
 </html>

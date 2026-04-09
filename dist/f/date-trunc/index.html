@@ -57,6 +57,14 @@
   <p class="command-overview">Truncates a date or timestamp to a specified unit, rounding down to the start of that unit. Useful for bucketing events into time windows: date_trunc(hour, created_at). Much faster than EXTRACT for grouping by time periods.</p>
 
   <h2>Compatibility</h2>
+  <div class="compare-bar">
+    <span class="compare-label">Show:</span>
+    <label><input type="checkbox" value="mysql" checked> MySQL</label>
+    <label><input type="checkbox" value="postgresql" checked> PostgreSQL</label>
+    <label><input type="checkbox" value="sqlserver" checked> SQL Server</label>
+    <label><input type="checkbox" value="oracle" checked> Oracle</label>
+    <label><input type="checkbox" value="sqlite" checked> SQLite</label>
+  </div>
   <table>
     <thead>
       <tr>
@@ -67,31 +75,31 @@
       </tr>
     </thead>
     <tbody>
-          <tr>
+          <tr data-db="mysql">
             <td>MySQL</td>
             <td class="not-supported">✗ Not Supported</td>
             <td>—</td>
             <td class="notes">No DATE_TRUNC(). Use DATE_FORMAT() or arithmetic with DATE() and LAST_DAY(). For truncation to a specific unit, combine YEAR/MONTH/DAY extraction and MAKEDATE/MAKETIME.</td>
           </tr>
-          <tr>
+          <tr data-db="postgresql">
             <td>PostgreSQL</td>
             <td class="supported">✓ Supported</td>
             <td>all</td>
             <td class="notes">DATE_TRUNC(unit, timestamp [, timezone]). Units: microseconds, milliseconds, second, minute, hour, day, week, month, quarter, year, decade, century, millennium. Optional timezone argument added in PG 12.</td>
           </tr>
-          <tr>
+          <tr data-db="sqlserver">
             <td>SQL Server</td>
             <td class="supported">✓ Supported</td>
             <td>2022</td>
             <td class="notes">DATE_TRUNC(datepart, date) added in SQL Server 2022. For older versions, use DATEADD/DATEDIFF arithmetic: DATEADD(month, DATEDIFF(month, 0, col), 0).</td>
           </tr>
-          <tr>
+          <tr data-db="oracle">
             <td>Oracle</td>
             <td class="supported">✓ Supported</td>
             <td>all</td>
             <td class="notes">TRUNC(date, format). Format strings differ from PostgreSQL: 'MM' for month, 'DD' for day, 'HH' for hour, 'YYYY' for year. No direct equivalent for week truncation.</td>
           </tr>
-          <tr>
+          <tr data-db="sqlite">
             <td>SQLite</td>
             <td class="not-supported">✗ Not Supported</td>
             <td>—</td>
@@ -122,18 +130,23 @@ FROM orders;</div>
 
   <h2>Per-Database Syntax &amp; Notes</h2>
   <div class="per-db-section">
+      <div class="per-db-entry" data-db="mysql">
         <h4>MySQL</h4>
         <p class="notes">No DATE_TRUNC(). Use DATE_FORMAT() or arithmetic with DATE() and LAST_DAY(). For truncation to a specific unit, combine YEAR/MONTH/DAY extraction and MAKEDATE/MAKETIME.</p>
         <div class="syntax">-- Truncate to start of month:
 SELECT DATE_FORMAT(created_at, '%Y-%m-01') AS month_start FROM orders;
 -- Truncate to start of hour:
 SELECT DATE_FORMAT(created_at, '%Y-%m-%d %H:00:00') AS hour_start FROM orders;</div>
+      </div>
+      <div class="per-db-entry" data-db="postgresql">
         <h4>PostgreSQL</h4>
         <p class="notes">DATE_TRUNC(unit, timestamp [, timezone]). Units: microseconds, milliseconds, second, minute, hour, day, week, month, quarter, year, decade, century, millennium. Optional timezone argument added in PG 12.</p>
         <div class="syntax">SELECT DATE_TRUNC('month', NOW());                        -- first of current month
 SELECT DATE_TRUNC('hour', created_at) FROM orders;       -- truncate to hour
 SELECT DATE_TRUNC('week', NOW());                        -- start of ISO week (Monday)
 SELECT DATE_TRUNC('month', NOW(), 'America/New_York');   -- with timezone (PG 12+)</div>
+      </div>
+      <div class="per-db-entry" data-db="sqlserver">
         <h4>SQL Server</h4>
         <p class="notes">DATE_TRUNC(datepart, date) added in SQL Server 2022. For older versions, use DATEADD/DATEDIFF arithmetic: DATEADD(month, DATEDIFF(month, 0, col), 0).</p>
         <div class="syntax">-- SQL Server 2022+:
@@ -142,21 +155,27 @@ SELECT DATE_TRUNC(month, created_at) FROM orders;
 -- Older versions (workaround):
 SELECT DATEADD(month, DATEDIFF(month, 0, created_at), 0) FROM orders;
 SELECT DATEADD(day,   DATEDIFF(day,   0, created_at), 0) FROM orders;</div>
+      </div>
+      <div class="per-db-entry" data-db="oracle">
         <h4>Oracle</h4>
         <p class="notes">TRUNC(date, format). Format strings differ from PostgreSQL: 'MM' for month, 'DD' for day, 'HH' for hour, 'YYYY' for year. No direct equivalent for week truncation.</p>
         <div class="syntax">SELECT TRUNC(SYSDATE, 'MM') FROM DUAL;    -- first of current month
 SELECT TRUNC(SYSDATE, 'YYYY') FROM DUAL;  -- first of year
 SELECT TRUNC(SYSDATE, 'DD') FROM DUAL;    -- midnight today
 SELECT TRUNC(SYSDATE, 'HH') FROM DUAL;    -- current hour</div>
+      </div>
+      <div class="per-db-entry" data-db="sqlite">
         <h4>SQLite</h4>
         <p class="notes">No DATE_TRUNC(). Use strftime() to format and truncate dates.</p>
         <div class="syntax">-- Truncate to start of month:
 SELECT strftime('%Y-%m-01', created_at) FROM orders;
 -- Truncate to start of hour:
 SELECT strftime('%Y-%m-%d %H:00:00', created_at) FROM orders;</div>
+      </div>
   </div>
   <script src="/search.js" defer></script>
   <script src="/splash.js" defer></script>
   <script src="/track.js" defer></script>
+  <script src="/compare.js" defer></script>
 </body>
 </html>

@@ -57,6 +57,14 @@
   <p class="command-overview">PostgreSQL powerful text search engine using tsvector for document indexing and tsquery for search expressions. Supports stemming, ranking, and phrase search. Can replace simple LIKE queries with much faster indexed search.</p>
 
   <h2>Compatibility</h2>
+  <div class="compare-bar">
+    <span class="compare-label">Show:</span>
+    <label><input type="checkbox" value="mysql" checked> MySQL</label>
+    <label><input type="checkbox" value="postgresql" checked> PostgreSQL</label>
+    <label><input type="checkbox" value="sqlserver" checked> SQL Server</label>
+    <label><input type="checkbox" value="oracle" checked> Oracle</label>
+    <label><input type="checkbox" value="sqlite" checked> SQLite</label>
+  </div>
   <table>
     <thead>
       <tr>
@@ -67,31 +75,31 @@
       </tr>
     </thead>
     <tbody>
-          <tr>
+          <tr data-db="mysql">
             <td>MySQL</td>
             <td class="supported">✓ Supported</td>
             <td>3.23.23</td>
             <td class="notes">Engine-dependent</td>
           </tr>
-          <tr>
+          <tr data-db="postgresql">
             <td>PostgreSQL</td>
             <td class="supported">✓ Supported</td>
             <td>8.3</td>
             <td class="notes">tsvector/tsquery</td>
           </tr>
-          <tr>
+          <tr data-db="sqlserver">
             <td>SQL Server</td>
             <td class="supported">✓ Supported</td>
             <td>2008</td>
             <td class="notes">Full-Text Service needed</td>
           </tr>
-          <tr>
+          <tr data-db="oracle">
             <td>Oracle</td>
             <td class="supported">✓ Supported</td>
             <td>8i</td>
             <td class="notes">Oracle Text</td>
           </tr>
-          <tr>
+          <tr data-db="sqlite">
             <td>SQLite</td>
             <td class="supported">✓ Supported</td>
             <td>3.9.0</td>
@@ -123,35 +131,46 @@ WHERE MATCH(title, body) AGAINST('terms' IN BOOLEAN MODE);</div>
 
   <h2>Per-Database Syntax &amp; Notes</h2>
   <div class="per-db-section">
+      <div class="per-db-entry" data-db="mysql">
         <h4>MySQL</h4>
         <p class="notes">Engine-dependent</p>
         <div class="syntax">SELECT *
 FROM articles
 WHERE MATCH(title,body) AGAINST('terms' IN BOOLEAN MODE);</div>
+      </div>
+      <div class="per-db-entry" data-db="postgresql">
         <h4>PostgreSQL</h4>
         <p class="notes">tsvector/tsquery</p>
         <div class="syntax">SELECT *
 FROM articles
 WHERE to_tsvector('english',title||' '||body)
   @@ plainto_tsquery('terms');</div>
+      </div>
+      <div class="per-db-entry" data-db="sqlserver">
         <h4>SQL Server</h4>
         <p class="notes">Full-Text Service needed</p>
         <div class="syntax">SELECT *
 FROM articles
 WHERE CONTAINS((title,body),'&quot;terms&quot;');</div>
+      </div>
+      <div class="per-db-entry" data-db="oracle">
         <h4>Oracle</h4>
         <p class="notes">Oracle Text</p>
         <div class="syntax">SELECT *
 FROM articles
 WHERE CONTAINS(title||body,'terms')&gt;0;</div>
+      </div>
+      <div class="per-db-entry" data-db="sqlite">
         <h4>SQLite</h4>
         <p class="notes">FTS3/4/5 modules</p>
         <div class="syntax">SELECT rowid, *
 FROM articles_fts
 WHERE articles_fts MATCH 'terms';</div>
+      </div>
   </div>
   <script src="/search.js" defer></script>
   <script src="/splash.js" defer></script>
   <script src="/track.js" defer></script>
+  <script src="/compare.js" defer></script>
 </body>
 </html>

@@ -57,6 +57,14 @@
   <p class="command-overview">Produces a Cartesian product: every row in the first table paired with every row in the second. Can be extremely large and expensive. Occasionally useful for generating combinations (e.g., all date/user pairs) when paired with a WHERE clause that filters most results away.</p>
 
   <h2>Compatibility</h2>
+  <div class="compare-bar">
+    <span class="compare-label">Show:</span>
+    <label><input type="checkbox" value="mysql" checked> MySQL</label>
+    <label><input type="checkbox" value="postgresql" checked> PostgreSQL</label>
+    <label><input type="checkbox" value="sqlserver" checked> SQL Server</label>
+    <label><input type="checkbox" value="oracle" checked> Oracle</label>
+    <label><input type="checkbox" value="sqlite" checked> SQLite</label>
+  </div>
   <table>
     <thead>
       <tr>
@@ -67,31 +75,31 @@
       </tr>
     </thead>
     <tbody>
-          <tr>
+          <tr data-db="mysql">
             <td>MySQL</td>
             <td class="supported">✓ Supported</td>
             <td>all</td>
             <td class="notes">CROSS JOIN keyword or comma syntax (FROM a, b) both produce a cartesian product.</td>
           </tr>
-          <tr>
+          <tr data-db="postgresql">
             <td>PostgreSQL</td>
             <td class="supported">✓ Supported</td>
             <td>all</td>
             <td class="notes">CROSS JOIN keyword or comma syntax (FROM a, b) both produce a cartesian product.</td>
           </tr>
-          <tr>
+          <tr data-db="sqlserver">
             <td>SQL Server</td>
             <td class="supported">✓ Supported</td>
             <td>all</td>
             <td class="notes">CROSS JOIN keyword or comma syntax (FROM a, b) both produce a cartesian product.</td>
           </tr>
-          <tr>
+          <tr data-db="oracle">
             <td>Oracle</td>
             <td class="supported">✓ Supported</td>
             <td>all</td>
             <td class="notes">CROSS JOIN keyword or comma syntax (FROM a, b) both produce a cartesian product.</td>
           </tr>
-          <tr>
+          <tr data-db="sqlite">
             <td>SQLite</td>
             <td class="supported">✓ Supported</td>
             <td>all</td>
@@ -122,24 +130,35 @@ CROSS JOIN table_b b;</div>
 
   <h2>Per-Database Syntax &amp; Notes</h2>
   <div class="per-db-section">
+      <div class="per-db-entry" data-db="mysql">
         <h4>MySQL</h4>
         <p class="notes">CROSS JOIN keyword or comma syntax (FROM a, b) both produce a cartesian product.</p>
         <div class="syntax">SELECT a.col, b.col FROM a CROSS JOIN b;</div>
+      </div>
+      <div class="per-db-entry" data-db="postgresql">
         <h4>PostgreSQL</h4>
         <p class="notes">CROSS JOIN keyword or comma syntax (FROM a, b) both produce a cartesian product.</p>
         <div class="syntax">SELECT a.col, b.col FROM a CROSS JOIN b;</div>
+      </div>
+      <div class="per-db-entry" data-db="sqlserver">
         <h4>SQL Server</h4>
         <p class="notes">CROSS JOIN keyword or comma syntax (FROM a, b) both produce a cartesian product.</p>
         <div class="syntax">SELECT a.col, b.col FROM a CROSS JOIN b;</div>
+      </div>
+      <div class="per-db-entry" data-db="oracle">
         <h4>Oracle</h4>
         <p class="notes">CROSS JOIN keyword or comma syntax (FROM a, b) both produce a cartesian product.</p>
         <div class="syntax">SELECT a.col, b.col FROM a CROSS JOIN b;</div>
+      </div>
+      <div class="per-db-entry" data-db="sqlite">
         <h4>SQLite</h4>
         <p class="notes">CROSS JOIN keyword or comma syntax (FROM a, b) both produce a cartesian product.</p>
         <div class="syntax">SELECT a.col, b.col FROM a CROSS JOIN b;</div>
+      </div>
   </div>
   <script src="/search.js" defer></script>
   <script src="/splash.js" defer></script>
   <script src="/track.js" defer></script>
+  <script src="/compare.js" defer></script>
 </body>
 </html>

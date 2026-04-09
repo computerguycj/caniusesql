@@ -57,6 +57,14 @@
   <p class="command-overview">An index that includes all columns a query needs, allowing the planner to satisfy the query from the index alone without touching the table (index-only scan). Add frequently-selected columns to an index with INCLUDE for covering without changing key column order.</p>
 
   <h2>Compatibility</h2>
+  <div class="compare-bar">
+    <span class="compare-label">Show:</span>
+    <label><input type="checkbox" value="mysql" checked> MySQL</label>
+    <label><input type="checkbox" value="postgresql" checked> PostgreSQL</label>
+    <label><input type="checkbox" value="sqlserver" checked> SQL Server</label>
+    <label><input type="checkbox" value="oracle" checked> Oracle</label>
+    <label><input type="checkbox" value="sqlite" checked> SQLite</label>
+  </div>
   <table>
     <thead>
       <tr>
@@ -67,31 +75,31 @@
       </tr>
     </thead>
     <tbody>
-          <tr>
+          <tr data-db="mysql">
             <td>MySQL</td>
             <td class="supported">✓ Supported</td>
             <td>5.0</td>
             <td class="notes">InnoDB supports covering indexes implicitly — any index that contains all required columns satisfies the query from the index (an 'index-only scan'). No INCLUDE syntax; simply add the extra columns to the index key. The primary key is always appended to secondary index leaf nodes in InnoDB.</td>
           </tr>
-          <tr>
+          <tr data-db="postgresql">
             <td>PostgreSQL</td>
             <td class="supported">✓ Supported</td>
             <td>11</td>
             <td class="notes">INCLUDE clause added in PG 11 for non-key columns in B-tree indexes. Non-key columns are stored only in leaf pages and cannot be used in index conditions, but satisfy column lookups without a heap fetch.</td>
           </tr>
-          <tr>
+          <tr data-db="sqlserver">
             <td>SQL Server</td>
             <td class="supported">✓ Supported</td>
             <td>2005</td>
             <td class="notes">INCLUDE columns are added to the leaf level of the index only. This is more space-efficient than adding them as key columns and avoids the 900-byte key size limit. Covering indexes with INCLUDE are a core SQL Server tuning technique.</td>
           </tr>
-          <tr>
+          <tr data-db="oracle">
             <td>Oracle</td>
             <td class="supported">✓ Supported</td>
             <td>8i</td>
             <td class="notes">Oracle achieves covering index behavior differently: an index-organized table (IOT) stores all data in the index structure. For secondary indexes, adding extra columns to the key achieves the same read effect. No INCLUDE syntax — all indexed columns are key columns.</td>
           </tr>
-          <tr>
+          <tr data-db="sqlite">
             <td>SQLite</td>
             <td class="supported">✓ Supported</td>
             <td>3.38.0</td>
@@ -123,33 +131,44 @@ INCLUDE (order_date, total);</div>
 
   <h2>Per-Database Syntax &amp; Notes</h2>
   <div class="per-db-section">
+      <div class="per-db-entry" data-db="mysql">
         <h4>MySQL</h4>
         <p class="notes">InnoDB supports covering indexes implicitly — any index that contains all required columns satisfies the query from the index (an 'index-only scan'). No INCLUDE syntax; simply add the extra columns to the index key. The primary key is always appended to secondary index leaf nodes in InnoDB.</p>
         <div class="syntax">CREATE INDEX idx_cover ON orders (customer_id, order_date, total);
 -- All three columns are key columns (no INCLUDE syntax)</div>
+      </div>
+      <div class="per-db-entry" data-db="postgresql">
         <h4>PostgreSQL</h4>
         <p class="notes">INCLUDE clause added in PG 11 for non-key columns in B-tree indexes. Non-key columns are stored only in leaf pages and cannot be used in index conditions, but satisfy column lookups without a heap fetch.</p>
         <div class="syntax">CREATE INDEX idx_orders_cover
 ON orders (customer_id)
 INCLUDE (order_date, total);</div>
+      </div>
+      <div class="per-db-entry" data-db="sqlserver">
         <h4>SQL Server</h4>
         <p class="notes">INCLUDE columns are added to the leaf level of the index only. This is more space-efficient than adding them as key columns and avoids the 900-byte key size limit. Covering indexes with INCLUDE are a core SQL Server tuning technique.</p>
         <div class="syntax">CREATE NONCLUSTERED INDEX idx_orders_cover
 ON orders (customer_id)
 INCLUDE (order_date, total);</div>
+      </div>
+      <div class="per-db-entry" data-db="oracle">
         <h4>Oracle</h4>
         <p class="notes">Oracle achieves covering index behavior differently: an index-organized table (IOT) stores all data in the index structure. For secondary indexes, adding extra columns to the key achieves the same read effect. No INCLUDE syntax — all indexed columns are key columns.</p>
         <div class="syntax">-- Add extra columns to key (no INCLUDE):
 CREATE INDEX idx_cover ON orders (customer_id, order_date, total);
 -- Or use a function-based/invisible index strategy</div>
+      </div>
+      <div class="per-db-entry" data-db="sqlite">
         <h4>SQLite</h4>
         <p class="notes">SQLite added INCLUDE column support in 3.38.0 (2022). Prior to that, covering index behavior was achievable only by including extra columns as key columns.</p>
         <div class="syntax">CREATE INDEX idx_orders_cover
 ON orders (customer_id)
 INCLUDE (order_date, total);</div>
+      </div>
   </div>
   <script src="/search.js" defer></script>
   <script src="/splash.js" defer></script>
   <script src="/track.js" defer></script>
+  <script src="/compare.js" defer></script>
 </body>
 </html>

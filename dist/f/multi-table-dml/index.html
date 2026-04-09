@@ -57,6 +57,14 @@
   <p class="command-overview">PostgreSQL and SQL Server UPDATE ... FROM syntax allows joining additional tables in an UPDATE. More flexible than standard SQL correlated subquery approach for multi-table updates.</p>
 
   <h2>Compatibility</h2>
+  <div class="compare-bar">
+    <span class="compare-label">Show:</span>
+    <label><input type="checkbox" value="mysql" checked> MySQL</label>
+    <label><input type="checkbox" value="postgresql" checked> PostgreSQL</label>
+    <label><input type="checkbox" value="sqlserver" checked> SQL Server</label>
+    <label><input type="checkbox" value="oracle" checked> Oracle</label>
+    <label><input type="checkbox" value="sqlite" checked> SQLite</label>
+  </div>
   <table>
     <thead>
       <tr>
@@ -67,31 +75,31 @@
       </tr>
     </thead>
     <tbody>
-          <tr>
+          <tr data-db="mysql">
             <td>MySQL</td>
             <td class="supported">✓ Supported</td>
             <td>4.0</td>
             <td class="notes">Multi-table UPDATE and DELETE with explicit JOIN syntax are native. Only the target table's rows are modified; joining tables are read-only in the statement.</td>
           </tr>
-          <tr>
+          <tr data-db="postgresql">
             <td>PostgreSQL</td>
             <td class="supported">✓ Supported</td>
             <td>7.2</td>
             <td class="notes">Uses UPDATE ... FROM and DELETE ... USING syntax. The target table appears once; joined tables are in the FROM/USING clause.</td>
           </tr>
-          <tr>
+          <tr data-db="sqlserver">
             <td>SQL Server</td>
             <td class="supported">✓ Supported</td>
             <td>2000</td>
             <td class="notes">UPDATE ... FROM and DELETE with FROM clause. Can also use MERGE for upsert-style multi-table DML. The aliased target table in FROM is the idiomatic form.</td>
           </tr>
-          <tr>
+          <tr data-db="oracle">
             <td>Oracle</td>
             <td class="supported">✓ Supported</td>
             <td>9i</td>
             <td class="notes">Oracle does not support UPDATE...JOIN directly. Use a correlated subquery, a CTE with MERGE, or update an inline view (if the view is key-preserved).</td>
           </tr>
-          <tr>
+          <tr data-db="sqlite">
             <td>SQLite</td>
             <td class="supported">✓ Supported</td>
             <td>3.33.0</td>
@@ -124,6 +132,7 @@ WHERE t2.flag = 1;</div>
 
   <h2>Per-Database Syntax &amp; Notes</h2>
   <div class="per-db-section">
+      <div class="per-db-entry" data-db="mysql">
         <h4>MySQL</h4>
         <p class="notes">Multi-table UPDATE and DELETE with explicit JOIN syntax are native. Only the target table's rows are modified; joining tables are read-only in the statement.</p>
         <div class="syntax">UPDATE orders o
@@ -135,6 +144,8 @@ DELETE o
 FROM orders o
 JOIN customers c ON o.customer_id = c.id
 WHERE c.active = 0;</div>
+      </div>
+      <div class="per-db-entry" data-db="postgresql">
         <h4>PostgreSQL</h4>
         <p class="notes">Uses UPDATE ... FROM and DELETE ... USING syntax. The target table appears once; joined tables are in the FROM/USING clause.</p>
         <div class="syntax">UPDATE orders o
@@ -147,6 +158,8 @@ DELETE FROM orders o
 USING customers c
 WHERE o.customer_id = c.id
   AND c.active = false;</div>
+      </div>
+      <div class="per-db-entry" data-db="sqlserver">
         <h4>SQL Server</h4>
         <p class="notes">UPDATE ... FROM and DELETE with FROM clause. Can also use MERGE for upsert-style multi-table DML. The aliased target table in FROM is the idiomatic form.</p>
         <div class="syntax">UPDATE o
@@ -159,6 +172,8 @@ DELETE o
 FROM orders o
 JOIN customers c ON o.customer_id = c.id
 WHERE c.active = 0;</div>
+      </div>
+      <div class="per-db-entry" data-db="oracle">
         <h4>Oracle</h4>
         <p class="notes">Oracle does not support UPDATE...JOIN directly. Use a correlated subquery, a CTE with MERGE, or update an inline view (if the view is key-preserved).</p>
         <div class="syntax">-- Correlated subquery:
@@ -177,6 +192,8 @@ UPDATE (
 ) v
 SET v.priority = 'high'
 WHERE v.tier = 'gold';</div>
+      </div>
+      <div class="per-db-entry" data-db="sqlite">
         <h4>SQLite</h4>
         <p class="notes">UPDATE FROM syntax added in 3.33.0 (2020). DELETE with correlated subquery has always been available; DELETE...FROM is not supported — use WHERE EXISTS or WHERE id IN (subquery).</p>
         <div class="syntax">-- UPDATE FROM (3.33.0+):
@@ -191,9 +208,11 @@ DELETE FROM orders
 WHERE customer_id IN (
   SELECT id FROM customers WHERE active = 0
 );</div>
+      </div>
   </div>
   <script src="/search.js" defer></script>
   <script src="/splash.js" defer></script>
   <script src="/track.js" defer></script>
+  <script src="/compare.js" defer></script>
 </body>
 </html>

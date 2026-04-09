@@ -171,6 +171,7 @@ ${bodyContent}
   <script src="/search.js" defer></script>
   <script src="/splash.js" defer></script>
   <script src="/track.js" defer></script>
+  <script src="/compare.js" defer></script>
 </body>
 </html>`;
 }
@@ -196,7 +197,7 @@ function buildPage(commandName, entry, headerTpl) {
     const statusText  = supported ? '✓ Supported' : '✗ Not Supported';
     const since       = info.since || '—';
     tableRows += `
-          <tr>
+          <tr data-db="${esc(db)}">
             <td>${esc(label)}</td>
             <td class="${statusClass}">${statusText}</td>
             <td>${esc(since)}</td>
@@ -224,9 +225,11 @@ function buildPage(commandName, entry, headerTpl) {
       ? `<p class="notes">${esc(info.notes)}</p>`
       : '';
     syntaxBlocks += `
+      <div class="per-db-entry" data-db="${esc(db)}">
         <h4>${esc(label)}</h4>
         ${note}
-        <div class="syntax">${esc(info.syntax)}</div>`;
+        <div class="syntax">${esc(info.syntax)}</div>
+      </div>`;
   }
 
   // ── Category badge ──────────────────────────────────────────────────────
@@ -259,6 +262,14 @@ function buildPage(commandName, entry, headerTpl) {
   ${overview ? `<p class="command-overview">${esc(overview)}</p>` : ''}
 
   <h2>Compatibility</h2>
+  <div class="compare-bar">
+    <span class="compare-label">Show:</span>
+    <label><input type="checkbox" value="mysql" checked> MySQL</label>
+    <label><input type="checkbox" value="postgresql" checked> PostgreSQL</label>
+    <label><input type="checkbox" value="sqlserver" checked> SQL Server</label>
+    <label><input type="checkbox" value="oracle" checked> Oracle</label>
+    <label><input type="checkbox" value="sqlite" checked> SQLite</label>
+  </div>
   <table>
     <thead>
       <tr>
@@ -451,6 +462,9 @@ async function main() {
 
   fs.copyFileSync(path.join(TEMPLATES_DIR, 'track.js'), path.join(OUT_DIR, 'track.js'));
   console.log('✔  Copied track.js');
+
+  fs.copyFileSync(path.join(TEMPLATES_DIR, 'compare.js'), path.join(OUT_DIR, 'compare.js'));
+  console.log('✔  Copied compare.js');
 
   const staticAssets = ['og-image.png', 'robots.txt', 'favicon.ico', 'favicon.png'];
   for (const asset of staticAssets) {

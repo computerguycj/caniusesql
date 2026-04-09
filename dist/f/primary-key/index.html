@@ -57,6 +57,14 @@
   <p class="command-overview">Uniquely identifies each row in a table; must be unique and not NULL. A table should almost always have one. Can be composite (multiple columns). Used as the target of foreign keys and the default clustering key. Typically auto-generated for surrogate keys.</p>
 
   <h2>Compatibility</h2>
+  <div class="compare-bar">
+    <span class="compare-label">Show:</span>
+    <label><input type="checkbox" value="mysql" checked> MySQL</label>
+    <label><input type="checkbox" value="postgresql" checked> PostgreSQL</label>
+    <label><input type="checkbox" value="sqlserver" checked> SQL Server</label>
+    <label><input type="checkbox" value="oracle" checked> Oracle</label>
+    <label><input type="checkbox" value="sqlite" checked> SQLite</label>
+  </div>
   <table>
     <thead>
       <tr>
@@ -67,31 +75,31 @@
       </tr>
     </thead>
     <tbody>
-          <tr>
+          <tr data-db="mysql">
             <td>MySQL</td>
             <td class="supported">✓ Supported</td>
             <td>all</td>
             <td class="notes">InnoDB tables are clustered by the primary key — row data is physically stored in PK order. AUTO_INCREMENT is the standard way to generate surrogate keys. Composite PKs supported. No natural integer sequence type (use AUTO_INCREMENT).</td>
           </tr>
-          <tr>
+          <tr data-db="postgresql">
             <td>PostgreSQL</td>
             <td class="supported">✓ Supported</td>
             <td>all</td>
             <td class="notes">PK implicitly adds a UNIQUE index and NOT NULL. SERIAL (legacy) or IDENTITY (SQL standard, PG 10+) or GENERATED ALWAYS AS IDENTITY for auto-increment. Tables are heap-organized (not clustered by PK) — use CLUSTER command to physically reorder if needed.</td>
           </tr>
-          <tr>
+          <tr data-db="sqlserver">
             <td>SQL Server</td>
             <td class="supported">✓ Supported</td>
             <td>all</td>
             <td class="notes">By default, PK creates a CLUSTERED index — data pages are physically ordered by PK. IDENTITY(seed, increment) for auto-increment. Can explicitly create as NONCLUSTERED if you need a different clustered index. NEWID() / NEWSEQUENTIALID() for UUID primary keys.</td>
           </tr>
-          <tr>
+          <tr data-db="oracle">
             <td>Oracle</td>
             <td class="supported">✓ Supported</td>
             <td>all</td>
             <td class="notes">PKs create a unique index (B-tree by default). Auto-increment via SEQUENCE + trigger (legacy) or GENERATED AS IDENTITY (12c+). Oracle tables are heap-organized by default; index-organized tables (IOT) cluster by PK.</td>
           </tr>
-          <tr>
+          <tr data-db="sqlite">
             <td>SQLite</td>
             <td class="supported">✓ Supported</td>
             <td>all</td>
@@ -130,6 +138,7 @@ CREATE TABLE users (
 
   <h2>Per-Database Syntax &amp; Notes</h2>
   <div class="per-db-section">
+      <div class="per-db-entry" data-db="mysql">
         <h4>MySQL</h4>
         <p class="notes">InnoDB tables are clustered by the primary key — row data is physically stored in PK order. AUTO_INCREMENT is the standard way to generate surrogate keys. Composite PKs supported. No natural integer sequence type (use AUTO_INCREMENT).</p>
         <div class="syntax">CREATE TABLE users (
@@ -143,6 +152,8 @@ CREATE TABLE order_items (
   item_id  INT,
   PRIMARY KEY (order_id, item_id)
 );</div>
+      </div>
+      <div class="per-db-entry" data-db="postgresql">
         <h4>PostgreSQL</h4>
         <p class="notes">PK implicitly adds a UNIQUE index and NOT NULL. SERIAL (legacy) or IDENTITY (SQL standard, PG 10+) or GENERATED ALWAYS AS IDENTITY for auto-increment. Tables are heap-organized (not clustered by PK) — use CLUSTER command to physically reorder if needed.</p>
         <div class="syntax">-- Modern (PG 10+):
@@ -156,6 +167,8 @@ CREATE TABLE users (
   id   SERIAL PRIMARY KEY,
   name TEXT NOT NULL
 );</div>
+      </div>
+      <div class="per-db-entry" data-db="sqlserver">
         <h4>SQL Server</h4>
         <p class="notes">By default, PK creates a CLUSTERED index — data pages are physically ordered by PK. IDENTITY(seed, increment) for auto-increment. Can explicitly create as NONCLUSTERED if you need a different clustered index. NEWID() / NEWSEQUENTIALID() for UUID primary keys.</p>
         <div class="syntax">CREATE TABLE users (
@@ -168,6 +181,8 @@ CREATE TABLE users (
   id INT PRIMARY KEY NONCLUSTERED,
   name NVARCHAR(100)
 );</div>
+      </div>
+      <div class="per-db-entry" data-db="oracle">
         <h4>Oracle</h4>
         <p class="notes">PKs create a unique index (B-tree by default). Auto-increment via SEQUENCE + trigger (legacy) or GENERATED AS IDENTITY (12c+). Oracle tables are heap-organized by default; index-organized tables (IOT) cluster by PK.</p>
         <div class="syntax">-- Modern (12c+):
@@ -179,6 +194,8 @@ CREATE TABLE users (
 -- Legacy sequence approach:
 CREATE SEQUENCE user_seq START WITH 1 INCREMENT BY 1;
 CREATE TABLE users (id NUMBER DEFAULT user_seq.NEXTVAL PRIMARY KEY, name VARCHAR2(100));</div>
+      </div>
+      <div class="per-db-entry" data-db="sqlite">
         <h4>SQLite</h4>
         <p class="notes">INTEGER PRIMARY KEY (exactly this type + constraint) is a special alias for the internal rowid — it auto-increments. AUTOINCREMENT keyword additionally prevents rowid reuse after deletions. Any other PK type creates a standard unique constraint without rowid aliasing.</p>
         <div class="syntax">CREATE TABLE users (
@@ -191,9 +208,11 @@ CREATE TABLE users (
   id   INTEGER PRIMARY KEY AUTOINCREMENT,
   name TEXT
 );</div>
+      </div>
   </div>
   <script src="/search.js" defer></script>
   <script src="/splash.js" defer></script>
   <script src="/track.js" defer></script>
+  <script src="/compare.js" defer></script>
 </body>
 </html>

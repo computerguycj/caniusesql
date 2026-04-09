@@ -57,6 +57,14 @@
   <p class="command-overview">Basic numeric functions: FLOOR rounds down, CEIL/CEILING rounds up, ROUND rounds to a given precision, and ABS returns absolute value. Widely supported across all major databases with consistent behavior.</p>
 
   <h2>Compatibility</h2>
+  <div class="compare-bar">
+    <span class="compare-label">Show:</span>
+    <label><input type="checkbox" value="mysql" checked> MySQL</label>
+    <label><input type="checkbox" value="postgresql" checked> PostgreSQL</label>
+    <label><input type="checkbox" value="sqlserver" checked> SQL Server</label>
+    <label><input type="checkbox" value="oracle" checked> Oracle</label>
+    <label><input type="checkbox" value="sqlite" checked> SQLite</label>
+  </div>
   <table>
     <thead>
       <tr>
@@ -67,31 +75,31 @@
       </tr>
     </thead>
     <tbody>
-          <tr>
+          <tr data-db="mysql">
             <td>MySQL</td>
             <td class="supported">✓ Supported</td>
             <td>5.0</td>
             <td class="notes">FLOOR, CEILING (or CEIL), ROUND, ABS all available. ROUND uses half-away-from-zero. TRUNCATE(n, d) truncates without rounding.</td>
           </tr>
-          <tr>
+          <tr data-db="postgresql">
             <td>PostgreSQL</td>
             <td class="supported">✓ Supported</td>
             <td>7.4</td>
             <td class="notes">FLOOR, CEIL/CEILING, ROUND, ABS all standard. ROUND on the NUMERIC type uses banker's rounding (round half to even); on float it rounds half away from zero. TRUNC() truncates.</td>
           </tr>
-          <tr>
+          <tr data-db="sqlserver">
             <td>SQL Server</td>
             <td class="supported">✓ Supported</td>
             <td>2000</td>
             <td class="notes">FLOOR, CEILING, ROUND, ABS available. ROUND(n, d, 1) with a third argument of 1 truncates instead of rounding. No TRUNC function.</td>
           </tr>
-          <tr>
+          <tr data-db="oracle">
             <td>Oracle</td>
             <td class="supported">✓ Supported</td>
             <td>7</td>
             <td class="notes">FLOOR, CEIL, ROUND, ABS available. TRUNC(n, d) truncates. ROUND uses half-away-from-zero.</td>
           </tr>
-          <tr>
+          <tr data-db="sqlite">
             <td>SQLite</td>
             <td class="supported">✓ Supported</td>
             <td>3.0.0</td>
@@ -124,26 +132,37 @@
 
   <h2>Per-Database Syntax &amp; Notes</h2>
   <div class="per-db-section">
+      <div class="per-db-entry" data-db="mysql">
         <h4>MySQL</h4>
         <p class="notes">FLOOR, CEILING (or CEIL), ROUND, ABS all available. ROUND uses half-away-from-zero. TRUNCATE(n, d) truncates without rounding.</p>
         <div class="syntax">SELECT FLOOR(4.7), CEILING(4.2), ROUND(4.565, 2), ABS(-42), TRUNCATE(4.789, 2);</div>
+      </div>
+      <div class="per-db-entry" data-db="postgresql">
         <h4>PostgreSQL</h4>
         <p class="notes">FLOOR, CEIL/CEILING, ROUND, ABS all standard. ROUND on the NUMERIC type uses banker's rounding (round half to even); on float it rounds half away from zero. TRUNC() truncates.</p>
         <div class="syntax">SELECT FLOOR(4.7), CEIL(4.2), ROUND(4.565, 2), ABS(-42), TRUNC(4.789, 2);</div>
+      </div>
+      <div class="per-db-entry" data-db="sqlserver">
         <h4>SQL Server</h4>
         <p class="notes">FLOOR, CEILING, ROUND, ABS available. ROUND(n, d, 1) with a third argument of 1 truncates instead of rounding. No TRUNC function.</p>
         <div class="syntax">SELECT FLOOR(4.7), CEILING(4.2), ROUND(4.565, 2), ABS(-42);
 -- Truncate via ROUND third arg:
 SELECT ROUND(4.789, 2, 1);</div>
+      </div>
+      <div class="per-db-entry" data-db="oracle">
         <h4>Oracle</h4>
         <p class="notes">FLOOR, CEIL, ROUND, ABS available. TRUNC(n, d) truncates. ROUND uses half-away-from-zero.</p>
         <div class="syntax">SELECT FLOOR(4.7), CEIL(4.2), ROUND(4.565, 2), ABS(-42), TRUNC(4.789, 2) FROM dual;</div>
+      </div>
+      <div class="per-db-entry" data-db="sqlite">
         <h4>SQLite</h4>
         <p class="notes">ROUND and ABS built-in since the beginning. FLOOR and CEIL added in 3.35.0. No TRUNC; use CAST(n AS INT) or ROUND(n - 0.5) as a workaround for positive values.</p>
         <div class="syntax">SELECT FLOOR(4.7), CEIL(4.2), ROUND(4.567, 2), ABS(-42);</div>
+      </div>
   </div>
   <script src="/search.js" defer></script>
   <script src="/splash.js" defer></script>
   <script src="/track.js" defer></script>
+  <script src="/compare.js" defer></script>
 </body>
 </html>

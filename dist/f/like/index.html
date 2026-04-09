@@ -57,6 +57,14 @@
   <p class="command-overview">Pattern-matches strings using percent (any sequence) and underscore (any single character). Simple but limited -- it is case-sensitive and does not handle complex patterns efficiently. Use ESCAPE for literal percent or underscore characters. Not suitable for multi-character Unicode normalization.</p>
 
   <h2>Compatibility</h2>
+  <div class="compare-bar">
+    <span class="compare-label">Show:</span>
+    <label><input type="checkbox" value="mysql" checked> MySQL</label>
+    <label><input type="checkbox" value="postgresql" checked> PostgreSQL</label>
+    <label><input type="checkbox" value="sqlserver" checked> SQL Server</label>
+    <label><input type="checkbox" value="oracle" checked> Oracle</label>
+    <label><input type="checkbox" value="sqlite" checked> SQLite</label>
+  </div>
   <table>
     <thead>
       <tr>
@@ -67,31 +75,31 @@
       </tr>
     </thead>
     <tbody>
-          <tr>
+          <tr data-db="mysql">
             <td>MySQL</td>
             <td class="supported">✓ Supported</td>
             <td>all</td>
             <td class="notes">Case sensitivity depends on column collation (case-insensitive by default with utf8mb4_general_ci). REGEXP / RLIKE for full regex.</td>
           </tr>
-          <tr>
+          <tr data-db="postgresql">
             <td>PostgreSQL</td>
             <td class="supported">✓ Supported</td>
             <td>all</td>
             <td class="notes">LIKE is case-sensitive. ILIKE for case-insensitive matching (PostgreSQL extension). SIMILAR TO for SQL-standard regex. ~ / ~* for POSIX regex matching.</td>
           </tr>
-          <tr>
+          <tr data-db="sqlserver">
             <td>SQL Server</td>
             <td class="supported">✓ Supported</td>
             <td>all</td>
             <td class="notes">Case sensitivity depends on column/database collation. Uniquely supports [] character class ranges in patterns: LIKE '[A-Z]%'.</td>
           </tr>
-          <tr>
+          <tr data-db="oracle">
             <td>Oracle</td>
             <td class="supported">✓ Supported</td>
             <td>all</td>
             <td class="notes">Case-sensitive by default. REGEXP_LIKE(col, pattern [, flags]) for full regex. ESCAPE clause for literal % or _ in patterns.</td>
           </tr>
-          <tr>
+          <tr data-db="sqlite">
             <td>SQLite</td>
             <td class="supported">✓ Supported</td>
             <td>all</td>
@@ -120,30 +128,41 @@
 
   <h2>Per-Database Syntax &amp; Notes</h2>
   <div class="per-db-section">
+      <div class="per-db-entry" data-db="mysql">
         <h4>MySQL</h4>
         <p class="notes">Case sensitivity depends on column collation (case-insensitive by default with utf8mb4_general_ci). REGEXP / RLIKE for full regex.</p>
         <div class="syntax">SELECT * FROM tbl WHERE name LIKE 'J%';
 SELECT * FROM tbl WHERE name REGEXP '^J[aeiou]';</div>
+      </div>
+      <div class="per-db-entry" data-db="postgresql">
         <h4>PostgreSQL</h4>
         <p class="notes">LIKE is case-sensitive. ILIKE for case-insensitive matching (PostgreSQL extension). SIMILAR TO for SQL-standard regex. ~ / ~* for POSIX regex matching.</p>
         <div class="syntax">SELECT * FROM tbl WHERE name LIKE 'J%';    -- case-sensitive
 SELECT * FROM tbl WHERE name ILIKE 'j%';   -- case-insensitive
 SELECT * FROM tbl WHERE name ~ '^J[aeiou]'; -- POSIX regex</div>
+      </div>
+      <div class="per-db-entry" data-db="sqlserver">
         <h4>SQL Server</h4>
         <p class="notes">Case sensitivity depends on column/database collation. Uniquely supports [] character class ranges in patterns: LIKE '[A-Z]%'.</p>
         <div class="syntax">SELECT * FROM tbl WHERE name LIKE 'J%';
 SELECT * FROM tbl WHERE name LIKE '[A-Z]%';  -- starts with any letter</div>
+      </div>
+      <div class="per-db-entry" data-db="oracle">
         <h4>Oracle</h4>
         <p class="notes">Case-sensitive by default. REGEXP_LIKE(col, pattern [, flags]) for full regex. ESCAPE clause for literal % or _ in patterns.</p>
         <div class="syntax">SELECT * FROM tbl WHERE name LIKE 'J%';
 SELECT * FROM tbl WHERE REGEXP_LIKE(name, '^J', 'i');  -- case-insensitive regex</div>
+      </div>
+      <div class="per-db-entry" data-db="sqlite">
         <h4>SQLite</h4>
         <p class="notes">LIKE is case-insensitive for ASCII letters by default (unusual). GLOB provides case-sensitive matching using * and ? instead of % and _.</p>
         <div class="syntax">SELECT * FROM tbl WHERE name LIKE 'j%';  -- matches 'John' AND 'john'
 SELECT * FROM tbl WHERE name GLOB 'J*';  -- case-sensitive</div>
+      </div>
   </div>
   <script src="/search.js" defer></script>
   <script src="/splash.js" defer></script>
   <script src="/track.js" defer></script>
+  <script src="/compare.js" defer></script>
 </body>
 </html>

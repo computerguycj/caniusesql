@@ -57,6 +57,14 @@
   <p class="command-overview">Collects string values from multiple rows into a single string, using GROUP_CONCAT (MySQL), STRING_AGG (PostgreSQL/SQL Server), or LISTAGG (Oracle). Useful for building comma-separated lists per group, like tag lists.</p>
 
   <h2>Compatibility</h2>
+  <div class="compare-bar">
+    <span class="compare-label">Show:</span>
+    <label><input type="checkbox" value="mysql" checked> MySQL</label>
+    <label><input type="checkbox" value="postgresql" checked> PostgreSQL</label>
+    <label><input type="checkbox" value="sqlserver" checked> SQL Server</label>
+    <label><input type="checkbox" value="oracle" checked> Oracle</label>
+    <label><input type="checkbox" value="sqlite" checked> SQLite</label>
+  </div>
   <table>
     <thead>
       <tr>
@@ -67,31 +75,31 @@
       </tr>
     </thead>
     <tbody>
-          <tr>
+          <tr data-db="mysql">
             <td>MySQL</td>
             <td class="supported">✓ Supported</td>
             <td>8.0</td>
             <td class="notes">Implemented through equivalent GROUP_CONCAT function; default separator is comma</td>
           </tr>
-          <tr>
+          <tr data-db="postgresql">
             <td>PostgreSQL</td>
             <td class="supported">✓ Supported</td>
             <td>9.0</td>
             <td class="notes">Supports ORDER BY inside aggregation</td>
           </tr>
-          <tr>
+          <tr data-db="sqlserver">
             <td>SQL Server</td>
             <td class="supported">✓ Supported</td>
             <td>2017 (v14.x)</td>
             <td class="notes">Native support; clean syntax</td>
           </tr>
-          <tr>
+          <tr data-db="oracle">
             <td>Oracle</td>
             <td class="supported">✓ Supported</td>
             <td>11g Release 2 (11.2)</td>
             <td class="notes">NOTE: Implemented through equivalent LISTAGG function; supports ordering</td>
           </tr>
-          <tr>
+          <tr data-db="sqlite">
             <td>SQLite</td>
             <td class="supported">✓ Supported</td>
             <td>3.44.0 (released Nov 2023)</td>
@@ -125,5 +133,6 @@ STRING_AGG ( expression, separator [order_by_clause] );</div>
   <script src="/search.js" defer></script>
   <script src="/splash.js" defer></script>
   <script src="/track.js" defer></script>
+  <script src="/compare.js" defer></script>
 </body>
 </html>

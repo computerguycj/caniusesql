@@ -57,6 +57,14 @@
   <p class="command-overview">Renames a table atomically without moving data. Views and foreign key references to the table may need updating. Most databases support this; the syntax varies (RENAME TABLE in MySQL, ALTER TABLE ... RENAME TO in PostgreSQL).</p>
 
   <h2>Compatibility</h2>
+  <div class="compare-bar">
+    <span class="compare-label">Show:</span>
+    <label><input type="checkbox" value="mysql" checked> MySQL</label>
+    <label><input type="checkbox" value="postgresql" checked> PostgreSQL</label>
+    <label><input type="checkbox" value="sqlserver" checked> SQL Server</label>
+    <label><input type="checkbox" value="oracle" checked> Oracle</label>
+    <label><input type="checkbox" value="sqlite" checked> SQLite</label>
+  </div>
   <table>
     <thead>
       <tr>
@@ -67,31 +75,31 @@
       </tr>
     </thead>
     <tbody>
-          <tr>
+          <tr data-db="mysql">
             <td>MySQL</td>
             <td class="supported">✓ Supported</td>
             <td>5.0</td>
             <td class="notes">RENAME TABLE (table) since 5.0. RENAME COLUMN (column) added in 8.0. On older versions use CHANGE col old_col new_col col_definition.</td>
           </tr>
-          <tr>
+          <tr data-db="postgresql">
             <td>PostgreSQL</td>
             <td class="supported">✓ Supported</td>
             <td>7.4</td>
             <td class="notes">Both RENAME TABLE and RENAME COLUMN are via ALTER TABLE. Renaming updates pg_class/pg_attribute metadata instantly with no table rewrite.</td>
           </tr>
-          <tr>
+          <tr data-db="sqlserver">
             <td>SQL Server</td>
             <td class="supported">✓ Supported</td>
             <td>2000</td>
             <td class="notes">Uses sp_rename system procedure rather than ALTER TABLE syntax. Views, procedures, and other objects that reference the old name are not automatically updated.</td>
           </tr>
-          <tr>
+          <tr data-db="oracle">
             <td>Oracle</td>
             <td class="supported">✓ Supported</td>
             <td>9i</td>
             <td class="notes">RENAME (table) is standalone DDL; column rename via ALTER TABLE RENAME COLUMN added in Oracle 9i. Dependent objects (views, procedures) are invalidated and must be recompiled.</td>
           </tr>
-          <tr>
+          <tr data-db="sqlite">
             <td>SQLite</td>
             <td class="supported">✓ Supported</td>
             <td>3.25.0</td>
@@ -123,6 +131,7 @@ ALTER TABLE t RENAME COLUMN old_col TO new_col;</div>
 
   <h2>Per-Database Syntax &amp; Notes</h2>
   <div class="per-db-section">
+      <div class="per-db-entry" data-db="mysql">
         <h4>MySQL</h4>
         <p class="notes">RENAME TABLE (table) since 5.0. RENAME COLUMN (column) added in 8.0. On older versions use CHANGE col old_col new_col col_definition.</p>
         <div class="syntax">RENAME TABLE old_name TO new_name;
@@ -130,27 +139,37 @@ ALTER TABLE t RENAME COLUMN old_col TO new_col;</div>
 ALTER TABLE t RENAME COLUMN old_col TO new_col;
 -- Column (pre-8.0):
 ALTER TABLE t CHANGE old_col new_col INT NOT NULL;</div>
+      </div>
+      <div class="per-db-entry" data-db="postgresql">
         <h4>PostgreSQL</h4>
         <p class="notes">Both RENAME TABLE and RENAME COLUMN are via ALTER TABLE. Renaming updates pg_class/pg_attribute metadata instantly with no table rewrite.</p>
         <div class="syntax">ALTER TABLE old_name RENAME TO new_name;
 ALTER TABLE t RENAME COLUMN old_col TO new_col;</div>
+      </div>
+      <div class="per-db-entry" data-db="sqlserver">
         <h4>SQL Server</h4>
         <p class="notes">Uses sp_rename system procedure rather than ALTER TABLE syntax. Views, procedures, and other objects that reference the old name are not automatically updated.</p>
         <div class="syntax">-- Table:
 EXEC sp_rename 'old_name', 'new_name';
 -- Column:
 EXEC sp_rename 'dbo.t.old_col', 'new_col', 'COLUMN';</div>
+      </div>
+      <div class="per-db-entry" data-db="oracle">
         <h4>Oracle</h4>
         <p class="notes">RENAME (table) is standalone DDL; column rename via ALTER TABLE RENAME COLUMN added in Oracle 9i. Dependent objects (views, procedures) are invalidated and must be recompiled.</p>
         <div class="syntax">RENAME old_name TO new_name;
 ALTER TABLE t RENAME COLUMN old_col TO new_col;</div>
+      </div>
+      <div class="per-db-entry" data-db="sqlite">
         <h4>SQLite</h4>
         <p class="notes">ALTER TABLE RENAME TO (table rename) has been available since very early SQLite. RENAME COLUMN was added in 3.25.0 (2018). Views and triggers referencing the old column name are updated automatically.</p>
         <div class="syntax">ALTER TABLE old_name RENAME TO new_name;
 ALTER TABLE t RENAME COLUMN old_col TO new_col;</div>
+      </div>
   </div>
   <script src="/search.js" defer></script>
   <script src="/splash.js" defer></script>
   <script src="/track.js" defer></script>
+  <script src="/compare.js" defer></script>
 </body>
 </html>

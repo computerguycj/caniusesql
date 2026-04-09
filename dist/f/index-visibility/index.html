@@ -57,6 +57,14 @@
   <p class="command-overview">Temporarily disables constraint checking (DISABLE VALIDATE) or enforcement (DISABLE NOVALIDATE), useful for bulk data loading and migrations. Remember to re-enable (ENABLE) constraints afterward -- never leave them disabled in production.</p>
 
   <h2>Compatibility</h2>
+  <div class="compare-bar">
+    <span class="compare-label">Show:</span>
+    <label><input type="checkbox" value="mysql" checked> MySQL</label>
+    <label><input type="checkbox" value="postgresql" checked> PostgreSQL</label>
+    <label><input type="checkbox" value="sqlserver" checked> SQL Server</label>
+    <label><input type="checkbox" value="oracle" checked> Oracle</label>
+    <label><input type="checkbox" value="sqlite" checked> SQLite</label>
+  </div>
   <table>
     <thead>
       <tr>
@@ -67,31 +75,31 @@
       </tr>
     </thead>
     <tbody>
-          <tr>
+          <tr data-db="mysql">
             <td>MySQL</td>
             <td class="supported">✓ Supported</td>
             <td>8.0</td>
             <td class="notes">INVISIBLE indexes are maintained by the engine on write but ignored by the optimizer on read. Useful for safely testing index removal. Can be toggled with ALTER TABLE t ALTER INDEX idx VISIBLE.</td>
           </tr>
-          <tr>
+          <tr data-db="postgresql">
             <td>PostgreSQL</td>
             <td class="not-supported">✗ Not Supported</td>
             <td>—</td>
             <td class="notes">No native index visibility toggle. The closest equivalent is enabling/disabling an index via the enable_indexscan / enable_indexonlyscan planner parameters at session scope, or using pg_index.indisvalid. There is no single-index disable command.</td>
           </tr>
-          <tr>
+          <tr data-db="sqlserver">
             <td>SQL Server</td>
             <td class="supported">✓ Supported</td>
             <td>2005</td>
             <td class="notes">ALTER INDEX idx ON t DISABLE stops the optimizer from using the index and stops maintaining it on writes. REBUILD re-enables it. Note: a disabled clustered index makes the table inaccessible until rebuilt.</td>
           </tr>
-          <tr>
+          <tr data-db="oracle">
             <td>Oracle</td>
             <td class="supported">✓ Supported</td>
             <td>8i</td>
             <td class="notes">ALTER INDEX idx UNUSABLE marks it unusable — the optimizer ignores it and DML does not maintain it. ALTER INDEX idx REBUILD restores it. Invisible indexes (optimizer ignores, writes maintained) added in Oracle 11g.</td>
           </tr>
-          <tr>
+          <tr data-db="sqlite">
             <td>SQLite</td>
             <td class="not-supported">✗ Not Supported</td>
             <td>—</td>
@@ -124,6 +132,7 @@ ALTER INDEX idx ON t DISABLE;</div>
 
   <h2>Per-Database Syntax &amp; Notes</h2>
   <div class="per-db-section">
+      <div class="per-db-entry" data-db="mysql">
         <h4>MySQL</h4>
         <p class="notes">INVISIBLE indexes are maintained by the engine on write but ignored by the optimizer on read. Useful for safely testing index removal. Can be toggled with ALTER TABLE t ALTER INDEX idx VISIBLE.</p>
         <div class="syntax">-- Make invisible:
@@ -132,12 +141,16 @@ ALTER TABLE orders ALTER INDEX idx_customer INVISIBLE;
 ALTER TABLE orders ALTER INDEX idx_customer VISIBLE;
 -- Force optimizer to use invisible indexes (session-level):
 SET SESSION optimizer_switch = 'use_invisible_indexes=on';</div>
+      </div>
+      <div class="per-db-entry" data-db="sqlserver">
         <h4>SQL Server</h4>
         <p class="notes">ALTER INDEX idx ON t DISABLE stops the optimizer from using the index and stops maintaining it on writes. REBUILD re-enables it. Note: a disabled clustered index makes the table inaccessible until rebuilt.</p>
         <div class="syntax">-- Disable:
 ALTER INDEX idx_customer ON dbo.orders DISABLE;
 -- Re-enable:
 ALTER INDEX idx_customer ON dbo.orders REBUILD;</div>
+      </div>
+      <div class="per-db-entry" data-db="oracle">
         <h4>Oracle</h4>
         <p class="notes">ALTER INDEX idx UNUSABLE marks it unusable — the optimizer ignores it and DML does not maintain it. ALTER INDEX idx REBUILD restores it. Invisible indexes (optimizer ignores, writes maintained) added in Oracle 11g.</p>
         <div class="syntax">-- Unusable (not maintained):
@@ -146,9 +159,11 @@ ALTER INDEX idx_customer UNUSABLE;
 ALTER INDEX idx_customer INVISIBLE;
 -- Rebuild:
 ALTER INDEX idx_customer REBUILD;</div>
+      </div>
   </div>
   <script src="/search.js" defer></script>
   <script src="/splash.js" defer></script>
   <script src="/track.js" defer></script>
+  <script src="/compare.js" defer></script>
 </body>
 </html>

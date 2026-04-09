@@ -57,6 +57,14 @@
   <p class="command-overview">Prevents NULL values in a column, requiring a defined value. The simplest and most important constraint for data quality. Combine with DEFAULT to avoid NULLs from inserts that omit the column.</p>
 
   <h2>Compatibility</h2>
+  <div class="compare-bar">
+    <span class="compare-label">Show:</span>
+    <label><input type="checkbox" value="mysql" checked> MySQL</label>
+    <label><input type="checkbox" value="postgresql" checked> PostgreSQL</label>
+    <label><input type="checkbox" value="sqlserver" checked> SQL Server</label>
+    <label><input type="checkbox" value="oracle" checked> Oracle</label>
+    <label><input type="checkbox" value="sqlite" checked> SQLite</label>
+  </div>
   <table>
     <thead>
       <tr>
@@ -67,31 +75,31 @@
       </tr>
     </thead>
     <tbody>
-          <tr>
+          <tr data-db="mysql">
             <td>MySQL</td>
             <td class="supported">✓ Supported</td>
             <td>all</td>
             <td class="notes">Standard NOT NULL. Strict mode (STRICT_ALL_TABLES or STRICT_TRANS_TABLES) affects behavior: without strict mode, MySQL may insert empty string or 0 instead of rejecting the INSERT on a NOT NULL column — enabling strict mode is strongly recommended.</td>
           </tr>
-          <tr>
+          <tr data-db="postgresql">
             <td>PostgreSQL</td>
             <td class="supported">✓ Supported</td>
             <td>all</td>
             <td class="notes">Standard NOT NULL. PG 17 adds ALTER TABLE ... ALTER COLUMN ... SET NOT NULL as a fast path that avoids a full table scan when a CHECK constraint already guarantees no NULLs. NOT NULL can also be added as a named constraint (ALTER TABLE ... ADD CONSTRAINT ... NOT NULL) in PG 17+.</td>
           </tr>
-          <tr>
+          <tr data-db="sqlserver">
             <td>SQL Server</td>
             <td class="supported">✓ Supported</td>
             <td>all</td>
             <td class="notes">Standard NOT NULL. Columns are nullable by default. To change nullability on an existing column the column must be redefined with ALTER TABLE ... ALTER COLUMN. If data contains NULLs, the ALTER will fail.</td>
           </tr>
-          <tr>
+          <tr data-db="oracle">
             <td>Oracle</td>
             <td class="supported">✓ Supported</td>
             <td>all</td>
             <td class="notes">Standard NOT NULL. In Oracle, an empty string ('') is treated as NULL — unlike every other engine. This means NOT NULL also blocks empty string inserts. Modifying nullability: ALTER TABLE ... MODIFY col NOT NULL or ALTER TABLE ... MODIFY col NULL.</td>
           </tr>
-          <tr>
+          <tr data-db="sqlite">
             <td>SQLite</td>
             <td class="supported">✓ Supported</td>
             <td>all</td>
@@ -124,6 +132,7 @@
 
   <h2>Per-Database Syntax &amp; Notes</h2>
   <div class="per-db-section">
+      <div class="per-db-entry" data-db="mysql">
         <h4>MySQL</h4>
         <p class="notes">Standard NOT NULL. Strict mode (STRICT_ALL_TABLES or STRICT_TRANS_TABLES) affects behavior: without strict mode, MySQL may insert empty string or 0 instead of rejecting the INSERT on a NOT NULL column — enabling strict mode is strongly recommended.</p>
         <div class="syntax">CREATE TABLE users (
@@ -137,6 +146,8 @@ SET sql_mode = 'STRICT_ALL_TABLES';
 
 -- Add NOT NULL to existing column:
 ALTER TABLE users MODIFY COLUMN bio TEXT NOT NULL DEFAULT '';</div>
+      </div>
+      <div class="per-db-entry" data-db="postgresql">
         <h4>PostgreSQL</h4>
         <p class="notes">Standard NOT NULL. PG 17 adds ALTER TABLE ... ALTER COLUMN ... SET NOT NULL as a fast path that avoids a full table scan when a CHECK constraint already guarantees no NULLs. NOT NULL can also be added as a named constraint (ALTER TABLE ... ADD CONSTRAINT ... NOT NULL) in PG 17+.</p>
         <div class="syntax">CREATE TABLE users (
@@ -150,6 +161,8 @@ ALTER TABLE users ALTER COLUMN email SET NOT NULL;
 
 -- Remove NOT NULL:
 ALTER TABLE users ALTER COLUMN email DROP NOT NULL;</div>
+      </div>
+      <div class="per-db-entry" data-db="sqlserver">
         <h4>SQL Server</h4>
         <p class="notes">Standard NOT NULL. Columns are nullable by default. To change nullability on an existing column the column must be redefined with ALTER TABLE ... ALTER COLUMN. If data contains NULLs, the ALTER will fail.</p>
         <div class="syntax">CREATE TABLE users (
@@ -164,6 +177,8 @@ ALTER TABLE users ALTER COLUMN email NVARCHAR(255) NOT NULL;
 -- If NULLs exist, update first:
 UPDATE users SET email = '' WHERE email IS NULL;
 ALTER TABLE users ALTER COLUMN email NVARCHAR(255) NOT NULL;</div>
+      </div>
+      <div class="per-db-entry" data-db="oracle">
         <h4>Oracle</h4>
         <p class="notes">Standard NOT NULL. In Oracle, an empty string ('') is treated as NULL — unlike every other engine. This means NOT NULL also blocks empty string inserts. Modifying nullability: ALTER TABLE ... MODIFY col NOT NULL or ALTER TABLE ... MODIFY col NULL.</p>
         <div class="syntax">CREATE TABLE users (
@@ -175,6 +190,8 @@ ALTER TABLE users ALTER COLUMN email NVARCHAR(255) NOT NULL;</div>
 -- Change nullability:
 ALTER TABLE users MODIFY email VARCHAR2(255) NOT NULL;
 ALTER TABLE users MODIFY bio   VARCHAR2(4000) NULL;</div>
+      </div>
+      <div class="per-db-entry" data-db="sqlite">
         <h4>SQLite</h4>
         <p class="notes">Standard NOT NULL. The exception: INTEGER PRIMARY KEY columns implicitly get NOT NULL (and auto-increment behavior). SQLite allows ALTER TABLE to rename columns and add columns, but NOT NULL cannot be added to an existing column without recreating the table.</p>
         <div class="syntax">CREATE TABLE users (
@@ -182,9 +199,11 @@ ALTER TABLE users MODIFY bio   VARCHAR2(4000) NULL;</div>
   email TEXT NOT NULL,
   bio   TEXT                  -- nullable
 );</div>
+      </div>
   </div>
   <script src="/search.js" defer></script>
   <script src="/splash.js" defer></script>
   <script src="/track.js" defer></script>
+  <script src="/compare.js" defer></script>
 </body>
 </html>

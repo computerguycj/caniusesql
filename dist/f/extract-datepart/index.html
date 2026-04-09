@@ -57,6 +57,14 @@
   <p class="command-overview">Pulls a specific component (year, month, day, hour, etc.) from a date or timestamp value. EXTRACT is ANSI SQL standard; DATE_PART is PostgreSQL-specific. Both are essential for grouping by time periods or parsing temporal data.</p>
 
   <h2>Compatibility</h2>
+  <div class="compare-bar">
+    <span class="compare-label">Show:</span>
+    <label><input type="checkbox" value="mysql" checked> MySQL</label>
+    <label><input type="checkbox" value="postgresql" checked> PostgreSQL</label>
+    <label><input type="checkbox" value="sqlserver" checked> SQL Server</label>
+    <label><input type="checkbox" value="oracle" checked> Oracle</label>
+    <label><input type="checkbox" value="sqlite" checked> SQLite</label>
+  </div>
   <table>
     <thead>
       <tr>
@@ -67,31 +75,31 @@
       </tr>
     </thead>
     <tbody>
-          <tr>
+          <tr data-db="mysql">
             <td>MySQL</td>
             <td class="supported">✓ Supported</td>
             <td>all</td>
             <td class="notes">EXTRACT(unit FROM date) is SQL-standard and supported. Also YEAR(date), MONTH(date), DAY(date), HOUR(time), MINUTE(time), SECOND(time) as shorthand functions. DAYOFWEEK() returns 1=Sunday, WEEKDAY() returns 0=Monday.</td>
           </tr>
-          <tr>
+          <tr data-db="postgresql">
             <td>PostgreSQL</td>
             <td class="supported">✓ Supported</td>
             <td>all</td>
             <td class="notes">EXTRACT(field FROM source) returns a float8. DATE_PART(field, source) is equivalent. Fields include: year, month, day, hour, minute, second, milliseconds, epoch, dow (0=Sun), isodow (1=Mon), week, quarter, timezone.</td>
           </tr>
-          <tr>
+          <tr data-db="sqlserver">
             <td>SQL Server</td>
             <td class="supported">✓ Supported</td>
             <td>all</td>
             <td class="notes">DATEPART(datepart, date) returns an integer. YEAR(date), MONTH(date), DAY(date) are shorthand. Parts include: year, quarter, month, dayofyear, day, weekday, week, hour, minute, second, millisecond, microsecond. DATEPART(weekday, date) is locale-dependent (SET DATEFIRST).</td>
           </tr>
-          <tr>
+          <tr data-db="oracle">
             <td>Oracle</td>
             <td class="supported">✓ Supported</td>
             <td>all</td>
             <td class="notes">EXTRACT(field FROM date). Fields: YEAR, MONTH, DAY, HOUR, MINUTE, SECOND, TIMEZONE_HOUR, TIMEZONE_MINUTE. TO_CHAR(date, 'format') is the traditional Oracle approach for formatting.</td>
           </tr>
-          <tr>
+          <tr data-db="sqlite">
             <td>SQLite</td>
             <td class="not-supported">✗ Not Supported</td>
             <td>—</td>
@@ -121,12 +129,15 @@ FROM orders;</div>
 
   <h2>Per-Database Syntax &amp; Notes</h2>
   <div class="per-db-section">
+      <div class="per-db-entry" data-db="mysql">
         <h4>MySQL</h4>
         <p class="notes">EXTRACT(unit FROM date) is SQL-standard and supported. Also YEAR(date), MONTH(date), DAY(date), HOUR(time), MINUTE(time), SECOND(time) as shorthand functions. DAYOFWEEK() returns 1=Sunday, WEEKDAY() returns 0=Monday.</p>
         <div class="syntax">SELECT EXTRACT(YEAR FROM NOW());          -- 2024
 SELECT YEAR(NOW()), MONTH(NOW()), DAY(NOW());
 SELECT DAYOFWEEK(NOW());                  -- 1=Sun, 7=Sat
 SELECT WEEK(NOW());                       -- ISO week number</div>
+      </div>
+      <div class="per-db-entry" data-db="postgresql">
         <h4>PostgreSQL</h4>
         <p class="notes">EXTRACT(field FROM source) returns a float8. DATE_PART(field, source) is equivalent. Fields include: year, month, day, hour, minute, second, milliseconds, epoch, dow (0=Sun), isodow (1=Mon), week, quarter, timezone.</p>
         <div class="syntax">SELECT EXTRACT(YEAR FROM NOW());          -- 2024
@@ -134,26 +145,34 @@ SELECT EXTRACT(DOW FROM NOW());           -- 0=Sun, 6=Sat
 SELECT EXTRACT(ISODOW FROM NOW());        -- 1=Mon, 7=Sun (ISO)
 SELECT EXTRACT(EPOCH FROM NOW());         -- Unix timestamp
 SELECT DATE_PART('month', NOW());         -- same as EXTRACT</div>
+      </div>
+      <div class="per-db-entry" data-db="sqlserver">
         <h4>SQL Server</h4>
         <p class="notes">DATEPART(datepart, date) returns an integer. YEAR(date), MONTH(date), DAY(date) are shorthand. Parts include: year, quarter, month, dayofyear, day, weekday, week, hour, minute, second, millisecond, microsecond. DATEPART(weekday, date) is locale-dependent (SET DATEFIRST).</p>
         <div class="syntax">SELECT DATEPART(YEAR, GETDATE());         -- 2024
 SELECT DATEPART(QUARTER, GETDATE());      -- 1-4
 SELECT YEAR(GETDATE()), MONTH(GETDATE()), DAY(GETDATE());
 SELECT DATEPART(WEEKDAY, GETDATE());      -- locale-dependent</div>
+      </div>
+      <div class="per-db-entry" data-db="oracle">
         <h4>Oracle</h4>
         <p class="notes">EXTRACT(field FROM date). Fields: YEAR, MONTH, DAY, HOUR, MINUTE, SECOND, TIMEZONE_HOUR, TIMEZONE_MINUTE. TO_CHAR(date, 'format') is the traditional Oracle approach for formatting.</p>
         <div class="syntax">SELECT EXTRACT(YEAR FROM SYSDATE) FROM DUAL;      -- 2024
 SELECT EXTRACT(MONTH FROM SYSDATE) FROM DUAL;     -- 1-12
 SELECT TO_CHAR(SYSDATE, 'Q') FROM DUAL;           -- quarter (1-4)
 SELECT TO_CHAR(SYSDATE, 'IW') FROM DUAL;          -- ISO week number</div>
+      </div>
+      <div class="per-db-entry" data-db="sqlite">
         <h4>SQLite</h4>
         <p class="notes">No EXTRACT() or DATEPART(). Use strftime() with format codes: %Y=year, %m=month, %d=day, %H=hour, %M=minute, %S=second, %w=weekday (0=Sun), %W=week number.</p>
         <div class="syntax">SELECT CAST(strftime('%Y', 'now') AS INTEGER);   -- year
 SELECT CAST(strftime('%m', 'now') AS INTEGER);   -- month
 SELECT strftime('%w', 'now');                    -- 0=Sun, 6=Sat</div>
+      </div>
   </div>
   <script src="/search.js" defer></script>
   <script src="/splash.js" defer></script>
   <script src="/track.js" defer></script>
+  <script src="/compare.js" defer></script>
 </body>
 </html>
