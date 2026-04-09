@@ -31,6 +31,8 @@ const DB_LABELS = {
   sqlite:     'SQLite',
 };
 
+const DB_COUNT = Object.keys(DB_LABELS).length;
+
 // ---------------------------------------------------------------------------
 // Helpers
 // ---------------------------------------------------------------------------
@@ -51,27 +53,32 @@ function readTemplate(filename) {
   return fs.readFileSync(path.join(TEMPLATES_DIR, filename), 'utf8');
 }
 
+function supportClass(count) {
+  if (count === DB_COUNT) return 'support-5';
+  if (count >= 3)         return 'support-mid';
+  if (count >= 1)         return 'support-low';
+  return 'support-none';
+}
+
 // ---------------------------------------------------------------------------
 // Template assembly
 // ---------------------------------------------------------------------------
 
 /**
- * applyTemplate — substitutes {{KEY}} placeholders in the header template.
+ * applyTemplate — substitutes {{KEY}} placeholders in the header template,
+ * then assembles the full HTML document.
  *
- * Only the pre-escaped values produced by generate.js are inserted here.
- * Raw user/data strings must be passed through esc() before reaching this
- * function so that no unescaped content ever lands in an HTML attribute or
- * text position.
+ * Security: all values in `vars` must be pre-escaped via esc() before being
+ * passed here. Raw data strings must never be inserted directly.
  *
- * @param {string} headerTpl  - contents of templates/header.html
- * @param {string} footerTpl  - contents of templates/footer.html
- * @param {string} headHtml   - page-specific <head> content (already safe)
- * @param {string} bodyContent - main body content between header and footer
- * @param {Object} vars       - { COMMAND_HEADING: string } — pre-escaped values
+ * @param {string} headerTpl   - contents of templates/header.html
+ * @param {string} headHtml    - page-specific <head> content (already safe)
+ * @param {string} bodyContent - main body content (already safe)
+ * @param {Object} vars        - placeholder values, all pre-escaped
  * @returns {string} complete HTML document
  */
-function applyTemplate(headerTpl, footerTpl, headHtml, bodyContent, vars) {
-  var header = headerTpl.replace(/\{\{(\w+)\}\}/g, function (match, key) {
+function applyTemplate(headerTpl, headHtml, bodyContent, vars) {
+  const header = headerTpl.replace(/\{\{(\w+)\}\}/g, function (match, key) {
     return Object.prototype.hasOwnProperty.call(vars, key) ? vars[key] : '';
   });
 
@@ -88,7 +95,6 @@ ${headHtml}
 
 ${header}
 ${bodyContent}
-${footerTpl}
   <script src="/search.js" defer></script>
   <script src="/splash.js" defer></script>
 </body>
@@ -99,7 +105,7 @@ ${footerTpl}
 // Command page builder
 // ---------------------------------------------------------------------------
 
-function buildPage(commandName, entry, headerTpl, footerTpl) {
+function buildPage(commandName, entry, headerTpl) {
   const { slug, description, overview, details, syntax, compatibility, category } = entry;
 
   const displayName = commandName.toUpperCase();
@@ -155,7 +161,6 @@ function buildPage(commandName, entry, headerTpl, footerTpl) {
     : '';
 
   // ── Command heading (goes into {{COMMAND_HEADING}} placeholder) ─────────
-  // Both displayName and categoryBadge are already escaped above.
   const commandHeading = `<h1>${esc(displayName)}${categoryBadge}</h1>`;
 
   // ── Page-specific <head> ────────────────────────────────────────────────
@@ -210,19 +215,88 @@ function buildPage(commandName, entry, headerTpl, footerTpl) {
   <div class="per-db-section">${syntaxBlocks}
   </div>`;
 
-  return applyTemplate(headerTpl, footerTpl, headHtml, bodyContent, {
+  return applyTemplate(headerTpl, headHtml, bodyContent, {
     COMMAND_HEADING: commandHeading,
   });
+}
+
+// ---------------------------------------------------------------------------
+// Command list builder (homepage)
+// ---------------------------------------------------------------------------
+
+/**
+ * buildCommandList — generates category-grouped command cards for the homepage.
+ *
+ * All data values are passed through esc() before injection into HTML.
+ * Categories are ordered by first appearance in data; commands within each
+ * category are sorted alphabetically.
+ *
+ * @param {Object} data - parsed data.json
+ * @returns {string} HTML for the full command list section
+ */
+function buildCommandList(data) {
+  // Group commands by category, preserving first-seen category order
+  const categoryOrder = [];
+  const groups = {};
+
+  for (const [name, entry] of Object.entries(data)) {
+    const cat = entry.category || 'Other';
+    if (!groups[cat]) {
+      groups[cat] = [];
+      categoryOrder.push(cat);
+    }
+    groups[cat].push({ name, entry });
+  }
+
+  // Sort commands alphabetically within each category
+  for (const cat of categoryOrder) {
+    groups[cat].sort((a, b) => a.name.localeCompare(b.name));
+  }
+
+  let html = '';
+
+  for (const cat of categoryOrder) {
+    let cards = '';
+
+    for (const { name, entry } of groups[cat]) {
+      const count   = Object.values(entry.compatibility).filter(d => d.supported).length;
+      const cls     = supportClass(count);
+      const badge   = `${count}/${DB_COUNT}`;
+      const desc    = entry.description || '';
+
+      cards += `
+      <a href="/f/${esc(entry.slug)}/" class="command-card ${cls}">
+        <span class="card-name">${esc(name.toUpperCase())}</span>
+        <span class="card-desc">${esc(desc)}</span>
+        <span class="card-support-badge">${esc(badge)}</span>
+      </a>`;
+    }
+
+    html += `
+  <section class="category-group">
+    <h2 class="category-heading">${esc(cat)}</h2>
+    <div class="command-cards">${cards}
+    </div>
+  </section>`;
+  }
+
+  return html;
 }
 
 // ---------------------------------------------------------------------------
 // Homepage builder
 // ---------------------------------------------------------------------------
 
-function buildHomepage(headerTpl, footerTpl) {
-  const content  = fs.readFileSync(path.join(SRC_DIR, 'index.html'), 'utf8');
-  const title    = 'Can I Use SQL? | SQL Compatibility Checker';
-  const desc     = 'Check SQL command compatibility across MySQL, PostgreSQL, SQL Server, Oracle, and SQLite. Find out which databases support SELECT, MERGE, PIVOT, CTEs, window functions, and more.';
+function buildHomepage(data, headerTpl) {
+  const templateContent = fs.readFileSync(path.join(SRC_DIR, 'index.html'), 'utf8');
+  const commandList     = buildCommandList(data);
+
+  // Substitute {{COMMAND_LIST}} in the homepage template.
+  // commandList is entirely built from esc()-escaped data, so this is safe.
+  const content = templateContent.replace('{{COMMAND_LIST}}', commandList);
+
+  const title     = 'Can I Use SQL? | SQL Compatibility Checker';
+  const desc      = 'Check SQL command compatibility across MySQL, PostgreSQL, SQL Server, Oracle, and SQLite. Find out which databases support SELECT, MERGE, PIVOT, CTEs, window functions, and more.';
   const canonical = 'https://caniusesql.com/';
 
   const headHtml = `  <title>${esc(title)}</title>
@@ -240,8 +314,8 @@ function buildHomepage(headerTpl, footerTpl) {
   <link rel="sitemap" type="application/xml" href="/sitemap.xml">
   <link rel="canonical" href="${esc(canonical)}">`;
 
-  return applyTemplate(headerTpl, footerTpl, headHtml, content, {
-    COMMAND_HEADING: '',
+  return applyTemplate(headerTpl, headHtml, content, {
+    COMMAND_HEADING: '<span class="site-title">Can I Use SQL?</span>',
   });
 }
 
@@ -271,12 +345,11 @@ function main() {
 
   // Load shared templates
   const headerTpl = readTemplate('header.html');
-  const footerTpl = readTemplate('footer.html');
 
   mkdir(OUT_DIR);
 
   // Assemble and write homepage
-  const homepageHtml = buildHomepage(headerTpl, footerTpl);
+  const homepageHtml = buildHomepage(data, headerTpl);
   fs.writeFileSync(path.join(OUT_DIR, 'index.html'), homepageHtml, 'utf8');
   console.log('✔  Built index.html');
 
@@ -320,7 +393,7 @@ function main() {
     const pageDir = path.join(OUT_DIR, 'f', entry.slug);
     mkdir(pageDir);
 
-    const html = buildPage(commandName, entry, headerTpl, footerTpl);
+    const html = buildPage(commandName, entry, headerTpl);
     fs.writeFileSync(path.join(pageDir, 'index.html'), html, 'utf8');
 
     slugs.push(entry.slug);

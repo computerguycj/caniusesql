@@ -1,77 +1,37 @@
 <!-- Homepage-specific styles (shared base is in /styles.css) -->
 <style>
-  h1 {
-    color: #2c3e50;
-    text-align: center;
-    margin-bottom: 30px;
-  }
   .examples {
     background-color: white;
     padding: 20px;
     border-radius: 8px;
     box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-    margin-top: 30px;
+    margin-top: 24px;
   }
-  .examples h2 { margin-top: 0; color: #2c3e50; }
+  .examples h2 { margin-top: 0; color: #2c3e50; font-size: 1rem;
+    font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; }
   .example {
-    margin-bottom: 10px;
-    color: #3498db;
+    display: inline-block;
+    margin: 4px 6px 4px 0;
+    padding: 4px 10px;
+    background: #eaf3fb;
+    color: #2980b9;
+    border: 1px solid #aed6f1;
+    border-radius: 4px;
     text-decoration: none;
-    display: block;
+    font-size: 13px;
+    font-weight: 600;
   }
-  .example:hover { text-decoration: underline; }
-  .all-commands {
-    background-color: white;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-    margin-top: 40px;
-  }
-  .all-commands h2 { margin-top: 0; color: #2c3e50; }
-  .command-list {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-  }
-  .command-list a {
-    color: #3498db;
-    text-decoration: none;
-    font-size: 14px;
-  }
-  .command-list a:hover { text-decoration: underline; }
+  .example:hover { background: #d6eaf8; }
 </style>
 
-<h1>SQL Command Compatibility Checker</h1>
-
 <div class="examples">
-  <h2>Popular SQL Commands</h2>
+  <h2>Popular Commands</h2>
   <a class="example" href="/f/select">SELECT</a>
   <a class="example" href="/f/merge">MERGE</a>
   <a class="example" href="/f/pivot">PIVOT</a>
   <a class="example" href="/f/string-agg">STRING AGG</a>
+  <a class="example" href="/f/with-common-table-expressions">WITH (CTE)</a>
+  <a class="example" href="/f/window-functions">WINDOW FUNCTIONS</a>
 </div>
 
-<div class="all-commands" id="allCommands" style="display: none;">
-  <h2>All SQL Commands</h2>
-  <div class="command-list" id="commandList"></div>
-</div>
-
-<script>
-  function renderCommandIndex(data) {
-    var list    = document.getElementById('commandList');
-    var section = document.getElementById('allCommands');
-    Object.keys(data).forEach(function (key) {
-      var a = document.createElement('a');
-      a.href = '/f/' + data[key].slug;
-      a.textContent = key.toUpperCase();
-      list.appendChild(a);
-    });
-    section.style.display = 'block';
-  }
-
-  document.addEventListener('DOMContentLoaded', function () {
-    fetch('data.json?v=2')
-      .then(function (r) { return r.json(); })
-      .then(function (data) { renderCommandIndex(data); });
-  });
-</script>
+{{COMMAND_LIST}}

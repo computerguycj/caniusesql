@@ -24,14 +24,27 @@
 
 <header class="site-header">
   <a href="/" class="home-link" aria-label="Home">
-    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24"
-         fill="none" stroke="currentColor" stroke-width="2"
-         stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-      <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
-      <polyline points="9 22 9 12 15 12 15 22"/>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="30" height="30" aria-hidden="true">
+      <defs>
+        <linearGradient id="hbg" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#5dade2"/>
+          <stop offset="100%" stop-color="#1a6391"/>
+        </linearGradient>
+      </defs>
+      <!-- Badge background -->
+      <rect width="32" height="32" rx="7" fill="url(#hbg)"/>
+      <!-- House roof -->
+      <polygon points="16,6 27,15 5,15" fill="white"/>
+      <!-- House body -->
+      <rect x="7" y="15" width="18" height="12" rx="1" fill="white"/>
+      <!-- Door -->
+      <rect x="13" y="19" width="6" height="8" rx="1" fill="#1a6391"/>
+      <!-- Windows -->
+      <rect x="8"  y="17" width="4" height="3" rx="0.5" fill="#1a6391" opacity="0.55"/>
+      <rect x="20" y="17" width="4" height="3" rx="0.5" fill="#1a6391" opacity="0.55"/>
     </svg>
   </a>
-  <span class="command-heading"></span>
+  <span class="command-heading"><span class="site-title">Can I Use SQL?</span></span>
   <div class="search-widget">
     <input class="site-search" type="search" placeholder="Search SQL commands…"
            autocomplete="off" aria-label="Search SQL commands">
@@ -41,90 +54,846 @@
 
 <!-- Homepage-specific styles (shared base is in /styles.css) -->
 <style>
-  h1 {
-    color: #2c3e50;
-    text-align: center;
-    margin-bottom: 30px;
-  }
   .examples {
     background-color: white;
     padding: 20px;
     border-radius: 8px;
     box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-    margin-top: 30px;
+    margin-top: 24px;
   }
-  .examples h2 { margin-top: 0; color: #2c3e50; }
+  .examples h2 { margin-top: 0; color: #2c3e50; font-size: 1rem;
+    font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; }
   .example {
-    margin-bottom: 10px;
-    color: #3498db;
+    display: inline-block;
+    margin: 4px 6px 4px 0;
+    padding: 4px 10px;
+    background: #eaf3fb;
+    color: #2980b9;
+    border: 1px solid #aed6f1;
+    border-radius: 4px;
     text-decoration: none;
-    display: block;
+    font-size: 13px;
+    font-weight: 600;
   }
-  .example:hover { text-decoration: underline; }
-  .all-commands {
-    background-color: white;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-    margin-top: 40px;
-  }
-  .all-commands h2 { margin-top: 0; color: #2c3e50; }
-  .command-list {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-  }
-  .command-list a {
-    color: #3498db;
-    text-decoration: none;
-    font-size: 14px;
-  }
-  .command-list a:hover { text-decoration: underline; }
+  .example:hover { background: #d6eaf8; }
 </style>
 
-<h1>SQL Command Compatibility Checker</h1>
-
 <div class="examples">
-  <h2>Popular SQL Commands</h2>
+  <h2>Popular Commands</h2>
   <a class="example" href="/f/select">SELECT</a>
   <a class="example" href="/f/merge">MERGE</a>
   <a class="example" href="/f/pivot">PIVOT</a>
   <a class="example" href="/f/string-agg">STRING AGG</a>
+  <a class="example" href="/f/with-common-table-expressions">WITH (CTE)</a>
+  <a class="example" href="/f/window-functions">WINDOW FUNCTIONS</a>
 </div>
 
-<div class="all-commands" id="allCommands" style="display: none;">
-  <h2>All SQL Commands</h2>
-  <div class="command-list" id="commandList"></div>
-</div>
 
-<script>
-  function renderCommandIndex(data) {
-    var list    = document.getElementById('commandList');
-    var section = document.getElementById('allCommands');
-    Object.keys(data).forEach(function (key) {
-      var a = document.createElement('a');
-      a.href = '/f/' + data[key].slug;
-      a.textContent = key.toUpperCase();
-      list.appendChild(a);
-    });
-    section.style.display = 'block';
-  }
-
-  document.addEventListener('DOMContentLoaded', function () {
-    fetch('data.json?v=2')
-      .then(function (r) { return r.json(); })
-      .then(function (data) { renderCommandIndex(data); });
-  });
-</script>
-
-<footer class="site-footer">
-  <p>Looking for another SQL command?</p>
-  <div class="search-widget">
-    <input class="site-search" type="search" placeholder="Search SQL commands…"
-           autocomplete="off" aria-label="Search SQL commands">
-    <ul class="search-results" hidden role="listbox" aria-label="Search suggestions"></ul>
-  </div>
-</footer>
+  <section class="category-group">
+    <h2 class="category-heading">Query Techniques</h2>
+    <div class="command-cards">
+      <a href="/f/any-all/" class="command-card support-mid">
+        <span class="card-name">ANY / ALL</span>
+        <span class="card-desc">Subquery comparison operators. ANY (or SOME) returns true if the comparison holds for at least one value in the subquery result. ALL returns true only if the comparison holds for every value. Semantically related to EXISTS and IN but more flexible with comparison operators.</span>
+        <span class="card-support-badge">4/5</span>
+      </a>
+      <a href="/f/between/" class="command-card support-5">
+        <span class="card-name">BETWEEN</span>
+        <span class="card-desc">Test whether a value falls within an inclusive range. BETWEEN a AND b is equivalent to val &gt;= a AND val &lt;= b — both endpoints are included.</span>
+        <span class="card-support-badge">5/5</span>
+      </a>
+      <a href="/f/correlated-subquery/" class="command-card support-5">
+        <span class="card-name">CORRELATED SUBQUERY</span>
+        <span class="card-desc">A subquery that references columns from the outer query. The subquery is re-evaluated once per row of the outer query, creating a row-by-row dependency. Powerful but potentially slow on large datasets — often replaceable with a JOIN or window function.</span>
+        <span class="card-support-badge">5/5</span>
+      </a>
+      <a href="/f/cube/" class="command-card support-mid">
+        <span class="card-name">CUBE</span>
+        <span class="card-desc">An extension of GROUP BY ROLLUP that generates subtotals for every possible combination of the specified columns, not just hierarchical rollups. Produces 2^n grouping combinations for n columns.</span>
+        <span class="card-support-badge">3/5</span>
+      </a>
+      <a href="/f/distinct/" class="command-card support-5">
+        <span class="card-name">DISTINCT</span>
+        <span class="card-desc">Eliminate duplicate rows in a result set.</span>
+        <span class="card-support-badge">5/5</span>
+      </a>
+      <a href="/f/exists/" class="command-card support-5">
+        <span class="card-name">EXISTS</span>
+        <span class="card-desc">Test whether a subquery returns any rows. Returns TRUE if the subquery produces at least one row, FALSE otherwise. Short-circuits on the first match.</span>
+        <span class="card-support-badge">5/5</span>
+      </a>
+      <a href="/f/offset-fetch/" class="command-card support-5">
+        <span class="card-name">FETCH FIRST / OFFSET-FETCH</span>
+        <span class="card-desc">Standard SQL syntax for skipping a number of rows and limiting the result set size, used for pagination.</span>
+        <span class="card-support-badge">5/5</span>
+      </a>
+      <a href="/f/group-by/" class="command-card support-5">
+        <span class="card-name">GROUP BY</span>
+        <span class="card-desc">Aggregate rows sharing common values.</span>
+        <span class="card-support-badge">5/5</span>
+      </a>
+      <a href="/f/grouping-sets/" class="command-card support-mid">
+        <span class="card-name">GROUPING SETS</span>
+        <span class="card-desc">An explicit list of grouping combinations to compute in a single pass, giving precise control over which subtotals are produced. More flexible than ROLLUP or CUBE.</span>
+        <span class="card-support-badge">3/5</span>
+      </a>
+      <a href="/f/having/" class="command-card support-5">
+        <span class="card-name">HAVING</span>
+        <span class="card-desc">Filter the results of a GROUP BY aggregation. WHERE filters individual rows before grouping; HAVING filters groups after aggregation.</span>
+        <span class="card-support-badge">5/5</span>
+      </a>
+      <a href="/f/in-not-in/" class="command-card support-5">
+        <span class="card-name">IN / NOT IN</span>
+        <span class="card-desc">Test whether a value matches any value in a list or subquery. IN is shorthand for multiple OR equality conditions; NOT IN is the negation.</span>
+        <span class="card-support-badge">5/5</span>
+      </a>
+      <a href="/f/is-null/" class="command-card support-5">
+        <span class="card-name">IS NULL / IS NOT NULL</span>
+        <span class="card-desc">Test whether a value is NULL (missing/unknown). NULL cannot be compared with = or != — only IS NULL and IS NOT NULL work correctly.</span>
+        <span class="card-support-badge">5/5</span>
+      </a>
+      <a href="/f/lateral/" class="command-card support-mid">
+        <span class="card-name">LATERAL</span>
+        <span class="card-desc">Allows a subquery in the FROM clause to reference columns from tables to its left, enabling advanced row-by-row operations.</span>
+        <span class="card-support-badge">4/5</span>
+      </a>
+      <a href="/f/like/" class="command-card support-5">
+        <span class="card-name">LIKE</span>
+        <span class="card-desc">Pattern matching within strings using % (any sequence of characters) and _ (exactly one character) wildcards.</span>
+        <span class="card-support-badge">5/5</span>
+      </a>
+      <a href="/f/limit-top/" class="command-card support-5">
+        <span class="card-name">LIMIT / TOP / FETCH FIRST</span>
+        <span class="card-desc">Restrict the number of rows returned by a query. Every engine supports this but with different syntax.</span>
+        <span class="card-support-badge">5/5</span>
+      </a>
+      <a href="/f/window-clause/" class="command-card support-mid">
+        <span class="card-name">NAMED WINDOW CLAUSE</span>
+        <span class="card-desc">Define a reusable window specification with a name in a WINDOW clause, then reference it by name across multiple window functions in the same query. Eliminates duplicated OVER(...) definitions.</span>
+        <span class="card-support-badge">3/5</span>
+      </a>
+      <a href="/f/order-by/" class="command-card support-5">
+        <span class="card-name">ORDER BY</span>
+        <span class="card-desc">Sort the result set by one or more columns.</span>
+        <span class="card-support-badge">5/5</span>
+      </a>
+      <a href="/f/pivot/" class="command-card support-low">
+        <span class="card-name">PIVOT</span>
+        <span class="card-desc">Rotates rows into columns, creating cross-tab reports.</span>
+        <span class="card-support-badge">2/5</span>
+      </a>
+      <a href="/f/qualify/" class="command-card support-none">
+        <span class="card-name">QUALIFY</span>
+        <span class="card-desc">A post-aggregation filter clause for window functions, analogous to HAVING for aggregate functions, avoiding the need for a subquery.</span>
+        <span class="card-support-badge">0/5</span>
+      </a>
+      <a href="/f/query-hints/" class="command-card support-mid">
+        <span class="card-name">QUERY HINTS / OPTIMIZER HINTS</span>
+        <span class="card-desc">Directives embedded in a SQL statement that instruct the query optimizer to use a specific join order, index, or execution strategy.</span>
+        <span class="card-support-badge">4/5</span>
+      </a>
+      <a href="/f/recursive-cte/" class="command-card support-5">
+        <span class="card-name">RECURSIVE CTE</span>
+        <span class="card-desc">A CTE that references itself for hierarchies or graph traversals.</span>
+        <span class="card-support-badge">5/5</span>
+      </a>
+      <a href="/f/regex/" class="command-card support-mid">
+        <span class="card-name">REGEX</span>
+        <span class="card-desc">Match strings against regular expression patterns, enabling flexible search beyond simple LIKE wildcards.</span>
+        <span class="card-support-badge">3/5</span>
+      </a>
+      <a href="/f/rollup/" class="command-card support-mid">
+        <span class="card-name">ROLLUP</span>
+        <span class="card-desc">An extension of GROUP BY that generates subtotal and grand-total rows automatically. Produces a result set with multiple levels of aggregation in a single query.</span>
+        <span class="card-support-badge">4/5</span>
+      </a>
+      <a href="/f/set-operations/" class="command-card support-5">
+        <span class="card-name">SET OPERATIONS</span>
+        <span class="card-desc">Combine rows from multiple queries: UNION, INTERSECT, EXCEPT/MINUS.</span>
+        <span class="card-support-badge">5/5</span>
+      </a>
+      <a href="/f/subquery/" class="command-card support-5">
+        <span class="card-name">SUBQUERY</span>
+        <span class="card-desc">A SELECT statement nested inside another query, used in WHERE, FROM, SELECT, or HAVING clauses.</span>
+        <span class="card-support-badge">5/5</span>
+      </a>
+      <a href="/f/tablesample/" class="command-card support-mid">
+        <span class="card-name">TABLESAMPLE</span>
+        <span class="card-desc">Return a random sample of rows from a table efficiently, without scanning and sorting the full table.</span>
+        <span class="card-support-badge">3/5</span>
+      </a>
+      <a href="/f/unpivot/" class="command-card support-low">
+        <span class="card-name">UNPIVOT</span>
+        <span class="card-desc">Transform columns into rows — the inverse of PIVOT. Takes values spread across multiple columns and normalizes them into a key-value row structure. Useful for reshaping wide, denormalized data.</span>
+        <span class="card-support-badge">2/5</span>
+      </a>
+      <a href="/f/values-clause/" class="command-card support-mid">
+        <span class="card-name">VALUES CLAUSE</span>
+        <span class="card-desc">Construct an inline table from literal values without referencing a persistent table. Useful for multi-row inserts, testing, and constructing ad-hoc result sets to join against.</span>
+        <span class="card-support-badge">4/5</span>
+      </a>
+      <a href="/f/window-frame/" class="command-card support-5">
+        <span class="card-name">WINDOW FRAME (ROWS/RANGE)</span>
+        <span class="card-desc">Control which rows are included in a window function's calculation relative to the current row. The frame clause (ROWS or RANGE BETWEEN ... AND ...) determines the sliding window boundaries.</span>
+        <span class="card-support-badge">5/5</span>
+      </a>
+      <a href="/f/window-functions/" class="command-card support-5">
+        <span class="card-name">WINDOW FUNCTIONS</span>
+        <span class="card-desc">Perform calculations across a set of rows related to the current row.</span>
+        <span class="card-support-badge">5/5</span>
+      </a>
+      <a href="/f/with-cte/" class="command-card support-5">
+        <span class="card-name">WITH (COMMON TABLE EXPRESSIONS)</span>
+        <span class="card-desc">Common Table Expressions (CTEs) provide a way to write auxiliary statements for use in a larger query.</span>
+        <span class="card-support-badge">5/5</span>
+      </a>
+      <a href="/f/with-ties/" class="command-card support-mid">
+        <span class="card-name">WITH TIES</span>
+        <span class="card-desc">An extension to FETCH FIRST / LIMIT that includes additional rows that tie on the last ORDER BY value rather than cutting them off arbitrarily.</span>
+        <span class="card-support-badge">3/5</span>
+      </a>
+    </div>
+  </section>
+  <section class="category-group">
+    <h2 class="category-heading">DML</h2>
+    <div class="command-cards">
+      <a href="/f/copy-bulk-load/" class="command-card support-mid">
+        <span class="card-name">COPY / BULK LOAD</span>
+        <span class="card-desc">High-speed mechanisms for loading large volumes of data from flat files or streams into a table, bypassing row-by-row INSERT overhead. The fastest way to populate or refresh large tables.</span>
+        <span class="card-support-badge">4/5</span>
+      </a>
+      <a href="/f/delete/" class="command-card support-5">
+        <span class="card-name">DELETE</span>
+        <span class="card-desc">Remove rows from a table.</span>
+        <span class="card-support-badge">5/5</span>
+      </a>
+      <a href="/f/insert/" class="command-card support-5">
+        <span class="card-name">INSERT</span>
+        <span class="card-desc">Add new rows to a table.</span>
+        <span class="card-support-badge">5/5</span>
+      </a>
+      <a href="/f/insert-select/" class="command-card support-5">
+        <span class="card-name">INSERT INTO SELECT</span>
+        <span class="card-desc">Copy rows from one query result into a table, optionally transforming them in transit. The fundamental pattern for populating summary tables, migrating data, and archiving rows.</span>
+        <span class="card-support-badge">5/5</span>
+      </a>
+      <a href="/f/merge/" class="command-card support-mid">
+        <span class="card-name">MERGE</span>
+        <span class="card-desc">Performs insert, update, or delete operations on a target table based on a join to a source table.</span>
+        <span class="card-support-badge">3/5</span>
+      </a>
+      <a href="/f/multi-table-dml/" class="command-card support-5">
+        <span class="card-name">MULTI-TABLE UPDATE / DELETE</span>
+        <span class="card-desc">Modifying or deleting rows in one table based on a join condition with one or more other tables in a single DML statement.</span>
+        <span class="card-support-badge">5/5</span>
+      </a>
+      <a href="/f/output-into-variable/" class="command-card support-5">
+        <span class="card-name">OUTPUT / RETURNING INTO VARIABLE</span>
+        <span class="card-desc">Capturing values from rows affected by an INSERT, UPDATE, or DELETE into a variable or result set within the same statement.</span>
+        <span class="card-support-badge">5/5</span>
+      </a>
+      <a href="/f/returning/" class="command-card support-mid">
+        <span class="card-name">RETURNING</span>
+        <span class="card-desc">Return column values from rows affected by an INSERT, UPDATE, or DELETE — without a separate SELECT round-trip.</span>
+        <span class="card-support-badge">4/5</span>
+      </a>
+      <a href="/f/select/" class="command-card support-5">
+        <span class="card-name">SELECT</span>
+        <span class="card-desc">Retrieve rows from one or more tables.</span>
+        <span class="card-support-badge">5/5</span>
+      </a>
+      <a href="/f/select-into/" class="command-card support-mid">
+        <span class="card-name">SELECT INTO</span>
+        <span class="card-desc">A shorthand for creating a new table from the result of a SELECT statement.</span>
+        <span class="card-support-badge">4/5</span>
+      </a>
+      <a href="/f/truncate/" class="command-card support-mid">
+        <span class="card-name">TRUNCATE</span>
+        <span class="card-desc">Remove all rows from a table instantly, without logging individual row deletions.</span>
+        <span class="card-support-badge">4/5</span>
+      </a>
+      <a href="/f/update/" class="command-card support-5">
+        <span class="card-name">UPDATE</span>
+        <span class="card-desc">Modify existing rows in a table.</span>
+        <span class="card-support-badge">5/5</span>
+      </a>
+      <a href="/f/upsert/" class="command-card support-5">
+        <span class="card-name">UPSERT</span>
+        <span class="card-desc">Insert rows that don't exist and update those that do in one statement.</span>
+        <span class="card-support-badge">5/5</span>
+      </a>
+    </div>
+  </section>
+  <section class="category-group">
+    <h2 class="category-heading">JSON</h2>
+    <div class="command-cards">
+      <a href="/f/json-extract/" class="command-card support-5">
+        <span class="card-name">JSON EXTRACT</span>
+        <span class="card-desc">Extract a scalar value or sub-document from a JSON column using a path expression.</span>
+        <span class="card-support-badge">5/5</span>
+      </a>
+      <a href="/f/json-modify/" class="command-card support-5">
+        <span class="card-name">JSON MODIFY / JSON SET</span>
+        <span class="card-desc">Update, insert, or delete values within a JSON document stored in a column, returning the modified JSON. Avoids deserializing the entire document in application code just to change one field.</span>
+        <span class="card-support-badge">5/5</span>
+      </a>
+      <a href="/f/json-operators/" class="command-card support-mid">
+        <span class="card-name">JSON OPERATORS (-&gt; / -&gt;&gt;)</span>
+        <span class="card-desc">Shorthand operators for navigating JSON document structure. -&gt; extracts a JSON value; -&gt;&gt; extracts a text (unquoted) value. Availability and exact semantics vary significantly by engine.</span>
+        <span class="card-support-badge">3/5</span>
+      </a>
+      <a href="/f/json-agg/" class="command-card support-mid">
+        <span class="card-name">JSON_AGG / JSON_ARRAYAGG</span>
+        <span class="card-desc">Aggregate multiple rows into a single JSON array (or object), collapsing a one-to-many relationship into a nested JSON structure within a query.</span>
+        <span class="card-support-badge">4/5</span>
+      </a>
+      <a href="/f/json-table/" class="command-card support-mid">
+        <span class="card-name">JSON_TABLE</span>
+        <span class="card-desc">Extracts JSON data and returns it as a relational table.</span>
+        <span class="card-support-badge">4/5</span>
+      </a>
+      <a href="/f/lateral-flatten/" class="command-card support-5">
+        <span class="card-name">LATERAL FLATTEN</span>
+        <span class="card-desc">Expanding an array or JSON array column into multiple rows using a lateral (correlated) join, common in analytical SQL dialects.</span>
+        <span class="card-support-badge">5/5</span>
+      </a>
+    </div>
+  </section>
+  <section class="category-group">
+    <h2 class="category-heading">Indexes &amp; Search</h2>
+    <div class="command-cards">
+      <a href="/f/covering-index/" class="command-card support-5">
+        <span class="card-name">COVERING INDEX / INCLUDE COLUMNS</span>
+        <span class="card-desc">An index that contains all columns needed to satisfy a query, allowing the engine to return results from the index alone without accessing the base table.</span>
+        <span class="card-support-badge">5/5</span>
+      </a>
+      <a href="/f/create-index/" class="command-card support-5">
+        <span class="card-name">CREATE INDEX</span>
+        <span class="card-desc">Create an index on one or more columns to speed up queries at the cost of write overhead.</span>
+        <span class="card-support-badge">5/5</span>
+      </a>
+      <a href="/f/expression-index/" class="command-card support-5">
+        <span class="card-name">EXPRESSION INDEX</span>
+        <span class="card-desc">Function-based indexes allow indexing on expressions.</span>
+        <span class="card-support-badge">5/5</span>
+      </a>
+      <a href="/f/full-text-search/" class="command-card support-5">
+        <span class="card-name">FULL TEXT SEARCH</span>
+        <span class="card-desc">Specialized indexing and querying for efficient text searches.</span>
+        <span class="card-support-badge">5/5</span>
+      </a>
+      <a href="/f/index-visibility/" class="command-card support-mid">
+        <span class="card-name">INDEX VISIBILITY / DISABLE</span>
+        <span class="card-desc">Making an index invisible or disabled so the query optimizer ignores it, without dropping it — useful for testing the impact of index removal.</span>
+        <span class="card-support-badge">3/5</span>
+      </a>
+      <a href="/f/partial-index/" class="command-card support-mid">
+        <span class="card-name">PARTIAL / FILTERED INDEX</span>
+        <span class="card-desc">An index that covers only a subset of rows, defined by a WHERE condition. Produces smaller, faster indexes by excluding rows that are never queried via that index path.</span>
+        <span class="card-support-badge">3/5</span>
+      </a>
+    </div>
+  </section>
+  <section class="category-group">
+    <h2 class="category-heading">DDL</h2>
+    <div class="command-cards">
+      <a href="/f/alter-table/" class="command-card support-5">
+        <span class="card-name">ALTER TABLE</span>
+        <span class="card-desc">Modify an existing table’s structure.</span>
+        <span class="card-support-badge">5/5</span>
+      </a>
+      <a href="/f/check-constraint/" class="command-card support-5">
+        <span class="card-name">CHECK CONSTRAINT</span>
+        <span class="card-desc">A constraint that enforces a boolean condition on column values at the row level — the database rejects any INSERT or UPDATE that would violate it.</span>
+        <span class="card-support-badge">5/5</span>
+      </a>
+      <a href="/f/create-schema/" class="command-card support-mid">
+        <span class="card-name">CREATE SCHEMA</span>
+        <span class="card-desc">Create a named namespace within a database that groups related tables, views, and other objects. Schemas provide organizational structure and a layer of access control.</span>
+        <span class="card-support-badge">3/5</span>
+      </a>
+      <a href="/f/create-table/" class="command-card support-5">
+        <span class="card-name">CREATE TABLE</span>
+        <span class="card-desc">Define a new table and its columns.</span>
+        <span class="card-support-badge">5/5</span>
+      </a>
+      <a href="/f/create-view/" class="command-card support-5">
+        <span class="card-name">CREATE VIEW</span>
+        <span class="card-desc">Define a named virtual table based on a SELECT query.</span>
+        <span class="card-support-badge">5/5</span>
+      </a>
+      <a href="/f/default-value/" class="command-card support-5">
+        <span class="card-name">DEFAULT VALUE</span>
+        <span class="card-desc">Specify a value to be used automatically when no value is provided for a column during INSERT.</span>
+        <span class="card-support-badge">5/5</span>
+      </a>
+      <a href="/f/drop-table/" class="command-card support-5">
+        <span class="card-name">DROP TABLE</span>
+        <span class="card-desc">Remove a table and all its data.</span>
+        <span class="card-support-badge">5/5</span>
+      </a>
+      <a href="/f/exclusion-constraints/" class="command-card support-low">
+        <span class="card-name">EXCLUSION CONSTRAINTS</span>
+        <span class="card-desc">A generalization of UNIQUE constraints that uses arbitrary operators — most commonly used to prevent overlapping date/time ranges or spatial objects.</span>
+        <span class="card-support-badge">1/5</span>
+      </a>
+      <a href="/f/foreign-key/" class="command-card support-5">
+        <span class="card-name">FOREIGN KEY</span>
+        <span class="card-desc">A column or set of columns that references the primary key of another table, enforcing referential integrity between parent and child tables.</span>
+        <span class="card-support-badge">5/5</span>
+      </a>
+      <a href="/f/generated-columns/" class="command-card support-5">
+        <span class="card-name">GENERATED COLUMNS</span>
+        <span class="card-desc">Columns whose values are automatically computed from an expression over other columns in the same row. The database maintains the value rather than the application. Also called computed columns or virtual columns.</span>
+        <span class="card-support-badge">5/5</span>
+      </a>
+      <a href="/f/conditional-ddl/" class="command-card support-5">
+        <span class="card-name">IF NOT EXISTS / IF EXISTS (CONDITIONAL DDL)</span>
+        <span class="card-desc">Modifiers on DDL statements that suppress errors when an object already exists (or does not exist), enabling idempotent schema scripts.</span>
+        <span class="card-support-badge">5/5</span>
+      </a>
+      <a href="/f/materialized-view/" class="command-card support-mid">
+        <span class="card-name">MATERIALIZED VIEW</span>
+        <span class="card-desc">A view whose result set is physically stored on disk and can be refreshed on demand or automatically. Trades storage and staleness for query speed — avoids recomputing expensive aggregations on every query.</span>
+        <span class="card-support-badge">3/5</span>
+      </a>
+      <a href="/f/not-null/" class="command-card support-5">
+        <span class="card-name">NOT NULL</span>
+        <span class="card-desc">A column constraint that prevents NULL values from being stored, requiring every row to supply a value for that column.</span>
+        <span class="card-support-badge">5/5</span>
+      </a>
+      <a href="/f/primary-key/" class="command-card support-5">
+        <span class="card-name">PRIMARY KEY</span>
+        <span class="card-desc">A column or set of columns that uniquely identifies each row in a table. Enforces uniqueness and NOT NULL, and typically drives the clustered index.</span>
+        <span class="card-support-badge">5/5</span>
+      </a>
+      <a href="/f/rename-table/" class="command-card support-5">
+        <span class="card-name">RENAME TABLE / COLUMN</span>
+        <span class="card-desc">Changing the name of an existing table or column without recreating the object.</span>
+        <span class="card-support-badge">5/5</span>
+      </a>
+      <a href="/f/sequence-autoincrement/" class="command-card support-5">
+        <span class="card-name">SEQUENCE / AUTOINCREMENT</span>
+        <span class="card-desc">Mechanisms for auto-generating unique sequential integer values, typically used for surrogate primary keys. Syntax and feature names vary significantly across engines.</span>
+        <span class="card-support-badge">5/5</span>
+      </a>
+      <a href="/f/temp-tables/" class="command-card support-5">
+        <span class="card-name">TEMPORARY TABLES</span>
+        <span class="card-desc">Tables that exist only for the duration of a session or transaction and are automatically dropped when that session ends. Used to stage intermediate results without polluting the permanent schema.</span>
+        <span class="card-support-badge">5/5</span>
+      </a>
+      <a href="/f/unique-constraint/" class="command-card support-5">
+        <span class="card-name">UNIQUE CONSTRAINT</span>
+        <span class="card-desc">Enforce that all values in a column or combination of columns are distinct across all rows. Unlike a PRIMARY KEY, a unique constraint allows NULL values (with engine-specific behavior).</span>
+        <span class="card-support-badge">5/5</span>
+      </a>
+    </div>
+  </section>
+  <section class="category-group">
+    <h2 class="category-heading">Transactions</h2>
+    <div class="command-cards">
+      <a href="/f/deadlock-handling/" class="command-card support-5">
+        <span class="card-name">DEADLOCK HANDLING</span>
+        <span class="card-desc">How each engine detects and resolves deadlocks — circular lock dependencies between transactions — and what the application must do in response.</span>
+        <span class="card-support-badge">5/5</span>
+      </a>
+      <a href="/f/isolation-levels/" class="command-card support-5">
+        <span class="card-name">ISOLATION LEVELS</span>
+        <span class="card-desc">Transaction isolation levels control how and when changes made by one transaction become visible to others, balancing consistency against concurrency.</span>
+        <span class="card-support-badge">5/5</span>
+      </a>
+      <a href="/f/savepoint/" class="command-card support-5">
+        <span class="card-name">SAVEPOINT</span>
+        <span class="card-desc">A named marker within a transaction to which you can partially roll back without aborting the entire transaction. Enables nested or selective error recovery inside a larger unit of work.</span>
+        <span class="card-support-badge">5/5</span>
+      </a>
+      <a href="/f/transactions/" class="command-card support-5">
+        <span class="card-name">TRANSACTIONS</span>
+        <span class="card-desc">Control units of work with atomicity.</span>
+        <span class="card-support-badge">5/5</span>
+      </a>
+    </div>
+  </section>
+  <section class="category-group">
+    <h2 class="category-heading">Functions</h2>
+    <div class="command-cards">
+      <a href="/f/case-when/" class="command-card support-5">
+        <span class="card-name">CASE WHEN</span>
+        <span class="card-desc">Conditional expression returning different values based on evaluated conditions.</span>
+        <span class="card-support-badge">5/5</span>
+      </a>
+      <a href="/f/cast/" class="command-card support-5">
+        <span class="card-name">CAST</span>
+        <span class="card-desc">Convert a value from one data type to another.</span>
+        <span class="card-support-badge">5/5</span>
+      </a>
+      <a href="/f/string-search/" class="command-card support-5">
+        <span class="card-name">CHARINDEX / INSTR / POSITION</span>
+        <span class="card-desc">Search for a substring within a string and return the position of the first occurrence. Returns 0 or NULL if not found, depending on the engine.</span>
+        <span class="card-support-badge">5/5</span>
+      </a>
+      <a href="/f/coalesce/" class="command-card support-5">
+        <span class="card-name">COALESCE</span>
+        <span class="card-desc">Returns the first non-NULL value from a list of expressions.</span>
+        <span class="card-support-badge">5/5</span>
+      </a>
+      <a href="/f/concat/" class="command-card support-5">
+        <span class="card-name">CONCAT</span>
+        <span class="card-desc">Concatenate two or more strings into a single string. Behavior with NULL values differs significantly between engines.</span>
+        <span class="card-support-badge">5/5</span>
+      </a>
+      <a href="/f/basic-aggregates/" class="command-card support-5">
+        <span class="card-name">COUNT / SUM / AVG / MIN / MAX</span>
+        <span class="card-desc">The five core aggregate functions. COUNT counts rows or non-NULL values. SUM and AVG compute totals and averages. MIN and MAX return the smallest and largest value. All are universally supported.</span>
+        <span class="card-support-badge">5/5</span>
+      </a>
+      <a href="/f/current-timestamp/" class="command-card support-5">
+        <span class="card-name">CURRENT TIMESTAMP</span>
+        <span class="card-desc">Retrieve the current date and/or time from the database server. Each engine has multiple synonyms with subtle differences around timezone awareness and precision.</span>
+        <span class="card-support-badge">5/5</span>
+      </a>
+      <a href="/f/date-add/" class="command-card support-5">
+        <span class="card-name">DATE ADD / INTERVAL ARITHMETIC</span>
+        <span class="card-desc">Add or subtract a time interval from a date or timestamp value. Syntax varies more than almost any other operation across SQL engines.</span>
+        <span class="card-support-badge">5/5</span>
+      </a>
+      <a href="/f/date-format/" class="command-card support-5">
+        <span class="card-name">DATE FORMAT</span>
+        <span class="card-desc">Format a date or timestamp value as a string in a specific display format. Every engine has a different function name and format code system.</span>
+        <span class="card-support-badge">5/5</span>
+      </a>
+      <a href="/f/date-parsing/" class="command-card support-mid">
+        <span class="card-name">DATE PARSING</span>
+        <span class="card-desc">Functions for parsing strings into dates.</span>
+        <span class="card-support-badge">4/5</span>
+      </a>
+      <a href="/f/date-trunc/" class="command-card support-mid">
+        <span class="card-name">DATE TRUNC</span>
+        <span class="card-desc">Truncate a date or timestamp to a specified unit of precision (year, month, day, hour, etc.), zeroing out all smaller units.</span>
+        <span class="card-support-badge">3/5</span>
+      </a>
+      <a href="/f/datediff/" class="command-card support-5">
+        <span class="card-name">DATEDIFF</span>
+        <span class="card-desc">Calculate the difference between two date or timestamp values, returning an integer count of a specified unit (days, months, etc.) or an interval.</span>
+        <span class="card-support-badge">5/5</span>
+      </a>
+      <a href="/f/extract-datepart/" class="command-card support-mid">
+        <span class="card-name">EXTRACT / DATEPART</span>
+        <span class="card-desc">Extract a specific component (year, month, day, hour, etc.) from a date or timestamp as a numeric value.</span>
+        <span class="card-support-badge">4/5</span>
+      </a>
+      <a href="/f/filter-aggregate/" class="command-card support-mid">
+        <span class="card-name">FILTER (AGGREGATE)</span>
+        <span class="card-desc">Add a per-aggregate WHERE condition to filter the rows included in that specific aggregate, without a separate subquery.</span>
+        <span class="card-support-badge">3/5</span>
+      </a>
+      <a href="/f/first-last-value/" class="command-card support-5">
+        <span class="card-name">FIRST_VALUE / LAST_VALUE</span>
+        <span class="card-desc">Window functions that return the first or last value in the current window frame. Commonly used to carry forward the first value in a group or compare each row to the group's boundary.</span>
+        <span class="card-support-badge">5/5</span>
+      </a>
+      <a href="/f/format-to-char/" class="command-card support-5">
+        <span class="card-name">FORMAT / TO_CHAR</span>
+        <span class="card-desc">Formatting a date, number, or other value as a string according to a format pattern.</span>
+        <span class="card-support-badge">5/5</span>
+      </a>
+      <a href="/f/generate-series/" class="command-card support-mid">
+        <span class="card-name">GENERATE_SERIES</span>
+        <span class="card-desc">Generate a set of integer, numeric, or timestamp values as a virtual table row source.</span>
+        <span class="card-support-badge">3/5</span>
+      </a>
+      <a href="/f/greatest-least/" class="command-card support-mid">
+        <span class="card-name">GREATEST / LEAST</span>
+        <span class="card-desc">Return the largest or smallest value from a list of two or more expressions. Evaluate multiple columns or values in a single call without nested CASE expressions.</span>
+        <span class="card-support-badge">4/5</span>
+      </a>
+      <a href="/f/iif-decode/" class="command-card support-mid">
+        <span class="card-name">IIF / DECODE / CONDITIONAL SHORTHAND</span>
+        <span class="card-desc">Compact conditional expressions that return one of two or more values based on a condition, without the full verbosity of CASE WHEN. Includes IIF (SQL Server, Access), DECODE (Oracle), and IF (MySQL).</span>
+        <span class="card-support-badge">3/5</span>
+      </a>
+      <a href="/f/lag-lead/" class="command-card support-5">
+        <span class="card-name">LAG / LEAD</span>
+        <span class="card-desc">Access the value from a row before (LAG) or after (LEAD) the current row within an ordered window partition — without a self-join.</span>
+        <span class="card-support-badge">5/5</span>
+      </a>
+      <a href="/f/length/" class="command-card support-5">
+        <span class="card-name">LENGTH</span>
+        <span class="card-desc">Return the number of characters (or bytes) in a string.</span>
+        <span class="card-support-badge">5/5</span>
+      </a>
+      <a href="/f/math-functions/" class="command-card support-5">
+        <span class="card-name">MATH FUNCTIONS (FLOOR / CEIL / ROUND / ABS)</span>
+        <span class="card-desc">Core numeric functions for rounding, truncating, and taking the absolute value of numeric expressions.</span>
+        <span class="card-support-badge">5/5</span>
+      </a>
+      <a href="/f/ntile/" class="command-card support-5">
+        <span class="card-name">NTILE</span>
+        <span class="card-desc">Divide rows in a window partition into a specified number of ranked buckets (tiles) as evenly as possible, returning the bucket number for each row.</span>
+        <span class="card-support-badge">5/5</span>
+      </a>
+      <a href="/f/nullif/" class="command-card support-5">
+        <span class="card-name">NULLIF</span>
+        <span class="card-desc">Returns NULL if two expressions are equal, otherwise returns the first expression. Commonly used to suppress zero-division errors and convert sentinel values to NULL.</span>
+        <span class="card-support-badge">5/5</span>
+      </a>
+      <a href="/f/percentile/" class="command-card support-mid">
+        <span class="card-name">PERCENTILE FUNCTIONS</span>
+        <span class="card-desc">Compute percentile values within a distribution. PERCENTILE_CONT returns an interpolated value; PERCENTILE_DISC returns an actual value from the dataset. Used for medians, quartiles, and statistical analysis.</span>
+        <span class="card-support-badge">3/5</span>
+      </a>
+      <a href="/f/rank-dense-rank/" class="command-card support-5">
+        <span class="card-name">RANK / DENSE_RANK</span>
+        <span class="card-desc">Window functions that assign a rank to each row within a partition. RANK skips rank numbers after ties; DENSE_RANK does not skip.</span>
+        <span class="card-support-badge">5/5</span>
+      </a>
+      <a href="/f/regexp-replace/" class="command-card support-mid">
+        <span class="card-name">REGEXP REPLACE</span>
+        <span class="card-desc">A function to replace substrings based on regex patterns.</span>
+        <span class="card-support-badge">3/5</span>
+      </a>
+      <a href="/f/replace/" class="command-card support-5">
+        <span class="card-name">REPLACE</span>
+        <span class="card-desc">Replace all occurrences of a substring within a string with a new substring.</span>
+        <span class="card-support-badge">5/5</span>
+      </a>
+      <a href="/f/row-number/" class="command-card support-5">
+        <span class="card-name">ROW_NUMBER</span>
+        <span class="card-desc">Assign a sequential integer to each row within a result set or partition, starting at 1. Rows with equal values receive different numbers (unlike RANK).</span>
+        <span class="card-support-badge">5/5</span>
+      </a>
+      <a href="/f/string-agg/" class="command-card support-5">
+        <span class="card-name">STRING AGG</span>
+        <span class="card-desc">Concatenates strings separated by a specified separator. In PostgreSQL, this is STRING_AGG; in MySQL and SQLite, use GROUP_CONCAT; in Oracle, use LISTAGG; and in SQL Server, use STRING_AGG (since 2017). Syntax and features may differ between databases.</span>
+        <span class="card-support-badge">5/5</span>
+      </a>
+      <a href="/f/string-padding/" class="command-card support-mid">
+        <span class="card-name">STRING PADDING (LPAD / RPAD)</span>
+        <span class="card-desc">Padding a string to a specified length by prepending (LPAD) or appending (RPAD) a fill character.</span>
+        <span class="card-support-badge">3/5</span>
+      </a>
+      <a href="/f/string-split/" class="command-card support-mid">
+        <span class="card-name">STRING SPLIT / STRING TO ROWS</span>
+        <span class="card-desc">Split a delimited string into multiple rows or elements. Commonly needed for storing comma-separated lists in a single column and querying them relationally.</span>
+        <span class="card-support-badge">3/5</span>
+      </a>
+      <a href="/f/substring/" class="command-card support-5">
+        <span class="card-name">SUBSTRING</span>
+        <span class="card-desc">Extract a portion of a string starting at a given position, optionally for a given length.</span>
+        <span class="card-support-badge">5/5</span>
+      </a>
+      <a href="/f/trim/" class="command-card support-5">
+        <span class="card-name">TRIM</span>
+        <span class="card-desc">Remove leading and/or trailing characters (typically whitespace) from a string.</span>
+        <span class="card-support-badge">5/5</span>
+      </a>
+      <a href="/f/upper-lower/" class="command-card support-5">
+        <span class="card-name">UPPER / LOWER</span>
+        <span class="card-desc">Convert a string to all uppercase or all lowercase characters.</span>
+        <span class="card-support-badge">5/5</span>
+      </a>
+      <a href="/f/uuid/" class="command-card support-mid">
+        <span class="card-name">UUID / GEN_RANDOM_UUID</span>
+        <span class="card-desc">Generating a universally unique identifier (UUID/GUID) within a SQL query or default expression.</span>
+        <span class="card-support-badge">4/5</span>
+      </a>
+      <a href="/f/within-group/" class="command-card support-mid">
+        <span class="card-name">WITHIN GROUP</span>
+        <span class="card-desc">Ordered-set aggregate functions that require a sort order to compute their result: PERCENTILE_CONT (interpolated median), PERCENTILE_DISC (exact value), and MODE (most frequent value).</span>
+        <span class="card-support-badge">3/5</span>
+      </a>
+    </div>
+  </section>
+  <section class="category-group">
+    <h2 class="category-heading">Syntax</h2>
+    <div class="command-cards">
+      <a href="/f/comments/" class="command-card support-5">
+        <span class="card-name">COMMENTS</span>
+        <span class="card-desc">Annotate SQL code with single-line (--) or block (/* */) comments. All major SQL engines support both styles.</span>
+        <span class="card-support-badge">5/5</span>
+      </a>
+      <a href="/f/nulls-ordering/" class="command-card support-low">
+        <span class="card-name">NULLS ORDERING</span>
+        <span class="card-desc">Specifies the ordering of NULL values in an SQL query.</span>
+        <span class="card-support-badge">2/5</span>
+      </a>
+    </div>
+  </section>
+  <section class="category-group">
+    <h2 class="category-heading">Joins</h2>
+    <div class="command-cards">
+      <a href="/f/anti-join/" class="command-card support-5">
+        <span class="card-name">ANTI-JOIN</span>
+        <span class="card-desc">The NOT EXISTS pattern or LEFT JOIN ... IS NULL form for a performance advantage.</span>
+        <span class="card-support-badge">5/5</span>
+      </a>
+      <a href="/f/cross-join/" class="command-card support-5">
+        <span class="card-name">CROSS JOIN</span>
+        <span class="card-desc">Produces the cartesian product of two tables — every row of the left combined with every row of the right. No join condition.</span>
+        <span class="card-support-badge">5/5</span>
+      </a>
+      <a href="/f/full-outer-join/" class="command-card support-mid">
+        <span class="card-name">FULL OUTER JOIN</span>
+        <span class="card-desc">Returns all rows from both tables; NULLs fill columns where no match exists on either side.</span>
+        <span class="card-support-badge">4/5</span>
+      </a>
+      <a href="/f/inner-join/" class="command-card support-5">
+        <span class="card-name">INNER JOIN</span>
+        <span class="card-desc">Returns only rows where the join condition matches in both tables.</span>
+        <span class="card-support-badge">5/5</span>
+      </a>
+      <a href="/f/join/" class="command-card support-5">
+        <span class="card-name">JOIN</span>
+        <span class="card-desc">Combine rows from two or more tables based on a related column. All core join types are universally supported. Search for a specific type: &lt;a href=&quot;#&quot; onclick=&quot;searchCommand('inner join'); return false;&quot;&gt;INNER JOIN&lt;/a&gt;, &lt;a href=&quot;#&quot; onclick=&quot;searchCommand('left join'); return false;&quot;&gt;LEFT JOIN&lt;/a&gt;, &lt;a href=&quot;#&quot; onclick=&quot;searchCommand('right join'); return false;&quot;&gt;RIGHT JOIN&lt;/a&gt;, &lt;a href=&quot;#&quot; onclick=&quot;searchCommand('full outer join'); return false;&quot;&gt;FULL OUTER JOIN&lt;/a&gt;, &lt;a href=&quot;#&quot; onclick=&quot;searchCommand('cross join'); return false;&quot;&gt;CROSS JOIN&lt;/a&gt;.</span>
+        <span class="card-support-badge">5/5</span>
+      </a>
+      <a href="/f/left-join/" class="command-card support-5">
+        <span class="card-name">LEFT JOIN</span>
+        <span class="card-desc">Returns all rows from the left table and matching rows from the right; NULLs fill unmatched right-side columns.</span>
+        <span class="card-support-badge">5/5</span>
+      </a>
+      <a href="/f/natural-join/" class="command-card support-mid">
+        <span class="card-name">NATURAL JOIN / USING</span>
+        <span class="card-desc">Join syntax that matches columns by name automatically (NATURAL JOIN) or by an explicit shared column list (JOIN ... USING), avoiding repeated column references.</span>
+        <span class="card-support-badge">4/5</span>
+      </a>
+      <a href="/f/right-join/" class="command-card support-5">
+        <span class="card-name">RIGHT JOIN</span>
+        <span class="card-desc">Returns all rows from the right table and matching rows from the left; NULLs fill unmatched left-side columns.</span>
+        <span class="card-support-badge">5/5</span>
+      </a>
+    </div>
+  </section>
+  <section class="category-group">
+    <h2 class="category-heading">Programmability</h2>
+    <div class="command-cards">
+      <a href="/f/cursor/" class="command-card support-mid">
+        <span class="card-name">CURSOR</span>
+        <span class="card-desc">A database object that lets procedural code iterate over a result set one row at a time.</span>
+        <span class="card-support-badge">4/5</span>
+      </a>
+      <a href="/f/dynamic-sql/" class="command-card support-mid">
+        <span class="card-name">DYNAMIC SQL</span>
+        <span class="card-desc">Constructing and executing a SQL statement as a string at runtime, allowing the query structure to vary based on input.</span>
+        <span class="card-support-badge">4/5</span>
+      </a>
+      <a href="/f/stored-procedure/" class="command-card support-mid">
+        <span class="card-name">STORED PROCEDURE</span>
+        <span class="card-desc">A named, reusable block of SQL and procedural logic stored in the database.</span>
+        <span class="card-support-badge">4/5</span>
+      </a>
+      <a href="/f/trigger/" class="command-card support-5">
+        <span class="card-name">TRIGGER</span>
+        <span class="card-desc">A procedure that fires automatically in response to INSERT, UPDATE, or DELETE events on a table.</span>
+        <span class="card-support-badge">5/5</span>
+      </a>
+      <a href="/f/try-catch/" class="command-card support-mid">
+        <span class="card-name">TRY / CATCH / ERROR HANDLING</span>
+        <span class="card-desc">Structured error handling that traps runtime exceptions within a SQL block and routes execution to a handler.</span>
+        <span class="card-support-badge">4/5</span>
+      </a>
+      <a href="/f/user-defined-functions/" class="command-card support-5">
+        <span class="card-name">USER-DEFINED FUNCTIONS</span>
+        <span class="card-desc">Named, reusable routines that accept parameters, compute a value, and return a scalar or table result.</span>
+        <span class="card-support-badge">5/5</span>
+      </a>
+    </div>
+  </section>
+  <section class="category-group">
+    <h2 class="category-heading">Administration</h2>
+    <div class="command-cards">
+      <a href="/f/collation/" class="command-card support-5">
+        <span class="card-name">COLLATION AND CHARACTER SETS</span>
+        <span class="card-desc">Collation defines the rules for comparing and sorting string data — which characters are equal, how case and accents are handled, and sort order. Character set (charset) defines which characters can be stored. Together they determine string behavior throughout the engine.</span>
+        <span class="card-support-badge">5/5</span>
+      </a>
+      <a href="/f/explain/" class="command-card support-5">
+        <span class="card-name">EXPLAIN</span>
+        <span class="card-desc">Display the execution plan the query optimizer chose, optionally running the query to show actual statistics.</span>
+        <span class="card-support-badge">5/5</span>
+      </a>
+      <a href="/f/grant-revoke/" class="command-card support-mid">
+        <span class="card-name">GRANT / REVOKE</span>
+        <span class="card-desc">Basic permission management commands.</span>
+        <span class="card-support-badge">4/5</span>
+      </a>
+      <a href="/f/information-schema/" class="command-card support-mid">
+        <span class="card-name">INFORMATION SCHEMA</span>
+        <span class="card-desc">The INFORMATION_SCHEMA or equivalent system catalogs for introspection.</span>
+        <span class="card-support-badge">4/5</span>
+      </a>
+      <a href="/f/listen-notify/" class="command-card support-low">
+        <span class="card-name">LISTEN/NOTIFY</span>
+        <span class="card-desc">Asynchronous publish/subscribe messaging built into the database — no external message broker needed.</span>
+        <span class="card-support-badge">1/5</span>
+      </a>
+      <a href="/f/table-partitioning/" class="command-card support-mid">
+        <span class="card-name">TABLE PARTITIONING</span>
+        <span class="card-desc">Dividing a large table into smaller physical segments (partitions) based on a column value, improving query performance and maintenance operations.</span>
+        <span class="card-support-badge">4/5</span>
+      </a>
+      <a href="/f/vacuum-analyze/" class="command-card support-5">
+        <span class="card-name">VACUUM / ANALYZE</span>
+        <span class="card-desc">Maintenance operations that reclaim storage from dead rows (VACUUM) and update query planner statistics (ANALYZE), keeping performance stable over time.</span>
+        <span class="card-support-badge">5/5</span>
+      </a>
+    </div>
+  </section>
+  <section class="category-group">
+    <h2 class="category-heading">Data Types</h2>
+    <div class="command-cards">
+      <a href="/f/array-types/" class="command-card support-low">
+        <span class="card-name">ARRAY DATA TYPE</span>
+        <span class="card-desc">A column type that stores an ordered list of values of a uniform type within a single cell. Eliminates the need for a child table for simple multi-value attributes, at the cost of normalization.</span>
+        <span class="card-support-badge">2/5</span>
+      </a>
+      <a href="/f/boolean-type/" class="command-card support-mid">
+        <span class="card-name">BOOLEAN TYPE</span>
+        <span class="card-desc">A native data type representing a true/false value, stored and queried without numeric or string proxies.</span>
+        <span class="card-support-badge">4/5</span>
+      </a>
+      <a href="/f/enum-type/" class="command-card support-low">
+        <span class="card-name">ENUM TYPE</span>
+        <span class="card-desc">A column type that restricts values to a predefined set of named string constants, enforced at the database level.</span>
+        <span class="card-support-badge">2/5</span>
+      </a>
+      <a href="/f/interval-type/" class="command-card support-mid">
+        <span class="card-name">INTERVAL TYPE</span>
+        <span class="card-desc">A data type representing a span of time (e.g., '3 days', '2 hours 30 minutes') that can be stored, compared, and used in date arithmetic.</span>
+        <span class="card-support-badge">3/5</span>
+      </a>
+      <a href="/f/numeric-types/" class="command-card support-5">
+        <span class="card-name">NUMERIC TYPES</span>
+        <span class="card-desc">Precision differences between numeric types in SQL databases.</span>
+        <span class="card-support-badge">5/5</span>
+      </a>
+      <a href="/f/range-types/" class="command-card support-low">
+        <span class="card-name">RANGE TYPES</span>
+        <span class="card-desc">First-class data types representing a continuous range of values (integers, dates, timestamps) with built-in operators for containment, overlap, and adjacency.</span>
+        <span class="card-support-badge">1/5</span>
+      </a>
+      <a href="/f/text-types/" class="command-card support-5">
+        <span class="card-name">TEXT TYPES</span>
+        <span class="card-desc">Character string handling in SQL, including VARCHAR and TEXT types.</span>
+        <span class="card-support-badge">5/5</span>
+      </a>
+      <a href="/f/uuid-type/" class="command-card support-low">
+        <span class="card-name">UUID TYPE</span>
+        <span class="card-desc">A native 128-bit column type for storing universally unique identifiers, distinct from storing UUIDs as plain strings.</span>
+        <span class="card-support-badge">2/5</span>
+      </a>
+    </div>
+  </section>
+  <section class="category-group">
+    <h2 class="category-heading">Security</h2>
+    <div class="command-cards">
+      <a href="/f/row-level-security/" class="command-card support-mid">
+        <span class="card-name">ROW-LEVEL SECURITY</span>
+        <span class="card-desc">Attach policies to a table so different users or roles automatically see or can modify only the rows they are permitted to access.</span>
+        <span class="card-support-badge">3/5</span>
+      </a>
+    </div>
+  </section>
 
   <script src="/search.js" defer></script>
   <script src="/splash.js" defer></script>

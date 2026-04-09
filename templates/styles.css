@@ -28,11 +28,18 @@ h4 { color: #2c3e50; margin: 16px 0 4px; }
    -------------------------------------------------------------------------- */
 
 .site-header {
+  position: sticky;
+  top: 0;
+  z-index: 50;
   display: flex;
   align-items: center;
   gap: 16px;
+  padding-top: 12px;
+  padding-bottom: 12px;
   margin-bottom: 24px;
   flex-wrap: wrap;
+  background-color: #f5f7fa;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
 }
 
 .home-link {
@@ -148,26 +155,87 @@ h4 { color: #2c3e50; margin: 16px 0 4px; }
 }
 
 /* --------------------------------------------------------------------------
-   Site footer
+   Site title (shown in header on homepage)
    -------------------------------------------------------------------------- */
 
-.site-footer {
-  background: white;
-  border-radius: 8px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-  padding: 20px 24px;
-  margin-top: 40px;
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  flex-wrap: wrap;
-}
-
-.site-footer p {
-  margin: 0;
-  font-size: 1rem;
+.site-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #2c3e50;
   white-space: nowrap;
 }
+
+/* --------------------------------------------------------------------------
+   Homepage — category groups + command cards
+   -------------------------------------------------------------------------- */
+
+.category-group { margin-top: 40px; }
+
+.category-heading {
+  color: #2c3e50;
+  font-size: 1rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin: 0 0 12px;
+  padding-bottom: 6px;
+  border-bottom: 2px solid #3498db;
+}
+
+.command-cards {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.command-card {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  background: white;
+  border-radius: 6px;
+  padding: 10px 14px;
+  text-decoration: none;
+  color: #2c3e50;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+  border-left: 4px solid transparent;
+  min-width: 160px;
+  flex: 1;
+  max-width: 260px;
+  transition: box-shadow 0.15s, transform 0.1s;
+}
+
+.command-card:hover {
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.12);
+  transform: translateY(-1px);
+}
+
+.card-name {
+  font-weight: bold;
+  font-size: 13px;
+}
+
+.card-desc {
+  font-size: 12px;
+  color: #7f8c8d;
+  line-height: 1.4;
+}
+
+.card-support-badge {
+  font-size: 11px;
+  font-weight: bold;
+  margin-top: 4px;
+  align-self: flex-start;
+}
+
+.support-5   { border-left-color: #27ae60; }
+.support-5   .card-support-badge { color: #27ae60; }
+.support-mid { border-left-color: #f39c12; }
+.support-mid .card-support-badge { color: #f39c12; }
+.support-low { border-left-color: #e74c3c; }
+.support-low .card-support-badge { color: #e74c3c; }
+.support-none { border-left-color: #95a5a6; }
+.support-none .card-support-badge { color: #95a5a6; }
 
 /* --------------------------------------------------------------------------
    Compatibility table
