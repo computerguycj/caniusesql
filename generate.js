@@ -344,13 +344,17 @@ function buildCommandList(data) {
     let cards = '';
 
     for (const { name, entry } of groups[cat]) {
-      const count   = Object.values(entry.compatibility).filter(d => d.supported).length;
-      const cls     = supportClass(count);
-      const badge   = `${count}/${DB_COUNT}`;
-      const desc    = entry.description || '';
+      const count       = Object.values(entry.compatibility).filter(d => d.supported).length;
+      const cls         = supportClass(count);
+      const badge       = `${count}/${DB_COUNT}`;
+      const desc        = entry.description || '';
+      const supportedBy = Object.entries(entry.compatibility)
+        .filter(([, info]) => info.supported)
+        .map(([db]) => db)
+        .join(' ');
 
       cards += `
-      <a href="/f/${esc(entry.slug)}/" class="command-card ${cls}">
+      <a href="/f/${esc(entry.slug)}/" class="command-card ${cls}" data-dbs="${esc(supportedBy)}">
         <span class="card-name">${esc(name.toUpperCase())}</span>
         <span class="card-desc">${esc(desc)}</span>
         <span class="card-support-badge">${esc(badge)}</span>
