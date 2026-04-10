@@ -505,3 +505,9 @@ tr:hover { background-color: var(--color-row-hover); }
 .detail-block p { margin: 0; }
 
 .version-list { margin-top: 8px; }
+
+.bmc-link img {
+  display: block;
+  height: 36px;
+  width: auto;
+}
