@@ -55,7 +55,7 @@ No build toolchain complexity. No client-side rendering delays.
 ### Local Setup
 
 ```bash
-git clone https://github.com/yourusername/caniusesql.git
+git clone https://github.com/computerguycj/caniusesql.git
 cd caniusesql
 npm install
 npm run generate-sitemap
