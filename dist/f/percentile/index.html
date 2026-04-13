@@ -22,6 +22,7 @@
 </head>
 <body>
 
+<a href="#main-content" class="skip-link">Skip to main content</a>
 <header class="site-header">
   <a href="/" class="home-link" aria-label="Home">
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="30" height="30" aria-hidden="true">
@@ -44,64 +45,71 @@
       <rect x="20" y="17" width="4" height="3" rx="0.5" fill="#1a6391" opacity="0.55"/>
     </svg>
   </a>
-  <span class="command-heading"><h1>PERCENTILE FUNCTIONS<span class="category-badge">Functions</span></h1></span>
+  <span class="command-heading"><h1>PERCENTILE FUNCTIONS</h1><span class="category-badge">Functions</span></span>
   <div class="search-widget">
     <input class="site-search" type="search" placeholder="Search SQL commands…"
            autocomplete="off" aria-label="Search SQL commands">
     <ul class="search-results" hidden role="listbox" aria-label="Search suggestions"></ul>
   </div>
+    <a href="https://www.buymeacoffee.com/computerguycj" target="_blank" rel="noopener" class="bmc-link" aria-label="Buy me a coffee">
+    <img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png"
+         alt="Buy Me A Coffee"
+         height="36">
+  </a>
 </header>
 
+<main id="main-content">
 
   <p class="command-desc">Compute percentile values within a distribution. PERCENTILE_CONT returns an interpolated value; PERCENTILE_DISC returns an actual value from the dataset. Used for medians, quartiles, and statistical analysis.</p>
   <p class="command-overview">PostgreSQL aggregate that computes a continuous percentile value (interpolated). PERCENTILE_CONT(0.5) returns the median. Essential for robust statistical measures.</p>
 
   <h2>Compatibility</h2>
-  <div class="compare-bar">
-    <span class="compare-label">Show:</span>
+  <fieldset class="compare-bar">
+    <legend>Filter by Database</legend>
     <label><input type="checkbox" value="mysql" checked> MySQL</label>
     <label><input type="checkbox" value="postgresql" checked> PostgreSQL</label>
     <label><input type="checkbox" value="sqlserver" checked> SQL Server</label>
     <label><input type="checkbox" value="oracle" checked> Oracle</label>
     <label><input type="checkbox" value="sqlite" checked> SQLite</label>
-  </div>
+  </fieldset>
   <table>
+    <caption>SQL PERCENTILE FUNCTIONS Compatibility Across Databases</caption>
     <thead>
       <tr>
-        <th>Database System</th>
-        <th>Support Status</th>
-        <th>Since Version</th>
-        <th>Notes</th>
+        <th scope="col">Database System</th>
+        <th scope="col">Support Status</th>
+        <th scope="col">Since Version</th>
+        <th scope="col">Notes</th>
       </tr>
     </thead>
     <tbody>
           <tr data-db="mysql">
             <td>MySQL</td>
-            <td class="not-supported">✗ Not Supported</td>
+            <td class="not-supported"><span aria-hidden="true">✗</span> <span class="status-text">Not Supported</span></td>
             <td>—</td>
             <td class="notes">No PERCENTILE_CONT or PERCENTILE_DISC aggregate functions. Common workarounds: use a window function approach with ROW_NUMBER() and COUNT(*), or (MySQL 8.0+) use the window function versions of percentile approximation. NTILE(100) produces percentile buckets, not values.</td>
           </tr>
           <tr data-db="postgresql">
             <td>PostgreSQL</td>
-            <td class="supported">✓ Supported</td>
+            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
             <td>9.4</td>
             <td class="notes">Both PERCENTILE_CONT and PERCENTILE_DISC are supported as ordered-set aggregate functions using the WITHIN GROUP (ORDER BY ...) syntax. Also available as window functions via FILTER clause. The array form PERCENTILE_CONT(ARRAY[0.25, 0.5, 0.75]) computes multiple percentiles in a single pass. Works on numeric and interval types.</td>
           </tr>
           <tr data-db="sqlserver">
             <td>SQL Server</td>
-            <td class="supported">✓ Supported</td>
+            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
             <td>2012</td>
             <td class="notes">SQL Server implements PERCENTILE_CONT and PERCENTILE_DISC as window functions (with OVER clause), not as aggregate functions. This means they always require an OVER clause and are computed per-row — to get a single value per group, use a subquery or DISTINCT on the result. The WITHIN GROUP clause is NOT used in SQL Server's syntax.</td>
           </tr>
           <tr data-db="oracle">
             <td>Oracle</td>
-            <td class="supported">✓ Supported</td>
+            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
             <td>8.1.6</td>
             <td class="notes">Oracle supports both the aggregate form (WITHIN GROUP, no OVER clause) and the analytic/window function form (WITHIN GROUP + OVER clause). The aggregate form returns one row per group; the analytic form computes the percentile and returns it for every row in the partition. Supports numeric and datetime ORDER BY expressions.</td>
           </tr>
           <tr data-db="sqlite">
             <td>SQLite</td>
-            <td class="not-supported">✗ Not Supported</td>
+            <td class="not-supported"><span aria-hidden="true">✗</span> <span class="status-text">Not Supported</span></td>
             <td>—</td>
             <td class="notes">No PERCENTILE_CONT or PERCENTILE_DISC. Use the ROW_NUMBER window function workaround to compute a median. For grouped medians, a CTE is typically clearest.</td>
           </tr>
@@ -122,11 +130,11 @@ FROM employees;</div>
 
   <h2>Version Support</h2>
   <div class="version-list">
-    <span class="version-badge version-not-supported">MySQL: Not supported</span>
-    <span class="version-badge version-supported">PostgreSQL: Since 9.4</span>
-    <span class="version-badge version-supported">SQL Server: Since 2012</span>
-    <span class="version-badge version-supported">Oracle: Since 8.1.6</span>
-    <span class="version-badge version-not-supported">SQLite: Not supported</span>
+    <span class="version-badge version-not-supported"><span aria-hidden="true">✗</span> MySQL: Not supported</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> PostgreSQL: Since 9.4</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> SQL Server: Since 2012</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> Oracle: Since 8.1.6</span>
+    <span class="version-badge version-not-supported"><span aria-hidden="true">✗</span> SQLite: Not supported</span>
     
   </div>
 
@@ -245,6 +253,10 @@ WHERE rn IN ((cnt+1)/2, (cnt+2)/2)
 GROUP BY dept;</div>
       </div>
   </div>
+</main>
+<footer class="site-footer">
+  <p>&copy; 2024 Can I Use SQL. All rights reserved.</p>
+</footer>
   <script src="/search.js" defer></script>
   <script src="/splash.js" defer></script>
   <script src="/track.js" defer></script>

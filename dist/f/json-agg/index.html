@@ -22,6 +22,7 @@
 </head>
 <body>
 
+<a href="#main-content" class="skip-link">Skip to main content</a>
 <header class="site-header">
   <a href="/" class="home-link" aria-label="Home">
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="30" height="30" aria-hidden="true">
@@ -44,64 +45,71 @@
       <rect x="20" y="17" width="4" height="3" rx="0.5" fill="#1a6391" opacity="0.55"/>
     </svg>
   </a>
-  <span class="command-heading"><h1>JSON_AGG / JSON_ARRAYAGG<span class="category-badge">JSON</span></h1></span>
+  <span class="command-heading"><h1>JSON_AGG / JSON_ARRAYAGG</h1><span class="category-badge">JSON</span></span>
   <div class="search-widget">
     <input class="site-search" type="search" placeholder="Search SQL commands…"
            autocomplete="off" aria-label="Search SQL commands">
     <ul class="search-results" hidden role="listbox" aria-label="Search suggestions"></ul>
   </div>
+    <a href="https://www.buymeacoffee.com/computerguycj" target="_blank" rel="noopener" class="bmc-link" aria-label="Buy me a coffee">
+    <img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png"
+         alt="Buy Me A Coffee"
+         height="36">
+  </a>
 </header>
 
+<main id="main-content">
 
   <p class="command-desc">Aggregate multiple rows into a single JSON array (or object), collapsing a one-to-many relationship into a nested JSON structure within a query.</p>
   <p class="command-overview">PostgreSQL aggregate function that collects rows into a JSON array, the inverse of json_each. Combines with ORDER BY within the aggregate to control array element order. The foundation of SQL-to-JSON transformations.</p>
 
   <h2>Compatibility</h2>
-  <div class="compare-bar">
-    <span class="compare-label">Show:</span>
+  <fieldset class="compare-bar">
+    <legend>Filter by Database</legend>
     <label><input type="checkbox" value="mysql" checked> MySQL</label>
     <label><input type="checkbox" value="postgresql" checked> PostgreSQL</label>
     <label><input type="checkbox" value="sqlserver" checked> SQL Server</label>
     <label><input type="checkbox" value="oracle" checked> Oracle</label>
     <label><input type="checkbox" value="sqlite" checked> SQLite</label>
-  </div>
+  </fieldset>
   <table>
+    <caption>SQL JSON_AGG / JSON_ARRAYAGG Compatibility Across Databases</caption>
     <thead>
       <tr>
-        <th>Database System</th>
-        <th>Support Status</th>
-        <th>Since Version</th>
-        <th>Notes</th>
+        <th scope="col">Database System</th>
+        <th scope="col">Support Status</th>
+        <th scope="col">Since Version</th>
+        <th scope="col">Notes</th>
       </tr>
     </thead>
     <tbody>
           <tr data-db="mysql">
             <td>MySQL</td>
-            <td class="supported">✓ Supported</td>
+            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
             <td>5.7.22</td>
             <td class="notes">JSON_ARRAYAGG(expr) aggregates values into a JSON array. JSON_OBJECTAGG(key_expr, value_expr) aggregates key-value pairs into a JSON object. Both added in 5.7.22. No ORDER BY inside the aggregate — sort the outer query or use a subquery. NULL values in the expression are included as JSON null.</td>
           </tr>
           <tr data-db="postgresql">
             <td>PostgreSQL</td>
-            <td class="supported">✓ Supported</td>
+            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
             <td>9.3</td>
             <td class="notes">json_agg(expr) aggregates into a json array (since 9.3); jsonb_agg(expr) returns jsonb (since 9.4). json_object_agg(key, value) / jsonb_object_agg(key, value) aggregate into a JSON object. ORDER BY is supported inside the aggregate. NULL values are included as JSON null. Use FILTER (WHERE ...) to exclude rows.</td>
           </tr>
           <tr data-db="sqlserver">
             <td>SQL Server</td>
-            <td class="not-supported">✗ Not Supported</td>
+            <td class="not-supported"><span aria-hidden="true">✗</span> <span class="status-text">Not Supported</span></td>
             <td>—</td>
             <td class="notes">No JSON_ARRAYAGG or json_agg. Use FOR JSON PATH / FOR JSON AUTO on a subquery to produce a JSON array. STRING_AGG can be combined with JSON_OBJECT (SQL Server 2022+) for simple cases. The result of FOR JSON is NVARCHAR, not a typed JSON column.</td>
           </tr>
           <tr data-db="oracle">
             <td>Oracle</td>
-            <td class="supported">✓ Supported</td>
+            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
             <td>18c</td>
             <td class="notes">JSON_ARRAYAGG(expr) and JSON_OBJECTAGG(key VALUE value) added in Oracle 18c. In Oracle 12c, workarounds include LISTAGG combined with manual JSON construction, or using JSON_ARRAY with a subquery. ORDER BY and ON NULL clauses supported inside JSON_ARRAYAGG.</td>
           </tr>
           <tr data-db="sqlite">
             <td>SQLite</td>
-            <td class="supported">✓ Supported</td>
+            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
             <td>3.9.0</td>
             <td class="notes">json_group_array(expr) aggregates values into a JSON array. json_group_object(name, value) aggregates into a JSON object. Both available since 3.9.0 when the JSON1 extension was added. In most SQLite distributions the JSON1 extension is compiled in by default.</td>
           </tr>
@@ -128,11 +136,11 @@ GROUP BY dept_id;</div>
 
   <h2>Version Support</h2>
   <div class="version-list">
-    <span class="version-badge version-supported">MySQL: Since 5.7.22</span>
-    <span class="version-badge version-supported">PostgreSQL: Since 9.3</span>
-    <span class="version-badge version-not-supported">SQL Server: Not supported</span>
-    <span class="version-badge version-supported">Oracle: Since 18c</span>
-    <span class="version-badge version-supported">SQLite: Since 3.9.0</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> MySQL: Since 5.7.22</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> PostgreSQL: Since 9.3</span>
+    <span class="version-badge version-not-supported"><span aria-hidden="true">✗</span> SQL Server: Not supported</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> Oracle: Since 18c</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> SQLite: Since 3.9.0</span>
     
   </div>
 
@@ -246,6 +254,10 @@ FROM employees
 GROUP BY dept_id;</div>
       </div>
   </div>
+</main>
+<footer class="site-footer">
+  <p>&copy; 2024 Can I Use SQL. All rights reserved.</p>
+</footer>
   <script src="/search.js" defer></script>
   <script src="/splash.js" defer></script>
   <script src="/track.js" defer></script>

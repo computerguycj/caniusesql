@@ -22,6 +22,7 @@
 </head>
 <body>
 
+<a href="#main-content" class="skip-link">Skip to main content</a>
 <header class="site-header">
   <a href="/" class="home-link" aria-label="Home">
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="30" height="30" aria-hidden="true">
@@ -44,64 +45,71 @@
       <rect x="20" y="17" width="4" height="3" rx="0.5" fill="#1a6391" opacity="0.55"/>
     </svg>
   </a>
-  <span class="command-heading"><h1>ROW_NUMBER<span class="category-badge">Functions</span></h1></span>
+  <span class="command-heading"><h1>ROW_NUMBER</h1><span class="category-badge">Functions</span></span>
   <div class="search-widget">
     <input class="site-search" type="search" placeholder="Search SQL commands…"
            autocomplete="off" aria-label="Search SQL commands">
     <ul class="search-results" hidden role="listbox" aria-label="Search suggestions"></ul>
   </div>
+    <a href="https://www.buymeacoffee.com/computerguycj" target="_blank" rel="noopener" class="bmc-link" aria-label="Buy me a coffee">
+    <img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png"
+         alt="Buy Me A Coffee"
+         height="36">
+  </a>
 </header>
 
+<main id="main-content">
 
   <p class="command-desc">Assign a sequential integer to each row within a result set or partition, starting at 1. Rows with equal values receive different numbers (unlike RANK).</p>
   <p class="command-overview">Assigns a unique sequential integer to each row within a partition, starting at 1. Useful for deduplication (taking the first row per group) and pagination. Combine with DISTINCT ON in PostgreSQL for efficient top-N per group.</p>
 
   <h2>Compatibility</h2>
-  <div class="compare-bar">
-    <span class="compare-label">Show:</span>
+  <fieldset class="compare-bar">
+    <legend>Filter by Database</legend>
     <label><input type="checkbox" value="mysql" checked> MySQL</label>
     <label><input type="checkbox" value="postgresql" checked> PostgreSQL</label>
     <label><input type="checkbox" value="sqlserver" checked> SQL Server</label>
     <label><input type="checkbox" value="oracle" checked> Oracle</label>
     <label><input type="checkbox" value="sqlite" checked> SQLite</label>
-  </div>
+  </fieldset>
   <table>
+    <caption>SQL ROW_NUMBER Compatibility Across Databases</caption>
     <thead>
       <tr>
-        <th>Database System</th>
-        <th>Support Status</th>
-        <th>Since Version</th>
-        <th>Notes</th>
+        <th scope="col">Database System</th>
+        <th scope="col">Support Status</th>
+        <th scope="col">Since Version</th>
+        <th scope="col">Notes</th>
       </tr>
     </thead>
     <tbody>
           <tr data-db="mysql">
             <td>MySQL</td>
-            <td class="supported">✓ Supported</td>
+            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
             <td>8.0</td>
             <td class="notes">ROW_NUMBER() fully supported since MySQL 8.0. Not available in MySQL 5.x — use user-defined variables as a workaround.</td>
           </tr>
           <tr data-db="postgresql">
             <td>PostgreSQL</td>
-            <td class="supported">✓ Supported</td>
+            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
             <td>8.4</td>
             <td class="notes">ROW_NUMBER() fully supported. Commonly used with a CTE to filter to a specific rank (top-N per group pattern).</td>
           </tr>
           <tr data-db="sqlserver">
             <td>SQL Server</td>
-            <td class="supported">✓ Supported</td>
+            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
             <td>2005</td>
             <td class="notes">ROW_NUMBER() fully supported since SQL Server 2005. The ORDER BY inside OVER() is required for ROW_NUMBER (unlike some other window functions).</td>
           </tr>
           <tr data-db="oracle">
             <td>Oracle</td>
-            <td class="supported">✓ Supported</td>
+            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
             <td>8i</td>
             <td class="notes">ROW_NUMBER() fully supported. Oracle also has ROWNUM (a pseudocolumn, not a window function) which assigns numbers before ORDER BY is applied — they behave differently.</td>
           </tr>
           <tr data-db="sqlite">
             <td>SQLite</td>
-            <td class="supported">✓ Supported</td>
+            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
             <td>3.25.0</td>
             <td class="notes">ROW_NUMBER() fully supported since SQLite 3.25.0 (September 2018).</td>
           </tr>
@@ -121,11 +129,11 @@ FROM employees;</div>
 
   <h2>Version Support</h2>
   <div class="version-list">
-    <span class="version-badge version-supported">MySQL: Since 8.0</span>
-    <span class="version-badge version-supported">PostgreSQL: Since 8.4</span>
-    <span class="version-badge version-supported">SQL Server: Since 2005</span>
-    <span class="version-badge version-supported">Oracle: Since 8i</span>
-    <span class="version-badge version-supported">SQLite: Since 3.25.0</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> MySQL: Since 8.0</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> PostgreSQL: Since 8.4</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> SQL Server: Since 2005</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> Oracle: Since 8i</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> SQLite: Since 3.25.0</span>
     
   </div>
 
@@ -175,6 +183,10 @@ SELECT ROWNUM, name FROM employees;  -- assigned before sorting</div>
 FROM employees;</div>
       </div>
   </div>
+</main>
+<footer class="site-footer">
+  <p>&copy; 2024 Can I Use SQL. All rights reserved.</p>
+</footer>
   <script src="/search.js" defer></script>
   <script src="/splash.js" defer></script>
   <script src="/track.js" defer></script>

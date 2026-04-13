@@ -22,6 +22,7 @@
 </head>
 <body>
 
+<a href="#main-content" class="skip-link">Skip to main content</a>
 <header class="site-header">
   <a href="/" class="home-link" aria-label="Home">
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="30" height="30" aria-hidden="true">
@@ -44,64 +45,71 @@
       <rect x="20" y="17" width="4" height="3" rx="0.5" fill="#1a6391" opacity="0.55"/>
     </svg>
   </a>
-  <span class="command-heading"><h1>NATURAL JOIN / USING<span class="category-badge">Joins</span></h1></span>
+  <span class="command-heading"><h1>NATURAL JOIN / USING</h1><span class="category-badge">Joins</span></span>
   <div class="search-widget">
     <input class="site-search" type="search" placeholder="Search SQL commands…"
            autocomplete="off" aria-label="Search SQL commands">
     <ul class="search-results" hidden role="listbox" aria-label="Search suggestions"></ul>
   </div>
+    <a href="https://www.buymeacoffee.com/computerguycj" target="_blank" rel="noopener" class="bmc-link" aria-label="Buy me a coffee">
+    <img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png"
+         alt="Buy Me A Coffee"
+         height="36">
+  </a>
 </header>
 
+<main id="main-content">
 
   <p class="command-desc">Join syntax that matches columns by name automatically (NATURAL JOIN) or by an explicit shared column list (JOIN ... USING), avoiding repeated column references.</p>
   <p class="command-overview">A shorthand for ON when the join column has the same name in both tables, producing cleaner output with a single shared column instead of duplicates. Only works when the column names match exactly; falls back to ON for mismatched names.</p>
 
   <h2>Compatibility</h2>
-  <div class="compare-bar">
-    <span class="compare-label">Show:</span>
+  <fieldset class="compare-bar">
+    <legend>Filter by Database</legend>
     <label><input type="checkbox" value="mysql" checked> MySQL</label>
     <label><input type="checkbox" value="postgresql" checked> PostgreSQL</label>
     <label><input type="checkbox" value="sqlserver" checked> SQL Server</label>
     <label><input type="checkbox" value="oracle" checked> Oracle</label>
     <label><input type="checkbox" value="sqlite" checked> SQLite</label>
-  </div>
+  </fieldset>
   <table>
+    <caption>SQL NATURAL JOIN / USING Compatibility Across Databases</caption>
     <thead>
       <tr>
-        <th>Database System</th>
-        <th>Support Status</th>
-        <th>Since Version</th>
-        <th>Notes</th>
+        <th scope="col">Database System</th>
+        <th scope="col">Support Status</th>
+        <th scope="col">Since Version</th>
+        <th scope="col">Notes</th>
       </tr>
     </thead>
     <tbody>
           <tr data-db="mysql">
             <td>MySQL</td>
-            <td class="supported">✓ Supported</td>
+            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
             <td>5.0</td>
             <td class="notes">Both NATURAL JOIN and USING are supported. NATURAL JOIN matches all columns with identical names; USING matches on the specified list. The joined column appears once in SELECT *.</td>
           </tr>
           <tr data-db="postgresql">
             <td>PostgreSQL</td>
-            <td class="supported">✓ Supported</td>
+            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
             <td>7.4</td>
             <td class="notes">Full support for both. USING produces a merged column in the output; NATURAL JOIN is effectively shorthand for USING all common column names.</td>
           </tr>
           <tr data-db="sqlserver">
             <td>SQL Server</td>
-            <td class="not-supported">✗ Not Supported</td>
+            <td class="not-supported"><span aria-hidden="true">✗</span> <span class="status-text">Not Supported</span></td>
             <td>—</td>
             <td class="notes">Neither NATURAL JOIN nor USING is supported. Use explicit ON clauses. This is a deliberate omission — Microsoft considers NATURAL JOIN ambiguity-prone.</td>
           </tr>
           <tr data-db="oracle">
             <td>Oracle</td>
-            <td class="supported">✓ Supported</td>
+            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
             <td>9i</td>
             <td class="notes">Both NATURAL JOIN and USING supported. A known gotcha: NATURAL JOIN silently breaks if a column with a matching name is added to either table later.</td>
           </tr>
           <tr data-db="sqlite">
             <td>SQLite</td>
-            <td class="supported">✓ Supported</td>
+            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
             <td>3.0.0</td>
             <td class="notes">NATURAL JOIN and USING are both supported. NATURAL JOIN is parsed but its behavior on ambiguous schemas can be unpredictable — USING is the safer choice.</td>
           </tr>
@@ -124,11 +132,11 @@ NATURAL JOIN customers;</div>
 
   <h2>Version Support</h2>
   <div class="version-list">
-    <span class="version-badge version-supported">MySQL: Since 5.0</span>
-    <span class="version-badge version-supported">PostgreSQL: Since 7.4</span>
-    <span class="version-badge version-not-supported">SQL Server: Not supported</span>
-    <span class="version-badge version-supported">Oracle: Since 9i</span>
-    <span class="version-badge version-supported">SQLite: Since 3.0.0</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> MySQL: Since 5.0</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> PostgreSQL: Since 7.4</span>
+    <span class="version-badge version-not-supported"><span aria-hidden="true">✗</span> SQL Server: Not supported</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> Oracle: Since 9i</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> SQLite: Since 3.0.0</span>
     
   </div>
 
@@ -158,6 +166,10 @@ SELECT * FROM orders NATURAL JOIN customers;</div>
         <div class="syntax">SELECT * FROM orders JOIN customers USING (customer_id);</div>
       </div>
   </div>
+</main>
+<footer class="site-footer">
+  <p>&copy; 2024 Can I Use SQL. All rights reserved.</p>
+</footer>
   <script src="/search.js" defer></script>
   <script src="/splash.js" defer></script>
   <script src="/track.js" defer></script>

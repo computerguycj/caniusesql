@@ -22,6 +22,7 @@
 </head>
 <body>
 
+<a href="#main-content" class="skip-link">Skip to main content</a>
 <header class="site-header">
   <a href="/" class="home-link" aria-label="Home">
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="30" height="30" aria-hidden="true">
@@ -44,64 +45,71 @@
       <rect x="20" y="17" width="4" height="3" rx="0.5" fill="#1a6391" opacity="0.55"/>
     </svg>
   </a>
-  <span class="command-heading"><h1>INSERT INTO SELECT<span class="category-badge">DML</span></h1></span>
+  <span class="command-heading"><h1>INSERT INTO SELECT</h1><span class="category-badge">DML</span></span>
   <div class="search-widget">
     <input class="site-search" type="search" placeholder="Search SQL commands…"
            autocomplete="off" aria-label="Search SQL commands">
     <ul class="search-results" hidden role="listbox" aria-label="Search suggestions"></ul>
   </div>
+    <a href="https://www.buymeacoffee.com/computerguycj" target="_blank" rel="noopener" class="bmc-link" aria-label="Buy me a coffee">
+    <img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png"
+         alt="Buy Me A Coffee"
+         height="36">
+  </a>
 </header>
 
+<main id="main-content">
 
   <p class="command-desc">Copy rows from one query result into a table, optionally transforming them in transit. The fundamental pattern for populating summary tables, migrating data, and archiving rows.</p>
   <p class="command-overview">Inserts rows computed from a SELECT query, the standard way to copy data between tables, transform data during insertion, and populate tables from computed results.</p>
 
   <h2>Compatibility</h2>
-  <div class="compare-bar">
-    <span class="compare-label">Show:</span>
+  <fieldset class="compare-bar">
+    <legend>Filter by Database</legend>
     <label><input type="checkbox" value="mysql" checked> MySQL</label>
     <label><input type="checkbox" value="postgresql" checked> PostgreSQL</label>
     <label><input type="checkbox" value="sqlserver" checked> SQL Server</label>
     <label><input type="checkbox" value="oracle" checked> Oracle</label>
     <label><input type="checkbox" value="sqlite" checked> SQLite</label>
-  </div>
+  </fieldset>
   <table>
+    <caption>SQL INSERT INTO SELECT Compatibility Across Databases</caption>
     <thead>
       <tr>
-        <th>Database System</th>
-        <th>Support Status</th>
-        <th>Since Version</th>
-        <th>Notes</th>
+        <th scope="col">Database System</th>
+        <th scope="col">Support Status</th>
+        <th scope="col">Since Version</th>
+        <th scope="col">Notes</th>
       </tr>
     </thead>
     <tbody>
           <tr data-db="mysql">
             <td>MySQL</td>
-            <td class="supported">✓ Supported</td>
+            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
             <td>3.23</td>
             <td class="notes">INSERT INTO ... SELECT is fully supported. Column list in the INSERT is optional if the SELECT returns columns in the exact same order and count as the table. CREATE TABLE ... SELECT creates and populates a new table in one statement (MySQL-specific shorthand). AUTO_INCREMENT columns are populated normally during INSERT INTO ... SELECT.</td>
           </tr>
           <tr data-db="postgresql">
             <td>PostgreSQL</td>
-            <td class="supported">✓ Supported</td>
+            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
             <td>6.0</td>
             <td class="notes">INSERT INTO ... SELECT is fully supported. SELECT INTO creates a new table from a query (PostgreSQL-specific; standard SQL uses CREATE TABLE AS SELECT). CREATE TABLE AS SELECT is the portable form. Can include ON CONFLICT clause for upsert behavior on the destination table.</td>
           </tr>
           <tr data-db="sqlserver">
             <td>SQL Server</td>
-            <td class="supported">✓ Supported</td>
+            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
             <td>6.5</td>
             <td class="notes">INSERT INTO ... SELECT fully supported. SELECT INTO creates a new table (SQL Server extension, same as PostgreSQL). For large inserts, TABLOCK hint with minimal logging (simple recovery model) dramatically reduces log growth. The OUTPUT clause captures inserted rows in the same statement. Can use OPENROWSET or linked servers as the source.</td>
           </tr>
           <tr data-db="oracle">
             <td>Oracle</td>
-            <td class="supported">✓ Supported</td>
+            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
             <td>7</td>
             <td class="notes">INSERT INTO ... SELECT fully supported. CREATE TABLE AS SELECT (CTAS) is the Oracle form for create-and-populate. INSERT ALL allows inserting into multiple tables from a single SELECT. The APPEND hint enables direct-path insert (faster, bypasses buffer cache, locks the table for the duration).</td>
           </tr>
           <tr data-db="sqlite">
             <td>SQLite</td>
-            <td class="supported">✓ Supported</td>
+            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
             <td>1.0</td>
             <td class="notes">INSERT INTO ... SELECT fully supported. CREATE TABLE AS SELECT creates and populates a new table. Wrapping a large INSERT INTO ... SELECT in a transaction is critical for performance — SQLite without a transaction performs an fsync per row.</td>
           </tr>
@@ -127,11 +135,11 @@ FROM orders;  -- SQL Server syntax</div>
 
   <h2>Version Support</h2>
   <div class="version-list">
-    <span class="version-badge version-supported">MySQL: Since 3.23</span>
-    <span class="version-badge version-supported">PostgreSQL: Since 6.0</span>
-    <span class="version-badge version-supported">SQL Server: Since 6.5</span>
-    <span class="version-badge version-supported">Oracle: Since 7</span>
-    <span class="version-badge version-supported">SQLite: Since 1.0</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> MySQL: Since 3.23</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> PostgreSQL: Since 6.0</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> SQL Server: Since 6.5</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> Oracle: Since 7</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> SQLite: Since 1.0</span>
     
   </div>
 
@@ -261,6 +269,10 @@ INSERT OR IGNORE INTO users_cache
 SELECT id, email FROM users_import;</div>
       </div>
   </div>
+</main>
+<footer class="site-footer">
+  <p>&copy; 2024 Can I Use SQL. All rights reserved.</p>
+</footer>
   <script src="/search.js" defer></script>
   <script src="/splash.js" defer></script>
   <script src="/track.js" defer></script>

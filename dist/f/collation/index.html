@@ -22,6 +22,7 @@
 </head>
 <body>
 
+<a href="#main-content" class="skip-link">Skip to main content</a>
 <header class="site-header">
   <a href="/" class="home-link" aria-label="Home">
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="30" height="30" aria-hidden="true">
@@ -44,64 +45,71 @@
       <rect x="20" y="17" width="4" height="3" rx="0.5" fill="#1a6391" opacity="0.55"/>
     </svg>
   </a>
-  <span class="command-heading"><h1>COLLATION AND CHARACTER SETS<span class="category-badge">Administration</span></h1></span>
+  <span class="command-heading"><h1>COLLATION AND CHARACTER SETS</h1><span class="category-badge">Administration</span></span>
   <div class="search-widget">
     <input class="site-search" type="search" placeholder="Search SQL commands…"
            autocomplete="off" aria-label="Search SQL commands">
     <ul class="search-results" hidden role="listbox" aria-label="Search suggestions"></ul>
   </div>
+    <a href="https://www.buymeacoffee.com/computerguycj" target="_blank" rel="noopener" class="bmc-link" aria-label="Buy me a coffee">
+    <img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png"
+         alt="Buy Me A Coffee"
+         height="36">
+  </a>
 </header>
 
+<main id="main-content">
 
   <p class="command-desc">Collation defines the rules for comparing and sorting string data — which characters are equal, how case and accents are handled, and sort order. Character set (charset) defines which characters can be stored. Together they determine string behavior throughout the engine.</p>
   <p class="command-overview">Defines how strings are sorted and compared (collation) and what character encoding is used (charset). Collation affects ORDER BY, comparison, and uniqueness. Mixing collations causes errors; always specify explicitly for predictable behavior.</p>
 
   <h2>Compatibility</h2>
-  <div class="compare-bar">
-    <span class="compare-label">Show:</span>
+  <fieldset class="compare-bar">
+    <legend>Filter by Database</legend>
     <label><input type="checkbox" value="mysql" checked> MySQL</label>
     <label><input type="checkbox" value="postgresql" checked> PostgreSQL</label>
     <label><input type="checkbox" value="sqlserver" checked> SQL Server</label>
     <label><input type="checkbox" value="oracle" checked> Oracle</label>
     <label><input type="checkbox" value="sqlite" checked> SQLite</label>
-  </div>
+  </fieldset>
   <table>
+    <caption>SQL COLLATION AND CHARACTER SETS Compatibility Across Databases</caption>
     <thead>
       <tr>
-        <th>Database System</th>
-        <th>Support Status</th>
-        <th>Since Version</th>
-        <th>Notes</th>
+        <th scope="col">Database System</th>
+        <th scope="col">Support Status</th>
+        <th scope="col">Since Version</th>
+        <th scope="col">Notes</th>
       </tr>
     </thead>
     <tbody>
           <tr data-db="mysql">
             <td>MySQL</td>
-            <td class="supported">✓ Supported</td>
+            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
             <td>4.1</td>
             <td class="notes">Character set and collation are separate but related settings. Character set determines storable characters (utf8mb4 is the recommended charset — note utf8 in MySQL is a misleading alias for a 3-byte subset that cannot store 4-byte Unicode like emoji; use utf8mb4). Collation determines sort/comparison rules. Can be set at server, database, table, and column level. utf8mb4_unicode_ci is case-insensitive and accent-insensitive; utf8mb4_bin is binary (case-sensitive, byte-by-byte). Collation mismatches between joined columns cause the 'Illegal mix of collations' error.</td>
           </tr>
           <tr data-db="postgresql">
             <td>PostgreSQL</td>
-            <td class="supported">✓ Supported</td>
+            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
             <td>9.1</td>
             <td class="notes">PostgreSQL collation support uses the underlying OS locale (libc provider) or the ICU library (ICU provider, recommended for cross-platform consistency since PostgreSQL 10). Database-level collation is set at CREATE DATABASE and cannot be changed afterward. Column-level COLLATE overrides apply to comparisons, ORDER BY, and indexes. The C collation is byte-order (equivalent to POSIX, fastest, no locale rules). ICU deterministic=false collations (15+) allow accent/case-insensitive indexes.</td>
           </tr>
           <tr data-db="sqlserver">
             <td>SQL Server</td>
-            <td class="supported">✓ Supported</td>
+            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
             <td>7.0</td>
             <td class="notes">Collation names in SQL Server encode multiple attributes: locale (Latin1_General), case sensitivity (CI = case-insensitive, CS = case-sensitive), accent sensitivity (AI = accent-insensitive, AS = accent-sensitive), and optionally width and kana sensitivity. The default collation for a SQL Server installation is set at setup time and affects system databases. SQL_* collations are legacy; Windows collations (Latin1_General_*) and BIN2 (binary) are current. Collation conflicts between tempdb and user databases are a common source of errors.</td>
           </tr>
           <tr data-db="oracle">
             <td>Oracle</td>
-            <td class="supported">✓ Supported</td>
+            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
             <td>12c</td>
             <td class="notes">Oracle's collation support has evolved significantly. Pre-12c: NLS_SORT and NLS_COMP session parameters control sort order and comparison behavior. 12c+: column-level COLLATE clause added. 21c+: enhanced Unicode collation with BINARY_AI (accent-insensitive), BINARY_CI (case-insensitive). The database character set (AL32UTF8 = Unicode) is set at creation and cannot be changed. NLS_SORT=BINARY_CI + NLS_COMP=LINGUISTIC enables case-insensitive comparisons globally.</td>
           </tr>
           <tr data-db="sqlite">
             <td>SQLite</td>
-            <td class="supported">✓ Supported</td>
+            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
             <td>3.0</td>
             <td class="notes">SQLite has three built-in collations: BINARY (default, case-sensitive byte comparison), NOCASE (case-insensitive for ASCII A-Z only, not Unicode), and RTRIM (BINARY with trailing spaces ignored). Custom collations can be registered at runtime via the application layer (e.g., sqlite3_create_collation() in C, or driver-level in Python/Go). No ICU or Unicode-aware case folding built in — for full Unicode case-insensitive search, register a custom collation or use LOWER().</td>
           </tr>
@@ -125,11 +133,11 @@ SELECT * FROM users WHERE username = 'Alice'; -- may match 'alice', 'ALICE'</div
 
   <h2>Version Support</h2>
   <div class="version-list">
-    <span class="version-badge version-supported">MySQL: Since 4.1</span>
-    <span class="version-badge version-supported">PostgreSQL: Since 9.1</span>
-    <span class="version-badge version-supported">SQL Server: Since 7.0</span>
-    <span class="version-badge version-supported">Oracle: Since 12c</span>
-    <span class="version-badge version-supported">SQLite: Since 3.0</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> MySQL: Since 4.1</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> PostgreSQL: Since 9.1</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> SQL Server: Since 7.0</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> Oracle: Since 12c</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> SQLite: Since 3.0</span>
     
   </div>
 
@@ -272,6 +280,10 @@ WHERE LOWER(username) = LOWER('Ünïcödé');
 PRAGMA collation_list;</div>
       </div>
   </div>
+</main>
+<footer class="site-footer">
+  <p>&copy; 2024 Can I Use SQL. All rights reserved.</p>
+</footer>
   <script src="/search.js" defer></script>
   <script src="/splash.js" defer></script>
   <script src="/track.js" defer></script>

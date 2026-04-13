@@ -22,6 +22,7 @@
 </head>
 <body>
 
+<a href="#main-content" class="skip-link">Skip to main content</a>
 <header class="site-header">
   <a href="/" class="home-link" aria-label="Home">
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="30" height="30" aria-hidden="true">
@@ -44,64 +45,71 @@
       <rect x="20" y="17" width="4" height="3" rx="0.5" fill="#1a6391" opacity="0.55"/>
     </svg>
   </a>
-  <span class="command-heading"><h1>SAVEPOINT<span class="category-badge">Transactions</span></h1></span>
+  <span class="command-heading"><h1>SAVEPOINT</h1><span class="category-badge">Transactions</span></span>
   <div class="search-widget">
     <input class="site-search" type="search" placeholder="Search SQL commands…"
            autocomplete="off" aria-label="Search SQL commands">
     <ul class="search-results" hidden role="listbox" aria-label="Search suggestions"></ul>
   </div>
+    <a href="https://www.buymeacoffee.com/computerguycj" target="_blank" rel="noopener" class="bmc-link" aria-label="Buy me a coffee">
+    <img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png"
+         alt="Buy Me A Coffee"
+         height="36">
+  </a>
 </header>
 
+<main id="main-content">
 
   <p class="command-desc">A named marker within a transaction to which you can partially roll back without aborting the entire transaction. Enables nested or selective error recovery inside a larger unit of work.</p>
   <p class="command-overview">A named marker within a transaction allowing partial rollback without aborting the entire transaction. Useful for recovering from errors mid-transaction. Can be nested in some databases. Release savepoints once no longer needed to free resources.</p>
 
   <h2>Compatibility</h2>
-  <div class="compare-bar">
-    <span class="compare-label">Show:</span>
+  <fieldset class="compare-bar">
+    <legend>Filter by Database</legend>
     <label><input type="checkbox" value="mysql" checked> MySQL</label>
     <label><input type="checkbox" value="postgresql" checked> PostgreSQL</label>
     <label><input type="checkbox" value="sqlserver" checked> SQL Server</label>
     <label><input type="checkbox" value="oracle" checked> Oracle</label>
     <label><input type="checkbox" value="sqlite" checked> SQLite</label>
-  </div>
+  </fieldset>
   <table>
+    <caption>SQL SAVEPOINT Compatibility Across Databases</caption>
     <thead>
       <tr>
-        <th>Database System</th>
-        <th>Support Status</th>
-        <th>Since Version</th>
-        <th>Notes</th>
+        <th scope="col">Database System</th>
+        <th scope="col">Support Status</th>
+        <th scope="col">Since Version</th>
+        <th scope="col">Notes</th>
       </tr>
     </thead>
     <tbody>
           <tr data-db="mysql">
             <td>MySQL</td>
-            <td class="supported">✓ Supported</td>
+            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
             <td>4.0.14</td>
             <td class="notes">SAVEPOINT, ROLLBACK TO SAVEPOINT, and RELEASE SAVEPOINT supported for InnoDB tables since MySQL 4.0.14. Not available for MyISAM (which has no transaction support). Savepoints are session-scoped and discarded on COMMIT or full ROLLBACK. Nested savepoints with the same name replace the previous one.</td>
           </tr>
           <tr data-db="postgresql">
             <td>PostgreSQL</td>
-            <td class="supported">✓ Supported</td>
+            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
             <td>8.0</td>
             <td class="notes">SAVEPOINT, ROLLBACK TO SAVEPOINT, and RELEASE SAVEPOINT fully supported. PostgreSQL also uses savepoints internally to implement subtransactions. In PostgreSQL, any error inside a transaction puts it into an error state that blocks further commands — ROLLBACK TO SAVEPOINT is the only way to recover a usable transaction state after an error without aborting everything. This makes savepoints especially important in PostgreSQL for error handling inside application code.</td>
           </tr>
           <tr data-db="sqlserver">
             <td>SQL Server</td>
-            <td class="supported">✓ Supported</td>
+            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
             <td>6.5</td>
             <td class="notes">SAVE TRANSACTION (note: SAVE, not SAVEPOINT) creates a savepoint. ROLLBACK TRANSACTION &lt;name&gt; rolls back to the savepoint without ending the transaction. SAVE TRANSACTION does not support a full RELEASE equivalent. Nested BEGIN TRANSACTION increments @@TRANCOUNT but the outermost COMMIT is the only one that actually commits — inner COMMITs decrement @@TRANCOUNT only.</td>
           </tr>
           <tr data-db="oracle">
             <td>Oracle</td>
-            <td class="supported">✓ Supported</td>
+            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
             <td>7</td>
             <td class="notes">SAVEPOINT and ROLLBACK TO SAVEPOINT supported. Oracle auto-starts transactions (no explicit BEGIN needed — the first DML statement starts a transaction). RELEASE SAVEPOINT is not supported in Oracle — savepoints are implicitly released on COMMIT. Oracle's autonomous transactions (PRAGMA AUTONOMOUS_TRANSACTION) are a related but distinct concept.</td>
           </tr>
           <tr data-db="sqlite">
             <td>SQLite</td>
-            <td class="supported">✓ Supported</td>
+            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
             <td>3.6.8</td>
             <td class="notes">SAVEPOINT, ROLLBACK TO, and RELEASE supported since SQLite 3.6.8. SQLite's SAVEPOINT also doubles as a BEGIN — nesting SAVEPOINTs creates subtransactions. RELEASE is equivalent to committing the savepoint's work into the outer transaction (like COMMIT for the savepoint). Rolling back to a savepoint and then RELEASEing it is not the same as canceling it — RELEASE after ROLLBACK TO simply removes the savepoint marker.</td>
           </tr>
@@ -128,11 +136,11 @@ COMMIT;</div>
 
   <h2>Version Support</h2>
   <div class="version-list">
-    <span class="version-badge version-supported">MySQL: Since 4.0.14</span>
-    <span class="version-badge version-supported">PostgreSQL: Since 8.0</span>
-    <span class="version-badge version-supported">SQL Server: Since 6.5</span>
-    <span class="version-badge version-supported">Oracle: Since 7</span>
-    <span class="version-badge version-supported">SQLite: Since 3.6.8</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> MySQL: Since 4.0.14</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> PostgreSQL: Since 8.0</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> SQL Server: Since 6.5</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> Oracle: Since 7</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> SQLite: Since 3.6.8</span>
     
   </div>
 
@@ -240,6 +248,10 @@ SAVEPOINT outer;
 ROLLBACK TO outer;  -- undoes everything including inner</div>
       </div>
   </div>
+</main>
+<footer class="site-footer">
+  <p>&copy; 2024 Can I Use SQL. All rights reserved.</p>
+</footer>
   <script src="/search.js" defer></script>
   <script src="/splash.js" defer></script>
   <script src="/track.js" defer></script>

@@ -1,15 +1,15 @@
-<div class="examples" id="popular-commands-box">
+<nav class="examples" id="popular-commands-box" aria-label="Popular Commands">
   <h2>Popular Commands</h2>
   <div id="popular-commands-list">{{POPULAR_COMMANDS}}</div>
-</div>
+</nav>
 
-<div class="compare-bar">
-  <span class="compare-label">Show:</span>
+<fieldset class="compare-bar">
+  <legend>Filter by Database</legend>
   <label><input type="checkbox" value="mysql" checked> MySQL</label>
   <label><input type="checkbox" value="postgresql" checked> PostgreSQL</label>
   <label><input type="checkbox" value="sqlserver" checked> SQL Server</label>
   <label><input type="checkbox" value="oracle" checked> Oracle</label>
   <label><input type="checkbox" value="sqlite" checked> SQLite</label>
-</div>
+</fieldset>
 
 {{COMMAND_LIST}}

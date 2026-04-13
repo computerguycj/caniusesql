@@ -22,6 +22,7 @@
 </head>
 <body>
 
+<a href="#main-content" class="skip-link">Skip to main content</a>
 <header class="site-header">
   <a href="/" class="home-link" aria-label="Home">
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="30" height="30" aria-hidden="true">
@@ -44,64 +45,71 @@
       <rect x="20" y="17" width="4" height="3" rx="0.5" fill="#1a6391" opacity="0.55"/>
     </svg>
   </a>
-  <span class="command-heading"><h1>MATERIALIZED VIEW<span class="category-badge">DDL</span></h1></span>
+  <span class="command-heading"><h1>MATERIALIZED VIEW</h1><span class="category-badge">DDL</span></span>
   <div class="search-widget">
     <input class="site-search" type="search" placeholder="Search SQL commands…"
            autocomplete="off" aria-label="Search SQL commands">
     <ul class="search-results" hidden role="listbox" aria-label="Search suggestions"></ul>
   </div>
+    <a href="https://www.buymeacoffee.com/computerguycj" target="_blank" rel="noopener" class="bmc-link" aria-label="Buy me a coffee">
+    <img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png"
+         alt="Buy Me A Coffee"
+         height="36">
+  </a>
 </header>
 
+<main id="main-content">
 
   <p class="command-desc">A view whose result set is physically stored on disk and can be refreshed on demand or automatically. Trades storage and staleness for query speed — avoids recomputing expensive aggregations on every query.</p>
   <p class="command-overview">Physical snapshots of a query result stored as a table, refreshed on demand or on a schedule. Dramatically faster for expensive aggregations over large tables at the cost of stale data. The right choice when near-real-time accuracy is not required.</p>
 
   <h2>Compatibility</h2>
-  <div class="compare-bar">
-    <span class="compare-label">Show:</span>
+  <fieldset class="compare-bar">
+    <legend>Filter by Database</legend>
     <label><input type="checkbox" value="mysql" checked> MySQL</label>
     <label><input type="checkbox" value="postgresql" checked> PostgreSQL</label>
     <label><input type="checkbox" value="sqlserver" checked> SQL Server</label>
     <label><input type="checkbox" value="oracle" checked> Oracle</label>
     <label><input type="checkbox" value="sqlite" checked> SQLite</label>
-  </div>
+  </fieldset>
   <table>
+    <caption>SQL MATERIALIZED VIEW Compatibility Across Databases</caption>
     <thead>
       <tr>
-        <th>Database System</th>
-        <th>Support Status</th>
-        <th>Since Version</th>
-        <th>Notes</th>
+        <th scope="col">Database System</th>
+        <th scope="col">Support Status</th>
+        <th scope="col">Since Version</th>
+        <th scope="col">Notes</th>
       </tr>
     </thead>
     <tbody>
           <tr data-db="mysql">
             <td>MySQL</td>
-            <td class="not-supported">✗ Not Supported</td>
+            <td class="not-supported"><span aria-hidden="true">✗</span> <span class="status-text">Not Supported</span></td>
             <td>—</td>
             <td class="notes">MySQL has no native materialized view. Common workarounds: (1) a regular table populated by a scheduled event or stored procedure; (2) a STORED table populated by a trigger on the source table. MariaDB does not have materialized views either.</td>
           </tr>
           <tr data-db="postgresql">
             <td>PostgreSQL</td>
-            <td class="supported">✓ Supported</td>
+            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
             <td>9.3</td>
             <td class="notes">REFRESH MATERIALIZED VIEW rebuilds the view from scratch (locks table during refresh by default). REFRESH MATERIALIZED VIEW CONCURRENTLY (requires a UNIQUE index) allows concurrent reads during refresh. No automatic refresh — use pg_cron, a trigger, or an external scheduler. Can be indexed like a regular table.</td>
           </tr>
           <tr data-db="sqlserver">
             <td>SQL Server</td>
-            <td class="supported">✓ Supported</td>
+            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
             <td>2000</td>
             <td class="notes">Called indexed views. Create a regular view, then add a UNIQUE CLUSTERED INDEX — SQL Server automatically maintains the stored result on DML changes (synchronous, not on-demand). Requires the view to be created WITH SCHEMABINDING and imposes restrictions: no subqueries, no OUTER JOINs (Enterprise Edition relaxes some), no non-deterministic functions. The optimizer can use indexed views automatically (Enterprise) or with NOEXPAND hint (all editions).</td>
           </tr>
           <tr data-db="oracle">
             <td>Oracle</td>
-            <td class="supported">✓ Supported</td>
+            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
             <td>8i</td>
             <td class="notes">Full-featured materialized views with multiple refresh modes: COMPLETE (full recompute), FAST (incremental via materialized view logs), and FORCE (FAST if possible, else COMPLETE). Refresh can be ON COMMIT (synchronous) or ON DEMAND. The query rewrite feature lets Oracle's optimizer automatically use a materialized view instead of the base tables when it detects a matching pattern.</td>
           </tr>
           <tr data-db="sqlite">
             <td>SQLite</td>
-            <td class="not-supported">✗ Not Supported</td>
+            <td class="not-supported"><span aria-hidden="true">✗</span> <span class="status-text">Not Supported</span></td>
             <td>—</td>
             <td class="notes">SQLite has no materialized view support. The standard workaround is to create a regular table and populate it manually or via a trigger.</td>
           </tr>
@@ -125,11 +133,11 @@ REFRESH MATERIALIZED VIEW monthly_sales;</div>
 
   <h2>Version Support</h2>
   <div class="version-list">
-    <span class="version-badge version-not-supported">MySQL: Not supported</span>
-    <span class="version-badge version-supported">PostgreSQL: Since 9.3</span>
-    <span class="version-badge version-supported">SQL Server: Since 2000</span>
-    <span class="version-badge version-supported">Oracle: Since 8i</span>
-    <span class="version-badge version-not-supported">SQLite: Not supported</span>
+    <span class="version-badge version-not-supported"><span aria-hidden="true">✗</span> MySQL: Not supported</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> PostgreSQL: Since 9.3</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> SQL Server: Since 2000</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> Oracle: Since 8i</span>
+    <span class="version-badge version-not-supported"><span aria-hidden="true">✗</span> SQLite: Not supported</span>
     
   </div>
 
@@ -239,6 +247,10 @@ FROM orders
 GROUP BY strftime('%Y-%m', order_date);</div>
       </div>
   </div>
+</main>
+<footer class="site-footer">
+  <p>&copy; 2024 Can I Use SQL. All rights reserved.</p>
+</footer>
   <script src="/search.js" defer></script>
   <script src="/splash.js" defer></script>
   <script src="/track.js" defer></script>

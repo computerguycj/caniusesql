@@ -22,6 +22,7 @@
 </head>
 <body>
 
+<a href="#main-content" class="skip-link">Skip to main content</a>
 <header class="site-header">
   <a href="/" class="home-link" aria-label="Home">
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="30" height="30" aria-hidden="true">
@@ -44,64 +45,71 @@
       <rect x="20" y="17" width="4" height="3" rx="0.5" fill="#1a6391" opacity="0.55"/>
     </svg>
   </a>
-  <span class="command-heading"><h1>WINDOW FRAME (ROWS/RANGE)<span class="category-badge">Query Techniques</span></h1></span>
+  <span class="command-heading"><h1>WINDOW FRAME (ROWS/RANGE)</h1><span class="category-badge">Query Techniques</span></span>
   <div class="search-widget">
     <input class="site-search" type="search" placeholder="Search SQL commands…"
            autocomplete="off" aria-label="Search SQL commands">
     <ul class="search-results" hidden role="listbox" aria-label="Search suggestions"></ul>
   </div>
+    <a href="https://www.buymeacoffee.com/computerguycj" target="_blank" rel="noopener" class="bmc-link" aria-label="Buy me a coffee">
+    <img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png"
+         alt="Buy Me A Coffee"
+         height="36">
+  </a>
 </header>
 
+<main id="main-content">
 
   <p class="command-desc">Control which rows are included in a window function's calculation relative to the current row. The frame clause (ROWS or RANGE BETWEEN ... AND ...) determines the sliding window boundaries.</p>
   <p class="command-overview">Defines the set of rows relative to the current row in a window: ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW, for example. Required for FIRST_VALUE, LAST_VALUE, and NTH_VALUE to return meaningful results. Default varies by function.</p>
 
   <h2>Compatibility</h2>
-  <div class="compare-bar">
-    <span class="compare-label">Show:</span>
+  <fieldset class="compare-bar">
+    <legend>Filter by Database</legend>
     <label><input type="checkbox" value="mysql" checked> MySQL</label>
     <label><input type="checkbox" value="postgresql" checked> PostgreSQL</label>
     <label><input type="checkbox" value="sqlserver" checked> SQL Server</label>
     <label><input type="checkbox" value="oracle" checked> Oracle</label>
     <label><input type="checkbox" value="sqlite" checked> SQLite</label>
-  </div>
+  </fieldset>
   <table>
+    <caption>SQL WINDOW FRAME (ROWS/RANGE) Compatibility Across Databases</caption>
     <thead>
       <tr>
-        <th>Database System</th>
-        <th>Support Status</th>
-        <th>Since Version</th>
-        <th>Notes</th>
+        <th scope="col">Database System</th>
+        <th scope="col">Support Status</th>
+        <th scope="col">Since Version</th>
+        <th scope="col">Notes</th>
       </tr>
     </thead>
     <tbody>
           <tr data-db="mysql">
             <td>MySQL</td>
-            <td class="supported">✓ Supported</td>
+            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
             <td>8.0</td>
             <td class="notes">ROWS and RANGE frames supported since 8.0. GROUPS frame mode added in 8.0. Frame boundaries: UNBOUNDED PRECEDING, n PRECEDING, CURRENT ROW, n FOLLOWING, UNBOUNDED FOLLOWING. RANGE with numeric/interval offsets supported.</td>
           </tr>
           <tr data-db="postgresql">
             <td>PostgreSQL</td>
-            <td class="supported">✓ Supported</td>
+            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
             <td>8.4</td>
             <td class="notes">ROWS and RANGE supported since 8.4. GROUPS mode added in PG 11. RANGE with numeric/interval offsets. EXCLUDE clause (EXCLUDE CURRENT ROW, EXCLUDE GROUP, EXCLUDE TIES, EXCLUDE NO OTHERS) added in PG 11 for fine-grained control.</td>
           </tr>
           <tr data-db="sqlserver">
             <td>SQL Server</td>
-            <td class="supported">✓ Supported</td>
+            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
             <td>2012</td>
             <td class="notes">ROWS and RANGE supported since SQL Server 2012. No GROUPS mode. RANGE with numeric offsets supported but RANGE INTERVAL is not (use ROWS for date rolling windows instead). No EXCLUDE clause.</td>
           </tr>
           <tr data-db="oracle">
             <td>Oracle</td>
-            <td class="supported">✓ Supported</td>
+            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
             <td>8i</td>
             <td class="notes">ROWS and RANGE supported since 8i. No GROUPS mode. RANGE with numeric or interval offsets. No EXCLUDE clause. Default frame when ORDER BY is present: RANGE UNBOUNDED PRECEDING TO CURRENT ROW.</td>
           </tr>
           <tr data-db="sqlite">
             <td>SQLite</td>
-            <td class="supported">✓ Supported</td>
+            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
             <td>3.25.0</td>
             <td class="notes">ROWS and RANGE supported since 3.25.0. GROUPS mode added in 3.28.0. No EXCLUDE clause. RANGE with numeric offsets supported. No INTERVAL type, so RANGE date rolling requires storing dates as numeric types (Julian day or Unix epoch).</td>
           </tr>
@@ -126,11 +134,11 @@ FROM orders;</div>
 
   <h2>Version Support</h2>
   <div class="version-list">
-    <span class="version-badge version-supported">MySQL: Since 8.0</span>
-    <span class="version-badge version-supported">PostgreSQL: Since 8.4</span>
-    <span class="version-badge version-supported">SQL Server: Since 2012</span>
-    <span class="version-badge version-supported">Oracle: Since 8i</span>
-    <span class="version-badge version-supported">SQLite: Since 3.25.0</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> MySQL: Since 8.0</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> PostgreSQL: Since 8.4</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> SQL Server: Since 2012</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> Oracle: Since 8i</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> SQLite: Since 3.25.0</span>
     
   </div>
 
@@ -239,6 +247,10 @@ SELECT dt, amt,
 FROM sales;</div>
       </div>
   </div>
+</main>
+<footer class="site-footer">
+  <p>&copy; 2024 Can I Use SQL. All rights reserved.</p>
+</footer>
   <script src="/search.js" defer></script>
   <script src="/splash.js" defer></script>
   <script src="/track.js" defer></script>

@@ -166,8 +166,14 @@ ${headHtml}
 </head>
 <body>
 
+<a href="#main-content" class="skip-link">Skip to main content</a>
 ${header}
+<main id="main-content">
 ${bodyContent}
+</main>
+<footer class="site-footer">
+  <p>&copy; 2024 Can I Use SQL. All rights reserved.</p>
+</footer>
   <script src="/search.js" defer></script>
   <script src="/splash.js" defer></script>
   <script src="/track.js" defer></script>
@@ -194,12 +200,13 @@ function buildPage(commandName, entry, headerTpl) {
     const label       = DB_LABELS[db] || db;
     const supported   = info.supported;
     const statusClass = supported ? 'supported' : 'not-supported';
-    const statusText  = supported ? '✓ Supported' : '✗ Not Supported';
+    const symbol      = supported ? '✓' : '✗';
+    const statusText  = supported ? 'Supported' : 'Not Supported';
     const since       = info.since || '—';
     tableRows += `
           <tr data-db="${esc(db)}">
             <td>${esc(label)}</td>
-            <td class="${statusClass}">${statusText}</td>
+            <td class="${statusClass}"><span aria-hidden="true">${symbol}</span> <span class="status-text">${statusText}</span></td>
             <td>${esc(since)}</td>
             <td class="notes">${esc(info.notes || '')}</td>
           </tr>`;
@@ -210,10 +217,11 @@ function buildPage(commandName, entry, headerTpl) {
   for (const [db, info] of Object.entries(compatibility)) {
     const label      = DB_LABELS[db] || db;
     const badgeClass = info.supported ? 'version-supported' : 'version-not-supported';
+    const symbol     = info.supported ? '✓' : '✗';
     const text       = info.supported
       ? `${label}: Since ${info.since ?? '?'}`
       : `${label}: Not supported`;
-    badges += `<span class="version-badge ${badgeClass}">${esc(text)}</span>\n    `;
+    badges += `<span class="version-badge ${badgeClass}"><span aria-hidden="true">${symbol}</span> ${esc(text)}</span>\n    `;
   }
 
   // ── Per-DB syntax blocks ────────────────────────────────────────────────
@@ -238,7 +246,7 @@ function buildPage(commandName, entry, headerTpl) {
     : '';
 
   // ── Command heading (goes into {{COMMAND_HEADING}} placeholder) ─────────
-  const commandHeading = `<h1>${esc(displayName)}${categoryBadge}</h1>`;
+  const commandHeading = `<h1>${esc(displayName)}</h1>${categoryBadge}`;
 
   // ── Page-specific <head> ────────────────────────────────────────────────
   const headHtml = `  <title>${esc(title)}</title>
@@ -262,21 +270,22 @@ function buildPage(commandName, entry, headerTpl) {
   ${overview ? `<p class="command-overview">${esc(overview)}</p>` : ''}
 
   <h2>Compatibility</h2>
-  <div class="compare-bar">
-    <span class="compare-label">Show:</span>
+  <fieldset class="compare-bar">
+    <legend>Filter by Database</legend>
     <label><input type="checkbox" value="mysql" checked> MySQL</label>
     <label><input type="checkbox" value="postgresql" checked> PostgreSQL</label>
     <label><input type="checkbox" value="sqlserver" checked> SQL Server</label>
     <label><input type="checkbox" value="oracle" checked> Oracle</label>
     <label><input type="checkbox" value="sqlite" checked> SQLite</label>
-  </div>
+  </fieldset>
   <table>
+    <caption>SQL ${esc(displayName)} Compatibility Across Databases</caption>
     <thead>
       <tr>
-        <th>Database System</th>
-        <th>Support Status</th>
-        <th>Since Version</th>
-        <th>Notes</th>
+        <th scope="col">Database System</th>
+        <th scope="col">Support Status</th>
+        <th scope="col">Since Version</th>
+        <th scope="col">Notes</th>
       </tr>
     </thead>
     <tbody>${tableRows}
