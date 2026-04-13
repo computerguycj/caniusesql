@@ -5,6 +5,7 @@
 A caniuse.com-style resource for checking SQL feature support across PostgreSQL, MySQL, SQLite, SQL Server, and Oracle.
 
 **[Try it live →](https://www.caniusesql.com)**
+<img width="1092" height="829" alt="image" src="https://github.com/user-attachments/assets/5150ebd1-2452-40ae-9d91-2d691bcc225b" />
 
 ---
 
