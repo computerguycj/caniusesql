@@ -22,6 +22,7 @@
 </head>
 <body>
 
+<a href="#main-content" class="skip-link">Skip to main content</a>
 <header class="site-header">
   <a href="/" class="home-link" aria-label="Home">
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="30" height="30" aria-hidden="true">
@@ -44,64 +45,71 @@
       <rect x="20" y="17" width="4" height="3" rx="0.5" fill="#1a6391" opacity="0.55"/>
     </svg>
   </a>
-  <span class="command-heading"><h1>RETURNING<span class="category-badge">DML</span></h1></span>
+  <span class="command-heading"><h1>RETURNING</h1><span class="category-badge">DML</span></span>
   <div class="search-widget">
     <input class="site-search" type="search" placeholder="Search SQL commands…"
            autocomplete="off" aria-label="Search SQL commands">
     <ul class="search-results" hidden role="listbox" aria-label="Search suggestions"></ul>
   </div>
+    <a href="https://www.buymeacoffee.com/computerguycj" target="_blank" rel="noopener" class="bmc-link" aria-label="Buy me a coffee">
+    <img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png"
+         alt="Buy Me A Coffee"
+         height="36">
+  </a>
 </header>
 
+<main id="main-content">
 
   <p class="command-desc">Return column values from rows affected by an INSERT, UPDATE, or DELETE — without a separate SELECT round-trip.</p>
   <p class="command-overview">Returns columns from modified rows (INSERT, UPDATE, DELETE) as part of the statement result, avoiding a separate SELECT to fetch generated values. PostgreSQL, SQLite, and SQL Server support it; MySQL does not natively.</p>
 
   <h2>Compatibility</h2>
-  <div class="compare-bar">
-    <span class="compare-label">Show:</span>
+  <fieldset class="compare-bar">
+    <legend>Filter by Database</legend>
     <label><input type="checkbox" value="mysql" checked> MySQL</label>
     <label><input type="checkbox" value="postgresql" checked> PostgreSQL</label>
     <label><input type="checkbox" value="sqlserver" checked> SQL Server</label>
     <label><input type="checkbox" value="oracle" checked> Oracle</label>
     <label><input type="checkbox" value="sqlite" checked> SQLite</label>
-  </div>
+  </fieldset>
   <table>
+    <caption>SQL RETURNING Compatibility Across Databases</caption>
     <thead>
       <tr>
-        <th>Database System</th>
-        <th>Support Status</th>
-        <th>Since Version</th>
-        <th>Notes</th>
+        <th scope="col">Database System</th>
+        <th scope="col">Support Status</th>
+        <th scope="col">Since Version</th>
+        <th scope="col">Notes</th>
       </tr>
     </thead>
     <tbody>
           <tr data-db="mysql">
             <td>MySQL</td>
-            <td class="not-supported">✗ Not Supported</td>
+            <td class="not-supported"><span aria-hidden="true">✗</span> <span class="status-text">Not Supported</span></td>
             <td>—</td>
             <td class="notes">Not supported. Use LAST_INSERT_ID() for the auto-increment key after INSERT; no equivalent for UPDATE or DELETE.</td>
           </tr>
           <tr data-db="postgresql">
             <td>PostgreSQL</td>
-            <td class="supported">✓ Supported</td>
+            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
             <td>8.2</td>
             <td class="notes">Full RETURNING on INSERT, UPDATE, and DELETE. Can return any expression. Also supported in MERGE (PG 15+). Returns post-change values for UPDATE, deleted values for DELETE.</td>
           </tr>
           <tr data-db="sqlserver">
             <td>SQL Server</td>
-            <td class="supported">✓ Supported</td>
+            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
             <td>2005</td>
             <td class="notes">OUTPUT clause with INSERTED.* (post-change) and DELETED.* (pre-change). Different syntax but functionally equivalent. Can redirect output into a table variable with OUTPUT ... INTO.</td>
           </tr>
           <tr data-db="oracle">
             <td>Oracle</td>
-            <td class="supported">✓ Supported</td>
+            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
             <td>all</td>
             <td class="notes">RETURNING ... INTO :bind_var. Requires PL/SQL host/bind variables — cannot return a bare result set in plain SQL. Effectively PL/SQL-only; single-row practical for INSERT.</td>
           </tr>
           <tr data-db="sqlite">
             <td>SQLite</td>
-            <td class="supported">✓ Supported</td>
+            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
             <td>3.35.0</td>
             <td class="notes">RETURNING clause added in SQLite 3.35.0 (March 2021). Syntax matches PostgreSQL.</td>
           </tr>
@@ -122,11 +130,11 @@ DELETE FROM sessions WHERE expired_at &lt; NOW() RETURNING session_id;</div>
 
   <h2>Version Support</h2>
   <div class="version-list">
-    <span class="version-badge version-not-supported">MySQL: Not supported</span>
-    <span class="version-badge version-supported">PostgreSQL: Since 8.2</span>
-    <span class="version-badge version-supported">SQL Server: Since 2005</span>
-    <span class="version-badge version-supported">Oracle: Since all</span>
-    <span class="version-badge version-supported">SQLite: Since 3.35.0</span>
+    <span class="version-badge version-not-supported"><span aria-hidden="true">✗</span> MySQL: Not supported</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> PostgreSQL: Since 8.2</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> SQL Server: Since 2005</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> Oracle: Since all</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> SQLite: Since 3.35.0</span>
     
   </div>
 
@@ -167,6 +175,10 @@ RETURNING id INTO :new_id;
 UPDATE orders SET status = 'shipped' WHERE id = 42 RETURNING *;</div>
       </div>
   </div>
+</main>
+<footer class="site-footer">
+  <p>&copy; 2024 Can I Use SQL. All rights reserved.</p>
+</footer>
   <script src="/search.js" defer></script>
   <script src="/splash.js" defer></script>
   <script src="/track.js" defer></script>

@@ -22,6 +22,7 @@
 </head>
 <body>
 
+<a href="#main-content" class="skip-link">Skip to main content</a>
 <header class="site-header">
   <a href="/" class="home-link" aria-label="Home">
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="30" height="30" aria-hidden="true">
@@ -50,25 +51,31 @@
            autocomplete="off" aria-label="Search SQL commands">
     <ul class="search-results" hidden role="listbox" aria-label="Search suggestions"></ul>
   </div>
+    <a href="https://www.buymeacoffee.com/computerguycj" target="_blank" rel="noopener" class="bmc-link" aria-label="Buy me a coffee">
+    <img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png"
+         alt="Buy Me A Coffee"
+         height="36">
+  </a>
 </header>
 
-<div class="examples" id="popular-commands-box">
+<main id="main-content">
+<nav class="examples" id="popular-commands-box" aria-label="Popular Commands">
   <h2>Popular Commands</h2>
   <div id="popular-commands-list"><a class="example" href="/f/select">SELECT</a>
   <a class="example" href="/f/merge">MERGE</a>
   <a class="example" href="/f/pivot">PIVOT</a>
   <a class="example" href="/f/string-agg">STRING AGG</a>
   <a class="example" href="/f/window-functions">WINDOW FUNCTIONS</a></div>
-</div>
+</nav>
 
-<div class="compare-bar">
-  <span class="compare-label">Show:</span>
+<fieldset class="compare-bar">
+  <legend>Filter by Database</legend>
   <label><input type="checkbox" value="mysql" checked> MySQL</label>
   <label><input type="checkbox" value="postgresql" checked> PostgreSQL</label>
   <label><input type="checkbox" value="sqlserver" checked> SQL Server</label>
   <label><input type="checkbox" value="oracle" checked> Oracle</label>
   <label><input type="checkbox" value="sqlite" checked> SQLite</label>
-</div>
+</fieldset>
 
 
   <section class="category-group">
@@ -878,6 +885,10 @@
   </section>
 
 <script src="/popular.js" defer></script>
+</main>
+<footer class="site-footer">
+  <p>&copy; 2024 Can I Use SQL. All rights reserved.</p>
+</footer>
   <script src="/search.js" defer></script>
   <script src="/splash.js" defer></script>
   <script src="/track.js" defer></script>

@@ -22,6 +22,7 @@
 </head>
 <body>
 
+<a href="#main-content" class="skip-link">Skip to main content</a>
 <header class="site-header">
   <a href="/" class="home-link" aria-label="Home">
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="30" height="30" aria-hidden="true">
@@ -44,64 +45,71 @@
       <rect x="20" y="17" width="4" height="3" rx="0.5" fill="#1a6391" opacity="0.55"/>
     </svg>
   </a>
-  <span class="command-heading"><h1>DEFAULT VALUE<span class="category-badge">DDL</span></h1></span>
+  <span class="command-heading"><h1>DEFAULT VALUE</h1><span class="category-badge">DDL</span></span>
   <div class="search-widget">
     <input class="site-search" type="search" placeholder="Search SQL commands…"
            autocomplete="off" aria-label="Search SQL commands">
     <ul class="search-results" hidden role="listbox" aria-label="Search suggestions"></ul>
   </div>
+    <a href="https://www.buymeacoffee.com/computerguycj" target="_blank" rel="noopener" class="bmc-link" aria-label="Buy me a coffee">
+    <img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png"
+         alt="Buy Me A Coffee"
+         height="36">
+  </a>
 </header>
 
+<main id="main-content">
 
   <p class="command-desc">Specify a value to be used automatically when no value is provided for a column during INSERT.</p>
   <p class="command-overview">Values supplied when no explicit value is given on insert, specified with DEFAULT keyword. Can be literals, expressions, or functions like CURRENT_TIMESTAMP. Adding a default enables NOT NULL on columns previously populated via application logic.</p>
 
   <h2>Compatibility</h2>
-  <div class="compare-bar">
-    <span class="compare-label">Show:</span>
+  <fieldset class="compare-bar">
+    <legend>Filter by Database</legend>
     <label><input type="checkbox" value="mysql" checked> MySQL</label>
     <label><input type="checkbox" value="postgresql" checked> PostgreSQL</label>
     <label><input type="checkbox" value="sqlserver" checked> SQL Server</label>
     <label><input type="checkbox" value="oracle" checked> Oracle</label>
     <label><input type="checkbox" value="sqlite" checked> SQLite</label>
-  </div>
+  </fieldset>
   <table>
+    <caption>SQL DEFAULT VALUE Compatibility Across Databases</caption>
     <thead>
       <tr>
-        <th>Database System</th>
-        <th>Support Status</th>
-        <th>Since Version</th>
-        <th>Notes</th>
+        <th scope="col">Database System</th>
+        <th scope="col">Support Status</th>
+        <th scope="col">Since Version</th>
+        <th scope="col">Notes</th>
       </tr>
     </thead>
     <tbody>
           <tr data-db="mysql">
             <td>MySQL</td>
-            <td class="supported">✓ Supported</td>
+            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
             <td>all</td>
             <td class="notes">Literal defaults for any type. Expression defaults (DEFAULT (expr)) supported from 8.0.13. CURRENT_TIMESTAMP as default for DATETIME/TIMESTAMP. ON UPDATE CURRENT_TIMESTAMP auto-updates the column on row modification.</td>
           </tr>
           <tr data-db="postgresql">
             <td>PostgreSQL</td>
-            <td class="supported">✓ Supported</td>
+            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
             <td>all</td>
             <td class="notes">Defaults can be any expression, including function calls. CURRENT_TIMESTAMP, NOW(), gen_random_uuid(), etc. all work. DEFAULT can be set or dropped with ALTER TABLE ... SET DEFAULT / DROP DEFAULT.</td>
           </tr>
           <tr data-db="sqlserver">
             <td>SQL Server</td>
-            <td class="supported">✓ Supported</td>
+            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
             <td>all</td>
             <td class="notes">Named DEFAULT constraints are preferred over inline defaults — they can be referenced and dropped by name. GETDATE(), NEWID(), NEWSEQUENTIALID() are common default expressions. DEFAULT keyword can be used in INSERT to explicitly invoke the default.</td>
           </tr>
           <tr data-db="oracle">
             <td>Oracle</td>
-            <td class="supported">✓ Supported</td>
+            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
             <td>all</td>
             <td class="notes">Standard DEFAULT with literals or expressions. SYSDATE, SYSTIMESTAMP, SYS_GUID() (UUID) as common defaults. 12c+ adds DEFAULT ON NULL — applies the default even when NULL is explicitly inserted (unlike standard DEFAULT which only fires when the column is omitted).</td>
           </tr>
           <tr data-db="sqlite">
             <td>SQLite</td>
-            <td class="supported">✓ Supported</td>
+            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
             <td>all</td>
             <td class="notes">Supports literal defaults and a limited set of functions: CURRENT_TIME, CURRENT_DATE, CURRENT_TIMESTAMP. Arbitrary expression defaults are supported in parentheses. Cannot alter defaults after table creation without recreating the table.</td>
           </tr>
@@ -122,11 +130,11 @@
 
   <h2>Version Support</h2>
   <div class="version-list">
-    <span class="version-badge version-supported">MySQL: Since all</span>
-    <span class="version-badge version-supported">PostgreSQL: Since all</span>
-    <span class="version-badge version-supported">SQL Server: Since all</span>
-    <span class="version-badge version-supported">Oracle: Since all</span>
-    <span class="version-badge version-supported">SQLite: Since all</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> MySQL: Since all</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> PostgreSQL: Since all</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> SQL Server: Since all</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> Oracle: Since all</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> SQLite: Since all</span>
     
   </div>
 
@@ -199,6 +207,10 @@ CREATE TABLE items (qty NUMBER DEFAULT ON NULL 1);</div>
 );</div>
       </div>
   </div>
+</main>
+<footer class="site-footer">
+  <p>&copy; 2024 Can I Use SQL. All rights reserved.</p>
+</footer>
   <script src="/search.js" defer></script>
   <script src="/splash.js" defer></script>
   <script src="/track.js" defer></script>

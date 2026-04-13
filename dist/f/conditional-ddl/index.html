@@ -22,6 +22,7 @@
 </head>
 <body>
 
+<a href="#main-content" class="skip-link">Skip to main content</a>
 <header class="site-header">
   <a href="/" class="home-link" aria-label="Home">
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="30" height="30" aria-hidden="true">
@@ -44,64 +45,71 @@
       <rect x="20" y="17" width="4" height="3" rx="0.5" fill="#1a6391" opacity="0.55"/>
     </svg>
   </a>
-  <span class="command-heading"><h1>IF NOT EXISTS / IF EXISTS (CONDITIONAL DDL)<span class="category-badge">DDL</span></h1></span>
+  <span class="command-heading"><h1>IF NOT EXISTS / IF EXISTS (CONDITIONAL DDL)</h1><span class="category-badge">DDL</span></span>
   <div class="search-widget">
     <input class="site-search" type="search" placeholder="Search SQL commands…"
            autocomplete="off" aria-label="Search SQL commands">
     <ul class="search-results" hidden role="listbox" aria-label="Search suggestions"></ul>
   </div>
+    <a href="https://www.buymeacoffee.com/computerguycj" target="_blank" rel="noopener" class="bmc-link" aria-label="Buy me a coffee">
+    <img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png"
+         alt="Buy Me A Coffee"
+         height="36">
+  </a>
 </header>
 
+<main id="main-content">
 
   <p class="command-desc">Modifiers on DDL statements that suppress errors when an object already exists (or does not exist), enabling idempotent schema scripts.</p>
   <p class="command-overview">Conditional DDL that only executes the command if the object does not exist (IF NOT EXISTS) or does exist (IF EXISTS). Prevents errors when running scripts multiple times and enables idempotent schema deployments.</p>
 
   <h2>Compatibility</h2>
-  <div class="compare-bar">
-    <span class="compare-label">Show:</span>
+  <fieldset class="compare-bar">
+    <legend>Filter by Database</legend>
     <label><input type="checkbox" value="mysql" checked> MySQL</label>
     <label><input type="checkbox" value="postgresql" checked> PostgreSQL</label>
     <label><input type="checkbox" value="sqlserver" checked> SQL Server</label>
     <label><input type="checkbox" value="oracle" checked> Oracle</label>
     <label><input type="checkbox" value="sqlite" checked> SQLite</label>
-  </div>
+  </fieldset>
   <table>
+    <caption>SQL IF NOT EXISTS / IF EXISTS (CONDITIONAL DDL) Compatibility Across Databases</caption>
     <thead>
       <tr>
-        <th>Database System</th>
-        <th>Support Status</th>
-        <th>Since Version</th>
-        <th>Notes</th>
+        <th scope="col">Database System</th>
+        <th scope="col">Support Status</th>
+        <th scope="col">Since Version</th>
+        <th scope="col">Notes</th>
       </tr>
     </thead>
     <tbody>
           <tr data-db="mysql">
             <td>MySQL</td>
-            <td class="supported">✓ Supported</td>
+            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
             <td>5.0</td>
             <td class="notes">IF NOT EXISTS on CREATE TABLE, CREATE INDEX, CREATE DATABASE, CREATE SCHEMA. IF EXISTS on DROP TABLE, DROP INDEX, ALTER TABLE DROP COLUMN (8.0+).</td>
           </tr>
           <tr data-db="postgresql">
             <td>PostgreSQL</td>
-            <td class="supported">✓ Supported</td>
+            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
             <td>9.1</td>
             <td class="notes">IF NOT EXISTS added for CREATE TABLE in 9.1, CREATE INDEX in 9.5, CREATE SCHEMA in 9.3. IF EXISTS on DROP widely available. ALTER TABLE ... DROP COLUMN IF EXISTS since 9.0.</td>
           </tr>
           <tr data-db="sqlserver">
             <td>SQL Server</td>
-            <td class="supported">✓ Supported</td>
+            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
             <td>2016</td>
             <td class="notes">DROP TABLE IF EXISTS, DROP INDEX IF EXISTS added in 2016. CREATE TABLE IF NOT EXISTS is not supported — use IF NOT EXISTS (SELECT 1 FROM sys.tables ...) workaround or OBJECT_ID() check.</td>
           </tr>
           <tr data-db="oracle">
             <td>Oracle</td>
-            <td class="supported">✓ Supported</td>
+            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
             <td>23c</td>
             <td class="notes">IF EXISTS and IF NOT EXISTS on CREATE/DROP TABLE/INDEX added in Oracle 23c. On earlier versions, use PL/SQL exception handling (WHEN OBJ_ALREADY_EXISTS / WHEN NO_DATA_FOUND) as a workaround.</td>
           </tr>
           <tr data-db="sqlite">
             <td>SQLite</td>
-            <td class="supported">✓ Supported</td>
+            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
             <td>3.0.0</td>
             <td class="notes">CREATE TABLE IF NOT EXISTS and DROP TABLE IF EXISTS are fully supported. CREATE INDEX IF NOT EXISTS since 3.3.7.</td>
           </tr>
@@ -119,11 +127,11 @@ DROP TABLE IF EXISTS t;</div>
 
   <h2>Version Support</h2>
   <div class="version-list">
-    <span class="version-badge version-supported">MySQL: Since 5.0</span>
-    <span class="version-badge version-supported">PostgreSQL: Since 9.1</span>
-    <span class="version-badge version-supported">SQL Server: Since 2016</span>
-    <span class="version-badge version-supported">Oracle: Since 23c</span>
-    <span class="version-badge version-supported">SQLite: Since 3.0.0</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> MySQL: Since 5.0</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> PostgreSQL: Since 9.1</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> SQL Server: Since 2016</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> Oracle: Since 23c</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> SQLite: Since 3.0.0</span>
     
   </div>
 
@@ -169,6 +177,10 @@ END;</div>
 DROP TABLE IF EXISTS orders;</div>
       </div>
   </div>
+</main>
+<footer class="site-footer">
+  <p>&copy; 2024 Can I Use SQL. All rights reserved.</p>
+</footer>
   <script src="/search.js" defer></script>
   <script src="/splash.js" defer></script>
   <script src="/track.js" defer></script>

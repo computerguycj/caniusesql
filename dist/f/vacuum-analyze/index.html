@@ -22,6 +22,7 @@
 </head>
 <body>
 
+<a href="#main-content" class="skip-link">Skip to main content</a>
 <header class="site-header">
   <a href="/" class="home-link" aria-label="Home">
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="30" height="30" aria-hidden="true">
@@ -44,64 +45,71 @@
       <rect x="20" y="17" width="4" height="3" rx="0.5" fill="#1a6391" opacity="0.55"/>
     </svg>
   </a>
-  <span class="command-heading"><h1>VACUUM / ANALYZE<span class="category-badge">Administration</span></h1></span>
+  <span class="command-heading"><h1>VACUUM / ANALYZE</h1><span class="category-badge">Administration</span></span>
   <div class="search-widget">
     <input class="site-search" type="search" placeholder="Search SQL commands…"
            autocomplete="off" aria-label="Search SQL commands">
     <ul class="search-results" hidden role="listbox" aria-label="Search suggestions"></ul>
   </div>
+    <a href="https://www.buymeacoffee.com/computerguycj" target="_blank" rel="noopener" class="bmc-link" aria-label="Buy me a coffee">
+    <img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png"
+         alt="Buy Me A Coffee"
+         height="36">
+  </a>
 </header>
 
+<main id="main-content">
 
   <p class="command-desc">Maintenance operations that reclaim storage from dead rows (VACUUM) and update query planner statistics (ANALYZE), keeping performance stable over time.</p>
   <p class="command-overview">PostgreSQL command that updates statistics about the distribution of data in tables and indexes. The query planner uses these statistics to choose optimal execution plans. Run after significant data changes.</p>
 
   <h2>Compatibility</h2>
-  <div class="compare-bar">
-    <span class="compare-label">Show:</span>
+  <fieldset class="compare-bar">
+    <legend>Filter by Database</legend>
     <label><input type="checkbox" value="mysql" checked> MySQL</label>
     <label><input type="checkbox" value="postgresql" checked> PostgreSQL</label>
     <label><input type="checkbox" value="sqlserver" checked> SQL Server</label>
     <label><input type="checkbox" value="oracle" checked> Oracle</label>
     <label><input type="checkbox" value="sqlite" checked> SQLite</label>
-  </div>
+  </fieldset>
   <table>
+    <caption>SQL VACUUM / ANALYZE Compatibility Across Databases</caption>
     <thead>
       <tr>
-        <th>Database System</th>
-        <th>Support Status</th>
-        <th>Since Version</th>
-        <th>Notes</th>
+        <th scope="col">Database System</th>
+        <th scope="col">Support Status</th>
+        <th scope="col">Since Version</th>
+        <th scope="col">Notes</th>
       </tr>
     </thead>
     <tbody>
           <tr data-db="mysql">
             <td>MySQL</td>
-            <td class="supported">✓ Supported</td>
+            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
             <td>5.0</td>
             <td class="notes">OPTIMIZE TABLE reclaims space from deleted rows in InnoDB and MyISAM. ANALYZE TABLE updates index statistics used by the optimizer. Both can be run online (non-blocking) in InnoDB since 5.6. No VACUUM keyword.</td>
           </tr>
           <tr data-db="postgresql">
             <td>PostgreSQL</td>
-            <td class="supported">✓ Supported</td>
+            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
             <td>7.4</td>
             <td class="notes">VACUUM reclaims storage from dead tuples created by MVCC updates/deletes. VACUUM FULL rewrites the table (locks table, reclaims more space). ANALYZE updates planner statistics. Autovacuum runs both automatically. VACUUM FREEZE prevents transaction ID wraparound.</td>
           </tr>
           <tr data-db="sqlserver">
             <td>SQL Server</td>
-            <td class="supported">✓ Supported</td>
+            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
             <td>2000</td>
             <td class="notes">No VACUUM equivalent — SQL Server uses a separate background thread for ghost record cleanup. UPDATE STATISTICS or sp_updatestats updates query planner statistics. DBCC SHRINKFILE / SHRINKDATABASE reclaims space (use sparingly — causes fragmentation). REBUILD INDEX is the primary defragmentation tool.</td>
           </tr>
           <tr data-db="oracle">
             <td>Oracle</td>
-            <td class="supported">✓ Supported</td>
+            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
             <td>7</td>
             <td class="notes">Oracle uses UNDO segments rather than dead tuple storage, so no VACUUM equivalent is needed. DBMS_STATS.GATHER_TABLE_STATS updates optimizer statistics. Segment shrink (ALTER TABLE ... SHRINK SPACE) reclaims space below the high-water mark.</td>
           </tr>
           <tr data-db="sqlite">
             <td>SQLite</td>
-            <td class="supported">✓ Supported</td>
+            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
             <td>3.0.0</td>
             <td class="notes">VACUUM rewrites the entire database file to reclaim space from deleted rows and reduce fragmentation. ANALYZE updates statistics in the sqlite_stat tables used by the query planner. Both are manual operations; no auto-vacuum by default (can be enabled with PRAGMA auto_vacuum).</td>
           </tr>
@@ -119,11 +127,11 @@ VACUUM ANALYZE orders;</div>
 
   <h2>Version Support</h2>
   <div class="version-list">
-    <span class="version-badge version-supported">MySQL: Since 5.0</span>
-    <span class="version-badge version-supported">PostgreSQL: Since 7.4</span>
-    <span class="version-badge version-supported">SQL Server: Since 2000</span>
-    <span class="version-badge version-supported">Oracle: Since 7</span>
-    <span class="version-badge version-supported">SQLite: Since 3.0.0</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> MySQL: Since 5.0</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> PostgreSQL: Since 7.4</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> SQL Server: Since 2000</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> Oracle: Since 7</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> SQLite: Since 3.0.0</span>
     
   </div>
 
@@ -168,6 +176,10 @@ ANALYZE;                        -- update query planner stats
 PRAGMA auto_vacuum = INCREMENTAL; -- enable incremental auto-vacuum</div>
       </div>
   </div>
+</main>
+<footer class="site-footer">
+  <p>&copy; 2024 Can I Use SQL. All rights reserved.</p>
+</footer>
   <script src="/search.js" defer></script>
   <script src="/splash.js" defer></script>
   <script src="/track.js" defer></script>

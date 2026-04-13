@@ -22,6 +22,7 @@
 </head>
 <body>
 
+<a href="#main-content" class="skip-link">Skip to main content</a>
 <header class="site-header">
   <a href="/" class="home-link" aria-label="Home">
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="30" height="30" aria-hidden="true">
@@ -44,64 +45,71 @@
       <rect x="20" y="17" width="4" height="3" rx="0.5" fill="#1a6391" opacity="0.55"/>
     </svg>
   </a>
-  <span class="command-heading"><h1>LIMIT / TOP / FETCH FIRST<span class="category-badge">Query Techniques</span></h1></span>
+  <span class="command-heading"><h1>LIMIT / TOP / FETCH FIRST</h1><span class="category-badge">Query Techniques</span></span>
   <div class="search-widget">
     <input class="site-search" type="search" placeholder="Search SQL commands…"
            autocomplete="off" aria-label="Search SQL commands">
     <ul class="search-results" hidden role="listbox" aria-label="Search suggestions"></ul>
   </div>
+    <a href="https://www.buymeacoffee.com/computerguycj" target="_blank" rel="noopener" class="bmc-link" aria-label="Buy me a coffee">
+    <img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png"
+         alt="Buy Me A Coffee"
+         height="36">
+  </a>
 </header>
 
+<main id="main-content">
 
   <p class="command-desc">Restrict the number of rows returned by a query. Every engine supports this but with different syntax.</p>
   <p class="command-overview">Restricts the number of rows returned: LIMIT n OFFSET m (MySQL/PostgreSQL), TOP n (SQL Server), FETCH FIRST n ROWS ONLY (standard SQL). For pagination, OFFSET becomes expensive for large skip values -- keyset pagination scales better.</p>
 
   <h2>Compatibility</h2>
-  <div class="compare-bar">
-    <span class="compare-label">Show:</span>
+  <fieldset class="compare-bar">
+    <legend>Filter by Database</legend>
     <label><input type="checkbox" value="mysql" checked> MySQL</label>
     <label><input type="checkbox" value="postgresql" checked> PostgreSQL</label>
     <label><input type="checkbox" value="sqlserver" checked> SQL Server</label>
     <label><input type="checkbox" value="oracle" checked> Oracle</label>
     <label><input type="checkbox" value="sqlite" checked> SQLite</label>
-  </div>
+  </fieldset>
   <table>
+    <caption>SQL LIMIT / TOP / FETCH FIRST Compatibility Across Databases</caption>
     <thead>
       <tr>
-        <th>Database System</th>
-        <th>Support Status</th>
-        <th>Since Version</th>
-        <th>Notes</th>
+        <th scope="col">Database System</th>
+        <th scope="col">Support Status</th>
+        <th scope="col">Since Version</th>
+        <th scope="col">Notes</th>
       </tr>
     </thead>
     <tbody>
           <tr data-db="mysql">
             <td>MySQL</td>
-            <td class="supported">✓ Supported</td>
+            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
             <td>all</td>
             <td class="notes">LIMIT n or LIMIT offset, n or LIMIT n OFFSET offset. No FETCH FIRST. LIMIT without ORDER BY returns an arbitrary set of rows — always include ORDER BY for deterministic pagination. LIMIT in subqueries has restrictions in older versions.</td>
           </tr>
           <tr data-db="postgresql">
             <td>PostgreSQL</td>
-            <td class="supported">✓ Supported</td>
+            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
             <td>all</td>
             <td class="notes">LIMIT n OFFSET m (non-standard but widely supported). Also supports the SQL-standard FETCH FIRST n ROWS ONLY since PostgreSQL 8.4. LIMIT ALL means no limit. OFFSET without LIMIT is valid.</td>
           </tr>
           <tr data-db="sqlserver">
             <td>SQL Server</td>
-            <td class="supported">✓ Supported</td>
+            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
             <td>2012</td>
             <td class="notes">OFFSET ... FETCH is the standard syntax (SQL Server 2012+). TOP n is available in all versions but is non-standard and does not support OFFSET. TOP with PERCENT and WITH TIES options available. OFFSET FETCH requires ORDER BY.</td>
           </tr>
           <tr data-db="oracle">
             <td>Oracle</td>
-            <td class="supported">✓ Supported</td>
+            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
             <td>12c</td>
             <td class="notes">FETCH FIRST is the SQL-standard syntax, supported since 12c. Before 12c, use ROWNUM in a subquery (notoriously tricky — ROWNUM is assigned before ORDER BY). OFFSET ... FETCH supported in 12c+.</td>
           </tr>
           <tr data-db="sqlite">
             <td>SQLite</td>
-            <td class="supported">✓ Supported</td>
+            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
             <td>all</td>
             <td class="notes">LIMIT n OFFSET m. Also accepts LIMIT offset, n (comma syntax, same as MySQL). LIMIT -1 means no limit (useful for OFFSET without a row cap). No FETCH FIRST.</td>
           </tr>
@@ -123,11 +131,11 @@ SELECT TOP 10 * FROM tbl;              -- SQL Server</div>
 
   <h2>Version Support</h2>
   <div class="version-list">
-    <span class="version-badge version-supported">MySQL: Since all</span>
-    <span class="version-badge version-supported">PostgreSQL: Since all</span>
-    <span class="version-badge version-supported">SQL Server: Since 2012</span>
-    <span class="version-badge version-supported">Oracle: Since 12c</span>
-    <span class="version-badge version-supported">SQLite: Since all</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> MySQL: Since all</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> PostgreSQL: Since all</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> SQL Server: Since 2012</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> Oracle: Since 12c</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> SQLite: Since all</span>
     
   </div>
 
@@ -190,6 +198,10 @@ SELECT * FROM tbl ORDER BY id LIMIT 10 OFFSET 20;
 SELECT * FROM tbl ORDER BY id LIMIT -1 OFFSET 20;</div>
       </div>
   </div>
+</main>
+<footer class="site-footer">
+  <p>&copy; 2024 Can I Use SQL. All rights reserved.</p>
+</footer>
   <script src="/search.js" defer></script>
   <script src="/splash.js" defer></script>
   <script src="/track.js" defer></script>

@@ -22,6 +22,7 @@
 </head>
 <body>
 
+<a href="#main-content" class="skip-link">Skip to main content</a>
 <header class="site-header">
   <a href="/" class="home-link" aria-label="Home">
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="30" height="30" aria-hidden="true">
@@ -44,64 +45,71 @@
       <rect x="20" y="17" width="4" height="3" rx="0.5" fill="#1a6391" opacity="0.55"/>
     </svg>
   </a>
-  <span class="command-heading"><h1>FETCH FIRST / OFFSET-FETCH<span class="category-badge">Query Techniques</span></h1></span>
+  <span class="command-heading"><h1>FETCH FIRST / OFFSET-FETCH</h1><span class="category-badge">Query Techniques</span></span>
   <div class="search-widget">
     <input class="site-search" type="search" placeholder="Search SQL commands…"
            autocomplete="off" aria-label="Search SQL commands">
     <ul class="search-results" hidden role="listbox" aria-label="Search suggestions"></ul>
   </div>
+    <a href="https://www.buymeacoffee.com/computerguycj" target="_blank" rel="noopener" class="bmc-link" aria-label="Buy me a coffee">
+    <img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png"
+         alt="Buy Me A Coffee"
+         height="36">
+  </a>
 </header>
 
+<main id="main-content">
 
   <p class="command-desc">Standard SQL syntax for skipping a number of rows and limiting the result set size, used for pagination.</p>
   <p class="command-overview">Restricts the number of rows returned: LIMIT n OFFSET m (MySQL/PostgreSQL), TOP n (SQL Server), FETCH FIRST n ROWS ONLY (standard SQL). For pagination, OFFSET becomes expensive for large skip values -- keyset pagination scales better.</p>
 
   <h2>Compatibility</h2>
-  <div class="compare-bar">
-    <span class="compare-label">Show:</span>
+  <fieldset class="compare-bar">
+    <legend>Filter by Database</legend>
     <label><input type="checkbox" value="mysql" checked> MySQL</label>
     <label><input type="checkbox" value="postgresql" checked> PostgreSQL</label>
     <label><input type="checkbox" value="sqlserver" checked> SQL Server</label>
     <label><input type="checkbox" value="oracle" checked> Oracle</label>
     <label><input type="checkbox" value="sqlite" checked> SQLite</label>
-  </div>
+  </fieldset>
   <table>
+    <caption>SQL FETCH FIRST / OFFSET-FETCH Compatibility Across Databases</caption>
     <thead>
       <tr>
-        <th>Database System</th>
-        <th>Support Status</th>
-        <th>Since Version</th>
-        <th>Notes</th>
+        <th scope="col">Database System</th>
+        <th scope="col">Support Status</th>
+        <th scope="col">Since Version</th>
+        <th scope="col">Notes</th>
       </tr>
     </thead>
     <tbody>
           <tr data-db="mysql">
             <td>MySQL</td>
-            <td class="supported">✓ Supported</td>
+            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
             <td>8.0</td>
             <td class="notes">OFFSET/FETCH FIRST syntax added in 8.0 as an alias for LIMIT/OFFSET. The original LIMIT n OFFSET m syntax remains available and is more common in practice.</td>
           </tr>
           <tr data-db="postgresql">
             <td>PostgreSQL</td>
-            <td class="supported">✓ Supported</td>
+            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
             <td>8.4</td>
             <td class="notes">Full OFFSET/FETCH FIRST support since 8.4. LIMIT/OFFSET also remains available. FETCH FIRST n ROWS WITH TIES requires PostgreSQL 13+.</td>
           </tr>
           <tr data-db="sqlserver">
             <td>SQL Server</td>
-            <td class="supported">✓ Supported</td>
+            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
             <td>2012</td>
             <td class="notes">OFFSET/FETCH ONLY is the standard SQL Server pagination syntax since 2012. Requires an ORDER BY clause — omitting it is a syntax error. TOP N is the older alternative but does not support offset.</td>
           </tr>
           <tr data-db="oracle">
             <td>Oracle</td>
-            <td class="supported">✓ Supported</td>
+            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
             <td>12c</td>
             <td class="notes">OFFSET/FETCH added in Oracle 12c. Prior versions required the ROWNUM pseudo-column or ROW_NUMBER() window function wrapped in a subquery.</td>
           </tr>
           <tr data-db="sqlite">
             <td>SQLite</td>
-            <td class="supported">✓ Supported</td>
+            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
             <td>3.25.0</td>
             <td class="notes">OFFSET/FETCH FIRST syntax added in 3.25.0. The traditional LIMIT/OFFSET form has been available since very early SQLite versions.</td>
           </tr>
@@ -121,11 +129,11 @@ FETCH NEXT 10 ROWS ONLY;</div>
 
   <h2>Version Support</h2>
   <div class="version-list">
-    <span class="version-badge version-supported">MySQL: Since 8.0</span>
-    <span class="version-badge version-supported">PostgreSQL: Since 8.4</span>
-    <span class="version-badge version-supported">SQL Server: Since 2012</span>
-    <span class="version-badge version-supported">Oracle: Since 12c</span>
-    <span class="version-badge version-supported">SQLite: Since 3.25.0</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> MySQL: Since 8.0</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> PostgreSQL: Since 8.4</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> SQL Server: Since 2012</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> Oracle: Since 12c</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> SQLite: Since 3.25.0</span>
     
   </div>
 
@@ -168,6 +176,10 @@ SELECT * FROM (SELECT t.*, ROWNUM rn FROM (SELECT * FROM t ORDER BY id) t WHERE 
 OFFSET 20 ROWS FETCH NEXT 10 ROWS ONLY;</div>
       </div>
   </div>
+</main>
+<footer class="site-footer">
+  <p>&copy; 2024 Can I Use SQL. All rights reserved.</p>
+</footer>
   <script src="/search.js" defer></script>
   <script src="/splash.js" defer></script>
   <script src="/track.js" defer></script>

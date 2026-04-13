@@ -22,6 +22,7 @@
 </head>
 <body>
 
+<a href="#main-content" class="skip-link">Skip to main content</a>
 <header class="site-header">
   <a href="/" class="home-link" aria-label="Home">
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="30" height="30" aria-hidden="true">
@@ -44,64 +45,71 @@
       <rect x="20" y="17" width="4" height="3" rx="0.5" fill="#1a6391" opacity="0.55"/>
     </svg>
   </a>
-  <span class="command-heading"><h1>JSON OPERATORS (-&gt; / -&gt;&gt;)<span class="category-badge">JSON</span></h1></span>
+  <span class="command-heading"><h1>JSON OPERATORS (-&gt; / -&gt;&gt;)</h1><span class="category-badge">JSON</span></span>
   <div class="search-widget">
     <input class="site-search" type="search" placeholder="Search SQL commands…"
            autocomplete="off" aria-label="Search SQL commands">
     <ul class="search-results" hidden role="listbox" aria-label="Search suggestions"></ul>
   </div>
+    <a href="https://www.buymeacoffee.com/computerguycj" target="_blank" rel="noopener" class="bmc-link" aria-label="Buy me a coffee">
+    <img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png"
+         alt="Buy Me A Coffee"
+         height="36">
+  </a>
 </header>
 
+<main id="main-content">
 
   <p class="command-desc">Shorthand operators for navigating JSON document structure. -&gt; extracts a JSON value; -&gt;&gt; extracts a text (unquoted) value. Availability and exact semantics vary significantly by engine.</p>
   <p class="command-overview">PostgreSQL operators for querying JSONB: arrow for int/object access, arrow-arrow for text extraction, at-greater for containment, question-mark for key existence. Combined with GIN indexes, these enable powerful indexed JSON querying.</p>
 
   <h2>Compatibility</h2>
-  <div class="compare-bar">
-    <span class="compare-label">Show:</span>
+  <fieldset class="compare-bar">
+    <legend>Filter by Database</legend>
     <label><input type="checkbox" value="mysql" checked> MySQL</label>
     <label><input type="checkbox" value="postgresql" checked> PostgreSQL</label>
     <label><input type="checkbox" value="sqlserver" checked> SQL Server</label>
     <label><input type="checkbox" value="oracle" checked> Oracle</label>
     <label><input type="checkbox" value="sqlite" checked> SQLite</label>
-  </div>
+  </fieldset>
   <table>
+    <caption>SQL JSON OPERATORS (-&gt; / -&gt;&gt;) Compatibility Across Databases</caption>
     <thead>
       <tr>
-        <th>Database System</th>
-        <th>Support Status</th>
-        <th>Since Version</th>
-        <th>Notes</th>
+        <th scope="col">Database System</th>
+        <th scope="col">Support Status</th>
+        <th scope="col">Since Version</th>
+        <th scope="col">Notes</th>
       </tr>
     </thead>
     <tbody>
           <tr data-db="mysql">
             <td>MySQL</td>
-            <td class="supported">✓ Supported</td>
+            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
             <td>5.7.8</td>
             <td class="notes">col-&gt;'$.path' is shorthand for JSON_EXTRACT(col, '$.path') and returns a JSON-encoded value (strings include surrounding quotes). col-&gt;&gt;'$.path' is shorthand for JSON_UNQUOTE(JSON_EXTRACT(col, '$.path')) and returns unquoted text. Path expressions must include the $ root prefix.</td>
           </tr>
           <tr data-db="postgresql">
             <td>PostgreSQL</td>
-            <td class="supported">✓ Supported</td>
+            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
             <td>9.3</td>
             <td class="notes">Richest operator set of any engine. -&gt; extracts a JSON/JSONB value by key (or array index). -&gt;&gt; extracts as text. #&gt; extracts by path array (JSON result); #&gt;&gt; extracts by path array (text result). jsonb columns additionally support @&gt; (contains), &lt;@ (contained by), ? (key exists), ?| (any key exists), ?&amp; (all keys exist) — all indexable with GIN. The json type supports -&gt; and -&gt;&gt; but not the containment operators.</td>
           </tr>
           <tr data-db="sqlserver">
             <td>SQL Server</td>
-            <td class="not-supported">✗ Not Supported</td>
+            <td class="not-supported"><span aria-hidden="true">✗</span> <span class="status-text">Not Supported</span></td>
             <td>—</td>
             <td class="notes">No -&gt; or -&gt;&gt; operators. All JSON access is through functions: JSON_VALUE() for scalars and JSON_QUERY() for objects/arrays. Path expressions are string arguments to functions, not operators. There is no operator-based path syntax.</td>
           </tr>
           <tr data-db="oracle">
             <td>Oracle</td>
-            <td class="not-supported">✗ Not Supported</td>
+            <td class="not-supported"><span aria-hidden="true">✗</span> <span class="status-text">Not Supported</span></td>
             <td>—</td>
             <td class="notes">No -&gt; or -&gt;&gt; operators in standard SQL access. All access uses JSON_VALUE() and JSON_QUERY() functions with path string arguments. Oracle 21c introduced a native JSON data type with dot-notation access (col.key.subkey), but this only applies to columns declared as JSON type, not VARCHAR2/CLOB with JSON content.</td>
           </tr>
           <tr data-db="sqlite">
             <td>SQLite</td>
-            <td class="supported">✓ Supported</td>
+            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
             <td>3.38.0</td>
             <td class="notes">-&gt; and -&gt;&gt; operators added in SQLite 3.38.0 (2022-02-22). SQLite's -&gt;&gt; always returns an SQL value (text, integer, real, or NULL) — it never returns a JSON-encoded string, which differs from MySQL's -&gt; behavior. For SQLite &lt; 3.38.0, use json_extract() exclusively.</td>
           </tr>
@@ -128,11 +136,11 @@ FROM users;</div>
 
   <h2>Version Support</h2>
   <div class="version-list">
-    <span class="version-badge version-supported">MySQL: Since 5.7.8</span>
-    <span class="version-badge version-supported">PostgreSQL: Since 9.3</span>
-    <span class="version-badge version-not-supported">SQL Server: Not supported</span>
-    <span class="version-badge version-not-supported">Oracle: Not supported</span>
-    <span class="version-badge version-supported">SQLite: Since 3.38.0</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> MySQL: Since 5.7.8</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> PostgreSQL: Since 9.3</span>
+    <span class="version-badge version-not-supported"><span aria-hidden="true">✗</span> SQL Server: Not supported</span>
+    <span class="version-badge version-not-supported"><span aria-hidden="true">✗</span> Oracle: Not supported</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> SQLite: Since 3.38.0</span>
     
   </div>
 
@@ -230,6 +238,10 @@ SELECT json_extract(data, '$.name') AS name
 FROM users;</div>
       </div>
   </div>
+</main>
+<footer class="site-footer">
+  <p>&copy; 2024 Can I Use SQL. All rights reserved.</p>
+</footer>
   <script src="/search.js" defer></script>
   <script src="/splash.js" defer></script>
   <script src="/track.js" defer></script>

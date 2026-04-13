@@ -80,6 +80,27 @@ body {
 
 a { color: var(--color-primary); }
 
+a:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+/* Skip link for keyboard navigation */
+.skip-link {
+  position: absolute;
+  top: -40px;
+  left: 0;
+  background: var(--color-primary);
+  color: white;
+  padding: 8px;
+  text-decoration: none;
+  z-index: 100;
+}
+
+.skip-link:focus {
+  top: 0;
+}
+
 h2 { color: var(--color-text-heading); margin-top: 32px; }
 h4 { color: var(--color-text-heading); margin: 16px 0 4px; }
 
@@ -94,9 +115,9 @@ h4 { color: var(--color-text-heading); margin: 16px 0 4px; }
   display: flex;
   align-items: center;
   gap: 16px;
-  padding-top: 12px;
-  padding-bottom: 12px;
+  padding: 12px 16px;
   margin-bottom: 24px;
+  border-radius: 8px;
   flex-wrap: wrap;
   background-color: var(--color-header-bg);
   box-shadow: var(--shadow-header);
@@ -169,6 +190,12 @@ h4 { color: var(--color-text-heading); margin: 16px 0 4px; }
   outline: none;
   border-color: var(--color-primary);
   box-shadow: 0 0 0 2px var(--color-focus-ring);
+}
+
+.site-search:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+  box-shadow: none;
 }
 
 .search-results {
@@ -292,12 +319,12 @@ h4 { color: var(--color-text-heading); margin: 16px 0 4px; }
 /* Support/status colors — intentionally same in both light and dark */
 .support-5   { border-left-color: #27ae60; }
 .support-5   .card-support-badge { color: #27ae60; }
-.support-mid { border-left-color: #f39c12; }
-.support-mid .card-support-badge { color: #f39c12; }
-.support-low { border-left-color: #e74c3c; }
-.support-low .card-support-badge { color: #e74c3c; }
-.support-none { border-left-color: #95a5a6; }
-.support-none .card-support-badge { color: #95a5a6; }
+.support-mid { border-left-color: #d97706; }
+.support-mid .card-support-badge { color: #d97706; }
+.support-low { border-left-color: #c1272d; }
+.support-low .card-support-badge { color: #c1272d; }
+.support-none { border-left-color: #666666; }
+.support-none .card-support-badge { color: #666666; }
 
 /* --------------------------------------------------------------------------
    Compare filter bar (command pages)
@@ -305,30 +332,47 @@ h4 { color: var(--color-text-heading); margin: 16px 0 4px; }
 
 .compare-bar {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   gap: 12px;
   flex-wrap: wrap;
   margin-bottom: 12px;
-  padding: 8px 12px;
+  padding: 12px;
   background: var(--color-surface);
   border-radius: 6px;
   border: 1px solid var(--color-border);
   font-size: 13px;
 }
 
-.compare-label {
+.compare-bar legend {
   font-weight: 600;
   color: var(--color-text-heading);
   white-space: nowrap;
+  margin-bottom: 8px;
+  width: 100%;
+  padding: 0;
 }
 
 .compare-bar label {
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: 8px;
   cursor: pointer;
   color: var(--color-text);
   white-space: nowrap;
+}
+
+.compare-bar input[type="checkbox"] {
+  width: 24px;
+  height: 24px;
+  min-width: 24px;
+  min-height: 24px;
+  cursor: pointer;
+  accent-color: var(--color-primary);
+}
+
+.compare-bar input[type="checkbox"]:focus {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
 }
 
 /* --------------------------------------------------------------------------
@@ -355,8 +399,20 @@ tr:last-child td { border-bottom: none; }
 tr:hover { background-color: var(--color-row-hover); }
 
 .supported     { color: #27ae60; font-weight: bold; }
-.not-supported { color: #e74c3c; }
+.not-supported { color: #c1272d; font-weight: bold; }
+.status-text   { display: inline; }
 .notes         { font-size: 14px; color: var(--color-text-muted); }
+
+table tr:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: -1px;
+}
+
+th:focus-visible,
+td:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: -1px;
+}
 
 /* --------------------------------------------------------------------------
    Syntax blocks + copy button
@@ -426,8 +482,8 @@ tr:hover { background-color: var(--color-row-hover); }
 
 .version-not-supported {
   background-color: #fde8e8;
-  color: #e74c3c;
-  border: 1px solid #e74c3c;
+  color: #c1272d;
+  border: 1px solid #c1272d;
 }
 
 /* --------------------------------------------------------------------------
@@ -505,3 +561,26 @@ tr:hover { background-color: var(--color-row-hover); }
 .detail-block p { margin: 0; }
 
 .version-list { margin-top: 8px; }
+
+.bmc-link img {
+  display: block;
+  height: 36px;
+  width: auto;
+}
+
+/* --------------------------------------------------------------------------
+   Footer
+   -------------------------------------------------------------------------- */
+
+.site-footer {
+  text-align: center;
+  margin-top: 48px;
+  padding-top: 24px;
+  border-top: 1px solid var(--color-border);
+  color: var(--color-text-muted);
+  font-size: 13px;
+}
+
+.site-footer p {
+  margin: 0;
+}

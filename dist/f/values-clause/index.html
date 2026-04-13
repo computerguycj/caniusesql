@@ -22,6 +22,7 @@
 </head>
 <body>
 
+<a href="#main-content" class="skip-link">Skip to main content</a>
 <header class="site-header">
   <a href="/" class="home-link" aria-label="Home">
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="30" height="30" aria-hidden="true">
@@ -44,64 +45,71 @@
       <rect x="20" y="17" width="4" height="3" rx="0.5" fill="#1a6391" opacity="0.55"/>
     </svg>
   </a>
-  <span class="command-heading"><h1>VALUES CLAUSE<span class="category-badge">Query Techniques</span></h1></span>
+  <span class="command-heading"><h1>VALUES CLAUSE</h1><span class="category-badge">Query Techniques</span></span>
   <div class="search-widget">
     <input class="site-search" type="search" placeholder="Search SQL commands…"
            autocomplete="off" aria-label="Search SQL commands">
     <ul class="search-results" hidden role="listbox" aria-label="Search suggestions"></ul>
   </div>
+    <a href="https://www.buymeacoffee.com/computerguycj" target="_blank" rel="noopener" class="bmc-link" aria-label="Buy me a coffee">
+    <img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png"
+         alt="Buy Me A Coffee"
+         height="36">
+  </a>
 </header>
 
+<main id="main-content">
 
   <p class="command-desc">Construct an inline table from literal values without referencing a persistent table. Useful for multi-row inserts, testing, and constructing ad-hoc result sets to join against.</p>
   <p class="command-overview">Generates a derived table of literal values, useful for defining small lookup tables on the fly without creating a temporary table. SELECT * FROM (VALUES (1, a), (2, b)) AS t(id, name) is portable and useful in INSERT and JOIN contexts.</p>
 
   <h2>Compatibility</h2>
-  <div class="compare-bar">
-    <span class="compare-label">Show:</span>
+  <fieldset class="compare-bar">
+    <legend>Filter by Database</legend>
     <label><input type="checkbox" value="mysql" checked> MySQL</label>
     <label><input type="checkbox" value="postgresql" checked> PostgreSQL</label>
     <label><input type="checkbox" value="sqlserver" checked> SQL Server</label>
     <label><input type="checkbox" value="oracle" checked> Oracle</label>
     <label><input type="checkbox" value="sqlite" checked> SQLite</label>
-  </div>
+  </fieldset>
   <table>
+    <caption>SQL VALUES CLAUSE Compatibility Across Databases</caption>
     <thead>
       <tr>
-        <th>Database System</th>
-        <th>Support Status</th>
-        <th>Since Version</th>
-        <th>Notes</th>
+        <th scope="col">Database System</th>
+        <th scope="col">Support Status</th>
+        <th scope="col">Since Version</th>
+        <th scope="col">Notes</th>
       </tr>
     </thead>
     <tbody>
           <tr data-db="mysql">
             <td>MySQL</td>
-            <td class="supported">✓ Supported</td>
+            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
             <td>8.0.19</td>
             <td class="notes">Multi-row INSERT VALUES has been supported since early MySQL versions. The TABLE and VALUES statement as a standalone query (VALUES ROW(...), ROW(...)) was added in MySQL 8.0.19, providing an inline table construct. Prior to 8.0.19, use UNION ALL of SELECT literals to simulate an inline table.</td>
           </tr>
           <tr data-db="postgresql">
             <td>PostgreSQL</td>
-            <td class="supported">✓ Supported</td>
+            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
             <td>8.2</td>
             <td class="notes">VALUES is a full first-class relation since PostgreSQL 8.2 — it can appear anywhere a table or subquery can: in FROM, CTE, UNION, INSERT, etc. Column names in the alias are required when the VALUES clause is used as a subquery or CTE. Row type is inferred from the first row; explicit casts may be needed for ambiguous literals.</td>
           </tr>
           <tr data-db="sqlserver">
             <td>SQL Server</td>
-            <td class="supported">✓ Supported</td>
+            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
             <td>2008</td>
             <td class="notes">VALUES as an inline table constructor available since SQL Server 2008. Syntax requires an alias with column names. Often used for multi-row inserts and lookup tables in CTEs. Cannot exceed 1000 rows in a single VALUES constructor.</td>
           </tr>
           <tr data-db="oracle">
             <td>Oracle</td>
-            <td class="not-supported">✗ Not Supported</td>
+            <td class="not-supported"><span aria-hidden="true">✗</span> <span class="status-text">Not Supported</span></td>
             <td>—</td>
             <td class="notes">Oracle does not support a VALUES clause as a standalone table constructor in SELECT queries. Multi-row INSERT is supported via INSERT ALL or INSERT with a SELECT from DUAL for a single row. For an inline lookup table, use a UNION ALL SELECT from DUAL, or a collection type with TABLE().</td>
           </tr>
           <tr data-db="sqlite">
             <td>SQLite</td>
-            <td class="supported">✓ Supported</td>
+            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
             <td>3.8.3</td>
             <td class="notes">VALUES as a table-value constructor in SELECT/FROM supported since SQLite 3.8.3. Supports alias with column names. Fully usable in CTEs, FROM clauses, and UNION.</td>
           </tr>
@@ -124,11 +132,11 @@ VALUES (1, 'red'), (2, 'green'), (3, 'blue');</div>
 
   <h2>Version Support</h2>
   <div class="version-list">
-    <span class="version-badge version-supported">MySQL: Since 8.0.19</span>
-    <span class="version-badge version-supported">PostgreSQL: Since 8.2</span>
-    <span class="version-badge version-supported">SQL Server: Since 2008</span>
-    <span class="version-badge version-not-supported">Oracle: Not supported</span>
-    <span class="version-badge version-supported">SQLite: Since 3.8.3</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> MySQL: Since 8.0.19</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> PostgreSQL: Since 8.2</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> SQL Server: Since 2008</span>
+    <span class="version-badge version-not-supported"><span aria-hidden="true">✗</span> Oracle: Not supported</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> SQLite: Since 3.8.3</span>
     
   </div>
 
@@ -246,6 +254,10 @@ INSERT INTO colors (id, name)
 VALUES (1,'red'),(2,'green'),(3,'blue');</div>
       </div>
   </div>
+</main>
+<footer class="site-footer">
+  <p>&copy; 2024 Can I Use SQL. All rights reserved.</p>
+</footer>
   <script src="/search.js" defer></script>
   <script src="/splash.js" defer></script>
   <script src="/track.js" defer></script>

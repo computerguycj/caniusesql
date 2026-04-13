@@ -22,6 +22,7 @@
 </head>
 <body>
 
+<a href="#main-content" class="skip-link">Skip to main content</a>
 <header class="site-header">
   <a href="/" class="home-link" aria-label="Home">
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="30" height="30" aria-hidden="true">
@@ -44,64 +45,71 @@
       <rect x="20" y="17" width="4" height="3" rx="0.5" fill="#1a6391" opacity="0.55"/>
     </svg>
   </a>
-  <span class="command-heading"><h1>DEADLOCK HANDLING<span class="category-badge">Transactions</span></h1></span>
+  <span class="command-heading"><h1>DEADLOCK HANDLING</h1><span class="category-badge">Transactions</span></span>
   <div class="search-widget">
     <input class="site-search" type="search" placeholder="Search SQL commands…"
            autocomplete="off" aria-label="Search SQL commands">
     <ul class="search-results" hidden role="listbox" aria-label="Search suggestions"></ul>
   </div>
+    <a href="https://www.buymeacoffee.com/computerguycj" target="_blank" rel="noopener" class="bmc-link" aria-label="Buy me a coffee">
+    <img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png"
+         alt="Buy Me A Coffee"
+         height="36">
+  </a>
 </header>
 
+<main id="main-content">
 
   <p class="command-desc">How each engine detects and resolves deadlocks — circular lock dependencies between transactions — and what the application must do in response.</p>
   <p class="command-overview">A situation where two or more transactions are each waiting for locks held by the others, causing all to stall. Databases detect deadlocks and abort one victim transaction -- your application must handle this and retry. Minimize by acquiring locks in a consistent order.</p>
 
   <h2>Compatibility</h2>
-  <div class="compare-bar">
-    <span class="compare-label">Show:</span>
+  <fieldset class="compare-bar">
+    <legend>Filter by Database</legend>
     <label><input type="checkbox" value="mysql" checked> MySQL</label>
     <label><input type="checkbox" value="postgresql" checked> PostgreSQL</label>
     <label><input type="checkbox" value="sqlserver" checked> SQL Server</label>
     <label><input type="checkbox" value="oracle" checked> Oracle</label>
     <label><input type="checkbox" value="sqlite" checked> SQLite</label>
-  </div>
+  </fieldset>
   <table>
+    <caption>SQL DEADLOCK HANDLING Compatibility Across Databases</caption>
     <thead>
       <tr>
-        <th>Database System</th>
-        <th>Support Status</th>
-        <th>Since Version</th>
-        <th>Notes</th>
+        <th scope="col">Database System</th>
+        <th scope="col">Support Status</th>
+        <th scope="col">Since Version</th>
+        <th scope="col">Notes</th>
       </tr>
     </thead>
     <tbody>
           <tr data-db="mysql">
             <td>MySQL</td>
-            <td class="supported">✓ Supported</td>
+            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
             <td>5.0</td>
             <td class="notes">InnoDB automatically detects deadlocks and rolls back the transaction with the least undo work (the 'cheaper' victim). Error code 1213 (ER_LOCK_DEADLOCK). The application must catch this and retry the transaction.</td>
           </tr>
           <tr data-db="postgresql">
             <td>PostgreSQL</td>
-            <td class="supported">✓ Supported</td>
+            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
             <td>7.4</td>
             <td class="notes">PostgreSQL detects deadlocks using a wait-for graph checked after a configurable lock_timeout or deadlock_timeout (default 1 second). One transaction is chosen as victim and receives error code 40P01. The application must catch and retry.</td>
           </tr>
           <tr data-db="sqlserver">
             <td>SQL Server</td>
-            <td class="supported">✓ Supported</td>
+            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
             <td>2000</td>
             <td class="notes">Deadlock monitor runs every 5 seconds by default (escalating to 100ms when deadlocks are detected). Victim is chosen by lowest deadlock priority, then cheapest rollback. Error 1205. Use SET DEADLOCK_PRIORITY to influence victim selection.</td>
           </tr>
           <tr data-db="oracle">
             <td>Oracle</td>
-            <td class="supported">✓ Supported</td>
+            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
             <td>7</td>
             <td class="notes">Oracle detects deadlocks and immediately rolls back only the statement that caused the deadlock (not the entire transaction). ORA-00060 is raised. The transaction remains open and the application can choose to commit, roll back further, or retry the statement.</td>
           </tr>
           <tr data-db="sqlite">
             <td>SQLite</td>
-            <td class="supported">✓ Supported</td>
+            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
             <td>3.0.0</td>
             <td class="notes">SQLite's locking model (database-level write lock) makes traditional row-level deadlocks impossible. SQLITE_BUSY (error 5) is returned when a write lock cannot be acquired. Use busy_timeout to configure how long to wait before returning SQLITE_BUSY.</td>
           </tr>
@@ -119,11 +127,11 @@
 
   <h2>Version Support</h2>
   <div class="version-list">
-    <span class="version-badge version-supported">MySQL: Since 5.0</span>
-    <span class="version-badge version-supported">PostgreSQL: Since 7.4</span>
-    <span class="version-badge version-supported">SQL Server: Since 2000</span>
-    <span class="version-badge version-supported">Oracle: Since 7</span>
-    <span class="version-badge version-supported">SQLite: Since 3.0.0</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> MySQL: Since 5.0</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> PostgreSQL: Since 7.4</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> SQL Server: Since 2000</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> Oracle: Since 7</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> SQLite: Since 3.0.0</span>
     
   </div>
 
@@ -165,6 +173,10 @@ PRAGMA busy_timeout = 5000;  -- wait up to 5 seconds
 -- Or handle SQLITE_BUSY (error 5) in application</div>
       </div>
   </div>
+</main>
+<footer class="site-footer">
+  <p>&copy; 2024 Can I Use SQL. All rights reserved.</p>
+</footer>
   <script src="/search.js" defer></script>
   <script src="/splash.js" defer></script>
   <script src="/track.js" defer></script>

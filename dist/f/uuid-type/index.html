@@ -22,6 +22,7 @@
 </head>
 <body>
 
+<a href="#main-content" class="skip-link">Skip to main content</a>
 <header class="site-header">
   <a href="/" class="home-link" aria-label="Home">
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="30" height="30" aria-hidden="true">
@@ -44,64 +45,71 @@
       <rect x="20" y="17" width="4" height="3" rx="0.5" fill="#1a6391" opacity="0.55"/>
     </svg>
   </a>
-  <span class="command-heading"><h1>UUID TYPE<span class="category-badge">Data Types</span></h1></span>
+  <span class="command-heading"><h1>UUID TYPE</h1><span class="category-badge">Data Types</span></span>
   <div class="search-widget">
     <input class="site-search" type="search" placeholder="Search SQL commands…"
            autocomplete="off" aria-label="Search SQL commands">
     <ul class="search-results" hidden role="listbox" aria-label="Search suggestions"></ul>
   </div>
+    <a href="https://www.buymeacoffee.com/computerguycj" target="_blank" rel="noopener" class="bmc-link" aria-label="Buy me a coffee">
+    <img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png"
+         alt="Buy Me A Coffee"
+         height="36">
+  </a>
 </header>
 
+<main id="main-content">
 
   <p class="command-desc">A native 128-bit column type for storing universally unique identifiers, distinct from storing UUIDs as plain strings.</p>
   <p class="command-overview">Globally unique identifiers that can be generated independently across systems without coordination, unlike auto-increment. UUIDs avoid ID conflicts in distributed systems but are larger (16 bytes), slower to index, and harder to debug. Consider UUID v7 for time-ordered IDs.</p>
 
   <h2>Compatibility</h2>
-  <div class="compare-bar">
-    <span class="compare-label">Show:</span>
+  <fieldset class="compare-bar">
+    <legend>Filter by Database</legend>
     <label><input type="checkbox" value="mysql" checked> MySQL</label>
     <label><input type="checkbox" value="postgresql" checked> PostgreSQL</label>
     <label><input type="checkbox" value="sqlserver" checked> SQL Server</label>
     <label><input type="checkbox" value="oracle" checked> Oracle</label>
     <label><input type="checkbox" value="sqlite" checked> SQLite</label>
-  </div>
+  </fieldset>
   <table>
+    <caption>SQL UUID TYPE Compatibility Across Databases</caption>
     <thead>
       <tr>
-        <th>Database System</th>
-        <th>Support Status</th>
-        <th>Since Version</th>
-        <th>Notes</th>
+        <th scope="col">Database System</th>
+        <th scope="col">Support Status</th>
+        <th scope="col">Since Version</th>
+        <th scope="col">Notes</th>
       </tr>
     </thead>
     <tbody>
           <tr data-db="mysql">
             <td>MySQL</td>
-            <td class="not-supported">✗ Not Supported</td>
+            <td class="not-supported"><span aria-hidden="true">✗</span> <span class="status-text">Not Supported</span></td>
             <td>—</td>
             <td class="notes">No native UUID column type. Common options: CHAR(36) for human-readable storage, or BINARY(16) with UUID_TO_BIN() / BIN_TO_UUID() (8.0+) for efficient indexed storage. BINARY(16) is strongly preferred for primary keys.</td>
           </tr>
           <tr data-db="postgresql">
             <td>PostgreSQL</td>
-            <td class="supported">✓ Supported</td>
+            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
             <td>8.3</td>
             <td class="notes">Native UUID type stores 16 bytes internally (no hyphen overhead). Displays as the standard 8-4-4-4-12 hyphenated string. Supports equality, indexing, and default expressions with gen_random_uuid().</td>
           </tr>
           <tr data-db="sqlserver">
             <td>SQL Server</td>
-            <td class="supported">✓ Supported</td>
+            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
             <td>2000</td>
             <td class="notes">UNIQUEIDENTIFIER is the native 16-byte UUID type. Supports NEWID() and NEWSEQUENTIALID() as defaults. Note: SQL Server stores bytes in a mixed-endian order that differs from RFC 4122, which affects cross-platform comparisons.</td>
           </tr>
           <tr data-db="oracle">
             <td>Oracle</td>
-            <td class="not-supported">✗ Not Supported</td>
+            <td class="not-supported"><span aria-hidden="true">✗</span> <span class="status-text">Not Supported</span></td>
             <td>—</td>
             <td class="notes">No native UUID column type. SYS_GUID() returns RAW(16), and RAW(16) is the conventional storage type for UUIDs. The standard hyphenated format requires manual conversion.</td>
           </tr>
           <tr data-db="sqlite">
             <td>SQLite</td>
-            <td class="not-supported">✗ Not Supported</td>
+            <td class="not-supported"><span aria-hidden="true">✗</span> <span class="status-text">Not Supported</span></td>
             <td>—</td>
             <td class="notes">No native UUID type. Store as TEXT (36-char hyphenated string) or BLOB (16 bytes). TEXT is more portable; BLOB is more space-efficient.</td>
           </tr>
@@ -121,11 +129,11 @@ CREATE TABLE t (
 
   <h2>Version Support</h2>
   <div class="version-list">
-    <span class="version-badge version-not-supported">MySQL: Not supported</span>
-    <span class="version-badge version-supported">PostgreSQL: Since 8.3</span>
-    <span class="version-badge version-supported">SQL Server: Since 2000</span>
-    <span class="version-badge version-not-supported">Oracle: Not supported</span>
-    <span class="version-badge version-not-supported">SQLite: Not supported</span>
+    <span class="version-badge version-not-supported"><span aria-hidden="true">✗</span> MySQL: Not supported</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> PostgreSQL: Since 8.3</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> SQL Server: Since 2000</span>
+    <span class="version-badge version-not-supported"><span aria-hidden="true">✗</span> Oracle: Not supported</span>
+    <span class="version-badge version-not-supported"><span aria-hidden="true">✗</span> SQLite: Not supported</span>
     
   </div>
 
@@ -176,6 +184,10 @@ SELECT LOWER(REGEXP_REPLACE(RAWTOHEX(id),
 -- Application generates and inserts the UUID string</div>
       </div>
   </div>
+</main>
+<footer class="site-footer">
+  <p>&copy; 2024 Can I Use SQL. All rights reserved.</p>
+</footer>
   <script src="/search.js" defer></script>
   <script src="/splash.js" defer></script>
   <script src="/track.js" defer></script>

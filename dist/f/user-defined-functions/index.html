@@ -22,6 +22,7 @@
 </head>
 <body>
 
+<a href="#main-content" class="skip-link">Skip to main content</a>
 <header class="site-header">
   <a href="/" class="home-link" aria-label="Home">
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="30" height="30" aria-hidden="true">
@@ -44,64 +45,71 @@
       <rect x="20" y="17" width="4" height="3" rx="0.5" fill="#1a6391" opacity="0.55"/>
     </svg>
   </a>
-  <span class="command-heading"><h1>USER-DEFINED FUNCTIONS<span class="category-badge">Programmability</span></h1></span>
+  <span class="command-heading"><h1>USER-DEFINED FUNCTIONS</h1><span class="category-badge">Programmability</span></span>
   <div class="search-widget">
     <input class="site-search" type="search" placeholder="Search SQL commands…"
            autocomplete="off" aria-label="Search SQL commands">
     <ul class="search-results" hidden role="listbox" aria-label="Search suggestions"></ul>
   </div>
+    <a href="https://www.buymeacoffee.com/computerguycj" target="_blank" rel="noopener" class="bmc-link" aria-label="Buy me a coffee">
+    <img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png"
+         alt="Buy Me A Coffee"
+         height="36">
+  </a>
 </header>
 
+<main id="main-content">
 
   <p class="command-desc">Named, reusable routines that accept parameters, compute a value, and return a scalar or table result.</p>
   <p class="command-overview">Database-specific procedural extensions: PL/pgSQL in PostgreSQL, T-SQL in SQL Server, PL/SQL in Oracle. Allow complex logic, loops, and conditionals in the database. Powerful but can become a maintenance burden and are hard to test.</p>
 
   <h2>Compatibility</h2>
-  <div class="compare-bar">
-    <span class="compare-label">Show:</span>
+  <fieldset class="compare-bar">
+    <legend>Filter by Database</legend>
     <label><input type="checkbox" value="mysql" checked> MySQL</label>
     <label><input type="checkbox" value="postgresql" checked> PostgreSQL</label>
     <label><input type="checkbox" value="sqlserver" checked> SQL Server</label>
     <label><input type="checkbox" value="oracle" checked> Oracle</label>
     <label><input type="checkbox" value="sqlite" checked> SQLite</label>
-  </div>
+  </fieldset>
   <table>
+    <caption>SQL USER-DEFINED FUNCTIONS Compatibility Across Databases</caption>
     <thead>
       <tr>
-        <th>Database System</th>
-        <th>Support Status</th>
-        <th>Since Version</th>
-        <th>Notes</th>
+        <th scope="col">Database System</th>
+        <th scope="col">Support Status</th>
+        <th scope="col">Since Version</th>
+        <th scope="col">Notes</th>
       </tr>
     </thead>
     <tbody>
           <tr data-db="mysql">
             <td>MySQL</td>
-            <td class="supported">✓ Supported</td>
+            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
             <td>5.0</td>
             <td class="notes">Scalar functions only (no table-valued UDFs in native SQL). DETERMINISTIC / NO SQL / READS SQL DATA characteristics affect optimizer behavior.</td>
           </tr>
           <tr data-db="postgresql">
             <td>PostgreSQL</td>
-            <td class="supported">✓ Supported</td>
+            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
             <td>6.5</td>
             <td class="notes">Supports scalar and set-returning (RETURNS TABLE / RETURNS SETOF) functions. LANGUAGE can be sql, plpgsql, python, c, and more.</td>
           </tr>
           <tr data-db="sqlserver">
             <td>SQL Server</td>
-            <td class="supported">✓ Supported</td>
+            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
             <td>2000</td>
             <td class="notes">Three types: scalar, inline table-valued (ITVF), and multi-statement table-valued (MSTVF). ITVFs are strongly preferred over MSTVFs for performance.</td>
           </tr>
           <tr data-db="oracle">
             <td>Oracle</td>
-            <td class="supported">✓ Supported</td>
+            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
             <td>7</td>
             <td class="notes">Functions can use PIPELINED RETURN to stream table results row by row. DETERMINISTIC hint improves optimizer reuse.</td>
           </tr>
           <tr data-db="sqlite">
             <td>SQLite</td>
-            <td class="supported">✓ Supported</td>
+            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
             <td>3.0.0</td>
             <td class="notes">UDFs must be registered at the connection level via the application API (e.g., sqlite3_create_function in C, or conn.create_function() in Python). No CREATE FUNCTION DDL.</td>
           </tr>
@@ -122,11 +130,11 @@ AS
 
   <h2>Version Support</h2>
   <div class="version-list">
-    <span class="version-badge version-supported">MySQL: Since 5.0</span>
-    <span class="version-badge version-supported">PostgreSQL: Since 6.5</span>
-    <span class="version-badge version-supported">SQL Server: Since 2000</span>
-    <span class="version-badge version-supported">Oracle: Since 7</span>
-    <span class="version-badge version-supported">SQLite: Since 3.0.0</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> MySQL: Since 5.0</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> PostgreSQL: Since 6.5</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> SQL Server: Since 2000</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> Oracle: Since 7</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> SQLite: Since 3.0.0</span>
     
   </div>
 
@@ -180,6 +188,10 @@ conn.create_function('add_tax', 1, lambda p: p * 1.1)
 SELECT add_tax(price) FROM products;</div>
       </div>
   </div>
+</main>
+<footer class="site-footer">
+  <p>&copy; 2024 Can I Use SQL. All rights reserved.</p>
+</footer>
   <script src="/search.js" defer></script>
   <script src="/splash.js" defer></script>
   <script src="/track.js" defer></script>

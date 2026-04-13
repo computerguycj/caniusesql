@@ -22,6 +22,7 @@
 </head>
 <body>
 
+<a href="#main-content" class="skip-link">Skip to main content</a>
 <header class="site-header">
   <a href="/" class="home-link" aria-label="Home">
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="30" height="30" aria-hidden="true">
@@ -44,64 +45,71 @@
       <rect x="20" y="17" width="4" height="3" rx="0.5" fill="#1a6391" opacity="0.55"/>
     </svg>
   </a>
-  <span class="command-heading"><h1>JSON EXTRACT<span class="category-badge">JSON</span></h1></span>
+  <span class="command-heading"><h1>JSON EXTRACT</h1><span class="category-badge">JSON</span></span>
   <div class="search-widget">
     <input class="site-search" type="search" placeholder="Search SQL commands…"
            autocomplete="off" aria-label="Search SQL commands">
     <ul class="search-results" hidden role="listbox" aria-label="Search suggestions"></ul>
   </div>
+    <a href="https://www.buymeacoffee.com/computerguycj" target="_blank" rel="noopener" class="bmc-link" aria-label="Buy me a coffee">
+    <img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png"
+         alt="Buy Me A Coffee"
+         height="36">
+  </a>
 </header>
 
+<main id="main-content">
 
   <p class="command-desc">Extract a scalar value or sub-document from a JSON column using a path expression.</p>
   <p class="command-overview">Extracts values from JSON data: JSON_EXTRACT returns the raw JSON (including delimiters) while JSON_VALUE returns a scalar string. JSON_VALUE in SQL Server is the equivalent of JSON_EXTRACT in PostgreSQL. Essential for querying semi-structured data.</p>
 
   <h2>Compatibility</h2>
-  <div class="compare-bar">
-    <span class="compare-label">Show:</span>
+  <fieldset class="compare-bar">
+    <legend>Filter by Database</legend>
     <label><input type="checkbox" value="mysql" checked> MySQL</label>
     <label><input type="checkbox" value="postgresql" checked> PostgreSQL</label>
     <label><input type="checkbox" value="sqlserver" checked> SQL Server</label>
     <label><input type="checkbox" value="oracle" checked> Oracle</label>
     <label><input type="checkbox" value="sqlite" checked> SQLite</label>
-  </div>
+  </fieldset>
   <table>
+    <caption>SQL JSON EXTRACT Compatibility Across Databases</caption>
     <thead>
       <tr>
-        <th>Database System</th>
-        <th>Support Status</th>
-        <th>Since Version</th>
-        <th>Notes</th>
+        <th scope="col">Database System</th>
+        <th scope="col">Support Status</th>
+        <th scope="col">Since Version</th>
+        <th scope="col">Notes</th>
       </tr>
     </thead>
     <tbody>
           <tr data-db="mysql">
             <td>MySQL</td>
-            <td class="supported">✓ Supported</td>
+            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
             <td>5.7.8</td>
             <td class="notes">JSON_EXTRACT(col, path) returns a JSON-encoded value. The -&gt; operator is shorthand for JSON_EXTRACT; -&gt;&gt; is shorthand for JSON_UNQUOTE(JSON_EXTRACT(...)) and returns unquoted text. Paths use $.key, $.key.subkey, $.array[n] notation.</td>
           </tr>
           <tr data-db="postgresql">
             <td>PostgreSQL</td>
-            <td class="supported">✓ Supported</td>
+            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
             <td>9.3</td>
             <td class="notes">The -&gt; operator returns a JSON value; -&gt;&gt; returns text. For nested paths use #&gt; (JSON) and #&gt;&gt; (text) with an array of keys. jsonb columns support the same operators plus GIN-indexable containment operators (@&gt;, &lt;@, ?, ?|, ?&amp;). json_extract_path() and jsonb_extract_path_text() are function equivalents.</td>
           </tr>
           <tr data-db="sqlserver">
             <td>SQL Server</td>
-            <td class="supported">✓ Supported</td>
+            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
             <td>2016</td>
             <td class="notes">JSON_VALUE(col, path) extracts a scalar (returns NVARCHAR). JSON_QUERY(col, path) extracts an object or array (returns NVARCHAR containing JSON). Passing the wrong function for the value type returns NULL silently. No -&gt; operators — all access is function-based with $.key path strings.</td>
           </tr>
           <tr data-db="oracle">
             <td>Oracle</td>
-            <td class="supported">✓ Supported</td>
+            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
             <td>12c</td>
             <td class="notes">JSON_VALUE(col, path) extracts a scalar; JSON_QUERY(col, path) extracts objects or arrays. The RETURNING clause controls the output type. Error handling clauses (NULL ON ERROR, ERROR ON ERROR) prevent silent failures. Oracle 21c added JSON_TRANSFORM and dot-notation access on JSON type columns.</td>
           </tr>
           <tr data-db="sqlite">
             <td>SQLite</td>
-            <td class="supported">✓ Supported</td>
+            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
             <td>3.9.0</td>
             <td class="notes">json_extract(col, path) is the core function, available since 3.9.0. The -&gt; and -&gt;&gt; operators (matching MySQL semantics) were added in SQLite 3.38.0 (2022-02-22). -&gt;&gt; always returns an SQL value (text/integer/real), never a JSON-encoded string.</td>
           </tr>
@@ -128,11 +136,11 @@ FROM users;</div>
 
   <h2>Version Support</h2>
   <div class="version-list">
-    <span class="version-badge version-supported">MySQL: Since 5.7.8</span>
-    <span class="version-badge version-supported">PostgreSQL: Since 9.3</span>
-    <span class="version-badge version-supported">SQL Server: Since 2016</span>
-    <span class="version-badge version-supported">Oracle: Since 12c</span>
-    <span class="version-badge version-supported">SQLite: Since 3.9.0</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> MySQL: Since 5.7.8</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> PostgreSQL: Since 9.3</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> SQL Server: Since 2016</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> Oracle: Since 12c</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> SQLite: Since 3.9.0</span>
     
   </div>
 
@@ -231,6 +239,10 @@ SELECT json_extract(data, '$.tags[0]') AS first_tag
 FROM posts;</div>
       </div>
   </div>
+</main>
+<footer class="site-footer">
+  <p>&copy; 2024 Can I Use SQL. All rights reserved.</p>
+</footer>
   <script src="/search.js" defer></script>
   <script src="/splash.js" defer></script>
   <script src="/track.js" defer></script>

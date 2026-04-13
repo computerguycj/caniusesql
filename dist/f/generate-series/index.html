@@ -22,6 +22,7 @@
 </head>
 <body>
 
+<a href="#main-content" class="skip-link">Skip to main content</a>
 <header class="site-header">
   <a href="/" class="home-link" aria-label="Home">
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="30" height="30" aria-hidden="true">
@@ -44,64 +45,71 @@
       <rect x="20" y="17" width="4" height="3" rx="0.5" fill="#1a6391" opacity="0.55"/>
     </svg>
   </a>
-  <span class="command-heading"><h1>GENERATE_SERIES<span class="category-badge">Functions</span></h1></span>
+  <span class="command-heading"><h1>GENERATE_SERIES</h1><span class="category-badge">Functions</span></span>
   <div class="search-widget">
     <input class="site-search" type="search" placeholder="Search SQL commands…"
            autocomplete="off" aria-label="Search SQL commands">
     <ul class="search-results" hidden role="listbox" aria-label="Search suggestions"></ul>
   </div>
+    <a href="https://www.buymeacoffee.com/computerguycj" target="_blank" rel="noopener" class="bmc-link" aria-label="Buy me a coffee">
+    <img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png"
+         alt="Buy Me A Coffee"
+         height="36">
+  </a>
 </header>
 
+<main id="main-content">
 
   <p class="command-desc">Generate a set of integer, numeric, or timestamp values as a virtual table row source.</p>
   <p class="command-overview">Generates a series of values from start to end with an optional step, available in PostgreSQL and SQLite (3.31.0+). Essential for generating date sequences, test data, and calendar tables without creating physical tables.</p>
 
   <h2>Compatibility</h2>
-  <div class="compare-bar">
-    <span class="compare-label">Show:</span>
+  <fieldset class="compare-bar">
+    <legend>Filter by Database</legend>
     <label><input type="checkbox" value="mysql" checked> MySQL</label>
     <label><input type="checkbox" value="postgresql" checked> PostgreSQL</label>
     <label><input type="checkbox" value="sqlserver" checked> SQL Server</label>
     <label><input type="checkbox" value="oracle" checked> Oracle</label>
     <label><input type="checkbox" value="sqlite" checked> SQLite</label>
-  </div>
+  </fieldset>
   <table>
+    <caption>SQL GENERATE_SERIES Compatibility Across Databases</caption>
     <thead>
       <tr>
-        <th>Database System</th>
-        <th>Support Status</th>
-        <th>Since Version</th>
-        <th>Notes</th>
+        <th scope="col">Database System</th>
+        <th scope="col">Support Status</th>
+        <th scope="col">Since Version</th>
+        <th scope="col">Notes</th>
       </tr>
     </thead>
     <tbody>
           <tr data-db="mysql">
             <td>MySQL</td>
-            <td class="not-supported">✗ Not Supported</td>
+            <td class="not-supported"><span aria-hidden="true">✗</span> <span class="status-text">Not Supported</span></td>
             <td>—</td>
             <td class="notes">Not supported. Workaround: recursive CTE (limited to @@cte_max_recursion_depth, default 1000).</td>
           </tr>
           <tr data-db="postgresql">
             <td>PostgreSQL</td>
-            <td class="supported">✓ Supported</td>
+            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
             <td>8.0</td>
             <td class="notes">generate_series(start, stop[, step]) for integers/bigints/numerics. Timestamp support added in 8.4. Negative step works. Returns empty set if start &gt; stop (with positive step).</td>
           </tr>
           <tr data-db="sqlserver">
             <td>SQL Server</td>
-            <td class="supported">✓ Supported</td>
+            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
             <td>2022</td>
             <td class="notes">GENERATE_SERIES(start, stop[, step]) added in SQL Server 2022. Requires database compatibility level 160. Supports int, bigint, decimal, numeric. No timestamp/date support.</td>
           </tr>
           <tr data-db="oracle">
             <td>Oracle</td>
-            <td class="not-supported">✗ Not Supported</td>
+            <td class="not-supported"><span aria-hidden="true">✗</span> <span class="status-text">Not Supported</span></td>
             <td>—</td>
             <td class="notes">Not supported. Workaround: CONNECT BY LEVEL for integers; recursive CTE for other types.</td>
           </tr>
           <tr data-db="sqlite">
             <td>SQLite</td>
-            <td class="supported">✓ Supported</td>
+            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
             <td>3.31.0</td>
             <td class="notes">Built-in table-valued function since 3.31.0, but may require explicit loading in some environments and is not enabled by default.</td>
           </tr>
@@ -125,11 +133,11 @@ SELECT generate_series(
 
   <h2>Version Support</h2>
   <div class="version-list">
-    <span class="version-badge version-not-supported">MySQL: Not supported</span>
-    <span class="version-badge version-supported">PostgreSQL: Since 8.0</span>
-    <span class="version-badge version-supported">SQL Server: Since 2022</span>
-    <span class="version-badge version-not-supported">Oracle: Not supported</span>
-    <span class="version-badge version-supported">SQLite: Since 3.31.0</span>
+    <span class="version-badge version-not-supported"><span aria-hidden="true">✗</span> MySQL: Not supported</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> PostgreSQL: Since 8.0</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> SQL Server: Since 2022</span>
+    <span class="version-badge version-not-supported"><span aria-hidden="true">✗</span> Oracle: Not supported</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> SQLite: Since 3.31.0</span>
     
   </div>
 
@@ -174,6 +182,10 @@ SELECT value FROM GENERATE_SERIES(1, 10, 2);
         <div class="syntax">SELECT value FROM generate_series(1, 10);</div>
       </div>
   </div>
+</main>
+<footer class="site-footer">
+  <p>&copy; 2024 Can I Use SQL. All rights reserved.</p>
+</footer>
   <script src="/search.js" defer></script>
   <script src="/splash.js" defer></script>
   <script src="/track.js" defer></script>

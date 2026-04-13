@@ -22,6 +22,7 @@
 </head>
 <body>
 
+<a href="#main-content" class="skip-link">Skip to main content</a>
 <header class="site-header">
   <a href="/" class="home-link" aria-label="Home">
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="30" height="30" aria-hidden="true">
@@ -44,64 +45,71 @@
       <rect x="20" y="17" width="4" height="3" rx="0.5" fill="#1a6391" opacity="0.55"/>
     </svg>
   </a>
-  <span class="command-heading"><h1>CREATE SCHEMA<span class="category-badge">DDL</span></h1></span>
+  <span class="command-heading"><h1>CREATE SCHEMA</h1><span class="category-badge">DDL</span></span>
   <div class="search-widget">
     <input class="site-search" type="search" placeholder="Search SQL commands…"
            autocomplete="off" aria-label="Search SQL commands">
     <ul class="search-results" hidden role="listbox" aria-label="Search suggestions"></ul>
   </div>
+    <a href="https://www.buymeacoffee.com/computerguycj" target="_blank" rel="noopener" class="bmc-link" aria-label="Buy me a coffee">
+    <img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png"
+         alt="Buy Me A Coffee"
+         height="36">
+  </a>
 </header>
 
+<main id="main-content">
 
   <p class="command-desc">Create a named namespace within a database that groups related tables, views, and other objects. Schemas provide organizational structure and a layer of access control.</p>
   <p class="command-overview">Creates a named namespace within a database for grouping related objects. Simplifies object management and allows multiple teams to work in the same database without name collisions. Schema ownership and privileges can be controlled separately.</p>
 
   <h2>Compatibility</h2>
-  <div class="compare-bar">
-    <span class="compare-label">Show:</span>
+  <fieldset class="compare-bar">
+    <legend>Filter by Database</legend>
     <label><input type="checkbox" value="mysql" checked> MySQL</label>
     <label><input type="checkbox" value="postgresql" checked> PostgreSQL</label>
     <label><input type="checkbox" value="sqlserver" checked> SQL Server</label>
     <label><input type="checkbox" value="oracle" checked> Oracle</label>
     <label><input type="checkbox" value="sqlite" checked> SQLite</label>
-  </div>
+  </fieldset>
   <table>
+    <caption>SQL CREATE SCHEMA Compatibility Across Databases</caption>
     <thead>
       <tr>
-        <th>Database System</th>
-        <th>Support Status</th>
-        <th>Since Version</th>
-        <th>Notes</th>
+        <th scope="col">Database System</th>
+        <th scope="col">Support Status</th>
+        <th scope="col">Since Version</th>
+        <th scope="col">Notes</th>
       </tr>
     </thead>
     <tbody>
           <tr data-db="mysql">
             <td>MySQL</td>
-            <td class="supported">✓ Supported</td>
+            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
             <td>5.0</td>
             <td class="notes">In MySQL, SCHEMA is a synonym for DATABASE — CREATE SCHEMA and CREATE DATABASE are interchangeable. There is no sub-database namespace concept; each schema/database is a fully separate unit. The dot notation (schema.table) is the cross-database reference syntax. This differs from every other engine where schemas are namespaces within a database.</td>
           </tr>
           <tr data-db="postgresql">
             <td>PostgreSQL</td>
-            <td class="supported">✓ Supported</td>
+            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
             <td>7.3</td>
             <td class="notes">Schemas are namespaces within a PostgreSQL database (distinct from databases themselves). The default schema is public. search_path controls which schemas are searched when an unqualified name is used. CREATE SCHEMA ... AUTHORIZATION assigns schema ownership. Objects in different schemas can be queried in the same connection; cross-database queries require foreign data wrappers (postgres_fdw).</td>
           </tr>
           <tr data-db="sqlserver">
             <td>SQL Server</td>
-            <td class="supported">✓ Supported</td>
+            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
             <td>2005</td>
             <td class="notes">Schemas are sub-namespaces within a database (SQL Server 2005 replaced the old owner-based dbo.table model). The default schema is dbo. Each login has a default schema. Permissions can be granted at the schema level, applying to all current and future objects. The four-part name server.database.schema.object can reference objects across databases and linked servers.</td>
           </tr>
           <tr data-db="oracle">
             <td>Oracle</td>
-            <td class="not-supported">✗ Not Supported</td>
+            <td class="not-supported"><span aria-hidden="true">✗</span> <span class="status-text">Not Supported</span></td>
             <td>—</td>
             <td class="notes">Oracle does not have a separate SCHEMA object — in Oracle, every user IS a schema. Creating a user (CREATE USER) creates the schema of the same name. Objects are owned by users/schemas, and the two terms are interchangeable in Oracle. There is no CREATE SCHEMA DDL to create a new namespace independently of a user. The CREATE SCHEMA statement exists in Oracle but only as a convenience to create multiple objects in one transaction, not to create the schema itself.</td>
           </tr>
           <tr data-db="sqlite">
             <td>SQLite</td>
-            <td class="not-supported">✗ Not Supported</td>
+            <td class="not-supported"><span aria-hidden="true">✗</span> <span class="status-text">Not Supported</span></td>
             <td>—</td>
             <td class="notes">SQLite has no schema namespace concept within a database file. Each SQLite database file is a single namespace. The ATTACH DATABASE statement allows attaching multiple database files to one connection, and the attached databases are referenced by alias — this is the closest equivalent to cross-schema access.</td>
           </tr>
@@ -125,11 +133,11 @@ SELECT * FROM sales.orders;</div>
 
   <h2>Version Support</h2>
   <div class="version-list">
-    <span class="version-badge version-supported">MySQL: Since 5.0</span>
-    <span class="version-badge version-supported">PostgreSQL: Since 7.3</span>
-    <span class="version-badge version-supported">SQL Server: Since 2005</span>
-    <span class="version-badge version-not-supported">Oracle: Not supported</span>
-    <span class="version-badge version-not-supported">SQLite: Not supported</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> MySQL: Since 5.0</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> PostgreSQL: Since 7.3</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> SQL Server: Since 2005</span>
+    <span class="version-badge version-not-supported"><span aria-hidden="true">✗</span> Oracle: Not supported</span>
+    <span class="version-badge version-not-supported"><span aria-hidden="true">✗</span> SQLite: Not supported</span>
     
   </div>
 
@@ -241,6 +249,10 @@ SELECT * FROM main.products;
 PRAGMA database_list;</div>
       </div>
   </div>
+</main>
+<footer class="site-footer">
+  <p>&copy; 2024 Can I Use SQL. All rights reserved.</p>
+</footer>
   <script src="/search.js" defer></script>
   <script src="/splash.js" defer></script>
   <script src="/track.js" defer></script>
