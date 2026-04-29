@@ -85,32 +85,32 @@
     <tbody>
           <tr data-db="mysql">
             <td>MySQL</td>
-            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
+            <td class="supported"><span aria-hidden="true">&#10003;</span> <span class="status-text">Native</span></td>
             <td>3.23</td>
             <td class="notes">LOAD DATA INFILE reads from a server-side file path. LOAD DATA LOCAL INFILE reads from the client machine (requires local_infile=ON on both client and server). The mysqlimport CLI tool wraps LOAD DATA INFILE. For cloud environments where file access is restricted, use INSERT with multi-row VALUES or a pipeline tool. CSV, TSV, and custom delimiter/enclosure formats supported.</td>
           </tr>
           <tr data-db="postgresql">
             <td>PostgreSQL</td>
-            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
+            <td class="supported"><span aria-hidden="true">&#10003;</span> <span class="status-text">Native</span></td>
             <td>7.0</td>
             <td class="notes">COPY is the standard bulk load mechanism. Server-side COPY reads/writes files on the server (requires superuser). Client-side \copy (psql meta-command) reads/writes files on the client machine without superuser. COPY also accepts FROM STDIN / TO STDOUT for pipe-based loading. Supported formats: text (default), CSV, binary. Cannot COPY into a view; use INSTEAD OF triggers or a function. The pg_bulkload extension offers even faster loading for very large datasets.</td>
           </tr>
           <tr data-db="sqlserver">
             <td>SQL Server</td>
-            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
+            <td class="supported"><span aria-hidden="true">&#10003;</span> <span class="status-text">Native</span></td>
             <td>6.5</td>
             <td class="notes">Two main options: BULK INSERT (T-SQL statement, server-side file access) and the bcp utility (command-line tool for client-side file transfer). The OPENROWSET(BULK ...) function embeds bulk data in a SELECT, useful for transformation during load. SQL Server Integration Services (SSIS) is the full ETL solution. Azure SQL supports loading from Azure Blob Storage via BULK INSERT with DATASOURCE.</td>
           </tr>
           <tr data-db="oracle">
             <td>Oracle</td>
-            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
+            <td class="supported"><span aria-hidden="true">&#10003;</span> <span class="status-text">Native</span></td>
             <td>7</td>
             <td class="notes">SQL*Loader (sqlldr) is the primary bulk load utility — a standalone command-line tool with a control file describing the source format. External tables allow querying a flat file as if it were a table and loading with INSERT INTO ... SELECT. The Data Pump (expdp/impdp) is used for Oracle-to-Oracle bulk transfers. Direct-path loading (DIRECT=TRUE in sqlldr) bypasses redo logging for maximum speed.</td>
           </tr>
           <tr data-db="sqlite">
             <td>SQLite</td>
-            <td class="not-supported"><span aria-hidden="true">✗</span> <span class="status-text">Not Supported</span></td>
-            <td>—</td>
+            <td class="not-supported"><span aria-hidden="true">&mdash;</span> <span class="status-text">Not Supported</span></td>
+            <td>-</td>
             <td class="notes">SQLite has no native bulk load statement. The sqlite3 CLI tool has a .import command for loading CSV files, and the .mode csv setting controls CSV parsing. Programmatically, the fastest approach is to use a transaction wrapping many INSERT statements, or to use the SQLite C API's batch insert with prepared statements. The sqlite-utils Python library provides a convenient bulk insert interface.</td>
           </tr>
     </tbody>
@@ -136,18 +136,18 @@ IGNORE 1 ROWS;</div>
 
   <h2>Version Support</h2>
   <div class="version-list">
-    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> MySQL: Since 3.23</span>
-    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> PostgreSQL: Since 7.0</span>
-    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> SQL Server: Since 6.5</span>
-    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> Oracle: Since 7</span>
-    <span class="version-badge version-not-supported"><span aria-hidden="true">✗</span> SQLite: Not supported</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">&#10003;</span> MySQL: Native since 3.23</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">&#10003;</span> PostgreSQL: Native since 7.0</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">&#10003;</span> SQL Server: Native since 6.5</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">&#10003;</span> Oracle: Native since 7</span>
+    <span class="version-badge version-not-supported"><span aria-hidden="true">&mdash;</span> SQLite: Not supported</span>
     
   </div>
 
   <h2>Per-Database Syntax &amp; Notes</h2>
   <div class="per-db-section">
       <div class="per-db-entry" data-db="mysql">
-        <h4>MySQL</h4>
+        <h4>MySQL <span class="syntax-kind syntax-kind-native">Native syntax</span></h4>
         <p class="notes">LOAD DATA INFILE reads from a server-side file path. LOAD DATA LOCAL INFILE reads from the client machine (requires local_infile=ON on both client and server). The mysqlimport CLI tool wraps LOAD DATA INFILE. For cloud environments where file access is restricted, use INSERT with multi-row VALUES or a pipeline tool. CSV, TSV, and custom delimiter/enclosure formats supported.</p>
         <div class="syntax">-- From server-side file:
 LOAD DATA INFILE '/var/lib/mysql-files/orders.csv'
@@ -170,7 +170,7 @@ REPLACE INTO TABLE orders
 FIELDS TERMINATED BY ',';</div>
       </div>
       <div class="per-db-entry" data-db="postgresql">
-        <h4>PostgreSQL</h4>
+        <h4>PostgreSQL <span class="syntax-kind syntax-kind-native">Native syntax</span></h4>
         <p class="notes">COPY is the standard bulk load mechanism. Server-side COPY reads/writes files on the server (requires superuser). Client-side \copy (psql meta-command) reads/writes files on the client machine without superuser. COPY also accepts FROM STDIN / TO STDOUT for pipe-based loading. Supported formats: text (default), CSV, binary. Cannot COPY into a view; use INSTEAD OF triggers or a function. The pg_bulkload extension offers even faster loading for very large datasets.</p>
         <div class="syntax">-- From server-side CSV file (requires superuser):
 COPY orders (id, customer_id, amount, order_date)
@@ -192,7 +192,7 @@ CSV HEADER;
 COPY orders FROM '/data/orders.bin' FORMAT binary;</div>
       </div>
       <div class="per-db-entry" data-db="sqlserver">
-        <h4>SQL Server</h4>
+        <h4>SQL Server <span class="syntax-kind syntax-kind-native">Native syntax</span></h4>
         <p class="notes">Two main options: BULK INSERT (T-SQL statement, server-side file access) and the bcp utility (command-line tool for client-side file transfer). The OPENROWSET(BULK ...) function embeds bulk data in a SELECT, useful for transformation during load. SQL Server Integration Services (SSIS) is the full ETL solution. Azure SQL supports loading from Azure Blob Storage via BULK INSERT with DATASOURCE.</p>
         <div class="syntax">-- BULK INSERT from server-side file:
 BULK INSERT orders
@@ -216,7 +216,7 @@ FROM OPENROWSET(
 -- bcp mydb.dbo.orders in orders.csv -c -t, -S server -U user -P pass</div>
       </div>
       <div class="per-db-entry" data-db="oracle">
-        <h4>Oracle</h4>
+        <h4>Oracle <span class="syntax-kind syntax-kind-native">Native syntax</span></h4>
         <p class="notes">SQL*Loader (sqlldr) is the primary bulk load utility — a standalone command-line tool with a control file describing the source format. External tables allow querying a flat file as if it were a table and loading with INSERT INTO ... SELECT. The Data Pump (expdp/impdp) is used for Oracle-to-Oracle bulk transfers. Direct-path loading (DIRECT=TRUE in sqlldr) bypasses redo logging for maximum speed.</p>
         <div class="syntax">-- SQL*Loader control file (orders.ctl):
 -- LOAD DATA
@@ -246,7 +246,7 @@ ORGANIZATION EXTERNAL (
 INSERT INTO orders SELECT * FROM orders_ext;</div>
       </div>
       <div class="per-db-entry" data-db="sqlite">
-        <h4>SQLite</h4>
+        <h4>SQLite <span class="syntax-kind syntax-kind-workaround">Alternative syntax</span></h4>
         <p class="notes">SQLite has no native bulk load statement. The sqlite3 CLI tool has a .import command for loading CSV files, and the .mode csv setting controls CSV parsing. Programmatically, the fastest approach is to use a transaction wrapping many INSERT statements, or to use the SQLite C API's batch insert with prepared statements. The sqlite-utils Python library provides a convenient bulk insert interface.</p>
         <div class="syntax">-- sqlite3 CLI import:
 -- .mode csv

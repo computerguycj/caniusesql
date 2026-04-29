@@ -85,31 +85,31 @@
     <tbody>
           <tr data-db="mysql">
             <td>MySQL</td>
-            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
+            <td class="supported"><span aria-hidden="true">&#10003;</span> <span class="status-text">Native</span></td>
             <td>8.0</td>
             <td class="notes">NTILE(n) added in MySQL 8.0. Distributes rows into n buckets. If rows don't divide evenly, earlier buckets get one extra row. NTILE(100) = percentile bucket.</td>
           </tr>
           <tr data-db="postgresql">
             <td>PostgreSQL</td>
-            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
+            <td class="supported"><span aria-hidden="true">&#10003;</span> <span class="status-text">Native</span></td>
             <td>8.4</td>
             <td class="notes">Standard NTILE(n). Supports the WINDOW clause shorthand for reusing window definitions.</td>
           </tr>
           <tr data-db="sqlserver">
             <td>SQL Server</td>
-            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
+            <td class="supported"><span aria-hidden="true">&#10003;</span> <span class="status-text">Native</span></td>
             <td>2005</td>
             <td class="notes">Standard NTILE(n). Available since SQL Server 2005.</td>
           </tr>
           <tr data-db="oracle">
             <td>Oracle</td>
-            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
+            <td class="supported"><span aria-hidden="true">&#10003;</span> <span class="status-text">Native</span></td>
             <td>8i</td>
             <td class="notes">Standard NTILE(n). Available since 8i.</td>
           </tr>
           <tr data-db="sqlite">
             <td>SQLite</td>
-            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
+            <td class="supported"><span aria-hidden="true">&#10003;</span> <span class="status-text">Native</span></td>
             <td>3.25.0</td>
             <td class="notes">NTILE(n) added in SQLite 3.25.0.</td>
           </tr>
@@ -130,18 +130,18 @@ FROM students;</div>
 
   <h2>Version Support</h2>
   <div class="version-list">
-    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> MySQL: Since 8.0</span>
-    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> PostgreSQL: Since 8.4</span>
-    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> SQL Server: Since 2005</span>
-    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> Oracle: Since 8i</span>
-    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> SQLite: Since 3.25.0</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">&#10003;</span> MySQL: Native since 8.0</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">&#10003;</span> PostgreSQL: Native since 8.4</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">&#10003;</span> SQL Server: Native since 2005</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">&#10003;</span> Oracle: Native since 8i</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">&#10003;</span> SQLite: Native since 3.25.0</span>
     
   </div>
 
   <h2>Per-Database Syntax &amp; Notes</h2>
   <div class="per-db-section">
       <div class="per-db-entry" data-db="mysql">
-        <h4>MySQL</h4>
+        <h4>MySQL <span class="syntax-kind syntax-kind-native">Native syntax</span></h4>
         <p class="notes">NTILE(n) added in MySQL 8.0. Distributes rows into n buckets. If rows don't divide evenly, earlier buckets get one extra row. NTILE(100) = percentile bucket.</p>
         <div class="syntax">SELECT name, score,
   NTILE(4)   OVER (ORDER BY score DESC) AS quartile,
@@ -155,7 +155,7 @@ SELECT name, dept, salary,
 FROM employees;</div>
       </div>
       <div class="per-db-entry" data-db="postgresql">
-        <h4>PostgreSQL</h4>
+        <h4>PostgreSQL <span class="syntax-kind syntax-kind-native">Native syntax</span></h4>
         <p class="notes">Standard NTILE(n). Supports the WINDOW clause shorthand for reusing window definitions.</p>
         <div class="syntax">SELECT name, score,
   NTILE(4) OVER (ORDER BY score DESC) AS quartile
@@ -169,7 +169,7 @@ FROM students
 WINDOW w AS (ORDER BY score DESC);</div>
       </div>
       <div class="per-db-entry" data-db="sqlserver">
-        <h4>SQL Server</h4>
+        <h4>SQL Server <span class="syntax-kind syntax-kind-native">Native syntax</span></h4>
         <p class="notes">Standard NTILE(n). Available since SQL Server 2005.</p>
         <div class="syntax">SELECT name, score,
   NTILE(4)  OVER (ORDER BY score DESC) AS quartile,
@@ -177,14 +177,14 @@ WINDOW w AS (ORDER BY score DESC);</div>
 FROM students;</div>
       </div>
       <div class="per-db-entry" data-db="oracle">
-        <h4>Oracle</h4>
+        <h4>Oracle <span class="syntax-kind syntax-kind-native">Native syntax</span></h4>
         <p class="notes">Standard NTILE(n). Available since 8i.</p>
         <div class="syntax">SELECT name, score,
   NTILE(4) OVER (ORDER BY score DESC) AS quartile
 FROM students;</div>
       </div>
       <div class="per-db-entry" data-db="sqlite">
-        <h4>SQLite</h4>
+        <h4>SQLite <span class="syntax-kind syntax-kind-native">Native syntax</span></h4>
         <p class="notes">NTILE(n) added in SQLite 3.25.0.</p>
         <div class="syntax">SELECT name, score,
   NTILE(4) OVER (ORDER BY score DESC) AS quartile

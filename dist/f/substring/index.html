@@ -85,31 +85,31 @@
     <tbody>
           <tr data-db="mysql">
             <td>MySQL</td>
-            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
+            <td class="supported"><span aria-hidden="true">&#10003;</span> <span class="status-text">Native</span></td>
             <td>all</td>
             <td class="notes">SUBSTRING(str, pos, len) and SUBSTR() are synonyms. Position is 1-based. If pos is negative, counts from the end of the string.</td>
           </tr>
           <tr data-db="postgresql">
             <td>PostgreSQL</td>
-            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
+            <td class="supported"><span aria-hidden="true">&#10003;</span> <span class="status-text">Native</span></td>
             <td>all</td>
             <td class="notes">SUBSTRING(str FROM pos FOR len) is the SQL-standard form. SUBSTRING(str, pos, len) also works. Supports regex: SUBSTRING(str FROM pattern) extracts the first match.</td>
           </tr>
           <tr data-db="sqlserver">
             <td>SQL Server</td>
-            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
+            <td class="supported"><span aria-hidden="true">&#10003;</span> <span class="status-text">Native</span></td>
             <td>all</td>
             <td class="notes">SUBSTRING(str, start, length). 1-based position. All three arguments are required. No negative indexing from end — use LEN() arithmetic instead.</td>
           </tr>
           <tr data-db="oracle">
             <td>Oracle</td>
-            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
+            <td class="supported"><span aria-hidden="true">&#10003;</span> <span class="status-text">Native</span></td>
             <td>all</td>
             <td class="notes">SUBSTR(str, position, length). Both SUBSTR and SUBSTRING work. Position is 1-based; negative position counts from the end.</td>
           </tr>
           <tr data-db="sqlite">
             <td>SQLite</td>
-            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
+            <td class="supported"><span aria-hidden="true">&#10003;</span> <span class="status-text">Native</span></td>
             <td>all</td>
             <td class="notes">SUBSTR(str, start, length). 1-based. Negative start counts from the end. SUBSTRING is also accepted as a synonym.</td>
           </tr>
@@ -127,45 +127,45 @@ FROM tbl;</div>
 
   <h2>Version Support</h2>
   <div class="version-list">
-    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> MySQL: Since all</span>
-    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> PostgreSQL: Since all</span>
-    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> SQL Server: Since all</span>
-    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> Oracle: Since all</span>
-    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> SQLite: Since all</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">&#10003;</span> MySQL: Native in all listed versions</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">&#10003;</span> PostgreSQL: Native in all listed versions</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">&#10003;</span> SQL Server: Native in all listed versions</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">&#10003;</span> Oracle: Native in all listed versions</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">&#10003;</span> SQLite: Native in all listed versions</span>
     
   </div>
 
   <h2>Per-Database Syntax &amp; Notes</h2>
   <div class="per-db-section">
       <div class="per-db-entry" data-db="mysql">
-        <h4>MySQL</h4>
+        <h4>MySQL <span class="syntax-kind syntax-kind-native">Native syntax</span></h4>
         <p class="notes">SUBSTRING(str, pos, len) and SUBSTR() are synonyms. Position is 1-based. If pos is negative, counts from the end of the string.</p>
         <div class="syntax">SELECT SUBSTRING('Hello World', 7, 5);     -- 'World'
 SELECT SUBSTRING('Hello World', -5);       -- 'World' (from end)
 SELECT MID('Hello World', 7, 5);           -- 'World' (synonym)</div>
       </div>
       <div class="per-db-entry" data-db="postgresql">
-        <h4>PostgreSQL</h4>
+        <h4>PostgreSQL <span class="syntax-kind syntax-kind-native">Native syntax</span></h4>
         <p class="notes">SUBSTRING(str FROM pos FOR len) is the SQL-standard form. SUBSTRING(str, pos, len) also works. Supports regex: SUBSTRING(str FROM pattern) extracts the first match.</p>
         <div class="syntax">SELECT SUBSTRING('Hello World' FROM 7 FOR 5);   -- 'World'
 SELECT SUBSTRING('Hello World', 7, 5);           -- 'World'
 SELECT SUBSTRING('abc123' FROM '[0-9]+');         -- '123' (regex)</div>
       </div>
       <div class="per-db-entry" data-db="sqlserver">
-        <h4>SQL Server</h4>
+        <h4>SQL Server <span class="syntax-kind syntax-kind-native">Native syntax</span></h4>
         <p class="notes">SUBSTRING(str, start, length). 1-based position. All three arguments are required. No negative indexing from end — use LEN() arithmetic instead.</p>
         <div class="syntax">SELECT SUBSTRING('Hello World', 7, 5);     -- 'World'
 -- Last 5 chars:
 SELECT SUBSTRING(col, LEN(col) - 4, 5) FROM tbl;</div>
       </div>
       <div class="per-db-entry" data-db="oracle">
-        <h4>Oracle</h4>
+        <h4>Oracle <span class="syntax-kind syntax-kind-native">Native syntax</span></h4>
         <p class="notes">SUBSTR(str, position, length). Both SUBSTR and SUBSTRING work. Position is 1-based; negative position counts from the end.</p>
         <div class="syntax">SELECT SUBSTR('Hello World', 7, 5) FROM DUAL;   -- 'World'
 SELECT SUBSTR('Hello World', -5) FROM DUAL;     -- 'World'</div>
       </div>
       <div class="per-db-entry" data-db="sqlite">
-        <h4>SQLite</h4>
+        <h4>SQLite <span class="syntax-kind syntax-kind-native">Native syntax</span></h4>
         <p class="notes">SUBSTR(str, start, length). 1-based. Negative start counts from the end. SUBSTRING is also accepted as a synonym.</p>
         <div class="syntax">SELECT SUBSTR('Hello World', 7, 5);        -- 'World'
 SELECT SUBSTR('Hello World', -5);          -- 'World'</div>

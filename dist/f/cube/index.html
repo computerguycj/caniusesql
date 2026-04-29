@@ -85,32 +85,32 @@
     <tbody>
           <tr data-db="mysql">
             <td>MySQL</td>
-            <td class="not-supported"><span aria-hidden="true">✗</span> <span class="status-text">Not Supported</span></td>
-            <td>—</td>
+            <td class="not-supported"><span aria-hidden="true">&mdash;</span> <span class="status-text">Not Supported</span></td>
+            <td>-</td>
             <td class="notes">CUBE is not supported. MySQL only supports ROLLUP via GROUP BY ... WITH ROLLUP or GROUP BY ROLLUP(...) syntax. Workaround: use UNION ALL to manually union each combination, or use GROUPING SETS-style UNION ALL queries.</td>
           </tr>
           <tr data-db="postgresql">
             <td>PostgreSQL</td>
-            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
+            <td class="supported"><span aria-hidden="true">&#10003;</span> <span class="status-text">Native</span></td>
             <td>9.5</td>
             <td class="notes">Standard GROUP BY CUBE(...) syntax. GROUPING(col) available to identify which rollup-generated NULL rows represent which grouping level. For 3 columns, CUBE generates 8 grouping combinations (2^3). Can be mixed with ROLLUP and GROUPING SETS.</td>
           </tr>
           <tr data-db="sqlserver">
             <td>SQL Server</td>
-            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
+            <td class="supported"><span aria-hidden="true">&#10003;</span> <span class="status-text">Native</span></td>
             <td>2008</td>
             <td class="notes">Standard GROUP BY CUBE(...) syntax. GROUPING(col) and GROUPING_ID() available. For very wide CUBE operations, consider breaking into GROUPING SETS for more control over which combinations are generated.</td>
           </tr>
           <tr data-db="oracle">
             <td>Oracle</td>
-            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
+            <td class="supported"><span aria-hidden="true">&#10003;</span> <span class="status-text">Native</span></td>
             <td>8i</td>
             <td class="notes">Standard GROUP BY CUBE(...) syntax since Oracle 8i. GROUPING() and GROUPING_ID() supported. Can be combined with ROLLUP and GROUPING SETS in a single GROUP BY clause.</td>
           </tr>
           <tr data-db="sqlite">
             <td>SQLite</td>
-            <td class="not-supported"><span aria-hidden="true">✗</span> <span class="status-text">Not Supported</span></td>
-            <td>—</td>
+            <td class="not-supported"><span aria-hidden="true">&mdash;</span> <span class="status-text">Not Supported</span></td>
+            <td>-</td>
             <td class="notes">CUBE is not supported. Workaround: enumerate all 2^n combinations manually using UNION ALL.</td>
           </tr>
     </tbody>
@@ -129,18 +129,18 @@ GROUP BY CUBE(region, product);
 
   <h2>Version Support</h2>
   <div class="version-list">
-    <span class="version-badge version-not-supported"><span aria-hidden="true">✗</span> MySQL: Not supported</span>
-    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> PostgreSQL: Since 9.5</span>
-    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> SQL Server: Since 2008</span>
-    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> Oracle: Since 8i</span>
-    <span class="version-badge version-not-supported"><span aria-hidden="true">✗</span> SQLite: Not supported</span>
+    <span class="version-badge version-not-supported"><span aria-hidden="true">&mdash;</span> MySQL: Not supported</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">&#10003;</span> PostgreSQL: Native since 9.5</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">&#10003;</span> SQL Server: Native since 2008</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">&#10003;</span> Oracle: Native since 8i</span>
+    <span class="version-badge version-not-supported"><span aria-hidden="true">&mdash;</span> SQLite: Not supported</span>
     
   </div>
 
   <h2>Per-Database Syntax &amp; Notes</h2>
   <div class="per-db-section">
       <div class="per-db-entry" data-db="mysql">
-        <h4>MySQL</h4>
+        <h4>MySQL <span class="syntax-kind syntax-kind-workaround">Alternative syntax</span></h4>
         <p class="notes">CUBE is not supported. MySQL only supports ROLLUP via GROUP BY ... WITH ROLLUP or GROUP BY ROLLUP(...) syntax. Workaround: use UNION ALL to manually union each combination, or use GROUPING SETS-style UNION ALL queries.</p>
         <div class="syntax">-- Workaround with UNION ALL for 2 dimensions:
 SELECT region, product, SUM(sales) AS total
@@ -156,7 +156,7 @@ SELECT NULL, NULL, SUM(sales)
 FROM orders;</div>
       </div>
       <div class="per-db-entry" data-db="postgresql">
-        <h4>PostgreSQL</h4>
+        <h4>PostgreSQL <span class="syntax-kind syntax-kind-native">Native syntax</span></h4>
         <p class="notes">Standard GROUP BY CUBE(...) syntax. GROUPING(col) available to identify which rollup-generated NULL rows represent which grouping level. For 3 columns, CUBE generates 8 grouping combinations (2^3). Can be mixed with ROLLUP and GROUPING SETS.</p>
         <div class="syntax">SELECT region, product, SUM(sales) AS total_sales
 FROM orders
@@ -173,7 +173,7 @@ FROM orders
 GROUP BY CUBE(region, product);</div>
       </div>
       <div class="per-db-entry" data-db="sqlserver">
-        <h4>SQL Server</h4>
+        <h4>SQL Server <span class="syntax-kind syntax-kind-native">Native syntax</span></h4>
         <p class="notes">Standard GROUP BY CUBE(...) syntax. GROUPING(col) and GROUPING_ID() available. For very wide CUBE operations, consider breaking into GROUPING SETS for more control over which combinations are generated.</p>
         <div class="syntax">SELECT region, product, SUM(sales) AS total_sales
 FROM orders
@@ -187,7 +187,7 @@ FROM orders
 GROUP BY CUBE(region, product);</div>
       </div>
       <div class="per-db-entry" data-db="oracle">
-        <h4>Oracle</h4>
+        <h4>Oracle <span class="syntax-kind syntax-kind-native">Native syntax</span></h4>
         <p class="notes">Standard GROUP BY CUBE(...) syntax since Oracle 8i. GROUPING() and GROUPING_ID() supported. Can be combined with ROLLUP and GROUPING SETS in a single GROUP BY clause.</p>
         <div class="syntax">SELECT region, product, SUM(sales) AS total_sales
 FROM orders
@@ -202,7 +202,7 @@ FROM orders
 GROUP BY CUBE(region, product);</div>
       </div>
       <div class="per-db-entry" data-db="sqlite">
-        <h4>SQLite</h4>
+        <h4>SQLite <span class="syntax-kind syntax-kind-workaround">Alternative syntax</span></h4>
         <p class="notes">CUBE is not supported. Workaround: enumerate all 2^n combinations manually using UNION ALL.</p>
         <div class="syntax">-- Manual CUBE workaround (2 dimensions = 4 queries):
 SELECT region, product, SUM(sales) AS total

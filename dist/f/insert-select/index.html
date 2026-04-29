@@ -85,31 +85,31 @@
     <tbody>
           <tr data-db="mysql">
             <td>MySQL</td>
-            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
+            <td class="supported"><span aria-hidden="true">&#10003;</span> <span class="status-text">Native</span></td>
             <td>3.23</td>
             <td class="notes">INSERT INTO ... SELECT is fully supported. Column list in the INSERT is optional if the SELECT returns columns in the exact same order and count as the table. CREATE TABLE ... SELECT creates and populates a new table in one statement (MySQL-specific shorthand). AUTO_INCREMENT columns are populated normally during INSERT INTO ... SELECT.</td>
           </tr>
           <tr data-db="postgresql">
             <td>PostgreSQL</td>
-            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
+            <td class="supported"><span aria-hidden="true">&#10003;</span> <span class="status-text">Native</span></td>
             <td>6.0</td>
             <td class="notes">INSERT INTO ... SELECT is fully supported. SELECT INTO creates a new table from a query (PostgreSQL-specific; standard SQL uses CREATE TABLE AS SELECT). CREATE TABLE AS SELECT is the portable form. Can include ON CONFLICT clause for upsert behavior on the destination table.</td>
           </tr>
           <tr data-db="sqlserver">
             <td>SQL Server</td>
-            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
+            <td class="supported"><span aria-hidden="true">&#10003;</span> <span class="status-text">Native</span></td>
             <td>6.5</td>
             <td class="notes">INSERT INTO ... SELECT fully supported. SELECT INTO creates a new table (SQL Server extension, same as PostgreSQL). For large inserts, TABLOCK hint with minimal logging (simple recovery model) dramatically reduces log growth. The OUTPUT clause captures inserted rows in the same statement. Can use OPENROWSET or linked servers as the source.</td>
           </tr>
           <tr data-db="oracle">
             <td>Oracle</td>
-            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
+            <td class="supported"><span aria-hidden="true">&#10003;</span> <span class="status-text">Native</span></td>
             <td>7</td>
             <td class="notes">INSERT INTO ... SELECT fully supported. CREATE TABLE AS SELECT (CTAS) is the Oracle form for create-and-populate. INSERT ALL allows inserting into multiple tables from a single SELECT. The APPEND hint enables direct-path insert (faster, bypasses buffer cache, locks the table for the duration).</td>
           </tr>
           <tr data-db="sqlite">
             <td>SQLite</td>
-            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
+            <td class="supported"><span aria-hidden="true">&#10003;</span> <span class="status-text">Native</span></td>
             <td>1.0</td>
             <td class="notes">INSERT INTO ... SELECT fully supported. CREATE TABLE AS SELECT creates and populates a new table. Wrapping a large INSERT INTO ... SELECT in a transaction is critical for performance — SQLite without a transaction performs an fsync per row.</td>
           </tr>
@@ -135,18 +135,18 @@ FROM orders;  -- SQL Server syntax</div>
 
   <h2>Version Support</h2>
   <div class="version-list">
-    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> MySQL: Since 3.23</span>
-    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> PostgreSQL: Since 6.0</span>
-    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> SQL Server: Since 6.5</span>
-    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> Oracle: Since 7</span>
-    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> SQLite: Since 1.0</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">&#10003;</span> MySQL: Native since 3.23</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">&#10003;</span> PostgreSQL: Native since 6.0</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">&#10003;</span> SQL Server: Native since 6.5</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">&#10003;</span> Oracle: Native since 7</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">&#10003;</span> SQLite: Native since 1.0</span>
     
   </div>
 
   <h2>Per-Database Syntax &amp; Notes</h2>
   <div class="per-db-section">
       <div class="per-db-entry" data-db="mysql">
-        <h4>MySQL</h4>
+        <h4>MySQL <span class="syntax-kind syntax-kind-native">Native syntax</span></h4>
         <p class="notes">INSERT INTO ... SELECT is fully supported. Column list in the INSERT is optional if the SELECT returns columns in the exact same order and count as the table. CREATE TABLE ... SELECT creates and populates a new table in one statement (MySQL-specific shorthand). AUTO_INCREMENT columns are populated normally during INSERT INTO ... SELECT.</p>
         <div class="syntax">-- Standard INSERT INTO ... SELECT:
 INSERT INTO archive_orders (id, customer_id, amount, archived_at)
@@ -171,7 +171,7 @@ INSERT IGNORE INTO users_cache
 SELECT id, email FROM users_import;</div>
       </div>
       <div class="per-db-entry" data-db="postgresql">
-        <h4>PostgreSQL</h4>
+        <h4>PostgreSQL <span class="syntax-kind syntax-kind-native">Native syntax</span></h4>
         <p class="notes">INSERT INTO ... SELECT is fully supported. SELECT INTO creates a new table from a query (PostgreSQL-specific; standard SQL uses CREATE TABLE AS SELECT). CREATE TABLE AS SELECT is the portable form. Can include ON CONFLICT clause for upsert behavior on the destination table.</p>
         <div class="syntax">-- Standard INSERT INTO ... SELECT:
 INSERT INTO archive_orders (id, customer_id, amount, archived_at)
@@ -199,7 +199,7 @@ INSERT INTO recent_orders_summary
 SELECT customer_id, COUNT(*), SUM(amount) FROM recent GROUP BY customer_id;</div>
       </div>
       <div class="per-db-entry" data-db="sqlserver">
-        <h4>SQL Server</h4>
+        <h4>SQL Server <span class="syntax-kind syntax-kind-native">Native syntax</span></h4>
         <p class="notes">INSERT INTO ... SELECT fully supported. SELECT INTO creates a new table (SQL Server extension, same as PostgreSQL). For large inserts, TABLOCK hint with minimal logging (simple recovery model) dramatically reduces log growth. The OUTPUT clause captures inserted rows in the same statement. Can use OPENROWSET or linked servers as the source.</p>
         <div class="syntax">-- Standard INSERT INTO ... SELECT:
 INSERT INTO archive_orders (id, customer_id, amount, archived_at)
@@ -222,7 +222,7 @@ INSERT INTO staging_table WITH (TABLOCK)
 SELECT * FROM source_table;</div>
       </div>
       <div class="per-db-entry" data-db="oracle">
-        <h4>Oracle</h4>
+        <h4>Oracle <span class="syntax-kind syntax-kind-native">Native syntax</span></h4>
         <p class="notes">INSERT INTO ... SELECT fully supported. CREATE TABLE AS SELECT (CTAS) is the Oracle form for create-and-populate. INSERT ALL allows inserting into multiple tables from a single SELECT. The APPEND hint enables direct-path insert (faster, bypasses buffer cache, locks the table for the duration).</p>
         <div class="syntax">-- Standard INSERT INTO ... SELECT:
 INSERT INTO archive_orders (id, customer_id, amount, archived_at)
@@ -247,7 +247,7 @@ INSERT ALL
 SELECT * FROM orders;</div>
       </div>
       <div class="per-db-entry" data-db="sqlite">
-        <h4>SQLite</h4>
+        <h4>SQLite <span class="syntax-kind syntax-kind-native">Native syntax</span></h4>
         <p class="notes">INSERT INTO ... SELECT fully supported. CREATE TABLE AS SELECT creates and populates a new table. Wrapping a large INSERT INTO ... SELECT in a transaction is critical for performance — SQLite without a transaction performs an fsync per row.</p>
         <div class="syntax">-- Standard INSERT INTO ... SELECT:
 INSERT INTO archive_orders (id, customer_id, amount)

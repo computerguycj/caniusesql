@@ -85,32 +85,32 @@
     <tbody>
           <tr data-db="mysql">
             <td>MySQL</td>
-            <td class="not-supported"><span aria-hidden="true">✗</span> <span class="status-text">Not Supported</span></td>
-            <td>—</td>
+            <td class="not-supported"><span aria-hidden="true">&mdash;</span> <span class="status-text">Not Supported</span></td>
+            <td>-</td>
             <td class="notes">Not supported. Use application-layer messaging (Redis pub/sub, etc.).</td>
           </tr>
           <tr data-db="postgresql">
             <td>PostgreSQL</td>
-            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
+            <td class="supported"><span aria-hidden="true">&#10003;</span> <span class="status-text">Native</span></td>
             <td>all</td>
             <td class="notes">LISTEN channel registers interest. NOTIFY channel [, payload] fires on transaction commit. Clients receive notifications via the connection. pg_notify(channel, payload) can be called from triggers or functions. Payload limited to ~8000 bytes. Works within a single database only.</td>
           </tr>
           <tr data-db="sqlserver">
             <td>SQL Server</td>
-            <td class="not-supported"><span aria-hidden="true">✗</span> <span class="status-text">Not Supported</span></td>
-            <td>—</td>
+            <td class="not-supported"><span aria-hidden="true">&mdash;</span> <span class="status-text">Not Supported</span></td>
+            <td>-</td>
             <td class="notes">Not supported as SQL. Service Broker provides similar functionality but with a very different architecture and syntax.</td>
           </tr>
           <tr data-db="oracle">
             <td>Oracle</td>
-            <td class="not-supported"><span aria-hidden="true">✗</span> <span class="status-text">Not Supported</span></td>
-            <td>—</td>
+            <td class="not-supported"><span aria-hidden="true">&mdash;</span> <span class="status-text">Not Supported</span></td>
+            <td>-</td>
             <td class="notes">Not supported as SQL. DBMS_ALERT and DBMS_PIPE PL/SQL packages provide async signaling but are PL/SQL-only.</td>
           </tr>
           <tr data-db="sqlite">
             <td>SQLite</td>
-            <td class="not-supported"><span aria-hidden="true">✗</span> <span class="status-text">Not Supported</span></td>
-            <td>—</td>
+            <td class="not-supported"><span aria-hidden="true">&mdash;</span> <span class="status-text">Not Supported</span></td>
+            <td>-</td>
             <td class="notes">Not supported. SQLite is a single-process embedded database with no server process to hold pub/sub channels.</td>
           </tr>
     </tbody>
@@ -130,23 +130,23 @@ NOTIFY order_updates, '{&quot;id&quot;: 42}';</div>
 
   <h2>Version Support</h2>
   <div class="version-list">
-    <span class="version-badge version-not-supported"><span aria-hidden="true">✗</span> MySQL: Not supported</span>
-    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> PostgreSQL: Since all</span>
-    <span class="version-badge version-not-supported"><span aria-hidden="true">✗</span> SQL Server: Not supported</span>
-    <span class="version-badge version-not-supported"><span aria-hidden="true">✗</span> Oracle: Not supported</span>
-    <span class="version-badge version-not-supported"><span aria-hidden="true">✗</span> SQLite: Not supported</span>
+    <span class="version-badge version-not-supported"><span aria-hidden="true">&mdash;</span> MySQL: Not supported</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">&#10003;</span> PostgreSQL: Native in all listed versions</span>
+    <span class="version-badge version-not-supported"><span aria-hidden="true">&mdash;</span> SQL Server: Not supported</span>
+    <span class="version-badge version-not-supported"><span aria-hidden="true">&mdash;</span> Oracle: Not supported</span>
+    <span class="version-badge version-not-supported"><span aria-hidden="true">&mdash;</span> SQLite: Not supported</span>
     
   </div>
 
   <h2>Per-Database Syntax &amp; Notes</h2>
   <div class="per-db-section">
       <div class="per-db-entry" data-db="mysql">
-        <h4>MySQL</h4>
+        <h4>MySQL <span class="syntax-kind syntax-kind-workaround">Alternative syntax</span></h4>
         <p class="notes">Not supported. Use application-layer messaging (Redis pub/sub, etc.).</p>
         <div class="syntax">-- Not supported.</div>
       </div>
       <div class="per-db-entry" data-db="postgresql">
-        <h4>PostgreSQL</h4>
+        <h4>PostgreSQL <span class="syntax-kind syntax-kind-native">Native syntax</span></h4>
         <p class="notes">LISTEN channel registers interest. NOTIFY channel [, payload] fires on transaction commit. Clients receive notifications via the connection. pg_notify(channel, payload) can be called from triggers or functions. Payload limited to ~8000 bytes. Works within a single database only.</p>
         <div class="syntax">-- Session 1:
 LISTEN order_updates;
@@ -158,17 +158,17 @@ NOTIFY order_updates, '{&quot;id&quot;: 42, &quot;status&quot;: &quot;shipped&qu
 SELECT pg_notify('order_updates', row_to_json(NEW)::text);</div>
       </div>
       <div class="per-db-entry" data-db="sqlserver">
-        <h4>SQL Server</h4>
+        <h4>SQL Server <span class="syntax-kind syntax-kind-workaround">Alternative syntax</span></h4>
         <p class="notes">Not supported as SQL. Service Broker provides similar functionality but with a very different architecture and syntax.</p>
         <div class="syntax">-- Not supported. See Service Broker.</div>
       </div>
       <div class="per-db-entry" data-db="oracle">
-        <h4>Oracle</h4>
+        <h4>Oracle <span class="syntax-kind syntax-kind-workaround">Alternative syntax</span></h4>
         <p class="notes">Not supported as SQL. DBMS_ALERT and DBMS_PIPE PL/SQL packages provide async signaling but are PL/SQL-only.</p>
         <div class="syntax">-- Not supported as SQL. See DBMS_ALERT.</div>
       </div>
       <div class="per-db-entry" data-db="sqlite">
-        <h4>SQLite</h4>
+        <h4>SQLite <span class="syntax-kind syntax-kind-workaround">Alternative syntax</span></h4>
         <p class="notes">Not supported. SQLite is a single-process embedded database with no server process to hold pub/sub channels.</p>
         <div class="syntax">-- Not supported.</div>
       </div>

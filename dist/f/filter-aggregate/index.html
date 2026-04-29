@@ -85,31 +85,31 @@
     <tbody>
           <tr data-db="mysql">
             <td>MySQL</td>
-            <td class="not-supported"><span aria-hidden="true">✗</span> <span class="status-text">Not Supported</span></td>
-            <td>—</td>
+            <td class="not-supported"><span aria-hidden="true">&mdash;</span> <span class="status-text">Not Supported</span></td>
+            <td>-</td>
             <td class="notes">Not supported. Use SUM(CASE WHEN cond THEN 1 ELSE 0 END) or COUNT(CASE WHEN cond THEN 1 END) as a workaround.</td>
           </tr>
           <tr data-db="postgresql">
             <td>PostgreSQL</td>
-            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
+            <td class="supported"><span aria-hidden="true">&#10003;</span> <span class="status-text">Native</span></td>
             <td>9.4</td>
             <td class="notes">Full support on all aggregate functions including COUNT, SUM, AVG, array_agg, etc. Also works on window functions when the window function is itself an aggregate.</td>
           </tr>
           <tr data-db="sqlserver">
             <td>SQL Server</td>
-            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
-            <td>2022</td>
-            <td class="notes">FILTER clause added in SQL Server 2022 (compatibility level 130+). Works with standard aggregates.</td>
+            <td class="workaround-supported"><span aria-hidden="true">~</span> <span class="status-text">Supported via workaround</span></td>
+            <td>-</td>
+            <td class="notes">Workaround available in all listed versions. No native aggregate FILTER (WHERE ...) clause. Use CASE expressions inside aggregates.</td>
           </tr>
           <tr data-db="oracle">
             <td>Oracle</td>
-            <td class="not-supported"><span aria-hidden="true">✗</span> <span class="status-text">Not Supported</span></td>
-            <td>—</td>
+            <td class="not-supported"><span aria-hidden="true">&mdash;</span> <span class="status-text">Not Supported</span></td>
+            <td>-</td>
             <td class="notes">Not supported. Use CASE expressions inside aggregates.</td>
           </tr>
           <tr data-db="sqlite">
             <td>SQLite</td>
-            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
+            <td class="supported"><span aria-hidden="true">&#10003;</span> <span class="status-text">Native</span></td>
             <td>3.30.0</td>
             <td class="notes">FILTER clause added in SQLite 3.30.0 (October 2019). Works with all built-in aggregates.</td>
           </tr>
@@ -130,18 +130,18 @@ FROM employees;</div>
 
   <h2>Version Support</h2>
   <div class="version-list">
-    <span class="version-badge version-not-supported"><span aria-hidden="true">✗</span> MySQL: Not supported</span>
-    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> PostgreSQL: Since 9.4</span>
-    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> SQL Server: Since 2022</span>
-    <span class="version-badge version-not-supported"><span aria-hidden="true">✗</span> Oracle: Not supported</span>
-    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> SQLite: Since 3.30.0</span>
+    <span class="version-badge version-not-supported"><span aria-hidden="true">&mdash;</span> MySQL: Not supported</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">&#10003;</span> PostgreSQL: Native since 9.4</span>
+    <span class="version-badge version-workaround"><span aria-hidden="true">~</span> SQL Server: Supported via workaround in all listed versions</span>
+    <span class="version-badge version-not-supported"><span aria-hidden="true">&mdash;</span> Oracle: Not supported</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">&#10003;</span> SQLite: Native since 3.30.0</span>
     
   </div>
 
   <h2>Per-Database Syntax &amp; Notes</h2>
   <div class="per-db-section">
       <div class="per-db-entry" data-db="mysql">
-        <h4>MySQL</h4>
+        <h4>MySQL <span class="syntax-kind syntax-kind-workaround">Alternative syntax</span></h4>
         <p class="notes">Not supported. Use SUM(CASE WHEN cond THEN 1 ELSE 0 END) or COUNT(CASE WHEN cond THEN 1 END) as a workaround.</p>
         <div class="syntax">SELECT
   SUM(CASE WHEN status='active'   THEN 1 ELSE 0 END) AS active_count,
@@ -149,7 +149,7 @@ FROM employees;</div>
 FROM employees;</div>
       </div>
       <div class="per-db-entry" data-db="postgresql">
-        <h4>PostgreSQL</h4>
+        <h4>PostgreSQL <span class="syntax-kind syntax-kind-native">Native syntax</span></h4>
         <p class="notes">Full support on all aggregate functions including COUNT, SUM, AVG, array_agg, etc. Also works on window functions when the window function is itself an aggregate.</p>
         <div class="syntax">SELECT
   COUNT(*) FILTER (WHERE status = 'active') AS active_count,
@@ -157,17 +157,20 @@ FROM employees;</div>
 FROM employees;</div>
       </div>
       <div class="per-db-entry" data-db="sqlserver">
-        <h4>SQL Server</h4>
-        <p class="notes">FILTER clause added in SQL Server 2022 (compatibility level 130+). Works with standard aggregates.</p>
-        <div class="syntax">SELECT COUNT(*) FILTER (WHERE status = 'active') AS active_count FROM employees;</div>
+        <h4>SQL Server <span class="syntax-kind syntax-kind-workaround">Workaround</span></h4>
+        <p class="notes">Use CASE expressions inside aggregate functions to conditionally include rows. Available in all listed versions. No native aggregate FILTER (WHERE ...) clause. Use CASE expressions inside aggregates.</p>
+        <div class="syntax">SELECT
+  SUM(CASE WHEN status = 'active' THEN 1 ELSE 0 END) AS active_count,
+  AVG(CASE WHEN dept = 'eng' THEN salary END) AS eng_avg_salary
+FROM employees;</div>
       </div>
       <div class="per-db-entry" data-db="oracle">
-        <h4>Oracle</h4>
+        <h4>Oracle <span class="syntax-kind syntax-kind-workaround">Alternative syntax</span></h4>
         <p class="notes">Not supported. Use CASE expressions inside aggregates.</p>
         <div class="syntax">SELECT COUNT(CASE WHEN status='active' THEN 1 END) AS active_count FROM employees;</div>
       </div>
       <div class="per-db-entry" data-db="sqlite">
-        <h4>SQLite</h4>
+        <h4>SQLite <span class="syntax-kind syntax-kind-native">Native syntax</span></h4>
         <p class="notes">FILTER clause added in SQLite 3.30.0 (October 2019). Works with all built-in aggregates.</p>
         <div class="syntax">SELECT COUNT(*) FILTER (WHERE status = 'active') FROM employees;</div>
       </div>

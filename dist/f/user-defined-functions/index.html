@@ -85,31 +85,31 @@
     <tbody>
           <tr data-db="mysql">
             <td>MySQL</td>
-            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
+            <td class="supported"><span aria-hidden="true">&#10003;</span> <span class="status-text">Native</span></td>
             <td>5.0</td>
             <td class="notes">Scalar functions only (no table-valued UDFs in native SQL). DETERMINISTIC / NO SQL / READS SQL DATA characteristics affect optimizer behavior.</td>
           </tr>
           <tr data-db="postgresql">
             <td>PostgreSQL</td>
-            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
+            <td class="supported"><span aria-hidden="true">&#10003;</span> <span class="status-text">Native</span></td>
             <td>6.5</td>
             <td class="notes">Supports scalar and set-returning (RETURNS TABLE / RETURNS SETOF) functions. LANGUAGE can be sql, plpgsql, python, c, and more.</td>
           </tr>
           <tr data-db="sqlserver">
             <td>SQL Server</td>
-            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
+            <td class="supported"><span aria-hidden="true">&#10003;</span> <span class="status-text">Native</span></td>
             <td>2000</td>
             <td class="notes">Three types: scalar, inline table-valued (ITVF), and multi-statement table-valued (MSTVF). ITVFs are strongly preferred over MSTVFs for performance.</td>
           </tr>
           <tr data-db="oracle">
             <td>Oracle</td>
-            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
+            <td class="supported"><span aria-hidden="true">&#10003;</span> <span class="status-text">Native</span></td>
             <td>7</td>
             <td class="notes">Functions can use PIPELINED RETURN to stream table results row by row. DETERMINISTIC hint improves optimizer reuse.</td>
           </tr>
           <tr data-db="sqlite">
             <td>SQLite</td>
-            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
+            <td class="supported"><span aria-hidden="true">&#10003;</span> <span class="status-text">Native</span></td>
             <td>3.0.0</td>
             <td class="notes">UDFs must be registered at the connection level via the application API (e.g., sqlite3_create_function in C, or conn.create_function() in Python). No CREATE FUNCTION DDL.</td>
           </tr>
@@ -130,18 +130,18 @@ AS
 
   <h2>Version Support</h2>
   <div class="version-list">
-    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> MySQL: Since 5.0</span>
-    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> PostgreSQL: Since 6.5</span>
-    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> SQL Server: Since 2000</span>
-    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> Oracle: Since 7</span>
-    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> SQLite: Since 3.0.0</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">&#10003;</span> MySQL: Native since 5.0</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">&#10003;</span> PostgreSQL: Native since 6.5</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">&#10003;</span> SQL Server: Native since 2000</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">&#10003;</span> Oracle: Native since 7</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">&#10003;</span> SQLite: Native since 3.0.0</span>
     
   </div>
 
   <h2>Per-Database Syntax &amp; Notes</h2>
   <div class="per-db-section">
       <div class="per-db-entry" data-db="mysql">
-        <h4>MySQL</h4>
+        <h4>MySQL <span class="syntax-kind syntax-kind-native">Native syntax</span></h4>
         <p class="notes">Scalar functions only (no table-valued UDFs in native SQL). DETERMINISTIC / NO SQL / READS SQL DATA characteristics affect optimizer behavior.</p>
         <div class="syntax">CREATE FUNCTION add_tax(price DECIMAL(10,2))
 RETURNS DECIMAL(10,2)
@@ -149,7 +149,7 @@ DETERMINISTIC
 RETURN price * 1.1;</div>
       </div>
       <div class="per-db-entry" data-db="postgresql">
-        <h4>PostgreSQL</h4>
+        <h4>PostgreSQL <span class="syntax-kind syntax-kind-native">Native syntax</span></h4>
         <p class="notes">Supports scalar and set-returning (RETURNS TABLE / RETURNS SETOF) functions. LANGUAGE can be sql, plpgsql, python, c, and more.</p>
         <div class="syntax">CREATE FUNCTION add_tax(price NUMERIC)
 RETURNS NUMERIC
@@ -159,7 +159,7 @@ IMMUTABLE AS $$
 $$;</div>
       </div>
       <div class="per-db-entry" data-db="sqlserver">
-        <h4>SQL Server</h4>
+        <h4>SQL Server <span class="syntax-kind syntax-kind-native">Native syntax</span></h4>
         <p class="notes">Three types: scalar, inline table-valued (ITVF), and multi-statement table-valued (MSTVF). ITVFs are strongly preferred over MSTVFs for performance.</p>
         <div class="syntax">CREATE FUNCTION dbo.add_tax(@price DECIMAL(10,2))
 RETURNS DECIMAL(10,2)
@@ -169,7 +169,7 @@ BEGIN
 END;</div>
       </div>
       <div class="per-db-entry" data-db="oracle">
-        <h4>Oracle</h4>
+        <h4>Oracle <span class="syntax-kind syntax-kind-native">Native syntax</span></h4>
         <p class="notes">Functions can use PIPELINED RETURN to stream table results row by row. DETERMINISTIC hint improves optimizer reuse.</p>
         <div class="syntax">CREATE FUNCTION add_tax(price NUMBER)
 RETURN NUMBER
@@ -180,7 +180,7 @@ BEGIN
 END;</div>
       </div>
       <div class="per-db-entry" data-db="sqlite">
-        <h4>SQLite</h4>
+        <h4>SQLite <span class="syntax-kind syntax-kind-native">Native syntax</span></h4>
         <p class="notes">UDFs must be registered at the connection level via the application API (e.g., sqlite3_create_function in C, or conn.create_function() in Python). No CREATE FUNCTION DDL.</p>
         <div class="syntax">-- Python example
 conn.create_function('add_tax', 1, lambda p: p * 1.1)

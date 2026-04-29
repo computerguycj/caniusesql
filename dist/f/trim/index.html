@@ -85,31 +85,31 @@
     <tbody>
           <tr data-db="mysql">
             <td>MySQL</td>
-            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
+            <td class="supported"><span aria-hidden="true">&#10003;</span> <span class="status-text">Native</span></td>
             <td>all</td>
             <td class="notes">TRIM([LEADING|TRAILING|BOTH] [remstr FROM] str). Removes whitespace by default. LTRIM() and RTRIM() for one-sided trim. Can trim specific characters: TRIM(BOTH 'x' FROM 'xxhelloxx').</td>
           </tr>
           <tr data-db="postgresql">
             <td>PostgreSQL</td>
-            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
+            <td class="supported"><span aria-hidden="true">&#10003;</span> <span class="status-text">Native</span></td>
             <td>all</td>
             <td class="notes">TRIM([LEADING|TRAILING|BOTH] [chars FROM] str). Also LTRIM(str [, chars]) and RTRIM(str [, chars]) which accept a set of characters to strip (not just whitespace). btrim() = TRIM(BOTH ...).</td>
           </tr>
           <tr data-db="sqlserver">
             <td>SQL Server</td>
-            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
+            <td class="supported"><span aria-hidden="true">&#10003;</span> <span class="status-text">Native</span></td>
             <td>all</td>
             <td class="notes">LTRIM() and RTRIM() have always been available. TRIM() (both sides, whitespace) added in SQL Server 2017. TRIM() with a character set argument added in SQL Server 2022.</td>
           </tr>
           <tr data-db="oracle">
             <td>Oracle</td>
-            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
+            <td class="supported"><span aria-hidden="true">&#10003;</span> <span class="status-text">Native</span></td>
             <td>all</td>
             <td class="notes">TRIM([LEADING|TRAILING|BOTH] [char FROM] str). LTRIM(str [, chars]) and RTRIM(str [, chars]) also available and accept character sets.</td>
           </tr>
           <tr data-db="sqlite">
             <td>SQLite</td>
-            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
+            <td class="supported"><span aria-hidden="true">&#10003;</span> <span class="status-text">Native</span></td>
             <td>all</td>
             <td class="notes">TRIM(str [, chars]), LTRIM(str [, chars]), RTRIM(str [, chars]). The optional chars argument is a set of characters to strip, not a substring.</td>
           </tr>
@@ -128,18 +128,18 @@ SELECT RTRIM('hello  ');         -- '  hello'</div>
 
   <h2>Version Support</h2>
   <div class="version-list">
-    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> MySQL: Since all</span>
-    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> PostgreSQL: Since all</span>
-    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> SQL Server: Since all</span>
-    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> Oracle: Since all</span>
-    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> SQLite: Since all</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">&#10003;</span> MySQL: Native in all listed versions</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">&#10003;</span> PostgreSQL: Native in all listed versions</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">&#10003;</span> SQL Server: Native in all listed versions</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">&#10003;</span> Oracle: Native in all listed versions</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">&#10003;</span> SQLite: Native in all listed versions</span>
     
   </div>
 
   <h2>Per-Database Syntax &amp; Notes</h2>
   <div class="per-db-section">
       <div class="per-db-entry" data-db="mysql">
-        <h4>MySQL</h4>
+        <h4>MySQL <span class="syntax-kind syntax-kind-native">Native syntax</span></h4>
         <p class="notes">TRIM([LEADING|TRAILING|BOTH] [remstr FROM] str). Removes whitespace by default. LTRIM() and RTRIM() for one-sided trim. Can trim specific characters: TRIM(BOTH 'x' FROM 'xxhelloxx').</p>
         <div class="syntax">SELECT TRIM('  hello  ');                  -- 'hello'
 SELECT TRIM(BOTH 'x' FROM 'xxhelloxx');   -- 'hello'
@@ -147,7 +147,7 @@ SELECT LTRIM('  hello');                  -- 'hello'
 SELECT RTRIM('hello  ');                  -- 'hello'</div>
       </div>
       <div class="per-db-entry" data-db="postgresql">
-        <h4>PostgreSQL</h4>
+        <h4>PostgreSQL <span class="syntax-kind syntax-kind-native">Native syntax</span></h4>
         <p class="notes">TRIM([LEADING|TRAILING|BOTH] [chars FROM] str). Also LTRIM(str [, chars]) and RTRIM(str [, chars]) which accept a set of characters to strip (not just whitespace). btrim() = TRIM(BOTH ...).</p>
         <div class="syntax">SELECT TRIM('  hello  ');                      -- 'hello'
 SELECT TRIM(BOTH 'x' FROM 'xxhelloxx');       -- 'hello'
@@ -155,21 +155,21 @@ SELECT LTRIM('xxxhello', 'x');                -- 'hello'
 SELECT BTRIM('xxhelloxx', 'x');               -- 'hello'</div>
       </div>
       <div class="per-db-entry" data-db="sqlserver">
-        <h4>SQL Server</h4>
+        <h4>SQL Server <span class="syntax-kind syntax-kind-native">Native syntax</span></h4>
         <p class="notes">LTRIM() and RTRIM() have always been available. TRIM() (both sides, whitespace) added in SQL Server 2017. TRIM() with a character set argument added in SQL Server 2022.</p>
         <div class="syntax">SELECT LTRIM(RTRIM('  hello  '));           -- pre-2017 both-side trim
 SELECT TRIM('  hello  ');                  -- 2017+
 SELECT TRIM('x' FROM 'xxhelloxx');        -- 2022+ (character argument)</div>
       </div>
       <div class="per-db-entry" data-db="oracle">
-        <h4>Oracle</h4>
+        <h4>Oracle <span class="syntax-kind syntax-kind-native">Native syntax</span></h4>
         <p class="notes">TRIM([LEADING|TRAILING|BOTH] [char FROM] str). LTRIM(str [, chars]) and RTRIM(str [, chars]) also available and accept character sets.</p>
         <div class="syntax">SELECT TRIM('  hello  ') FROM DUAL;              -- 'hello'
 SELECT TRIM(BOTH 'x' FROM 'xxhelloxx') FROM DUAL; -- 'hello'
 SELECT LTRIM('xxxhello', 'x') FROM DUAL;          -- 'hello'</div>
       </div>
       <div class="per-db-entry" data-db="sqlite">
-        <h4>SQLite</h4>
+        <h4>SQLite <span class="syntax-kind syntax-kind-native">Native syntax</span></h4>
         <p class="notes">TRIM(str [, chars]), LTRIM(str [, chars]), RTRIM(str [, chars]). The optional chars argument is a set of characters to strip, not a substring.</p>
         <div class="syntax">SELECT TRIM('  hello  ');                  -- 'hello'
 SELECT TRIM('xxhelloxx', 'x');            -- 'hello'

@@ -85,31 +85,31 @@
     <tbody>
           <tr data-db="mysql">
             <td>MySQL</td>
-            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
+            <td class="supported"><span aria-hidden="true">&#10003;</span> <span class="status-text">Native</span></td>
             <td>5.0.2</td>
             <td class="notes">BEFORE/AFTER on INSERT/UPDATE/DELETE. One trigger per event/timing combination per table (before 8.0.16). Uses NEW and OLD row references.</td>
           </tr>
           <tr data-db="postgresql">
             <td>PostgreSQL</td>
-            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
+            <td class="supported"><span aria-hidden="true">&#10003;</span> <span class="status-text">Native</span></td>
             <td>all</td>
             <td class="notes">BEFORE/AFTER/INSTEAD OF. Multiple triggers per event allowed. Trigger logic lives in a separate PL/pgSQL FUNCTION returning TRIGGER. Supports both row-level and statement-level triggers.</td>
           </tr>
           <tr data-db="sqlserver">
             <td>SQL Server</td>
-            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
+            <td class="supported"><span aria-hidden="true">&#10003;</span> <span class="status-text">Native</span></td>
             <td>all</td>
             <td class="notes">AFTER and INSTEAD OF DML triggers. DDL triggers (for schema changes) since 2005. Uses inserted and deleted pseudo-tables.</td>
           </tr>
           <tr data-db="oracle">
             <td>Oracle</td>
-            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
+            <td class="supported"><span aria-hidden="true">&#10003;</span> <span class="status-text">Native</span></td>
             <td>all</td>
             <td class="notes">BEFORE/AFTER/INSTEAD OF. Row-level and statement-level. Schema-level and database-level event triggers also supported. Uses :NEW and :OLD.</td>
           </tr>
           <tr data-db="sqlite">
             <td>SQLite</td>
-            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
+            <td class="supported"><span aria-hidden="true">&#10003;</span> <span class="status-text">Native</span></td>
             <td>2.5.0</td>
             <td class="notes">BEFORE/AFTER/INSTEAD OF (INSTEAD OF only on views). No statement-level triggers. Uses NEW and OLD row references.</td>
           </tr>
@@ -132,24 +132,24 @@ END;</div>
 
   <h2>Version Support</h2>
   <div class="version-list">
-    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> MySQL: Since 5.0.2</span>
-    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> PostgreSQL: Since all</span>
-    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> SQL Server: Since all</span>
-    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> Oracle: Since all</span>
-    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> SQLite: Since 2.5.0</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">&#10003;</span> MySQL: Native since 5.0.2</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">&#10003;</span> PostgreSQL: Native in all listed versions</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">&#10003;</span> SQL Server: Native in all listed versions</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">&#10003;</span> Oracle: Native in all listed versions</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">&#10003;</span> SQLite: Native since 2.5.0</span>
     
   </div>
 
   <h2>Per-Database Syntax &amp; Notes</h2>
   <div class="per-db-section">
       <div class="per-db-entry" data-db="mysql">
-        <h4>MySQL</h4>
+        <h4>MySQL <span class="syntax-kind syntax-kind-native">Native syntax</span></h4>
         <p class="notes">BEFORE/AFTER on INSERT/UPDATE/DELETE. One trigger per event/timing combination per table (before 8.0.16). Uses NEW and OLD row references.</p>
         <div class="syntax">CREATE TRIGGER trg BEFORE INSERT ON tbl
 FOR EACH ROW SET NEW.created_at = NOW();</div>
       </div>
       <div class="per-db-entry" data-db="postgresql">
-        <h4>PostgreSQL</h4>
+        <h4>PostgreSQL <span class="syntax-kind syntax-kind-native">Native syntax</span></h4>
         <p class="notes">BEFORE/AFTER/INSTEAD OF. Multiple triggers per event allowed. Trigger logic lives in a separate PL/pgSQL FUNCTION returning TRIGGER. Supports both row-level and statement-level triggers.</p>
         <div class="syntax">CREATE FUNCTION set_updated_at() RETURNS trigger LANGUAGE plpgsql AS $$
 BEGIN NEW.updated_at = now(); RETURN NEW; END;
@@ -159,7 +159,7 @@ CREATE TRIGGER trg BEFORE UPDATE ON tbl
 FOR EACH ROW EXECUTE FUNCTION set_updated_at();</div>
       </div>
       <div class="per-db-entry" data-db="sqlserver">
-        <h4>SQL Server</h4>
+        <h4>SQL Server <span class="syntax-kind syntax-kind-native">Native syntax</span></h4>
         <p class="notes">AFTER and INSTEAD OF DML triggers. DDL triggers (for schema changes) since 2005. Uses inserted and deleted pseudo-tables.</p>
         <div class="syntax">CREATE TRIGGER trg ON tbl AFTER INSERT AS
 BEGIN
@@ -168,13 +168,13 @@ BEGIN
 END;</div>
       </div>
       <div class="per-db-entry" data-db="oracle">
-        <h4>Oracle</h4>
+        <h4>Oracle <span class="syntax-kind syntax-kind-native">Native syntax</span></h4>
         <p class="notes">BEFORE/AFTER/INSTEAD OF. Row-level and statement-level. Schema-level and database-level event triggers also supported. Uses :NEW and :OLD.</p>
         <div class="syntax">CREATE TRIGGER trg BEFORE INSERT ON tbl
 FOR EACH ROW BEGIN :NEW.created_at := SYSDATE; END;</div>
       </div>
       <div class="per-db-entry" data-db="sqlite">
-        <h4>SQLite</h4>
+        <h4>SQLite <span class="syntax-kind syntax-kind-native">Native syntax</span></h4>
         <p class="notes">BEFORE/AFTER/INSTEAD OF (INSTEAD OF only on views). No statement-level triggers. Uses NEW and OLD row references.</p>
         <div class="syntax">CREATE TRIGGER trg AFTER INSERT ON tbl
 BEGIN

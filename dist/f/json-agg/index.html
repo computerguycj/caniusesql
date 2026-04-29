@@ -85,31 +85,31 @@
     <tbody>
           <tr data-db="mysql">
             <td>MySQL</td>
-            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
+            <td class="supported"><span aria-hidden="true">&#10003;</span> <span class="status-text">Native</span></td>
             <td>5.7.22</td>
             <td class="notes">JSON_ARRAYAGG(expr) aggregates values into a JSON array. JSON_OBJECTAGG(key_expr, value_expr) aggregates key-value pairs into a JSON object. Both added in 5.7.22. No ORDER BY inside the aggregate — sort the outer query or use a subquery. NULL values in the expression are included as JSON null.</td>
           </tr>
           <tr data-db="postgresql">
             <td>PostgreSQL</td>
-            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
+            <td class="supported"><span aria-hidden="true">&#10003;</span> <span class="status-text">Native</span></td>
             <td>9.3</td>
             <td class="notes">json_agg(expr) aggregates into a json array (since 9.3); jsonb_agg(expr) returns jsonb (since 9.4). json_object_agg(key, value) / jsonb_object_agg(key, value) aggregate into a JSON object. ORDER BY is supported inside the aggregate. NULL values are included as JSON null. Use FILTER (WHERE ...) to exclude rows.</td>
           </tr>
           <tr data-db="sqlserver">
             <td>SQL Server</td>
-            <td class="not-supported"><span aria-hidden="true">✗</span> <span class="status-text">Not Supported</span></td>
-            <td>—</td>
+            <td class="not-supported"><span aria-hidden="true">&mdash;</span> <span class="status-text">Not Supported</span></td>
+            <td>-</td>
             <td class="notes">No JSON_ARRAYAGG or json_agg. Use FOR JSON PATH / FOR JSON AUTO on a subquery to produce a JSON array. STRING_AGG can be combined with JSON_OBJECT (SQL Server 2022+) for simple cases. The result of FOR JSON is NVARCHAR, not a typed JSON column.</td>
           </tr>
           <tr data-db="oracle">
             <td>Oracle</td>
-            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
+            <td class="supported"><span aria-hidden="true">&#10003;</span> <span class="status-text">Native</span></td>
             <td>18c</td>
             <td class="notes">JSON_ARRAYAGG(expr) and JSON_OBJECTAGG(key VALUE value) added in Oracle 18c. In Oracle 12c, workarounds include LISTAGG combined with manual JSON construction, or using JSON_ARRAY with a subquery. ORDER BY and ON NULL clauses supported inside JSON_ARRAYAGG.</td>
           </tr>
           <tr data-db="sqlite">
             <td>SQLite</td>
-            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
+            <td class="supported"><span aria-hidden="true">&#10003;</span> <span class="status-text">Native</span></td>
             <td>3.9.0</td>
             <td class="notes">json_group_array(expr) aggregates values into a JSON array. json_group_object(name, value) aggregates into a JSON object. Both available since 3.9.0 when the JSON1 extension was added. In most SQLite distributions the JSON1 extension is compiled in by default.</td>
           </tr>
@@ -136,18 +136,18 @@ GROUP BY dept_id;</div>
 
   <h2>Version Support</h2>
   <div class="version-list">
-    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> MySQL: Since 5.7.22</span>
-    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> PostgreSQL: Since 9.3</span>
-    <span class="version-badge version-not-supported"><span aria-hidden="true">✗</span> SQL Server: Not supported</span>
-    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> Oracle: Since 18c</span>
-    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> SQLite: Since 3.9.0</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">&#10003;</span> MySQL: Native since 5.7.22</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">&#10003;</span> PostgreSQL: Native since 9.3</span>
+    <span class="version-badge version-not-supported"><span aria-hidden="true">&mdash;</span> SQL Server: Not supported</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">&#10003;</span> Oracle: Native since 18c</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">&#10003;</span> SQLite: Native since 3.9.0</span>
     
   </div>
 
   <h2>Per-Database Syntax &amp; Notes</h2>
   <div class="per-db-section">
       <div class="per-db-entry" data-db="mysql">
-        <h4>MySQL</h4>
+        <h4>MySQL <span class="syntax-kind syntax-kind-native">Native syntax</span></h4>
         <p class="notes">JSON_ARRAYAGG(expr) aggregates values into a JSON array. JSON_OBJECTAGG(key_expr, value_expr) aggregates key-value pairs into a JSON object. Both added in 5.7.22. No ORDER BY inside the aggregate — sort the outer query or use a subquery. NULL values in the expression are included as JSON null.</p>
         <div class="syntax">-- Array of values:
 SELECT dept_id,
@@ -169,7 +169,7 @@ FROM employees
 GROUP BY dept_id;</div>
       </div>
       <div class="per-db-entry" data-db="postgresql">
-        <h4>PostgreSQL</h4>
+        <h4>PostgreSQL <span class="syntax-kind syntax-kind-native">Native syntax</span></h4>
         <p class="notes">json_agg(expr) aggregates into a json array (since 9.3); jsonb_agg(expr) returns jsonb (since 9.4). json_object_agg(key, value) / jsonb_object_agg(key, value) aggregate into a JSON object. ORDER BY is supported inside the aggregate. NULL values are included as JSON null. Use FILTER (WHERE ...) to exclude rows.</p>
         <div class="syntax">-- json array (ordered):
 SELECT dept_id,
@@ -195,7 +195,7 @@ FROM employees e
 GROUP BY dept_id;</div>
       </div>
       <div class="per-db-entry" data-db="sqlserver">
-        <h4>SQL Server</h4>
+        <h4>SQL Server <span class="syntax-kind syntax-kind-workaround">Alternative syntax</span></h4>
         <p class="notes">No JSON_ARRAYAGG or json_agg. Use FOR JSON PATH / FOR JSON AUTO on a subquery to produce a JSON array. STRING_AGG can be combined with JSON_OBJECT (SQL Server 2022+) for simple cases. The result of FOR JSON is NVARCHAR, not a typed JSON column.</p>
         <div class="syntax">-- Subquery with FOR JSON PATH:
 SELECT d.dept_id,
@@ -212,7 +212,7 @@ FROM employees
 GROUP BY dept_id;</div>
       </div>
       <div class="per-db-entry" data-db="oracle">
-        <h4>Oracle</h4>
+        <h4>Oracle <span class="syntax-kind syntax-kind-native">Native syntax</span></h4>
         <p class="notes">JSON_ARRAYAGG(expr) and JSON_OBJECTAGG(key VALUE value) added in Oracle 18c. In Oracle 12c, workarounds include LISTAGG combined with manual JSON construction, or using JSON_ARRAY with a subquery. ORDER BY and ON NULL clauses supported inside JSON_ARRAYAGG.</p>
         <div class="syntax">-- Array of values (18c+):
 SELECT dept_id,
@@ -232,7 +232,7 @@ FROM employees
 GROUP BY dept_id;</div>
       </div>
       <div class="per-db-entry" data-db="sqlite">
-        <h4>SQLite</h4>
+        <h4>SQLite <span class="syntax-kind syntax-kind-native">Native syntax</span></h4>
         <p class="notes">json_group_array(expr) aggregates values into a JSON array. json_group_object(name, value) aggregates into a JSON object. Both available since 3.9.0 when the JSON1 extension was added. In most SQLite distributions the JSON1 extension is compiled in by default.</p>
         <div class="syntax">-- Array of values:
 SELECT dept_id,

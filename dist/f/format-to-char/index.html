@@ -85,31 +85,31 @@
     <tbody>
           <tr data-db="mysql">
             <td>MySQL</td>
-            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
+            <td class="supported"><span aria-hidden="true">&#10003;</span> <span class="status-text">Native</span></td>
             <td>5.0</td>
             <td class="notes">DATE_FORMAT() for date/datetime values; FORMAT() for numbers (adds thousands separator). No unified TO_CHAR equivalent.</td>
           </tr>
           <tr data-db="postgresql">
             <td>PostgreSQL</td>
-            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
+            <td class="supported"><span aria-hidden="true">&#10003;</span> <span class="status-text">Native</span></td>
             <td>7.4</td>
             <td class="notes">TO_CHAR() handles dates, timestamps, numbers, and intervals with a rich pattern language. TO_DATE() and TO_NUMBER() are the inverse functions.</td>
           </tr>
           <tr data-db="sqlserver">
             <td>SQL Server</td>
-            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
+            <td class="supported"><span aria-hidden="true">&#10003;</span> <span class="status-text">Native</span></td>
             <td>2012</td>
             <td class="notes">FORMAT() added in 2012 using .NET format strings. CONVERT() with a style code is the older approach and works on all versions. FORMAT() is convenient but notably slower than CONVERT() at scale.</td>
           </tr>
           <tr data-db="oracle">
             <td>Oracle</td>
-            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
+            <td class="supported"><span aria-hidden="true">&#10003;</span> <span class="status-text">Native</span></td>
             <td>7</td>
             <td class="notes">TO_CHAR() is the standard for both dates and numbers. NLS session parameters can affect output; use explicit format masks to ensure consistency.</td>
           </tr>
           <tr data-db="sqlite">
             <td>SQLite</td>
-            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
+            <td class="supported"><span aria-hidden="true">&#10003;</span> <span class="status-text">Native</span></td>
             <td>3.0.0</td>
             <td class="notes">strftime() handles date formatting. For numeric formatting, use printf() / format(), available since 3.38.0.</td>
           </tr>
@@ -130,30 +130,30 @@ SELECT FORMAT(order_date, 'yyyy-MM-dd') FROM orders;</div>
 
   <h2>Version Support</h2>
   <div class="version-list">
-    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> MySQL: Since 5.0</span>
-    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> PostgreSQL: Since 7.4</span>
-    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> SQL Server: Since 2012</span>
-    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> Oracle: Since 7</span>
-    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> SQLite: Since 3.0.0</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">&#10003;</span> MySQL: Native since 5.0</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">&#10003;</span> PostgreSQL: Native since 7.4</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">&#10003;</span> SQL Server: Native since 2012</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">&#10003;</span> Oracle: Native since 7</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">&#10003;</span> SQLite: Native since 3.0.0</span>
     
   </div>
 
   <h2>Per-Database Syntax &amp; Notes</h2>
   <div class="per-db-section">
       <div class="per-db-entry" data-db="mysql">
-        <h4>MySQL</h4>
+        <h4>MySQL <span class="syntax-kind syntax-kind-native">Native syntax</span></h4>
         <p class="notes">DATE_FORMAT() for date/datetime values; FORMAT() for numbers (adds thousands separator). No unified TO_CHAR equivalent.</p>
         <div class="syntax">SELECT DATE_FORMAT(order_date, '%Y-%m-%d') FROM orders;
 SELECT FORMAT(1234567.89, 2);  -- '1,234,567.89'</div>
       </div>
       <div class="per-db-entry" data-db="postgresql">
-        <h4>PostgreSQL</h4>
+        <h4>PostgreSQL <span class="syntax-kind syntax-kind-native">Native syntax</span></h4>
         <p class="notes">TO_CHAR() handles dates, timestamps, numbers, and intervals with a rich pattern language. TO_DATE() and TO_NUMBER() are the inverse functions.</p>
         <div class="syntax">SELECT TO_CHAR(order_date, 'YYYY-MM-DD') FROM orders;
 SELECT TO_CHAR(1234567.89, 'FM999,999,990.00');</div>
       </div>
       <div class="per-db-entry" data-db="sqlserver">
-        <h4>SQL Server</h4>
+        <h4>SQL Server <span class="syntax-kind syntax-kind-native">Native syntax</span></h4>
         <p class="notes">FORMAT() added in 2012 using .NET format strings. CONVERT() with a style code is the older approach and works on all versions. FORMAT() is convenient but notably slower than CONVERT() at scale.</p>
         <div class="syntax">SELECT FORMAT(order_date, 'yyyy-MM-dd') FROM orders;
 SELECT FORMAT(1234567.89, 'N2');  -- '1,234,567.89'
@@ -161,13 +161,13 @@ SELECT FORMAT(1234567.89, 'N2');  -- '1,234,567.89'
 SELECT CONVERT(VARCHAR, order_date, 23);  -- 'yyyy-mm-dd'</div>
       </div>
       <div class="per-db-entry" data-db="oracle">
-        <h4>Oracle</h4>
+        <h4>Oracle <span class="syntax-kind syntax-kind-native">Native syntax</span></h4>
         <p class="notes">TO_CHAR() is the standard for both dates and numbers. NLS session parameters can affect output; use explicit format masks to ensure consistency.</p>
         <div class="syntax">SELECT TO_CHAR(order_date, 'YYYY-MM-DD') FROM orders;
 SELECT TO_CHAR(1234567.89, '999,999,990.00') FROM dual;</div>
       </div>
       <div class="per-db-entry" data-db="sqlite">
-        <h4>SQLite</h4>
+        <h4>SQLite <span class="syntax-kind syntax-kind-native">Native syntax</span></h4>
         <p class="notes">strftime() handles date formatting. For numeric formatting, use printf() / format(), available since 3.38.0.</p>
         <div class="syntax">SELECT strftime('%Y-%m-%d', order_date) FROM orders;
 SELECT printf('%.2f', 1234.5);  -- '1234.50'</div>

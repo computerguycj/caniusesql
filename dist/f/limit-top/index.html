@@ -85,31 +85,31 @@
     <tbody>
           <tr data-db="mysql">
             <td>MySQL</td>
-            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
+            <td class="supported"><span aria-hidden="true">&#10003;</span> <span class="status-text">Native</span></td>
             <td>all</td>
             <td class="notes">LIMIT n or LIMIT offset, n or LIMIT n OFFSET offset. No FETCH FIRST. LIMIT without ORDER BY returns an arbitrary set of rows — always include ORDER BY for deterministic pagination. LIMIT in subqueries has restrictions in older versions.</td>
           </tr>
           <tr data-db="postgresql">
             <td>PostgreSQL</td>
-            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
+            <td class="supported"><span aria-hidden="true">&#10003;</span> <span class="status-text">Native</span></td>
             <td>all</td>
             <td class="notes">LIMIT n OFFSET m (non-standard but widely supported). Also supports the SQL-standard FETCH FIRST n ROWS ONLY since PostgreSQL 8.4. LIMIT ALL means no limit. OFFSET without LIMIT is valid.</td>
           </tr>
           <tr data-db="sqlserver">
             <td>SQL Server</td>
-            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
+            <td class="supported"><span aria-hidden="true">&#10003;</span> <span class="status-text">Native</span></td>
             <td>2012</td>
             <td class="notes">OFFSET ... FETCH is the standard syntax (SQL Server 2012+). TOP n is available in all versions but is non-standard and does not support OFFSET. TOP with PERCENT and WITH TIES options available. OFFSET FETCH requires ORDER BY.</td>
           </tr>
           <tr data-db="oracle">
             <td>Oracle</td>
-            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
+            <td class="supported"><span aria-hidden="true">&#10003;</span> <span class="status-text">Native</span></td>
             <td>12c</td>
             <td class="notes">FETCH FIRST is the SQL-standard syntax, supported since 12c. Before 12c, use ROWNUM in a subquery (notoriously tricky — ROWNUM is assigned before ORDER BY). OFFSET ... FETCH supported in 12c+.</td>
           </tr>
           <tr data-db="sqlite">
             <td>SQLite</td>
-            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
+            <td class="supported"><span aria-hidden="true">&#10003;</span> <span class="status-text">Native</span></td>
             <td>all</td>
             <td class="notes">LIMIT n OFFSET m. Also accepts LIMIT offset, n (comma syntax, same as MySQL). LIMIT -1 means no limit (useful for OFFSET without a row cap). No FETCH FIRST.</td>
           </tr>
@@ -131,25 +131,25 @@ SELECT TOP 10 * FROM tbl;              -- SQL Server</div>
 
   <h2>Version Support</h2>
   <div class="version-list">
-    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> MySQL: Since all</span>
-    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> PostgreSQL: Since all</span>
-    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> SQL Server: Since 2012</span>
-    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> Oracle: Since 12c</span>
-    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> SQLite: Since all</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">&#10003;</span> MySQL: Native in all listed versions</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">&#10003;</span> PostgreSQL: Native in all listed versions</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">&#10003;</span> SQL Server: Native since 2012</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">&#10003;</span> Oracle: Native since 12c</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">&#10003;</span> SQLite: Native in all listed versions</span>
     
   </div>
 
   <h2>Per-Database Syntax &amp; Notes</h2>
   <div class="per-db-section">
       <div class="per-db-entry" data-db="mysql">
-        <h4>MySQL</h4>
+        <h4>MySQL <span class="syntax-kind syntax-kind-native">Native syntax</span></h4>
         <p class="notes">LIMIT n or LIMIT offset, n or LIMIT n OFFSET offset. No FETCH FIRST. LIMIT without ORDER BY returns an arbitrary set of rows — always include ORDER BY for deterministic pagination. LIMIT in subqueries has restrictions in older versions.</p>
         <div class="syntax">SELECT * FROM tbl ORDER BY id LIMIT 10;            -- first 10
 SELECT * FROM tbl ORDER BY id LIMIT 10 OFFSET 20;  -- rows 21-30
 SELECT * FROM tbl ORDER BY id LIMIT 20, 10;        -- offset,count shorthand</div>
       </div>
       <div class="per-db-entry" data-db="postgresql">
-        <h4>PostgreSQL</h4>
+        <h4>PostgreSQL <span class="syntax-kind syntax-kind-native">Native syntax</span></h4>
         <p class="notes">LIMIT n OFFSET m (non-standard but widely supported). Also supports the SQL-standard FETCH FIRST n ROWS ONLY since PostgreSQL 8.4. LIMIT ALL means no limit. OFFSET without LIMIT is valid.</p>
         <div class="syntax">SELECT * FROM tbl ORDER BY id LIMIT 10;
 SELECT * FROM tbl ORDER BY id LIMIT 10 OFFSET 20;
@@ -162,7 +162,7 @@ OFFSET 20 ROWS FETCH NEXT 10 ROWS ONLY;
 SELECT * FROM tbl ORDER BY id LIMIT ALL OFFSET 5;</div>
       </div>
       <div class="per-db-entry" data-db="sqlserver">
-        <h4>SQL Server</h4>
+        <h4>SQL Server <span class="syntax-kind syntax-kind-native">Native syntax</span></h4>
         <p class="notes">OFFSET ... FETCH is the standard syntax (SQL Server 2012+). TOP n is available in all versions but is non-standard and does not support OFFSET. TOP with PERCENT and WITH TIES options available. OFFSET FETCH requires ORDER BY.</p>
         <div class="syntax">-- Modern standard:
 SELECT * FROM tbl ORDER BY id
@@ -174,7 +174,7 @@ SELECT TOP 10 PERCENT * FROM tbl ORDER BY id;
 SELECT TOP 10 WITH TIES * FROM tbl ORDER BY id;</div>
       </div>
       <div class="per-db-entry" data-db="oracle">
-        <h4>Oracle</h4>
+        <h4>Oracle <span class="syntax-kind syntax-kind-native">Native syntax</span></h4>
         <p class="notes">FETCH FIRST is the SQL-standard syntax, supported since 12c. Before 12c, use ROWNUM in a subquery (notoriously tricky — ROWNUM is assigned before ORDER BY). OFFSET ... FETCH supported in 12c+.</p>
         <div class="syntax">-- Modern (12c+):
 SELECT * FROM tbl ORDER BY id
@@ -189,7 +189,7 @@ SELECT * FROM (
 ) WHERE ROWNUM &lt;= 10;</div>
       </div>
       <div class="per-db-entry" data-db="sqlite">
-        <h4>SQLite</h4>
+        <h4>SQLite <span class="syntax-kind syntax-kind-native">Native syntax</span></h4>
         <p class="notes">LIMIT n OFFSET m. Also accepts LIMIT offset, n (comma syntax, same as MySQL). LIMIT -1 means no limit (useful for OFFSET without a row cap). No FETCH FIRST.</p>
         <div class="syntax">SELECT * FROM tbl ORDER BY id LIMIT 10;
 SELECT * FROM tbl ORDER BY id LIMIT 10 OFFSET 20;

@@ -85,32 +85,32 @@
     <tbody>
           <tr data-db="mysql">
             <td>MySQL</td>
-            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
+            <td class="supported"><span aria-hidden="true">&#10003;</span> <span class="status-text">Native</span></td>
             <td>4.1</td>
             <td class="notes">MySQL uses the non-standard WITH ROLLUP modifier on GROUP BY, available since 4.1. MySQL 8.0 also accepts the standard GROUP BY ROLLUP(...) syntax. Use GROUPING(col) (added in 8.0) to distinguish NULL subtotal rows from actual NULL data values. HAVING filtering applies after rollup rows are generated.</td>
           </tr>
           <tr data-db="postgresql">
             <td>PostgreSQL</td>
-            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
+            <td class="supported"><span aria-hidden="true">&#10003;</span> <span class="status-text">Native</span></td>
             <td>9.5</td>
             <td class="notes">Standard GROUP BY ROLLUP(...) syntax. GROUPING(col) function available to identify rollup-generated NULL rows. Can be combined with GROUPING SETS and CUBE in the same GROUP BY clause.</td>
           </tr>
           <tr data-db="sqlserver">
             <td>SQL Server</td>
-            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
+            <td class="supported"><span aria-hidden="true">&#10003;</span> <span class="status-text">Native</span></td>
             <td>2008</td>
             <td class="notes">Standard GROUP BY ROLLUP(...) syntax supported since 2008. The older WITH ROLLUP modifier (SQL Server 2005 syntax) is also still accepted. GROUPING(col) and GROUPING_ID(...) available to detect rollup rows.</td>
           </tr>
           <tr data-db="oracle">
             <td>Oracle</td>
-            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
+            <td class="supported"><span aria-hidden="true">&#10003;</span> <span class="status-text">Native</span></td>
             <td>8i</td>
             <td class="notes">Standard GROUP BY ROLLUP(...) syntax, available since Oracle 8i. GROUPING(col) and GROUPING_ID() available. Can combine ROLLUP, CUBE, and GROUPING SETS in one GROUP BY clause.</td>
           </tr>
           <tr data-db="sqlite">
             <td>SQLite</td>
-            <td class="not-supported"><span aria-hidden="true">✗</span> <span class="status-text">Not Supported</span></td>
-            <td>—</td>
+            <td class="not-supported"><span aria-hidden="true">&mdash;</span> <span class="status-text">Not Supported</span></td>
+            <td>-</td>
             <td class="notes">ROLLUP is not supported. Workaround: use UNION ALL to manually combine the detailed rows, subtotals, and grand total.</td>
           </tr>
     </tbody>
@@ -129,18 +129,18 @@ GROUP BY ROLLUP(region, country);
 
   <h2>Version Support</h2>
   <div class="version-list">
-    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> MySQL: Since 4.1</span>
-    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> PostgreSQL: Since 9.5</span>
-    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> SQL Server: Since 2008</span>
-    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> Oracle: Since 8i</span>
-    <span class="version-badge version-not-supported"><span aria-hidden="true">✗</span> SQLite: Not supported</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">&#10003;</span> MySQL: Native since 4.1</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">&#10003;</span> PostgreSQL: Native since 9.5</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">&#10003;</span> SQL Server: Native since 2008</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">&#10003;</span> Oracle: Native since 8i</span>
+    <span class="version-badge version-not-supported"><span aria-hidden="true">&mdash;</span> SQLite: Not supported</span>
     
   </div>
 
   <h2>Per-Database Syntax &amp; Notes</h2>
   <div class="per-db-section">
       <div class="per-db-entry" data-db="mysql">
-        <h4>MySQL</h4>
+        <h4>MySQL <span class="syntax-kind syntax-kind-native">Native syntax</span></h4>
         <p class="notes">MySQL uses the non-standard WITH ROLLUP modifier on GROUP BY, available since 4.1. MySQL 8.0 also accepts the standard GROUP BY ROLLUP(...) syntax. Use GROUPING(col) (added in 8.0) to distinguish NULL subtotal rows from actual NULL data values. HAVING filtering applies after rollup rows are generated.</p>
         <div class="syntax">-- Non-standard (works since 4.1):
 SELECT region, country, SUM(sales) AS total_sales
@@ -161,7 +161,7 @@ FROM orders
 GROUP BY region, country WITH ROLLUP;</div>
       </div>
       <div class="per-db-entry" data-db="postgresql">
-        <h4>PostgreSQL</h4>
+        <h4>PostgreSQL <span class="syntax-kind syntax-kind-native">Native syntax</span></h4>
         <p class="notes">Standard GROUP BY ROLLUP(...) syntax. GROUPING(col) function available to identify rollup-generated NULL rows. Can be combined with GROUPING SETS and CUBE in the same GROUP BY clause.</p>
         <div class="syntax">SELECT region, country, SUM(sales) AS total_sales
 FROM orders
@@ -176,7 +176,7 @@ FROM orders
 GROUP BY ROLLUP(region, country);</div>
       </div>
       <div class="per-db-entry" data-db="sqlserver">
-        <h4>SQL Server</h4>
+        <h4>SQL Server <span class="syntax-kind syntax-kind-native">Native syntax</span></h4>
         <p class="notes">Standard GROUP BY ROLLUP(...) syntax supported since 2008. The older WITH ROLLUP modifier (SQL Server 2005 syntax) is also still accepted. GROUPING(col) and GROUPING_ID(...) available to detect rollup rows.</p>
         <div class="syntax">-- Standard syntax:
 SELECT region, country, SUM(sales) AS total_sales
@@ -196,7 +196,7 @@ FROM orders
 GROUP BY ROLLUP(region, country);</div>
       </div>
       <div class="per-db-entry" data-db="oracle">
-        <h4>Oracle</h4>
+        <h4>Oracle <span class="syntax-kind syntax-kind-native">Native syntax</span></h4>
         <p class="notes">Standard GROUP BY ROLLUP(...) syntax, available since Oracle 8i. GROUPING(col) and GROUPING_ID() available. Can combine ROLLUP, CUBE, and GROUPING SETS in one GROUP BY clause.</p>
         <div class="syntax">SELECT region, country, SUM(sales) AS total_sales
 FROM orders
@@ -211,7 +211,7 @@ FROM orders
 GROUP BY ROLLUP(region, country);</div>
       </div>
       <div class="per-db-entry" data-db="sqlite">
-        <h4>SQLite</h4>
+        <h4>SQLite <span class="syntax-kind syntax-kind-workaround">Alternative syntax</span></h4>
         <p class="notes">ROLLUP is not supported. Workaround: use UNION ALL to manually combine the detailed rows, subtotals, and grand total.</p>
         <div class="syntax">-- Workaround with UNION ALL:
 SELECT region, country, SUM(sales) AS total_sales

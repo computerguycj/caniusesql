@@ -85,32 +85,32 @@
     <tbody>
           <tr data-db="mysql">
             <td>MySQL</td>
-            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
+            <td class="supported"><span aria-hidden="true">&#10003;</span> <span class="status-text">Native</span></td>
             <td>3.23</td>
             <td class="notes">GREATEST(v1, v2, ...) and LEAST(v1, v2, ...) support any number of arguments. If any argument is NULL, the result is NULL. Arguments are compared after implicit type conversion — mixing types triggers coercion rules. Works with numbers, strings, and dates.</td>
           </tr>
           <tr data-db="postgresql">
             <td>PostgreSQL</td>
-            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
+            <td class="supported"><span aria-hidden="true">&#10003;</span> <span class="status-text">Native</span></td>
             <td>6.0</td>
             <td class="notes">GREATEST and LEAST support any number of arguments and any comparable type. Unlike most SQL functions, PostgreSQL's GREATEST/LEAST ignore NULLs and return a non-NULL result if at least one argument is non-NULL. This differs from MySQL and Oracle, where any NULL input produces a NULL result.</td>
           </tr>
           <tr data-db="sqlserver">
             <td>SQL Server</td>
-            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
+            <td class="supported"><span aria-hidden="true">&#10003;</span> <span class="status-text">Native</span></td>
             <td>2022</td>
             <td class="notes">GREATEST() and LEAST() were added in SQL Server 2022. Unlike MySQL/Oracle, SQL Server's implementation ignores NULLs (matching PostgreSQL behavior). For SQL Server 2019 and earlier, use a VALUES subquery with aggregation or nested IIF/CASE expressions as a workaround.</td>
           </tr>
           <tr data-db="oracle">
             <td>Oracle</td>
-            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
+            <td class="supported"><span aria-hidden="true">&#10003;</span> <span class="status-text">Native</span></td>
             <td>7</td>
             <td class="notes">GREATEST and LEAST supported since Oracle 7. If any argument is NULL, the result is NULL (same as MySQL, opposite of PostgreSQL). Arguments must be compatible types. Works with NUMBER, VARCHAR2, DATE, and TIMESTAMP.</td>
           </tr>
           <tr data-db="sqlite">
             <td>SQLite</td>
-            <td class="not-supported"><span aria-hidden="true">✗</span> <span class="status-text">Not Supported</span></td>
-            <td>—</td>
+            <td class="not-supported"><span aria-hidden="true">&mdash;</span> <span class="status-text">Not Supported</span></td>
+            <td>-</td>
             <td class="notes">SQLite has no GREATEST or LEAST functions. Workaround for two values: use a CASE expression. For more values, use a subquery with MAX/MIN over a VALUES list (requires SQLite 3.8.3+ for VALUES in subqueries).</td>
           </tr>
     </tbody>
@@ -132,18 +132,18 @@ FROM contracts;</div>
 
   <h2>Version Support</h2>
   <div class="version-list">
-    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> MySQL: Since 3.23</span>
-    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> PostgreSQL: Since 6.0</span>
-    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> SQL Server: Since 2022</span>
-    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> Oracle: Since 7</span>
-    <span class="version-badge version-not-supported"><span aria-hidden="true">✗</span> SQLite: Not supported</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">&#10003;</span> MySQL: Native since 3.23</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">&#10003;</span> PostgreSQL: Native since 6.0</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">&#10003;</span> SQL Server: Native since 2022</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">&#10003;</span> Oracle: Native since 7</span>
+    <span class="version-badge version-not-supported"><span aria-hidden="true">&mdash;</span> SQLite: Not supported</span>
     
   </div>
 
   <h2>Per-Database Syntax &amp; Notes</h2>
   <div class="per-db-section">
       <div class="per-db-entry" data-db="mysql">
-        <h4>MySQL</h4>
+        <h4>MySQL <span class="syntax-kind syntax-kind-native">Native syntax</span></h4>
         <p class="notes">GREATEST(v1, v2, ...) and LEAST(v1, v2, ...) support any number of arguments. If any argument is NULL, the result is NULL. Arguments are compared after implicit type conversion — mixing types triggers coercion rules. Works with numbers, strings, and dates.</p>
         <div class="syntax">-- Largest of two columns:
 SELECT id, GREATEST(q1_sales, q2_sales, q3_sales, q4_sales) AS peak_quarter
@@ -161,7 +161,7 @@ FROM records;
 SELECT GREATEST(1, NULL, 3); -- Returns NULL</div>
       </div>
       <div class="per-db-entry" data-db="postgresql">
-        <h4>PostgreSQL</h4>
+        <h4>PostgreSQL <span class="syntax-kind syntax-kind-native">Native syntax</span></h4>
         <p class="notes">GREATEST and LEAST support any number of arguments and any comparable type. Unlike most SQL functions, PostgreSQL's GREATEST/LEAST ignore NULLs and return a non-NULL result if at least one argument is non-NULL. This differs from MySQL and Oracle, where any NULL input produces a NULL result.</p>
         <div class="syntax">-- Greatest of multiple values:
 SELECT GREATEST(q1, q2, q3, q4) AS peak
@@ -180,7 +180,7 @@ SELECT GREATEST(signup_date, activation_date) AS first_activity
 FROM users;</div>
       </div>
       <div class="per-db-entry" data-db="sqlserver">
-        <h4>SQL Server</h4>
+        <h4>SQL Server <span class="syntax-kind syntax-kind-native">Native syntax</span></h4>
         <p class="notes">GREATEST() and LEAST() were added in SQL Server 2022. Unlike MySQL/Oracle, SQL Server's implementation ignores NULLs (matching PostgreSQL behavior). For SQL Server 2019 and earlier, use a VALUES subquery with aggregation or nested IIF/CASE expressions as a workaround.</p>
         <div class="syntax">-- SQL Server 2022+:
 SELECT GREATEST(q1_sales, q2_sales, q3_sales) AS peak_quarter
@@ -198,7 +198,7 @@ SELECT (SELECT MAX(v) FROM (VALUES (q1), (q2), (q3)) AS t(v)) AS peak
 FROM quarterly_results;</div>
       </div>
       <div class="per-db-entry" data-db="oracle">
-        <h4>Oracle</h4>
+        <h4>Oracle <span class="syntax-kind syntax-kind-native">Native syntax</span></h4>
         <p class="notes">GREATEST and LEAST supported since Oracle 7. If any argument is NULL, the result is NULL (same as MySQL, opposite of PostgreSQL). Arguments must be compatible types. Works with NUMBER, VARCHAR2, DATE, and TIMESTAMP.</p>
         <div class="syntax">SELECT GREATEST(q1_sales, q2_sales, q3_sales, q4_sales) AS peak_quarter
 FROM quarterly_results;
@@ -215,7 +215,7 @@ SELECT GREATEST(NVL(col1, 0), NVL(col2, 0)) AS safe_greatest
 FROM t;</div>
       </div>
       <div class="per-db-entry" data-db="sqlite">
-        <h4>SQLite</h4>
+        <h4>SQLite <span class="syntax-kind syntax-kind-workaround">Alternative syntax</span></h4>
         <p class="notes">SQLite has no GREATEST or LEAST functions. Workaround for two values: use a CASE expression. For more values, use a subquery with MAX/MIN over a VALUES list (requires SQLite 3.8.3+ for VALUES in subqueries).</p>
         <div class="syntax">-- CASE workaround (2 values):
 SELECT CASE WHEN a &gt;= b THEN a ELSE b END AS greatest_of_two

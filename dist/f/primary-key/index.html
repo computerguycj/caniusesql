@@ -85,31 +85,31 @@
     <tbody>
           <tr data-db="mysql">
             <td>MySQL</td>
-            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
+            <td class="supported"><span aria-hidden="true">&#10003;</span> <span class="status-text">Native</span></td>
             <td>all</td>
             <td class="notes">InnoDB tables are clustered by the primary key — row data is physically stored in PK order. AUTO_INCREMENT is the standard way to generate surrogate keys. Composite PKs supported. No natural integer sequence type (use AUTO_INCREMENT).</td>
           </tr>
           <tr data-db="postgresql">
             <td>PostgreSQL</td>
-            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
+            <td class="supported"><span aria-hidden="true">&#10003;</span> <span class="status-text">Native</span></td>
             <td>all</td>
             <td class="notes">PK implicitly adds a UNIQUE index and NOT NULL. SERIAL (legacy) or IDENTITY (SQL standard, PG 10+) or GENERATED ALWAYS AS IDENTITY for auto-increment. Tables are heap-organized (not clustered by PK) — use CLUSTER command to physically reorder if needed.</td>
           </tr>
           <tr data-db="sqlserver">
             <td>SQL Server</td>
-            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
+            <td class="supported"><span aria-hidden="true">&#10003;</span> <span class="status-text">Native</span></td>
             <td>all</td>
             <td class="notes">By default, PK creates a CLUSTERED index — data pages are physically ordered by PK. IDENTITY(seed, increment) for auto-increment. Can explicitly create as NONCLUSTERED if you need a different clustered index. NEWID() / NEWSEQUENTIALID() for UUID primary keys.</td>
           </tr>
           <tr data-db="oracle">
             <td>Oracle</td>
-            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
+            <td class="supported"><span aria-hidden="true">&#10003;</span> <span class="status-text">Native</span></td>
             <td>all</td>
             <td class="notes">PKs create a unique index (B-tree by default). Auto-increment via SEQUENCE + trigger (legacy) or GENERATED AS IDENTITY (12c+). Oracle tables are heap-organized by default; index-organized tables (IOT) cluster by PK.</td>
           </tr>
           <tr data-db="sqlite">
             <td>SQLite</td>
-            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
+            <td class="supported"><span aria-hidden="true">&#10003;</span> <span class="status-text">Native</span></td>
             <td>all</td>
             <td class="notes">INTEGER PRIMARY KEY (exactly this type + constraint) is a special alias for the internal rowid — it auto-increments. AUTOINCREMENT keyword additionally prevents rowid reuse after deletions. Any other PK type creates a standard unique constraint without rowid aliasing.</td>
           </tr>
@@ -136,18 +136,18 @@ CREATE TABLE users (
 
   <h2>Version Support</h2>
   <div class="version-list">
-    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> MySQL: Since all</span>
-    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> PostgreSQL: Since all</span>
-    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> SQL Server: Since all</span>
-    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> Oracle: Since all</span>
-    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> SQLite: Since all</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">&#10003;</span> MySQL: Native in all listed versions</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">&#10003;</span> PostgreSQL: Native in all listed versions</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">&#10003;</span> SQL Server: Native in all listed versions</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">&#10003;</span> Oracle: Native in all listed versions</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">&#10003;</span> SQLite: Native in all listed versions</span>
     
   </div>
 
   <h2>Per-Database Syntax &amp; Notes</h2>
   <div class="per-db-section">
       <div class="per-db-entry" data-db="mysql">
-        <h4>MySQL</h4>
+        <h4>MySQL <span class="syntax-kind syntax-kind-native">Native syntax</span></h4>
         <p class="notes">InnoDB tables are clustered by the primary key — row data is physically stored in PK order. AUTO_INCREMENT is the standard way to generate surrogate keys. Composite PKs supported. No natural integer sequence type (use AUTO_INCREMENT).</p>
         <div class="syntax">CREATE TABLE users (
   id   INT AUTO_INCREMENT PRIMARY KEY,
@@ -162,7 +162,7 @@ CREATE TABLE order_items (
 );</div>
       </div>
       <div class="per-db-entry" data-db="postgresql">
-        <h4>PostgreSQL</h4>
+        <h4>PostgreSQL <span class="syntax-kind syntax-kind-native">Native syntax</span></h4>
         <p class="notes">PK implicitly adds a UNIQUE index and NOT NULL. SERIAL (legacy) or IDENTITY (SQL standard, PG 10+) or GENERATED ALWAYS AS IDENTITY for auto-increment. Tables are heap-organized (not clustered by PK) — use CLUSTER command to physically reorder if needed.</p>
         <div class="syntax">-- Modern (PG 10+):
 CREATE TABLE users (
@@ -177,7 +177,7 @@ CREATE TABLE users (
 );</div>
       </div>
       <div class="per-db-entry" data-db="sqlserver">
-        <h4>SQL Server</h4>
+        <h4>SQL Server <span class="syntax-kind syntax-kind-native">Native syntax</span></h4>
         <p class="notes">By default, PK creates a CLUSTERED index — data pages are physically ordered by PK. IDENTITY(seed, increment) for auto-increment. Can explicitly create as NONCLUSTERED if you need a different clustered index. NEWID() / NEWSEQUENTIALID() for UUID primary keys.</p>
         <div class="syntax">CREATE TABLE users (
   id   INT IDENTITY(1,1) PRIMARY KEY,
@@ -191,7 +191,7 @@ CREATE TABLE users (
 );</div>
       </div>
       <div class="per-db-entry" data-db="oracle">
-        <h4>Oracle</h4>
+        <h4>Oracle <span class="syntax-kind syntax-kind-native">Native syntax</span></h4>
         <p class="notes">PKs create a unique index (B-tree by default). Auto-increment via SEQUENCE + trigger (legacy) or GENERATED AS IDENTITY (12c+). Oracle tables are heap-organized by default; index-organized tables (IOT) cluster by PK.</p>
         <div class="syntax">-- Modern (12c+):
 CREATE TABLE users (
@@ -204,7 +204,7 @@ CREATE SEQUENCE user_seq START WITH 1 INCREMENT BY 1;
 CREATE TABLE users (id NUMBER DEFAULT user_seq.NEXTVAL PRIMARY KEY, name VARCHAR2(100));</div>
       </div>
       <div class="per-db-entry" data-db="sqlite">
-        <h4>SQLite</h4>
+        <h4>SQLite <span class="syntax-kind syntax-kind-native">Native syntax</span></h4>
         <p class="notes">INTEGER PRIMARY KEY (exactly this type + constraint) is a special alias for the internal rowid — it auto-increments. AUTOINCREMENT keyword additionally prevents rowid reuse after deletions. Any other PK type creates a standard unique constraint without rowid aliasing.</p>
         <div class="syntax">CREATE TABLE users (
   id   INTEGER PRIMARY KEY,      -- auto-increment via rowid alias

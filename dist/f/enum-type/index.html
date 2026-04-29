@@ -85,32 +85,32 @@
     <tbody>
           <tr data-db="mysql">
             <td>MySQL</td>
-            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
+            <td class="supported"><span aria-hidden="true">&#10003;</span> <span class="status-text">Native</span></td>
             <td>5.0</td>
             <td class="notes">ENUM is a native column type. Values are stored as integers internally (1-indexed position). Adding values requires ALTER TABLE. Comparing ENUM values uses integer order, not lexicographic.</td>
           </tr>
           <tr data-db="postgresql">
             <td>PostgreSQL</td>
-            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
+            <td class="supported"><span aria-hidden="true">&#10003;</span> <span class="status-text">Native</span></td>
             <td>8.3</td>
             <td class="notes">CREATE TYPE ... AS ENUM creates a reusable named type. Values can be added with ALTER TYPE ... ADD VALUE but cannot be removed. Enum ordering reflects declaration order, not alphabetical.</td>
           </tr>
           <tr data-db="sqlserver">
             <td>SQL Server</td>
-            <td class="not-supported"><span aria-hidden="true">✗</span> <span class="status-text">Not Supported</span></td>
-            <td>—</td>
+            <td class="not-supported"><span aria-hidden="true">&mdash;</span> <span class="status-text">Not Supported</span></td>
+            <td>-</td>
             <td class="notes">No native ENUM type. Use a CHECK constraint or a foreign key to a lookup table.</td>
           </tr>
           <tr data-db="oracle">
             <td>Oracle</td>
-            <td class="not-supported"><span aria-hidden="true">✗</span> <span class="status-text">Not Supported</span></td>
-            <td>—</td>
+            <td class="not-supported"><span aria-hidden="true">&mdash;</span> <span class="status-text">Not Supported</span></td>
+            <td>-</td>
             <td class="notes">No native ENUM type. Use a CHECK constraint or a lookup table with a foreign key.</td>
           </tr>
           <tr data-db="sqlite">
             <td>SQLite</td>
-            <td class="not-supported"><span aria-hidden="true">✗</span> <span class="status-text">Not Supported</span></td>
-            <td>—</td>
+            <td class="not-supported"><span aria-hidden="true">&mdash;</span> <span class="status-text">Not Supported</span></td>
+            <td>-</td>
             <td class="notes">No native ENUM type. Use a CHECK constraint to restrict allowed values.</td>
           </tr>
     </tbody>
@@ -129,18 +129,18 @@ CREATE TABLE orders (
 
   <h2>Version Support</h2>
   <div class="version-list">
-    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> MySQL: Since 5.0</span>
-    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> PostgreSQL: Since 8.3</span>
-    <span class="version-badge version-not-supported"><span aria-hidden="true">✗</span> SQL Server: Not supported</span>
-    <span class="version-badge version-not-supported"><span aria-hidden="true">✗</span> Oracle: Not supported</span>
-    <span class="version-badge version-not-supported"><span aria-hidden="true">✗</span> SQLite: Not supported</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">&#10003;</span> MySQL: Native since 5.0</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">&#10003;</span> PostgreSQL: Native since 8.3</span>
+    <span class="version-badge version-not-supported"><span aria-hidden="true">&mdash;</span> SQL Server: Not supported</span>
+    <span class="version-badge version-not-supported"><span aria-hidden="true">&mdash;</span> Oracle: Not supported</span>
+    <span class="version-badge version-not-supported"><span aria-hidden="true">&mdash;</span> SQLite: Not supported</span>
     
   </div>
 
   <h2>Per-Database Syntax &amp; Notes</h2>
   <div class="per-db-section">
       <div class="per-db-entry" data-db="mysql">
-        <h4>MySQL</h4>
+        <h4>MySQL <span class="syntax-kind syntax-kind-native">Native syntax</span></h4>
         <p class="notes">ENUM is a native column type. Values are stored as integers internally (1-indexed position). Adding values requires ALTER TABLE. Comparing ENUM values uses integer order, not lexicographic.</p>
         <div class="syntax">CREATE TABLE orders (
   status ENUM('pending', 'shipped', 'delivered') NOT NULL
@@ -148,7 +148,7 @@ CREATE TABLE orders (
 SELECT * FROM orders WHERE status = 'shipped';</div>
       </div>
       <div class="per-db-entry" data-db="postgresql">
-        <h4>PostgreSQL</h4>
+        <h4>PostgreSQL <span class="syntax-kind syntax-kind-native">Native syntax</span></h4>
         <p class="notes">CREATE TYPE ... AS ENUM creates a reusable named type. Values can be added with ALTER TYPE ... ADD VALUE but cannot be removed. Enum ordering reflects declaration order, not alphabetical.</p>
         <div class="syntax">CREATE TYPE order_status AS ENUM ('pending', 'shipped', 'delivered');
 CREATE TABLE orders (status order_status NOT NULL);
@@ -156,7 +156,7 @@ CREATE TABLE orders (status order_status NOT NULL);
 ALTER TYPE order_status ADD VALUE 'cancelled';</div>
       </div>
       <div class="per-db-entry" data-db="sqlserver">
-        <h4>SQL Server</h4>
+        <h4>SQL Server <span class="syntax-kind syntax-kind-workaround">Alternative syntax</span></h4>
         <p class="notes">No native ENUM type. Use a CHECK constraint or a foreign key to a lookup table.</p>
         <div class="syntax">CREATE TABLE orders (
   status VARCHAR(20) NOT NULL
@@ -164,7 +164,7 @@ ALTER TYPE order_status ADD VALUE 'cancelled';</div>
 );</div>
       </div>
       <div class="per-db-entry" data-db="oracle">
-        <h4>Oracle</h4>
+        <h4>Oracle <span class="syntax-kind syntax-kind-workaround">Alternative syntax</span></h4>
         <p class="notes">No native ENUM type. Use a CHECK constraint or a lookup table with a foreign key.</p>
         <div class="syntax">CREATE TABLE orders (
   status VARCHAR2(20) NOT NULL
@@ -172,7 +172,7 @@ ALTER TYPE order_status ADD VALUE 'cancelled';</div>
 );</div>
       </div>
       <div class="per-db-entry" data-db="sqlite">
-        <h4>SQLite</h4>
+        <h4>SQLite <span class="syntax-kind syntax-kind-workaround">Alternative syntax</span></h4>
         <p class="notes">No native ENUM type. Use a CHECK constraint to restrict allowed values.</p>
         <div class="syntax">CREATE TABLE orders (
   status TEXT NOT NULL

@@ -85,31 +85,31 @@
     <tbody>
           <tr data-db="mysql">
             <td>MySQL</td>
-            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
+            <td class="supported"><span aria-hidden="true">&#10003;</span> <span class="status-text">Native</span></td>
             <td>all</td>
             <td class="notes">CONCAT() ignores NULL arguments (treats them as empty string). CONCAT_WS(sep, ...) skips NULLs and adds a separator between non-null values.</td>
           </tr>
           <tr data-db="postgresql">
             <td>PostgreSQL</td>
-            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
+            <td class="supported"><span aria-hidden="true">&#10003;</span> <span class="status-text">Native</span></td>
             <td>all</td>
             <td class="notes">CONCAT() ignores NULLs (like MySQL). The || operator is the standard alternative but propagates NULLs — 'a' || NULL = NULL. Use CONCAT() or COALESCE() when NULL safety matters.</td>
           </tr>
           <tr data-db="sqlserver">
             <td>SQL Server</td>
-            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
+            <td class="supported"><span aria-hidden="true">&#10003;</span> <span class="status-text">Native</span></td>
             <td>2012</td>
             <td class="notes">CONCAT() added in SQL Server 2012 and treats NULLs as empty strings. Before 2012, use + operator — but + propagates NULLs unless SET CONCAT_NULL_YIELDS_NULL OFF. CONCAT_WS() added in SQL Server 2017.</td>
           </tr>
           <tr data-db="oracle">
             <td>Oracle</td>
-            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
+            <td class="supported"><span aria-hidden="true">&#10003;</span> <span class="status-text">Native</span></td>
             <td>all</td>
             <td class="notes">CONCAT() accepts exactly two arguments. For more than two strings, use the || operator or nest CONCAT() calls. In Oracle, NULL is treated as empty string in string concatenation (|| propagates, but CONCAT ignores).</td>
           </tr>
           <tr data-db="sqlite">
             <td>SQLite</td>
-            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
+            <td class="supported"><span aria-hidden="true">&#10003;</span> <span class="status-text">Native</span></td>
             <td>3.44.0</td>
             <td class="notes">CONCAT() added in SQLite 3.44.0 (Nov 2023). Before that, use the || operator exclusively. || propagates NULLs — use COALESCE() to guard against them.</td>
           </tr>
@@ -127,25 +127,25 @@ FROM users;</div>
 
   <h2>Version Support</h2>
   <div class="version-list">
-    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> MySQL: Since all</span>
-    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> PostgreSQL: Since all</span>
-    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> SQL Server: Since 2012</span>
-    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> Oracle: Since all</span>
-    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> SQLite: Since 3.44.0</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">&#10003;</span> MySQL: Native in all listed versions</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">&#10003;</span> PostgreSQL: Native in all listed versions</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">&#10003;</span> SQL Server: Native since 2012</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">&#10003;</span> Oracle: Native in all listed versions</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">&#10003;</span> SQLite: Native since 3.44.0</span>
     
   </div>
 
   <h2>Per-Database Syntax &amp; Notes</h2>
   <div class="per-db-section">
       <div class="per-db-entry" data-db="mysql">
-        <h4>MySQL</h4>
+        <h4>MySQL <span class="syntax-kind syntax-kind-native">Native syntax</span></h4>
         <p class="notes">CONCAT() ignores NULL arguments (treats them as empty string). CONCAT_WS(sep, ...) skips NULLs and adds a separator between non-null values.</p>
         <div class="syntax">SELECT CONCAT('Hello', ' ', 'World');       -- 'Hello World'
 SELECT CONCAT('a', NULL, 'b');             -- 'ab' (NULL silently ignored)
 SELECT CONCAT_WS(', ', 'Alice', NULL, 'Bob');  -- 'Alice, Bob'</div>
       </div>
       <div class="per-db-entry" data-db="postgresql">
-        <h4>PostgreSQL</h4>
+        <h4>PostgreSQL <span class="syntax-kind syntax-kind-native">Native syntax</span></h4>
         <p class="notes">CONCAT() ignores NULLs (like MySQL). The || operator is the standard alternative but propagates NULLs — 'a' || NULL = NULL. Use CONCAT() or COALESCE() when NULL safety matters.</p>
         <div class="syntax">SELECT CONCAT('Hello', ' ', 'World');       -- 'Hello World'
 SELECT 'Hello' || ' ' || 'World';          -- 'Hello World'
@@ -153,7 +153,7 @@ SELECT 'a' || NULL;                        -- NULL
 SELECT CONCAT('a', NULL, 'b');             -- 'ab'</div>
       </div>
       <div class="per-db-entry" data-db="sqlserver">
-        <h4>SQL Server</h4>
+        <h4>SQL Server <span class="syntax-kind syntax-kind-native">Native syntax</span></h4>
         <p class="notes">CONCAT() added in SQL Server 2012 and treats NULLs as empty strings. Before 2012, use + operator — but + propagates NULLs unless SET CONCAT_NULL_YIELDS_NULL OFF. CONCAT_WS() added in SQL Server 2017.</p>
         <div class="syntax">SELECT CONCAT('Hello', ' ', 'World');       -- 'Hello World'
 SELECT CONCAT('a', NULL, 'b');             -- 'ab'
@@ -161,14 +161,14 @@ SELECT 'Hello' + ' ' + 'World';           -- 'Hello World' (pre-2012)
 SELECT CONCAT_WS(', ', 'Alice', NULL, 'Bob');  -- 'Alice, Bob' (2017+)</div>
       </div>
       <div class="per-db-entry" data-db="oracle">
-        <h4>Oracle</h4>
+        <h4>Oracle <span class="syntax-kind syntax-kind-native">Native syntax</span></h4>
         <p class="notes">CONCAT() accepts exactly two arguments. For more than two strings, use the || operator or nest CONCAT() calls. In Oracle, NULL is treated as empty string in string concatenation (|| propagates, but CONCAT ignores).</p>
         <div class="syntax">SELECT CONCAT('Hello', ' World') FROM DUAL;          -- 'Hello World'
 SELECT 'Hello' || ' ' || 'World' FROM DUAL;          -- 'Hello World'
 SELECT CONCAT(CONCAT('a', 'b'), 'c') FROM DUAL;      -- 'abc'</div>
       </div>
       <div class="per-db-entry" data-db="sqlite">
-        <h4>SQLite</h4>
+        <h4>SQLite <span class="syntax-kind syntax-kind-native">Native syntax</span></h4>
         <p class="notes">CONCAT() added in SQLite 3.44.0 (Nov 2023). Before that, use the || operator exclusively. || propagates NULLs — use COALESCE() to guard against them.</p>
         <div class="syntax">SELECT CONCAT('Hello', ' ', 'World');       -- 3.44.0+
 SELECT 'Hello' || ' ' || 'World';          -- all versions

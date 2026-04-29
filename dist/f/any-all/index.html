@@ -85,32 +85,32 @@
     <tbody>
           <tr data-db="mysql">
             <td>MySQL</td>
-            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
+            <td class="supported"><span aria-hidden="true">&#10003;</span> <span class="status-text">Native</span></td>
             <td>4.1</td>
             <td class="notes">Both ANY and ALL supported since 4.1. SOME is an alias for ANY. Works with =, &lt;&gt;, &lt;, &lt;=, &gt;, &gt;= operators. = ANY(...) is equivalent to IN(...). &lt;&gt; ALL(...) is equivalent to NOT IN(...). If the subquery returns an empty result, ANY returns false and ALL returns true (vacuous truth). NULL in the subquery results causes the same NULL-propagation issues as IN.</td>
           </tr>
           <tr data-db="postgresql">
             <td>PostgreSQL</td>
-            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
+            <td class="supported"><span aria-hidden="true">&#10003;</span> <span class="status-text">Native</span></td>
             <td>6.0</td>
             <td class="notes">Full ANY / ALL / SOME support with all comparison operators. PostgreSQL additionally supports ANY and ALL against arrays (not just subqueries): WHERE val = ANY(ARRAY[1,2,3]) is a common idiom. Array form is often more concise than IN() for literal lists.</td>
           </tr>
           <tr data-db="sqlserver">
             <td>SQL Server</td>
-            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
+            <td class="supported"><span aria-hidden="true">&#10003;</span> <span class="status-text">Native</span></td>
             <td>6.5</td>
             <td class="notes">ANY and ALL supported but rarely used in practice. SOME is also accepted as an alias for ANY. SQL Server developers typically use IN / NOT IN / EXISTS patterns instead, which the optimizer handles equivalently. The array form (ANY(ARRAY[...])) is not supported — only the subquery form.</td>
           </tr>
           <tr data-db="oracle">
             <td>Oracle</td>
-            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
+            <td class="supported"><span aria-hidden="true">&#10003;</span> <span class="status-text">Native</span></td>
             <td>7</td>
             <td class="notes">ANY and ALL supported with all comparison operators. SOME accepted as alias for ANY. Scalar subquery optimization applies. Like SQL Server, Oracle developers typically use IN / EXISTS / aggregate subquery patterns in practice, but ANY / ALL are fully valid.</td>
           </tr>
           <tr data-db="sqlite">
             <td>SQLite</td>
-            <td class="not-supported"><span aria-hidden="true">✗</span> <span class="status-text">Not Supported</span></td>
-            <td>—</td>
+            <td class="not-supported"><span aria-hidden="true">&mdash;</span> <span class="status-text">Not Supported</span></td>
+            <td>-</td>
             <td class="notes">ANY and ALL operators are not supported. Use IN, NOT IN, EXISTS, or subqueries with MIN/MAX aggregates as equivalents.</td>
           </tr>
     </tbody>
@@ -136,18 +136,18 @@ WHERE salary &gt; ALL (
 
   <h2>Version Support</h2>
   <div class="version-list">
-    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> MySQL: Since 4.1</span>
-    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> PostgreSQL: Since 6.0</span>
-    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> SQL Server: Since 6.5</span>
-    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> Oracle: Since 7</span>
-    <span class="version-badge version-not-supported"><span aria-hidden="true">✗</span> SQLite: Not supported</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">&#10003;</span> MySQL: Native since 4.1</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">&#10003;</span> PostgreSQL: Native since 6.0</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">&#10003;</span> SQL Server: Native since 6.5</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">&#10003;</span> Oracle: Native since 7</span>
+    <span class="version-badge version-not-supported"><span aria-hidden="true">&mdash;</span> SQLite: Not supported</span>
     
   </div>
 
   <h2>Per-Database Syntax &amp; Notes</h2>
   <div class="per-db-section">
       <div class="per-db-entry" data-db="mysql">
-        <h4>MySQL</h4>
+        <h4>MySQL <span class="syntax-kind syntax-kind-native">Native syntax</span></h4>
         <p class="notes">Both ANY and ALL supported since 4.1. SOME is an alias for ANY. Works with =, &lt;&gt;, &lt;, &lt;=, &gt;, &gt;= operators. = ANY(...) is equivalent to IN(...). &lt;&gt; ALL(...) is equivalent to NOT IN(...). If the subquery returns an empty result, ANY returns false and ALL returns true (vacuous truth). NULL in the subquery results causes the same NULL-propagation issues as IN.</p>
         <div class="syntax">-- ANY (true if any value matches):
 SELECT name FROM employees
@@ -167,7 +167,7 @@ SELECT * FROM orders
 WHERE status &lt;&gt; ALL (SELECT status FROM cancelled_statuses);</div>
       </div>
       <div class="per-db-entry" data-db="postgresql">
-        <h4>PostgreSQL</h4>
+        <h4>PostgreSQL <span class="syntax-kind syntax-kind-native">Native syntax</span></h4>
         <p class="notes">Full ANY / ALL / SOME support with all comparison operators. PostgreSQL additionally supports ANY and ALL against arrays (not just subqueries): WHERE val = ANY(ARRAY[1,2,3]) is a common idiom. Array form is often more concise than IN() for literal lists.</p>
         <div class="syntax">-- Subquery form:
 SELECT name FROM employees
@@ -184,7 +184,7 @@ WHERE status &lt;&gt; ALL(ARRAY['cancelled', 'refunded']);
 -- WHERE tag_id = ANY($1::int[])  (pass an array parameter)</div>
       </div>
       <div class="per-db-entry" data-db="sqlserver">
-        <h4>SQL Server</h4>
+        <h4>SQL Server <span class="syntax-kind syntax-kind-native">Native syntax</span></h4>
         <p class="notes">ANY and ALL supported but rarely used in practice. SOME is also accepted as an alias for ANY. SQL Server developers typically use IN / NOT IN / EXISTS patterns instead, which the optimizer handles equivalently. The array form (ANY(ARRAY[...])) is not supported — only the subquery form.</p>
         <div class="syntax">-- ANY with subquery:
 SELECT name FROM employees
@@ -200,7 +200,7 @@ WHERE salary &gt; (SELECT MIN(salary) FROM employees WHERE dept = 'Interns');
 -- (MIN achieves the same as &gt; ALL; MAX achieves the same as &gt; ANY)</div>
       </div>
       <div class="per-db-entry" data-db="oracle">
-        <h4>Oracle</h4>
+        <h4>Oracle <span class="syntax-kind syntax-kind-native">Native syntax</span></h4>
         <p class="notes">ANY and ALL supported with all comparison operators. SOME accepted as alias for ANY. Scalar subquery optimization applies. Like SQL Server, Oracle developers typically use IN / EXISTS / aggregate subquery patterns in practice, but ANY / ALL are fully valid.</p>
         <div class="syntax">-- ANY:
 SELECT name FROM employees
@@ -216,7 +216,7 @@ WHERE salary &gt; (SELECT MAX(salary) FROM employees WHERE dept = 'Interns');
 -- (MAX(x) = x &gt; ALL subquery; MIN(x) = x &gt; ANY subquery)</div>
       </div>
       <div class="per-db-entry" data-db="sqlite">
-        <h4>SQLite</h4>
+        <h4>SQLite <span class="syntax-kind syntax-kind-workaround">Alternative syntax</span></h4>
         <p class="notes">ANY and ALL operators are not supported. Use IN, NOT IN, EXISTS, or subqueries with MIN/MAX aggregates as equivalents.</p>
         <div class="syntax">-- Instead of &gt; ANY(subquery), use &gt; MIN(...):
 SELECT name FROM employees

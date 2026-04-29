@@ -85,33 +85,33 @@
     <tbody>
           <tr data-db="mysql">
             <td>MySQL</td>
-            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
-            <td>8.0</td>
-            <td class="notes"></td>
+            <td class="workaround-supported"><span aria-hidden="true">~</span> <span class="status-text">Supported via workaround</span></td>
+            <td>-</td>
+            <td class="notes">Workaround available in all listed versions. No native SQL Server-style SELECT ... INTO new_table shorthand. Use CREATE TABLE ... AS SELECT instead.</td>
           </tr>
           <tr data-db="postgresql">
             <td>PostgreSQL</td>
-            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
-            <td>—</td>
+            <td class="supported"><span aria-hidden="true">&#10003;</span> <span class="status-text">Native</span></td>
+            <td>-</td>
             <td class="notes">SELECT ... INTO new_table is supported (with PL/pgSQL caveats). CREATE TABLE ... AS SELECT is the standard alternative.</td>
           </tr>
           <tr data-db="sqlserver">
             <td>SQL Server</td>
-            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
+            <td class="supported"><span aria-hidden="true">&#10003;</span> <span class="status-text">Native</span></td>
             <td>2016</td>
             <td class="notes"></td>
           </tr>
           <tr data-db="oracle">
             <td>Oracle</td>
-            <td class="not-supported"><span aria-hidden="true">✗</span> <span class="status-text">Not Supported</span></td>
-            <td>—</td>
+            <td class="not-supported"><span aria-hidden="true">&mdash;</span> <span class="status-text">Not Supported</span></td>
+            <td>-</td>
             <td class="notes">Oracle does not support the SQL-Server style SELECT ... INTO new_table shorthand — use CREATE TABLE ... AS SELECT ... or INSERT INTO ... SELECT ... instead.</td>
           </tr>
           <tr data-db="sqlite">
             <td>SQLite</td>
-            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
-            <td>3.6.5</td>
-            <td class="notes"></td>
+            <td class="workaround-supported"><span aria-hidden="true">~</span> <span class="status-text">Supported via workaround</span></td>
+            <td>-</td>
+            <td class="notes">Workaround since 3.6.5. No native SQL Server-style SELECT ... INTO new_table shorthand. Use CREATE TABLE ... AS SELECT instead.</td>
           </tr>
     </tbody>
   </table>
@@ -126,29 +126,29 @@
 
   <h2>Version Support</h2>
   <div class="version-list">
-    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> MySQL: Since 8.0</span>
-    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> PostgreSQL: Since ?</span>
-    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> SQL Server: Since 2016</span>
-    <span class="version-badge version-not-supported"><span aria-hidden="true">✗</span> Oracle: Not supported</span>
-    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> SQLite: Since 3.6.5</span>
+    <span class="version-badge version-workaround"><span aria-hidden="true">~</span> MySQL: Supported via workaround in all listed versions</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">&#10003;</span> PostgreSQL: Native since ?</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">&#10003;</span> SQL Server: Native since 2016</span>
+    <span class="version-badge version-not-supported"><span aria-hidden="true">&mdash;</span> Oracle: Not supported</span>
+    <span class="version-badge version-workaround"><span aria-hidden="true">~</span> SQLite: Supported via workaround since 3.6.5</span>
     
   </div>
 
   <h2>Per-Database Syntax &amp; Notes</h2>
   <div class="per-db-section">
       <div class="per-db-entry" data-db="mysql">
-        <h4>MySQL</h4>
-        
+        <h4>MySQL <span class="syntax-kind syntax-kind-workaround">Workaround</span></h4>
+        <p class="notes">Use CREATE TABLE ... AS SELECT to create a new table from a query result. Available in all listed versions. No native SQL Server-style SELECT ... INTO new_table shorthand. Use CREATE TABLE ... AS SELECT instead.</p>
         <div class="syntax">CREATE TABLE new_table AS SELECT column1, column2 FROM old_table;</div>
       </div>
       <div class="per-db-entry" data-db="sqlserver">
-        <h4>SQL Server</h4>
+        <h4>SQL Server <span class="syntax-kind syntax-kind-native">Native syntax</span></h4>
         
         <div class="syntax">SELECT column1, column2 INTO new_table FROM old_table;</div>
       </div>
       <div class="per-db-entry" data-db="sqlite">
-        <h4>SQLite</h4>
-        
+        <h4>SQLite <span class="syntax-kind syntax-kind-workaround">Workaround</span></h4>
+        <p class="notes">Use CREATE TABLE ... AS SELECT to create a new table from a query result. Since: 3.6.5. No native SQL Server-style SELECT ... INTO new_table shorthand. Use CREATE TABLE ... AS SELECT instead.</p>
         <div class="syntax">CREATE TABLE new_table AS SELECT column1, column2 FROM old_table;</div>
       </div>
   </div>

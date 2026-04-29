@@ -85,32 +85,32 @@
     <tbody>
           <tr data-db="mysql">
             <td>MySQL</td>
-            <td class="not-supported"><span aria-hidden="true">✗</span> <span class="status-text">Not Supported</span></td>
-            <td>—</td>
+            <td class="not-supported"><span aria-hidden="true">&mdash;</span> <span class="status-text">Not Supported</span></td>
+            <td>-</td>
             <td class="notes">GROUPING SETS is not supported. MySQL only supports ROLLUP via GROUP BY ... WITH ROLLUP or GROUP BY ROLLUP(...). For specific grouping combinations, use UNION ALL.</td>
           </tr>
           <tr data-db="postgresql">
             <td>PostgreSQL</td>
-            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
+            <td class="supported"><span aria-hidden="true">&#10003;</span> <span class="status-text">Native</span></td>
             <td>9.5</td>
             <td class="notes">Standard GROUPING SETS syntax. Can be combined with ROLLUP and CUBE in the same GROUP BY clause. GROUPING(col) identifies which rows are grouping-generated. An empty set () produces the grand total. Equivalent to the corresponding UNION ALL but computed in a single scan.</td>
           </tr>
           <tr data-db="sqlserver">
             <td>SQL Server</td>
-            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
+            <td class="supported"><span aria-hidden="true">&#10003;</span> <span class="status-text">Native</span></td>
             <td>2008</td>
             <td class="notes">Standard GROUPING SETS syntax since SQL Server 2008. GROUPING() and GROUPING_ID() supported. Useful for reporting queries that need specific subtotal combinations without the full output of CUBE.</td>
           </tr>
           <tr data-db="oracle">
             <td>Oracle</td>
-            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
+            <td class="supported"><span aria-hidden="true">&#10003;</span> <span class="status-text">Native</span></td>
             <td>8i</td>
             <td class="notes">Standard GROUPING SETS syntax since Oracle 8i. Can be combined with ROLLUP and CUBE. GROUPING() and GROUPING_ID() supported.</td>
           </tr>
           <tr data-db="sqlite">
             <td>SQLite</td>
-            <td class="not-supported"><span aria-hidden="true">✗</span> <span class="status-text">Not Supported</span></td>
-            <td>—</td>
+            <td class="not-supported"><span aria-hidden="true">&mdash;</span> <span class="status-text">Not Supported</span></td>
+            <td>-</td>
             <td class="notes">GROUPING SETS is not supported. Use UNION ALL to combine individual GROUP BY queries for each desired grouping.</td>
           </tr>
     </tbody>
@@ -132,18 +132,18 @@ GROUP BY GROUPING SETS (
 
   <h2>Version Support</h2>
   <div class="version-list">
-    <span class="version-badge version-not-supported"><span aria-hidden="true">✗</span> MySQL: Not supported</span>
-    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> PostgreSQL: Since 9.5</span>
-    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> SQL Server: Since 2008</span>
-    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> Oracle: Since 8i</span>
-    <span class="version-badge version-not-supported"><span aria-hidden="true">✗</span> SQLite: Not supported</span>
+    <span class="version-badge version-not-supported"><span aria-hidden="true">&mdash;</span> MySQL: Not supported</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">&#10003;</span> PostgreSQL: Native since 9.5</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">&#10003;</span> SQL Server: Native since 2008</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">&#10003;</span> Oracle: Native since 8i</span>
+    <span class="version-badge version-not-supported"><span aria-hidden="true">&mdash;</span> SQLite: Not supported</span>
     
   </div>
 
   <h2>Per-Database Syntax &amp; Notes</h2>
   <div class="per-db-section">
       <div class="per-db-entry" data-db="mysql">
-        <h4>MySQL</h4>
+        <h4>MySQL <span class="syntax-kind syntax-kind-workaround">Alternative syntax</span></h4>
         <p class="notes">GROUPING SETS is not supported. MySQL only supports ROLLUP via GROUP BY ... WITH ROLLUP or GROUP BY ROLLUP(...). For specific grouping combinations, use UNION ALL.</p>
         <div class="syntax">-- UNION ALL workaround:
 SELECT region, product, SUM(sales) AS total
@@ -156,7 +156,7 @@ SELECT NULL, NULL, SUM(sales)
 FROM orders;</div>
       </div>
       <div class="per-db-entry" data-db="postgresql">
-        <h4>PostgreSQL</h4>
+        <h4>PostgreSQL <span class="syntax-kind syntax-kind-native">Native syntax</span></h4>
         <p class="notes">Standard GROUPING SETS syntax. Can be combined with ROLLUP and CUBE in the same GROUP BY clause. GROUPING(col) identifies which rows are grouping-generated. An empty set () produces the grand total. Equivalent to the corresponding UNION ALL but computed in a single scan.</p>
         <div class="syntax">-- Explicit sets:
 SELECT region, product, SUM(sales) AS total_sales
@@ -184,7 +184,7 @@ FROM orders
 GROUP BY GROUPING SETS ((region, product), (region), ());</div>
       </div>
       <div class="per-db-entry" data-db="sqlserver">
-        <h4>SQL Server</h4>
+        <h4>SQL Server <span class="syntax-kind syntax-kind-native">Native syntax</span></h4>
         <p class="notes">Standard GROUPING SETS syntax since SQL Server 2008. GROUPING() and GROUPING_ID() supported. Useful for reporting queries that need specific subtotal combinations without the full output of CUBE.</p>
         <div class="syntax">SELECT region, product, SUM(sales) AS total_sales
 FROM orders
@@ -202,7 +202,7 @@ FROM orders
 GROUP BY GROUPING SETS ((region, product), (region), ());</div>
       </div>
       <div class="per-db-entry" data-db="oracle">
-        <h4>Oracle</h4>
+        <h4>Oracle <span class="syntax-kind syntax-kind-native">Native syntax</span></h4>
         <p class="notes">Standard GROUPING SETS syntax since Oracle 8i. Can be combined with ROLLUP and CUBE. GROUPING() and GROUPING_ID() supported.</p>
         <div class="syntax">SELECT region, product, SUM(sales) AS total_sales
 FROM orders
@@ -221,7 +221,7 @@ GROUP BY GROUPING SETS (
 );</div>
       </div>
       <div class="per-db-entry" data-db="sqlite">
-        <h4>SQLite</h4>
+        <h4>SQLite <span class="syntax-kind syntax-kind-workaround">Alternative syntax</span></h4>
         <p class="notes">GROUPING SETS is not supported. Use UNION ALL to combine individual GROUP BY queries for each desired grouping.</p>
         <div class="syntax">-- UNION ALL workaround:
 SELECT region, product, SUM(sales) AS total

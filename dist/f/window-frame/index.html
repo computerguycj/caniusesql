@@ -85,31 +85,31 @@
     <tbody>
           <tr data-db="mysql">
             <td>MySQL</td>
-            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
+            <td class="supported"><span aria-hidden="true">&#10003;</span> <span class="status-text">Native</span></td>
             <td>8.0</td>
             <td class="notes">ROWS and RANGE frames supported since 8.0. GROUPS frame mode added in 8.0. Frame boundaries: UNBOUNDED PRECEDING, n PRECEDING, CURRENT ROW, n FOLLOWING, UNBOUNDED FOLLOWING. RANGE with numeric/interval offsets supported.</td>
           </tr>
           <tr data-db="postgresql">
             <td>PostgreSQL</td>
-            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
+            <td class="supported"><span aria-hidden="true">&#10003;</span> <span class="status-text">Native</span></td>
             <td>8.4</td>
             <td class="notes">ROWS and RANGE supported since 8.4. GROUPS mode added in PG 11. RANGE with numeric/interval offsets. EXCLUDE clause (EXCLUDE CURRENT ROW, EXCLUDE GROUP, EXCLUDE TIES, EXCLUDE NO OTHERS) added in PG 11 for fine-grained control.</td>
           </tr>
           <tr data-db="sqlserver">
             <td>SQL Server</td>
-            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
+            <td class="supported"><span aria-hidden="true">&#10003;</span> <span class="status-text">Native</span></td>
             <td>2012</td>
             <td class="notes">ROWS and RANGE supported since SQL Server 2012. No GROUPS mode. RANGE with numeric offsets supported but RANGE INTERVAL is not (use ROWS for date rolling windows instead). No EXCLUDE clause.</td>
           </tr>
           <tr data-db="oracle">
             <td>Oracle</td>
-            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
+            <td class="supported"><span aria-hidden="true">&#10003;</span> <span class="status-text">Native</span></td>
             <td>8i</td>
             <td class="notes">ROWS and RANGE supported since 8i. No GROUPS mode. RANGE with numeric or interval offsets. No EXCLUDE clause. Default frame when ORDER BY is present: RANGE UNBOUNDED PRECEDING TO CURRENT ROW.</td>
           </tr>
           <tr data-db="sqlite">
             <td>SQLite</td>
-            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
+            <td class="supported"><span aria-hidden="true">&#10003;</span> <span class="status-text">Native</span></td>
             <td>3.25.0</td>
             <td class="notes">ROWS and RANGE supported since 3.25.0. GROUPS mode added in 3.28.0. No EXCLUDE clause. RANGE with numeric offsets supported. No INTERVAL type, so RANGE date rolling requires storing dates as numeric types (Julian day or Unix epoch).</td>
           </tr>
@@ -134,18 +134,18 @@ FROM orders;</div>
 
   <h2>Version Support</h2>
   <div class="version-list">
-    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> MySQL: Since 8.0</span>
-    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> PostgreSQL: Since 8.4</span>
-    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> SQL Server: Since 2012</span>
-    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> Oracle: Since 8i</span>
-    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> SQLite: Since 3.25.0</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">&#10003;</span> MySQL: Native since 8.0</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">&#10003;</span> PostgreSQL: Native since 8.4</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">&#10003;</span> SQL Server: Native since 2012</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">&#10003;</span> Oracle: Native since 8i</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">&#10003;</span> SQLite: Native since 3.25.0</span>
     
   </div>
 
   <h2>Per-Database Syntax &amp; Notes</h2>
   <div class="per-db-section">
       <div class="per-db-entry" data-db="mysql">
-        <h4>MySQL</h4>
+        <h4>MySQL <span class="syntax-kind syntax-kind-native">Native syntax</span></h4>
         <p class="notes">ROWS and RANGE frames supported since 8.0. GROUPS frame mode added in 8.0. Frame boundaries: UNBOUNDED PRECEDING, n PRECEDING, CURRENT ROW, n FOLLOWING, UNBOUNDED FOLLOWING. RANGE with numeric/interval offsets supported.</p>
         <div class="syntax">-- Running total:
 SELECT dt, amt,
@@ -166,7 +166,7 @@ SELECT dt, amt,
 FROM sales;</div>
       </div>
       <div class="per-db-entry" data-db="postgresql">
-        <h4>PostgreSQL</h4>
+        <h4>PostgreSQL <span class="syntax-kind syntax-kind-native">Native syntax</span></h4>
         <p class="notes">ROWS and RANGE supported since 8.4. GROUPS mode added in PG 11. RANGE with numeric/interval offsets. EXCLUDE clause (EXCLUDE CURRENT ROW, EXCLUDE GROUP, EXCLUDE TIES, EXCLUDE NO OTHERS) added in PG 11 for fine-grained control.</p>
         <div class="syntax">-- Running total:
 SELECT dt, amt,
@@ -195,7 +195,7 @@ SELECT dt, amt,
 FROM sales;</div>
       </div>
       <div class="per-db-entry" data-db="sqlserver">
-        <h4>SQL Server</h4>
+        <h4>SQL Server <span class="syntax-kind syntax-kind-native">Native syntax</span></h4>
         <p class="notes">ROWS and RANGE supported since SQL Server 2012. No GROUPS mode. RANGE with numeric offsets supported but RANGE INTERVAL is not (use ROWS for date rolling windows instead). No EXCLUDE clause.</p>
         <div class="syntax">-- Running total:
 SELECT dt, amt,
@@ -213,7 +213,7 @@ SELECT dt, amt,
 FROM sales;</div>
       </div>
       <div class="per-db-entry" data-db="oracle">
-        <h4>Oracle</h4>
+        <h4>Oracle <span class="syntax-kind syntax-kind-native">Native syntax</span></h4>
         <p class="notes">ROWS and RANGE supported since 8i. No GROUPS mode. RANGE with numeric or interval offsets. No EXCLUDE clause. Default frame when ORDER BY is present: RANGE UNBOUNDED PRECEDING TO CURRENT ROW.</p>
         <div class="syntax">-- Running total:
 SELECT dt, amt,
@@ -234,7 +234,7 @@ SELECT dt, amt,
 FROM sales;</div>
       </div>
       <div class="per-db-entry" data-db="sqlite">
-        <h4>SQLite</h4>
+        <h4>SQLite <span class="syntax-kind syntax-kind-native">Native syntax</span></h4>
         <p class="notes">ROWS and RANGE supported since 3.25.0. GROUPS mode added in 3.28.0. No EXCLUDE clause. RANGE with numeric offsets supported. No INTERVAL type, so RANGE date rolling requires storing dates as numeric types (Julian day or Unix epoch).</p>
         <div class="syntax">-- Running total:
 SELECT dt, amt,

@@ -85,31 +85,31 @@
     <tbody>
           <tr data-db="mysql">
             <td>MySQL</td>
-            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
+            <td class="supported"><span aria-hidden="true">&#10003;</span> <span class="status-text">Native</span></td>
             <td>all</td>
             <td class="notes">Literal defaults for any type. Expression defaults (DEFAULT (expr)) supported from 8.0.13. CURRENT_TIMESTAMP as default for DATETIME/TIMESTAMP. ON UPDATE CURRENT_TIMESTAMP auto-updates the column on row modification.</td>
           </tr>
           <tr data-db="postgresql">
             <td>PostgreSQL</td>
-            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
+            <td class="supported"><span aria-hidden="true">&#10003;</span> <span class="status-text">Native</span></td>
             <td>all</td>
             <td class="notes">Defaults can be any expression, including function calls. CURRENT_TIMESTAMP, NOW(), gen_random_uuid(), etc. all work. DEFAULT can be set or dropped with ALTER TABLE ... SET DEFAULT / DROP DEFAULT.</td>
           </tr>
           <tr data-db="sqlserver">
             <td>SQL Server</td>
-            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
+            <td class="supported"><span aria-hidden="true">&#10003;</span> <span class="status-text">Native</span></td>
             <td>all</td>
             <td class="notes">Named DEFAULT constraints are preferred over inline defaults — they can be referenced and dropped by name. GETDATE(), NEWID(), NEWSEQUENTIALID() are common default expressions. DEFAULT keyword can be used in INSERT to explicitly invoke the default.</td>
           </tr>
           <tr data-db="oracle">
             <td>Oracle</td>
-            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
+            <td class="supported"><span aria-hidden="true">&#10003;</span> <span class="status-text">Native</span></td>
             <td>all</td>
             <td class="notes">Standard DEFAULT with literals or expressions. SYSDATE, SYSTIMESTAMP, SYS_GUID() (UUID) as common defaults. 12c+ adds DEFAULT ON NULL — applies the default even when NULL is explicitly inserted (unlike standard DEFAULT which only fires when the column is omitted).</td>
           </tr>
           <tr data-db="sqlite">
             <td>SQLite</td>
-            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
+            <td class="supported"><span aria-hidden="true">&#10003;</span> <span class="status-text">Native</span></td>
             <td>all</td>
             <td class="notes">Supports literal defaults and a limited set of functions: CURRENT_TIME, CURRENT_DATE, CURRENT_TIMESTAMP. Arbitrary expression defaults are supported in parentheses. Cannot alter defaults after table creation without recreating the table.</td>
           </tr>
@@ -130,18 +130,18 @@
 
   <h2>Version Support</h2>
   <div class="version-list">
-    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> MySQL: Since all</span>
-    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> PostgreSQL: Since all</span>
-    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> SQL Server: Since all</span>
-    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> Oracle: Since all</span>
-    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> SQLite: Since all</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">&#10003;</span> MySQL: Native in all listed versions</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">&#10003;</span> PostgreSQL: Native in all listed versions</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">&#10003;</span> SQL Server: Native in all listed versions</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">&#10003;</span> Oracle: Native in all listed versions</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">&#10003;</span> SQLite: Native in all listed versions</span>
     
   </div>
 
   <h2>Per-Database Syntax &amp; Notes</h2>
   <div class="per-db-section">
       <div class="per-db-entry" data-db="mysql">
-        <h4>MySQL</h4>
+        <h4>MySQL <span class="syntax-kind syntax-kind-native">Native syntax</span></h4>
         <p class="notes">Literal defaults for any type. Expression defaults (DEFAULT (expr)) supported from 8.0.13. CURRENT_TIMESTAMP as default for DATETIME/TIMESTAMP. ON UPDATE CURRENT_TIMESTAMP auto-updates the column on row modification.</p>
         <div class="syntax">CREATE TABLE events (
   id         INT AUTO_INCREMENT PRIMARY KEY,
@@ -155,7 +155,7 @@
 CREATE TABLE items (price DECIMAL(10,2), tax DECIMAL(10,2) DEFAULT (price * 0.1));</div>
       </div>
       <div class="per-db-entry" data-db="postgresql">
-        <h4>PostgreSQL</h4>
+        <h4>PostgreSQL <span class="syntax-kind syntax-kind-native">Native syntax</span></h4>
         <p class="notes">Defaults can be any expression, including function calls. CURRENT_TIMESTAMP, NOW(), gen_random_uuid(), etc. all work. DEFAULT can be set or dropped with ALTER TABLE ... SET DEFAULT / DROP DEFAULT.</p>
         <div class="syntax">CREATE TABLE events (
   id         SERIAL PRIMARY KEY,
@@ -168,7 +168,7 @@ ALTER TABLE events ALTER COLUMN status SET DEFAULT 'active';
 ALTER TABLE events ALTER COLUMN status DROP DEFAULT;</div>
       </div>
       <div class="per-db-entry" data-db="sqlserver">
-        <h4>SQL Server</h4>
+        <h4>SQL Server <span class="syntax-kind syntax-kind-native">Native syntax</span></h4>
         <p class="notes">Named DEFAULT constraints are preferred over inline defaults — they can be referenced and dropped by name. GETDATE(), NEWID(), NEWSEQUENTIALID() are common default expressions. DEFAULT keyword can be used in INSERT to explicitly invoke the default.</p>
         <div class="syntax">CREATE TABLE events (
   id         INT IDENTITY PRIMARY KEY,
@@ -184,7 +184,7 @@ INSERT INTO events (status, created_at) VALUES (DEFAULT, DEFAULT);
 ALTER TABLE events DROP CONSTRAINT df_status;</div>
       </div>
       <div class="per-db-entry" data-db="oracle">
-        <h4>Oracle</h4>
+        <h4>Oracle <span class="syntax-kind syntax-kind-native">Native syntax</span></h4>
         <p class="notes">Standard DEFAULT with literals or expressions. SYSDATE, SYSTIMESTAMP, SYS_GUID() (UUID) as common defaults. 12c+ adds DEFAULT ON NULL — applies the default even when NULL is explicitly inserted (unlike standard DEFAULT which only fires when the column is omitted).</p>
         <div class="syntax">CREATE TABLE events (
   id         NUMBER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
@@ -197,7 +197,7 @@ ALTER TABLE events DROP CONSTRAINT df_status;</div>
 CREATE TABLE items (qty NUMBER DEFAULT ON NULL 1);</div>
       </div>
       <div class="per-db-entry" data-db="sqlite">
-        <h4>SQLite</h4>
+        <h4>SQLite <span class="syntax-kind syntax-kind-native">Native syntax</span></h4>
         <p class="notes">Supports literal defaults and a limited set of functions: CURRENT_TIME, CURRENT_DATE, CURRENT_TIMESTAMP. Arbitrary expression defaults are supported in parentheses. Cannot alter defaults after table creation without recreating the table.</p>
         <div class="syntax">CREATE TABLE events (
   id         INTEGER PRIMARY KEY,

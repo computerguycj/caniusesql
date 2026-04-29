@@ -85,31 +85,31 @@
     <tbody>
           <tr data-db="mysql">
             <td>MySQL</td>
-            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
+            <td class="supported"><span aria-hidden="true">&#10003;</span> <span class="status-text">Native</span></td>
             <td>all</td>
             <td class="notes">NOW() returns datetime in session timezone. CURRENT_TIMESTAMP is a synonym. SYSDATE() returns the time at the moment of execution (differs from NOW() inside stored procs). UTC_TIMESTAMP() for UTC. CURDATE() / CURTIME() for date or time only.</td>
           </tr>
           <tr data-db="postgresql">
             <td>PostgreSQL</td>
-            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
+            <td class="supported"><span aria-hidden="true">&#10003;</span> <span class="status-text">Native</span></td>
             <td>all</td>
             <td class="notes">NOW() and CURRENT_TIMESTAMP return timestamptz (with timezone) fixed at transaction start — the same value is returned throughout a transaction. CLOCK_TIMESTAMP() returns the real current time (changes mid-transaction). CURRENT_DATE and CURRENT_TIME also available.</td>
           </tr>
           <tr data-db="sqlserver">
             <td>SQL Server</td>
-            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
+            <td class="supported"><span aria-hidden="true">&#10003;</span> <span class="status-text">Native</span></td>
             <td>all</td>
             <td class="notes">GETDATE() returns local server time as datetime. GETUTCDATE() for UTC. SYSDATETIME() returns higher-precision datetime2. SYSUTCDATETIME() for UTC datetime2. CURRENT_TIMESTAMP is a synonym for GETDATE().</td>
           </tr>
           <tr data-db="oracle">
             <td>Oracle</td>
-            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
+            <td class="supported"><span aria-hidden="true">&#10003;</span> <span class="status-text">Native</span></td>
             <td>all</td>
             <td class="notes">SYSDATE returns server date/time without timezone (DATE type). SYSTIMESTAMP returns with timezone (TIMESTAMP WITH TIME ZONE). CURRENT_DATE and CURRENT_TIMESTAMP return session timezone values.</td>
           </tr>
           <tr data-db="sqlite">
             <td>SQLite</td>
-            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
+            <td class="supported"><span aria-hidden="true">&#10003;</span> <span class="status-text">Native</span></td>
             <td>all</td>
             <td class="notes">No dedicated function — use datetime(), date(), or time() with 'now'. Always returns UTC. CURRENT_TIMESTAMP, CURRENT_DATE, and CURRENT_TIME are also available as SQL-standard aliases.</td>
           </tr>
@@ -126,18 +126,18 @@
 
   <h2>Version Support</h2>
   <div class="version-list">
-    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> MySQL: Since all</span>
-    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> PostgreSQL: Since all</span>
-    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> SQL Server: Since all</span>
-    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> Oracle: Since all</span>
-    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> SQLite: Since all</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">&#10003;</span> MySQL: Native in all listed versions</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">&#10003;</span> PostgreSQL: Native in all listed versions</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">&#10003;</span> SQL Server: Native in all listed versions</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">&#10003;</span> Oracle: Native in all listed versions</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">&#10003;</span> SQLite: Native in all listed versions</span>
     
   </div>
 
   <h2>Per-Database Syntax &amp; Notes</h2>
   <div class="per-db-section">
       <div class="per-db-entry" data-db="mysql">
-        <h4>MySQL</h4>
+        <h4>MySQL <span class="syntax-kind syntax-kind-native">Native syntax</span></h4>
         <p class="notes">NOW() returns datetime in session timezone. CURRENT_TIMESTAMP is a synonym. SYSDATE() returns the time at the moment of execution (differs from NOW() inside stored procs). UTC_TIMESTAMP() for UTC. CURDATE() / CURTIME() for date or time only.</p>
         <div class="syntax">SELECT NOW();               -- '2024-03-15 14:23:01'
 SELECT CURRENT_TIMESTAMP;   -- same as NOW()
@@ -146,7 +146,7 @@ SELECT CURDATE();           -- '2024-03-15'
 SELECT CURTIME();           -- '14:23:01'</div>
       </div>
       <div class="per-db-entry" data-db="postgresql">
-        <h4>PostgreSQL</h4>
+        <h4>PostgreSQL <span class="syntax-kind syntax-kind-native">Native syntax</span></h4>
         <p class="notes">NOW() and CURRENT_TIMESTAMP return timestamptz (with timezone) fixed at transaction start — the same value is returned throughout a transaction. CLOCK_TIMESTAMP() returns the real current time (changes mid-transaction). CURRENT_DATE and CURRENT_TIME also available.</p>
         <div class="syntax">SELECT NOW();                  -- transaction start time, with tz
 SELECT CURRENT_TIMESTAMP;      -- same as NOW()
@@ -155,7 +155,7 @@ SELECT CURRENT_DATE;           -- '2024-03-15'
 SELECT CURRENT_TIME;           -- '14:23:01.123456+00'</div>
       </div>
       <div class="per-db-entry" data-db="sqlserver">
-        <h4>SQL Server</h4>
+        <h4>SQL Server <span class="syntax-kind syntax-kind-native">Native syntax</span></h4>
         <p class="notes">GETDATE() returns local server time as datetime. GETUTCDATE() for UTC. SYSDATETIME() returns higher-precision datetime2. SYSUTCDATETIME() for UTC datetime2. CURRENT_TIMESTAMP is a synonym for GETDATE().</p>
         <div class="syntax">SELECT GETDATE();              -- '2024-03-15 14:23:01.123'
 SELECT GETUTCDATE();           -- UTC datetime
@@ -163,7 +163,7 @@ SELECT SYSDATETIME();          -- datetime2 (higher precision)
 SELECT CURRENT_TIMESTAMP;      -- synonym for GETDATE()</div>
       </div>
       <div class="per-db-entry" data-db="oracle">
-        <h4>Oracle</h4>
+        <h4>Oracle <span class="syntax-kind syntax-kind-native">Native syntax</span></h4>
         <p class="notes">SYSDATE returns server date/time without timezone (DATE type). SYSTIMESTAMP returns with timezone (TIMESTAMP WITH TIME ZONE). CURRENT_DATE and CURRENT_TIMESTAMP return session timezone values.</p>
         <div class="syntax">SELECT SYSDATE FROM DUAL;           -- server local, no timezone
 SELECT SYSTIMESTAMP FROM DUAL;      -- with timezone, high precision
@@ -171,7 +171,7 @@ SELECT CURRENT_DATE FROM DUAL;      -- session timezone
 SELECT CURRENT_TIMESTAMP FROM DUAL; -- session timezone with tz</div>
       </div>
       <div class="per-db-entry" data-db="sqlite">
-        <h4>SQLite</h4>
+        <h4>SQLite <span class="syntax-kind syntax-kind-native">Native syntax</span></h4>
         <p class="notes">No dedicated function — use datetime(), date(), or time() with 'now'. Always returns UTC. CURRENT_TIMESTAMP, CURRENT_DATE, and CURRENT_TIME are also available as SQL-standard aliases.</p>
         <div class="syntax">SELECT datetime('now');            -- '2024-03-15 14:23:01' (UTC)
 SELECT datetime('now', 'localtime'); -- converted to local time

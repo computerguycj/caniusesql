@@ -85,31 +85,31 @@
     <tbody>
           <tr data-db="mysql">
             <td>MySQL</td>
-            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
+            <td class="supported"><span aria-hidden="true">&#10003;</span> <span class="status-text">Native</span></td>
             <td>5.7.8</td>
             <td class="notes">col-&gt;'$.path' is shorthand for JSON_EXTRACT(col, '$.path') and returns a JSON-encoded value (strings include surrounding quotes). col-&gt;&gt;'$.path' is shorthand for JSON_UNQUOTE(JSON_EXTRACT(col, '$.path')) and returns unquoted text. Path expressions must include the $ root prefix.</td>
           </tr>
           <tr data-db="postgresql">
             <td>PostgreSQL</td>
-            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
+            <td class="supported"><span aria-hidden="true">&#10003;</span> <span class="status-text">Native</span></td>
             <td>9.3</td>
             <td class="notes">Richest operator set of any engine. -&gt; extracts a JSON/JSONB value by key (or array index). -&gt;&gt; extracts as text. #&gt; extracts by path array (JSON result); #&gt;&gt; extracts by path array (text result). jsonb columns additionally support @&gt; (contains), &lt;@ (contained by), ? (key exists), ?| (any key exists), ?&amp; (all keys exist) — all indexable with GIN. The json type supports -&gt; and -&gt;&gt; but not the containment operators.</td>
           </tr>
           <tr data-db="sqlserver">
             <td>SQL Server</td>
-            <td class="not-supported"><span aria-hidden="true">✗</span> <span class="status-text">Not Supported</span></td>
-            <td>—</td>
+            <td class="not-supported"><span aria-hidden="true">&mdash;</span> <span class="status-text">Not Supported</span></td>
+            <td>-</td>
             <td class="notes">No -&gt; or -&gt;&gt; operators. All JSON access is through functions: JSON_VALUE() for scalars and JSON_QUERY() for objects/arrays. Path expressions are string arguments to functions, not operators. There is no operator-based path syntax.</td>
           </tr>
           <tr data-db="oracle">
             <td>Oracle</td>
-            <td class="not-supported"><span aria-hidden="true">✗</span> <span class="status-text">Not Supported</span></td>
-            <td>—</td>
+            <td class="not-supported"><span aria-hidden="true">&mdash;</span> <span class="status-text">Not Supported</span></td>
+            <td>-</td>
             <td class="notes">No -&gt; or -&gt;&gt; operators in standard SQL access. All access uses JSON_VALUE() and JSON_QUERY() functions with path string arguments. Oracle 21c introduced a native JSON data type with dot-notation access (col.key.subkey), but this only applies to columns declared as JSON type, not VARCHAR2/CLOB with JSON content.</td>
           </tr>
           <tr data-db="sqlite">
             <td>SQLite</td>
-            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
+            <td class="supported"><span aria-hidden="true">&#10003;</span> <span class="status-text">Native</span></td>
             <td>3.38.0</td>
             <td class="notes">-&gt; and -&gt;&gt; operators added in SQLite 3.38.0 (2022-02-22). SQLite's -&gt;&gt; always returns an SQL value (text, integer, real, or NULL) — it never returns a JSON-encoded string, which differs from MySQL's -&gt; behavior. For SQLite &lt; 3.38.0, use json_extract() exclusively.</td>
           </tr>
@@ -136,18 +136,18 @@ FROM users;</div>
 
   <h2>Version Support</h2>
   <div class="version-list">
-    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> MySQL: Since 5.7.8</span>
-    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> PostgreSQL: Since 9.3</span>
-    <span class="version-badge version-not-supported"><span aria-hidden="true">✗</span> SQL Server: Not supported</span>
-    <span class="version-badge version-not-supported"><span aria-hidden="true">✗</span> Oracle: Not supported</span>
-    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> SQLite: Since 3.38.0</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">&#10003;</span> MySQL: Native since 5.7.8</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">&#10003;</span> PostgreSQL: Native since 9.3</span>
+    <span class="version-badge version-not-supported"><span aria-hidden="true">&mdash;</span> SQL Server: Not supported</span>
+    <span class="version-badge version-not-supported"><span aria-hidden="true">&mdash;</span> Oracle: Not supported</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">&#10003;</span> SQLite: Native since 3.38.0</span>
     
   </div>
 
   <h2>Per-Database Syntax &amp; Notes</h2>
   <div class="per-db-section">
       <div class="per-db-entry" data-db="mysql">
-        <h4>MySQL</h4>
+        <h4>MySQL <span class="syntax-kind syntax-kind-native">Native syntax</span></h4>
         <p class="notes">col-&gt;'$.path' is shorthand for JSON_EXTRACT(col, '$.path') and returns a JSON-encoded value (strings include surrounding quotes). col-&gt;&gt;'$.path' is shorthand for JSON_UNQUOTE(JSON_EXTRACT(col, '$.path')) and returns unquoted text. Path expressions must include the $ root prefix.</p>
         <div class="syntax">-- -&gt; returns JSON-encoded value (quoted strings):
 SELECT data-&gt;'$.name'       AS name_with_quotes
@@ -168,7 +168,7 @@ FROM users;
 SELECT * FROM users WHERE data-&gt;&gt;'$.active' = 'true';</div>
       </div>
       <div class="per-db-entry" data-db="postgresql">
-        <h4>PostgreSQL</h4>
+        <h4>PostgreSQL <span class="syntax-kind syntax-kind-native">Native syntax</span></h4>
         <p class="notes">Richest operator set of any engine. -&gt; extracts a JSON/JSONB value by key (or array index). -&gt;&gt; extracts as text. #&gt; extracts by path array (JSON result); #&gt;&gt; extracts by path array (text result). jsonb columns additionally support @&gt; (contains), &lt;@ (contained by), ? (key exists), ?| (any key exists), ?&amp; (all keys exist) — all indexable with GIN. The json type supports -&gt; and -&gt;&gt; but not the containment operators.</p>
         <div class="syntax">-- Key extraction:
 SELECT data-&gt;'name'             AS name_json,
@@ -191,7 +191,7 @@ SELECT * FROM users WHERE data ? 'email';
 SELECT * FROM users WHERE data ?| ARRAY['admin','superuser'];</div>
       </div>
       <div class="per-db-entry" data-db="sqlserver">
-        <h4>SQL Server</h4>
+        <h4>SQL Server <span class="syntax-kind syntax-kind-workaround">Alternative syntax</span></h4>
         <p class="notes">No -&gt; or -&gt;&gt; operators. All JSON access is through functions: JSON_VALUE() for scalars and JSON_QUERY() for objects/arrays. Path expressions are string arguments to functions, not operators. There is no operator-based path syntax.</p>
         <div class="syntax">-- Must use functions instead of operators:
 SELECT JSON_VALUE(data, '$.name')        AS name,
@@ -204,7 +204,7 @@ FROM users
 WHERE JSON_VALUE(data, '$.active') = 'true';</div>
       </div>
       <div class="per-db-entry" data-db="oracle">
-        <h4>Oracle</h4>
+        <h4>Oracle <span class="syntax-kind syntax-kind-workaround">Alternative syntax</span></h4>
         <p class="notes">No -&gt; or -&gt;&gt; operators in standard SQL access. All access uses JSON_VALUE() and JSON_QUERY() functions with path string arguments. Oracle 21c introduced a native JSON data type with dot-notation access (col.key.subkey), but this only applies to columns declared as JSON type, not VARCHAR2/CLOB with JSON content.</p>
         <div class="syntax">-- Function-based access only:
 SELECT JSON_VALUE(data, '$.name')    AS name,
@@ -217,7 +217,7 @@ SELECT u.data.name.string(),
 FROM users u;</div>
       </div>
       <div class="per-db-entry" data-db="sqlite">
-        <h4>SQLite</h4>
+        <h4>SQLite <span class="syntax-kind syntax-kind-native">Native syntax</span></h4>
         <p class="notes">-&gt; and -&gt;&gt; operators added in SQLite 3.38.0 (2022-02-22). SQLite's -&gt;&gt; always returns an SQL value (text, integer, real, or NULL) — it never returns a JSON-encoded string, which differs from MySQL's -&gt; behavior. For SQLite &lt; 3.38.0, use json_extract() exclusively.</p>
         <div class="syntax">-- -&gt; returns JSON encoding:
 SELECT data-&gt;'name'          AS name_json

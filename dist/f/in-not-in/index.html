@@ -85,31 +85,31 @@
     <tbody>
           <tr data-db="mysql">
             <td>MySQL</td>
-            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
+            <td class="supported"><span aria-hidden="true">&#10003;</span> <span class="status-text">Native</span></td>
             <td>all</td>
             <td class="notes">Standard IN/NOT IN. Key gotcha: NOT IN with a subquery that returns any NULL will return no rows — because NULL != anything is UNKNOWN, not FALSE. Use NOT EXISTS instead when the subquery might return NULLs. IN list size is limited by max_allowed_packet.</td>
           </tr>
           <tr data-db="postgresql">
             <td>PostgreSQL</td>
-            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
+            <td class="supported"><span aria-hidden="true">&#10003;</span> <span class="status-text">Native</span></td>
             <td>all</td>
             <td class="notes">Standard IN/NOT IN. Same NULL trap: NOT IN with a NULL in the list or subquery returns no rows. Use NOT EXISTS for safety. PostgreSQL also supports = ANY(array) and &lt;&gt; ALL(array) as alternatives. IN with large static lists can be slower than = ANY(ARRAY[...]).</td>
           </tr>
           <tr data-db="sqlserver">
             <td>SQL Server</td>
-            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
+            <td class="supported"><span aria-hidden="true">&#10003;</span> <span class="status-text">Native</span></td>
             <td>all</td>
             <td class="notes">Standard IN/NOT IN. Same NULL trap with NOT IN. No array type, so = ANY(array) is not available. IN list maximum is not explicitly documented but very large lists may cause parameter sniffing issues — a table variable or temp table is better for lists over ~1000 values.</td>
           </tr>
           <tr data-db="oracle">
             <td>Oracle</td>
-            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
+            <td class="supported"><span aria-hidden="true">&#10003;</span> <span class="status-text">Native</span></td>
             <td>all</td>
             <td class="notes">Standard IN/NOT IN. Same NULL trap. IN list is limited to 1000 elements per expression — a hard limit. For larger lists, use IN with a subquery or a collection type. NOT EXISTS is recommended over NOT IN for correlated subqueries.</td>
           </tr>
           <tr data-db="sqlite">
             <td>SQLite</td>
-            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
+            <td class="supported"><span aria-hidden="true">&#10003;</span> <span class="status-text">Native</span></td>
             <td>all</td>
             <td class="notes">Standard IN/NOT IN. Same NULL trap with NOT IN. No array type. IN with a subquery is fully supported. No hard limit on IN list size (subject to SQLITE_MAX_VARIABLE_NUMBER, default 999 bound parameters).</td>
           </tr>
@@ -130,18 +130,18 @@ SELECT * FROM orders WHERE customer_id NOT IN (
 
   <h2>Version Support</h2>
   <div class="version-list">
-    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> MySQL: Since all</span>
-    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> PostgreSQL: Since all</span>
-    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> SQL Server: Since all</span>
-    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> Oracle: Since all</span>
-    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> SQLite: Since all</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">&#10003;</span> MySQL: Native in all listed versions</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">&#10003;</span> PostgreSQL: Native in all listed versions</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">&#10003;</span> SQL Server: Native in all listed versions</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">&#10003;</span> Oracle: Native in all listed versions</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">&#10003;</span> SQLite: Native in all listed versions</span>
     
   </div>
 
   <h2>Per-Database Syntax &amp; Notes</h2>
   <div class="per-db-section">
       <div class="per-db-entry" data-db="mysql">
-        <h4>MySQL</h4>
+        <h4>MySQL <span class="syntax-kind syntax-kind-native">Native syntax</span></h4>
         <p class="notes">Standard IN/NOT IN. Key gotcha: NOT IN with a subquery that returns any NULL will return no rows — because NULL != anything is UNKNOWN, not FALSE. Use NOT EXISTS instead when the subquery might return NULLs. IN list size is limited by max_allowed_packet.</p>
         <div class="syntax">SELECT * FROM orders WHERE status IN ('pending', 'processing');
 SELECT * FROM orders WHERE id NOT IN (1, 2, 3);
@@ -153,7 +153,7 @@ WHERE NOT EXISTS (
 );</div>
       </div>
       <div class="per-db-entry" data-db="postgresql">
-        <h4>PostgreSQL</h4>
+        <h4>PostgreSQL <span class="syntax-kind syntax-kind-native">Native syntax</span></h4>
         <p class="notes">Standard IN/NOT IN. Same NULL trap: NOT IN with a NULL in the list or subquery returns no rows. Use NOT EXISTS for safety. PostgreSQL also supports = ANY(array) and &lt;&gt; ALL(array) as alternatives. IN with large static lists can be slower than = ANY(ARRAY[...]).</p>
         <div class="syntax">SELECT * FROM orders WHERE status IN ('pending', 'processing');
 
@@ -165,7 +165,7 @@ SELECT * FROM orders o
 WHERE NOT EXISTS (SELECT 1 FROM blacklist b WHERE b.id = o.customer_id);</div>
       </div>
       <div class="per-db-entry" data-db="sqlserver">
-        <h4>SQL Server</h4>
+        <h4>SQL Server <span class="syntax-kind syntax-kind-native">Native syntax</span></h4>
         <p class="notes">Standard IN/NOT IN. Same NULL trap with NOT IN. No array type, so = ANY(array) is not available. IN list maximum is not explicitly documented but very large lists may cause parameter sniffing issues — a table variable or temp table is better for lists over ~1000 values.</p>
         <div class="syntax">SELECT * FROM orders WHERE status IN ('pending', 'processing', 'shipped');
 SELECT * FROM orders WHERE id NOT IN (1, 2, 3);
@@ -176,7 +176,7 @@ INSERT INTO @ids VALUES (1),(2),(3);
 SELECT * FROM orders WHERE id IN (SELECT id FROM @ids);</div>
       </div>
       <div class="per-db-entry" data-db="oracle">
-        <h4>Oracle</h4>
+        <h4>Oracle <span class="syntax-kind syntax-kind-native">Native syntax</span></h4>
         <p class="notes">Standard IN/NOT IN. Same NULL trap. IN list is limited to 1000 elements per expression — a hard limit. For larger lists, use IN with a subquery or a collection type. NOT EXISTS is recommended over NOT IN for correlated subqueries.</p>
         <div class="syntax">SELECT * FROM orders WHERE status IN ('pending', 'processing');
 
@@ -187,7 +187,7 @@ SELECT * FROM orders WHERE id IN (SELECT id FROM @ids);</div>
 SELECT * FROM orders WHERE id IN (SELECT id FROM my_id_list_table);</div>
       </div>
       <div class="per-db-entry" data-db="sqlite">
-        <h4>SQLite</h4>
+        <h4>SQLite <span class="syntax-kind syntax-kind-native">Native syntax</span></h4>
         <p class="notes">Standard IN/NOT IN. Same NULL trap with NOT IN. No array type. IN with a subquery is fully supported. No hard limit on IN list size (subject to SQLITE_MAX_VARIABLE_NUMBER, default 999 bound parameters).</p>
         <div class="syntax">SELECT * FROM orders WHERE status IN ('pending', 'processing');
 SELECT * FROM orders WHERE id NOT IN (1, 2, 3);
