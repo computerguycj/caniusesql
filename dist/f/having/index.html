@@ -85,31 +85,31 @@
     <tbody>
           <tr data-db="mysql">
             <td>MySQL</td>
-            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
+            <td class="supported"><span aria-hidden="true">&#10003;</span> <span class="status-text">Native</span></td>
             <td>all</td>
             <td class="notes">Standard HAVING. MySQL extension: HAVING can reference column aliases defined in SELECT (e.g. HAVING total &gt; 100 where total is a SELECT alias). This is non-standard behavior.</td>
           </tr>
           <tr data-db="postgresql">
             <td>PostgreSQL</td>
-            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
+            <td class="supported"><span aria-hidden="true">&#10003;</span> <span class="status-text">Native</span></td>
             <td>all</td>
             <td class="notes">Standard HAVING. Column aliases from SELECT cannot be referenced in HAVING (unlike MySQL) — repeat the expression or use a subquery/CTE.</td>
           </tr>
           <tr data-db="sqlserver">
             <td>SQL Server</td>
-            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
+            <td class="supported"><span aria-hidden="true">&#10003;</span> <span class="status-text">Native</span></td>
             <td>all</td>
             <td class="notes">Standard HAVING. Aliases from SELECT cannot be referenced in HAVING.</td>
           </tr>
           <tr data-db="oracle">
             <td>Oracle</td>
-            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
+            <td class="supported"><span aria-hidden="true">&#10003;</span> <span class="status-text">Native</span></td>
             <td>all</td>
             <td class="notes">Standard HAVING. Aliases from SELECT cannot be referenced in HAVING.</td>
           </tr>
           <tr data-db="sqlite">
             <td>SQLite</td>
-            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
+            <td class="supported"><span aria-hidden="true">&#10003;</span> <span class="status-text">Native</span></td>
             <td>all</td>
             <td class="notes">Standard HAVING supported. SQLite also allows referencing SELECT aliases in HAVING, similar to MySQL.</td>
           </tr>
@@ -129,18 +129,18 @@ HAVING COUNT(*) &gt; 10;</div>
 
   <h2>Version Support</h2>
   <div class="version-list">
-    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> MySQL: Since all</span>
-    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> PostgreSQL: Since all</span>
-    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> SQL Server: Since all</span>
-    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> Oracle: Since all</span>
-    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> SQLite: Since all</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">&#10003;</span> MySQL: Native in all listed versions</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">&#10003;</span> PostgreSQL: Native in all listed versions</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">&#10003;</span> SQL Server: Native in all listed versions</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">&#10003;</span> Oracle: Native in all listed versions</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">&#10003;</span> SQLite: Native in all listed versions</span>
     
   </div>
 
   <h2>Per-Database Syntax &amp; Notes</h2>
   <div class="per-db-section">
       <div class="per-db-entry" data-db="mysql">
-        <h4>MySQL</h4>
+        <h4>MySQL <span class="syntax-kind syntax-kind-native">Native syntax</span></h4>
         <p class="notes">Standard HAVING. MySQL extension: HAVING can reference column aliases defined in SELECT (e.g. HAVING total &gt; 100 where total is a SELECT alias). This is non-standard behavior.</p>
         <div class="syntax">SELECT dept_id, COUNT(*) AS cnt
 FROM employees
@@ -148,7 +148,7 @@ GROUP BY dept_id
 HAVING cnt &gt; 10;   -- MySQL allows alias reference (non-standard)</div>
       </div>
       <div class="per-db-entry" data-db="postgresql">
-        <h4>PostgreSQL</h4>
+        <h4>PostgreSQL <span class="syntax-kind syntax-kind-native">Native syntax</span></h4>
         <p class="notes">Standard HAVING. Column aliases from SELECT cannot be referenced in HAVING (unlike MySQL) — repeat the expression or use a subquery/CTE.</p>
         <div class="syntax">SELECT dept_id, COUNT(*) AS cnt
 FROM employees
@@ -156,7 +156,7 @@ GROUP BY dept_id
 HAVING COUNT(*) &gt; 10;   -- must repeat COUNT(*), not alias 'cnt'</div>
       </div>
       <div class="per-db-entry" data-db="sqlserver">
-        <h4>SQL Server</h4>
+        <h4>SQL Server <span class="syntax-kind syntax-kind-native">Native syntax</span></h4>
         <p class="notes">Standard HAVING. Aliases from SELECT cannot be referenced in HAVING.</p>
         <div class="syntax">SELECT dept_id, COUNT(*) AS cnt
 FROM employees
@@ -164,7 +164,7 @@ GROUP BY dept_id
 HAVING COUNT(*) &gt; 10;</div>
       </div>
       <div class="per-db-entry" data-db="oracle">
-        <h4>Oracle</h4>
+        <h4>Oracle <span class="syntax-kind syntax-kind-native">Native syntax</span></h4>
         <p class="notes">Standard HAVING. Aliases from SELECT cannot be referenced in HAVING.</p>
         <div class="syntax">SELECT dept_id, COUNT(*) AS cnt
 FROM employees
@@ -172,7 +172,7 @@ GROUP BY dept_id
 HAVING COUNT(*) &gt; 10;</div>
       </div>
       <div class="per-db-entry" data-db="sqlite">
-        <h4>SQLite</h4>
+        <h4>SQLite <span class="syntax-kind syntax-kind-native">Native syntax</span></h4>
         <p class="notes">Standard HAVING supported. SQLite also allows referencing SELECT aliases in HAVING, similar to MySQL.</p>
         <div class="syntax">SELECT dept_id, COUNT(*) AS cnt
 FROM employees

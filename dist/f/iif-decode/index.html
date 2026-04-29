@@ -85,32 +85,32 @@
     <tbody>
           <tr data-db="mysql">
             <td>MySQL</td>
-            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
+            <td class="supported"><span aria-hidden="true">&#10003;</span> <span class="status-text">Native</span></td>
             <td>3.23</td>
             <td class="notes">IF(condition, true_val, false_val) is the primary ternary conditional. IFNULL(expr, fallback) is shorthand for the NULL-check case. IIF is not supported. DECODE is not supported. All three are non-standard; the portable equivalent is CASE WHEN ... END.</td>
           </tr>
           <tr data-db="postgresql">
             <td>PostgreSQL</td>
-            <td class="not-supported"><span aria-hidden="true">✗</span> <span class="status-text">Not Supported</span></td>
-            <td>—</td>
+            <td class="not-supported"><span aria-hidden="true">&mdash;</span> <span class="status-text">Not Supported</span></td>
+            <td>-</td>
             <td class="notes">PostgreSQL does not support IIF, DECODE, or IF as conditional functions. The standard CASE WHEN ... END expression covers all use cases. COALESCE and NULLIF handle the common NULL-check patterns. No shorthand alternative — use CASE.</td>
           </tr>
           <tr data-db="sqlserver">
             <td>SQL Server</td>
-            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
+            <td class="supported"><span aria-hidden="true">&#10003;</span> <span class="status-text">Native</span></td>
             <td>2012</td>
             <td class="notes">IIF(condition, true_val, false_val) added in SQL Server 2012 (ported from Microsoft Access). It is syntactic sugar for CASE WHEN condition THEN true_val ELSE false_val END — the query optimizer treats them identically. CHOOSE(index, val1, val2, ...) also added in 2012, returns the value at the 1-based index position. DECODE is not supported.</td>
           </tr>
           <tr data-db="oracle">
             <td>Oracle</td>
-            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
+            <td class="supported"><span aria-hidden="true">&#10003;</span> <span class="status-text">Native</span></td>
             <td>7</td>
             <td class="notes">DECODE(expr, search1, result1, search2, result2, ..., default) is Oracle's proprietary multi-branch conditional, available since Oracle 7. It handles NULLs specially — DECODE treats two NULLs as equal (unlike = comparison). IIF is not supported. Oracle 9i+ supports the standard CASE WHEN expression alongside DECODE. NVL(expr, default) is the Oracle shorthand for NULL checking (equivalent to COALESCE with two args).</td>
           </tr>
           <tr data-db="sqlite">
             <td>SQLite</td>
-            <td class="not-supported"><span aria-hidden="true">✗</span> <span class="status-text">Not Supported</span></td>
-            <td>—</td>
+            <td class="not-supported"><span aria-hidden="true">&mdash;</span> <span class="status-text">Not Supported</span></td>
+            <td>-</td>
             <td class="notes">SQLite does not support IIF, DECODE, or IF as functions. CASE WHEN ... END is the only conditional expression. COALESCE and IFNULL (SQLite does support IFNULL as an alias for COALESCE with two arguments) handle NULL checks.</td>
           </tr>
     </tbody>
@@ -136,18 +136,18 @@ FROM employees;</div>
 
   <h2>Version Support</h2>
   <div class="version-list">
-    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> MySQL: Since 3.23</span>
-    <span class="version-badge version-not-supported"><span aria-hidden="true">✗</span> PostgreSQL: Not supported</span>
-    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> SQL Server: Since 2012</span>
-    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> Oracle: Since 7</span>
-    <span class="version-badge version-not-supported"><span aria-hidden="true">✗</span> SQLite: Not supported</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">&#10003;</span> MySQL: Native since 3.23</span>
+    <span class="version-badge version-not-supported"><span aria-hidden="true">&mdash;</span> PostgreSQL: Not supported</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">&#10003;</span> SQL Server: Native since 2012</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">&#10003;</span> Oracle: Native since 7</span>
+    <span class="version-badge version-not-supported"><span aria-hidden="true">&mdash;</span> SQLite: Not supported</span>
     
   </div>
 
   <h2>Per-Database Syntax &amp; Notes</h2>
   <div class="per-db-section">
       <div class="per-db-entry" data-db="mysql">
-        <h4>MySQL</h4>
+        <h4>MySQL <span class="syntax-kind syntax-kind-native">Native syntax</span></h4>
         <p class="notes">IF(condition, true_val, false_val) is the primary ternary conditional. IFNULL(expr, fallback) is shorthand for the NULL-check case. IIF is not supported. DECODE is not supported. All three are non-standard; the portable equivalent is CASE WHEN ... END.</p>
         <div class="syntax">-- IF (ternary):
 SELECT IF(salary &gt; 50000, 'Senior', 'Junior') AS grade
@@ -168,7 +168,7 @@ SELECT CASE WHEN salary &gt; 50000 THEN 'Senior' ELSE 'Junior' END AS grade
 FROM employees;</div>
       </div>
       <div class="per-db-entry" data-db="postgresql">
-        <h4>PostgreSQL</h4>
+        <h4>PostgreSQL <span class="syntax-kind syntax-kind-workaround">Alternative syntax</span></h4>
         <p class="notes">PostgreSQL does not support IIF, DECODE, or IF as conditional functions. The standard CASE WHEN ... END expression covers all use cases. COALESCE and NULLIF handle the common NULL-check patterns. No shorthand alternative — use CASE.</p>
         <div class="syntax">-- CASE WHEN (the only form; IIF/IF/DECODE not available):
 SELECT CASE WHEN salary &gt; 50000 THEN 'Senior' ELSE 'Junior' END AS grade
@@ -187,7 +187,7 @@ SELECT COALESCE(nickname, full_name) AS display_name
 FROM users;</div>
       </div>
       <div class="per-db-entry" data-db="sqlserver">
-        <h4>SQL Server</h4>
+        <h4>SQL Server <span class="syntax-kind syntax-kind-native">Native syntax</span></h4>
         <p class="notes">IIF(condition, true_val, false_val) added in SQL Server 2012 (ported from Microsoft Access). It is syntactic sugar for CASE WHEN condition THEN true_val ELSE false_val END — the query optimizer treats them identically. CHOOSE(index, val1, val2, ...) also added in 2012, returns the value at the 1-based index position. DECODE is not supported.</p>
         <div class="syntax">-- IIF (SQL Server 2012+):
 SELECT IIF(salary &gt; 50000, 'Senior', 'Junior') AS grade
@@ -207,7 +207,7 @@ SELECT ISNULL(nickname, full_name) AS display_name
 FROM users;</div>
       </div>
       <div class="per-db-entry" data-db="oracle">
-        <h4>Oracle</h4>
+        <h4>Oracle <span class="syntax-kind syntax-kind-native">Native syntax</span></h4>
         <p class="notes">DECODE(expr, search1, result1, search2, result2, ..., default) is Oracle's proprietary multi-branch conditional, available since Oracle 7. It handles NULLs specially — DECODE treats two NULLs as equal (unlike = comparison). IIF is not supported. Oracle 9i+ supports the standard CASE WHEN expression alongside DECODE. NVL(expr, default) is the Oracle shorthand for NULL checking (equivalent to COALESCE with two args).</p>
         <div class="syntax">-- DECODE (Oracle proprietary):
 SELECT DECODE(status, 'A', 'Active', 'I', 'Inactive', 'Unknown') AS label
@@ -230,7 +230,7 @@ SELECT CASE WHEN salary &gt; 50000 THEN 'Senior' ELSE 'Junior' END AS grade
 FROM employees;</div>
       </div>
       <div class="per-db-entry" data-db="sqlite">
-        <h4>SQLite</h4>
+        <h4>SQLite <span class="syntax-kind syntax-kind-workaround">Alternative syntax</span></h4>
         <p class="notes">SQLite does not support IIF, DECODE, or IF as functions. CASE WHEN ... END is the only conditional expression. COALESCE and IFNULL (SQLite does support IFNULL as an alias for COALESCE with two arguments) handle NULL checks.</p>
         <div class="syntax">-- CASE WHEN (standard form):
 SELECT CASE WHEN salary &gt; 50000 THEN 'Senior' ELSE 'Junior' END AS grade

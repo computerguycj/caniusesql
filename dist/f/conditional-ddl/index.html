@@ -85,31 +85,31 @@
     <tbody>
           <tr data-db="mysql">
             <td>MySQL</td>
-            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
+            <td class="supported"><span aria-hidden="true">&#10003;</span> <span class="status-text">Native</span></td>
             <td>5.0</td>
             <td class="notes">IF NOT EXISTS on CREATE TABLE, CREATE INDEX, CREATE DATABASE, CREATE SCHEMA. IF EXISTS on DROP TABLE, DROP INDEX, ALTER TABLE DROP COLUMN (8.0+).</td>
           </tr>
           <tr data-db="postgresql">
             <td>PostgreSQL</td>
-            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
+            <td class="supported"><span aria-hidden="true">&#10003;</span> <span class="status-text">Native</span></td>
             <td>9.1</td>
             <td class="notes">IF NOT EXISTS added for CREATE TABLE in 9.1, CREATE INDEX in 9.5, CREATE SCHEMA in 9.3. IF EXISTS on DROP widely available. ALTER TABLE ... DROP COLUMN IF EXISTS since 9.0.</td>
           </tr>
           <tr data-db="sqlserver">
             <td>SQL Server</td>
-            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
+            <td class="supported"><span aria-hidden="true">&#10003;</span> <span class="status-text">Native</span></td>
             <td>2016</td>
             <td class="notes">DROP TABLE IF EXISTS, DROP INDEX IF EXISTS added in 2016. CREATE TABLE IF NOT EXISTS is not supported — use IF NOT EXISTS (SELECT 1 FROM sys.tables ...) workaround or OBJECT_ID() check.</td>
           </tr>
           <tr data-db="oracle">
             <td>Oracle</td>
-            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
+            <td class="supported"><span aria-hidden="true">&#10003;</span> <span class="status-text">Native</span></td>
             <td>23c</td>
             <td class="notes">IF EXISTS and IF NOT EXISTS on CREATE/DROP TABLE/INDEX added in Oracle 23c. On earlier versions, use PL/SQL exception handling (WHEN OBJ_ALREADY_EXISTS / WHEN NO_DATA_FOUND) as a workaround.</td>
           </tr>
           <tr data-db="sqlite">
             <td>SQLite</td>
-            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
+            <td class="supported"><span aria-hidden="true">&#10003;</span> <span class="status-text">Native</span></td>
             <td>3.0.0</td>
             <td class="notes">CREATE TABLE IF NOT EXISTS and DROP TABLE IF EXISTS are fully supported. CREATE INDEX IF NOT EXISTS since 3.3.7.</td>
           </tr>
@@ -127,31 +127,31 @@ DROP TABLE IF EXISTS t;</div>
 
   <h2>Version Support</h2>
   <div class="version-list">
-    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> MySQL: Since 5.0</span>
-    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> PostgreSQL: Since 9.1</span>
-    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> SQL Server: Since 2016</span>
-    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> Oracle: Since 23c</span>
-    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> SQLite: Since 3.0.0</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">&#10003;</span> MySQL: Native since 5.0</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">&#10003;</span> PostgreSQL: Native since 9.1</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">&#10003;</span> SQL Server: Native since 2016</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">&#10003;</span> Oracle: Native since 23c</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">&#10003;</span> SQLite: Native since 3.0.0</span>
     
   </div>
 
   <h2>Per-Database Syntax &amp; Notes</h2>
   <div class="per-db-section">
       <div class="per-db-entry" data-db="mysql">
-        <h4>MySQL</h4>
+        <h4>MySQL <span class="syntax-kind syntax-kind-native">Native syntax</span></h4>
         <p class="notes">IF NOT EXISTS on CREATE TABLE, CREATE INDEX, CREATE DATABASE, CREATE SCHEMA. IF EXISTS on DROP TABLE, DROP INDEX, ALTER TABLE DROP COLUMN (8.0+).</p>
         <div class="syntax">CREATE TABLE IF NOT EXISTS orders (id INT PRIMARY KEY);
 DROP TABLE IF EXISTS orders;</div>
       </div>
       <div class="per-db-entry" data-db="postgresql">
-        <h4>PostgreSQL</h4>
+        <h4>PostgreSQL <span class="syntax-kind syntax-kind-native">Native syntax</span></h4>
         <p class="notes">IF NOT EXISTS added for CREATE TABLE in 9.1, CREATE INDEX in 9.5, CREATE SCHEMA in 9.3. IF EXISTS on DROP widely available. ALTER TABLE ... DROP COLUMN IF EXISTS since 9.0.</p>
         <div class="syntax">CREATE TABLE IF NOT EXISTS orders (id INT PRIMARY KEY);
 CREATE INDEX IF NOT EXISTS idx_orders_id ON orders(id);
 DROP TABLE IF EXISTS orders;</div>
       </div>
       <div class="per-db-entry" data-db="sqlserver">
-        <h4>SQL Server</h4>
+        <h4>SQL Server <span class="syntax-kind syntax-kind-native">Native syntax</span></h4>
         <p class="notes">DROP TABLE IF EXISTS, DROP INDEX IF EXISTS added in 2016. CREATE TABLE IF NOT EXISTS is not supported — use IF NOT EXISTS (SELECT 1 FROM sys.tables ...) workaround or OBJECT_ID() check.</p>
         <div class="syntax">DROP TABLE IF EXISTS dbo.orders;
 -- Create workaround:
@@ -159,7 +159,7 @@ IF OBJECT_ID('dbo.orders','U') IS NULL
   CREATE TABLE dbo.orders (id INT PRIMARY KEY);</div>
       </div>
       <div class="per-db-entry" data-db="oracle">
-        <h4>Oracle</h4>
+        <h4>Oracle <span class="syntax-kind syntax-kind-native">Native syntax</span></h4>
         <p class="notes">IF EXISTS and IF NOT EXISTS on CREATE/DROP TABLE/INDEX added in Oracle 23c. On earlier versions, use PL/SQL exception handling (WHEN OBJ_ALREADY_EXISTS / WHEN NO_DATA_FOUND) as a workaround.</p>
         <div class="syntax">-- Oracle 23c+
 CREATE TABLE IF NOT EXISTS orders (id NUMBER PRIMARY KEY);
@@ -171,7 +171,7 @@ EXCEPTION WHEN OTHERS THEN NULL;
 END;</div>
       </div>
       <div class="per-db-entry" data-db="sqlite">
-        <h4>SQLite</h4>
+        <h4>SQLite <span class="syntax-kind syntax-kind-native">Native syntax</span></h4>
         <p class="notes">CREATE TABLE IF NOT EXISTS and DROP TABLE IF EXISTS are fully supported. CREATE INDEX IF NOT EXISTS since 3.3.7.</p>
         <div class="syntax">CREATE TABLE IF NOT EXISTS orders (id INTEGER PRIMARY KEY);
 DROP TABLE IF EXISTS orders;</div>

@@ -85,31 +85,31 @@
     <tbody>
           <tr data-db="mysql">
             <td>MySQL</td>
-            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
+            <td class="supported"><span aria-hidden="true">&#10003;</span> <span class="status-text">Native</span></td>
             <td>8.0</td>
             <td class="notes">FIRST_VALUE() and LAST_VALUE() added in MySQL 8.0. Default window frame is RANGE BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW — this means LAST_VALUE() will usually return the current row's value, not the last in the partition. Always specify the frame explicitly for LAST_VALUE.</td>
           </tr>
           <tr data-db="postgresql">
             <td>PostgreSQL</td>
-            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
+            <td class="supported"><span aria-hidden="true">&#10003;</span> <span class="status-text">Native</span></td>
             <td>8.4</td>
             <td class="notes">FIRST_VALUE() and LAST_VALUE() supported. Same default frame gotcha as MySQL — LAST_VALUE needs explicit ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING to see the true last value in the partition.</td>
           </tr>
           <tr data-db="sqlserver">
             <td>SQL Server</td>
-            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
+            <td class="supported"><span aria-hidden="true">&#10003;</span> <span class="status-text">Native</span></td>
             <td>2012</td>
             <td class="notes">FIRST_VALUE() and LAST_VALUE() added in SQL Server 2012. Same default frame gotcha. IGNORE NULLS option added in SQL Server 2022.</td>
           </tr>
           <tr data-db="oracle">
             <td>Oracle</td>
-            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
+            <td class="supported"><span aria-hidden="true">&#10003;</span> <span class="status-text">Native</span></td>
             <td>8i</td>
             <td class="notes">FIRST_VALUE() and LAST_VALUE() supported. IGNORE NULLS / RESPECT NULLS options available (Oracle supports these earlier than other engines). Same default frame gotcha with LAST_VALUE.</td>
           </tr>
           <tr data-db="sqlite">
             <td>SQLite</td>
-            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
+            <td class="supported"><span aria-hidden="true">&#10003;</span> <span class="status-text">Native</span></td>
             <td>3.25.0</td>
             <td class="notes">FIRST_VALUE() and LAST_VALUE() added in SQLite 3.25.0. Standard syntax. Same default frame gotcha with LAST_VALUE.</td>
           </tr>
@@ -133,18 +133,18 @@ FROM employees;</div>
 
   <h2>Version Support</h2>
   <div class="version-list">
-    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> MySQL: Since 8.0</span>
-    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> PostgreSQL: Since 8.4</span>
-    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> SQL Server: Since 2012</span>
-    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> Oracle: Since 8i</span>
-    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> SQLite: Since 3.25.0</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">&#10003;</span> MySQL: Native since 8.0</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">&#10003;</span> PostgreSQL: Native since 8.4</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">&#10003;</span> SQL Server: Native since 2012</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">&#10003;</span> Oracle: Native since 8i</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">&#10003;</span> SQLite: Native since 3.25.0</span>
     
   </div>
 
   <h2>Per-Database Syntax &amp; Notes</h2>
   <div class="per-db-section">
       <div class="per-db-entry" data-db="mysql">
-        <h4>MySQL</h4>
+        <h4>MySQL <span class="syntax-kind syntax-kind-native">Native syntax</span></h4>
         <p class="notes">FIRST_VALUE() and LAST_VALUE() added in MySQL 8.0. Default window frame is RANGE BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW — this means LAST_VALUE() will usually return the current row's value, not the last in the partition. Always specify the frame explicitly for LAST_VALUE.</p>
         <div class="syntax">SELECT name, dept, salary,
   FIRST_VALUE(salary) OVER (PARTITION BY dept ORDER BY salary DESC) AS top_salary,
@@ -156,7 +156,7 @@ FROM employees;</div>
 FROM employees;</div>
       </div>
       <div class="per-db-entry" data-db="postgresql">
-        <h4>PostgreSQL</h4>
+        <h4>PostgreSQL <span class="syntax-kind syntax-kind-native">Native syntax</span></h4>
         <p class="notes">FIRST_VALUE() and LAST_VALUE() supported. Same default frame gotcha as MySQL — LAST_VALUE needs explicit ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING to see the true last value in the partition.</p>
         <div class="syntax">SELECT name, dept, salary,
   FIRST_VALUE(salary) OVER w AS top_salary,
@@ -168,7 +168,7 @@ WINDOW w AS (
 );</div>
       </div>
       <div class="per-db-entry" data-db="sqlserver">
-        <h4>SQL Server</h4>
+        <h4>SQL Server <span class="syntax-kind syntax-kind-native">Native syntax</span></h4>
         <p class="notes">FIRST_VALUE() and LAST_VALUE() added in SQL Server 2012. Same default frame gotcha. IGNORE NULLS option added in SQL Server 2022.</p>
         <div class="syntax">SELECT name, dept, salary,
   FIRST_VALUE(salary) OVER (PARTITION BY dept ORDER BY salary DESC) AS top_salary,
@@ -182,7 +182,7 @@ FROM employees;
 SELECT FIRST_VALUE(salary) IGNORE NULLS OVER (ORDER BY hire_date) FROM employees;</div>
       </div>
       <div class="per-db-entry" data-db="oracle">
-        <h4>Oracle</h4>
+        <h4>Oracle <span class="syntax-kind syntax-kind-native">Native syntax</span></h4>
         <p class="notes">FIRST_VALUE() and LAST_VALUE() supported. IGNORE NULLS / RESPECT NULLS options available (Oracle supports these earlier than other engines). Same default frame gotcha with LAST_VALUE.</p>
         <div class="syntax">SELECT name, dept, salary,
   FIRST_VALUE(salary) OVER (PARTITION BY dept ORDER BY salary DESC) AS top_salary,
@@ -194,7 +194,7 @@ SELECT FIRST_VALUE(salary) IGNORE NULLS OVER (ORDER BY hire_date) FROM employees
 FROM employees;</div>
       </div>
       <div class="per-db-entry" data-db="sqlite">
-        <h4>SQLite</h4>
+        <h4>SQLite <span class="syntax-kind syntax-kind-native">Native syntax</span></h4>
         <p class="notes">FIRST_VALUE() and LAST_VALUE() added in SQLite 3.25.0. Standard syntax. Same default frame gotcha with LAST_VALUE.</p>
         <div class="syntax">SELECT name, dept, salary,
   FIRST_VALUE(salary) OVER (PARTITION BY dept ORDER BY salary DESC) AS top_salary,

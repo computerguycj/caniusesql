@@ -85,32 +85,32 @@
     <tbody>
           <tr data-db="mysql">
             <td>MySQL</td>
-            <td class="not-supported"><span aria-hidden="true">✗</span> <span class="status-text">Not Supported</span></td>
-            <td>—</td>
+            <td class="not-supported"><span aria-hidden="true">&mdash;</span> <span class="status-text">Not Supported</span></td>
+            <td>-</td>
             <td class="notes">MySQL has no built-in string split function that returns rows. Common workarounds: (1) a recursive CTE (MySQL 8.0+) to iterate through the string; (2) a numbers/tally table approach; (3) JSON_TABLE with JSON_ARRAY conversion. The cleanest approach in MySQL 8.0+ is a recursive CTE.</td>
           </tr>
           <tr data-db="postgresql">
             <td>PostgreSQL</td>
-            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
+            <td class="supported"><span aria-hidden="true">&#10003;</span> <span class="status-text">Native</span></td>
             <td>8.0</td>
             <td class="notes">string_to_array(str, delimiter) converts a delimited string to a PostgreSQL array, then unnest() expands the array into rows. regexp_split_to_table(str, pattern) splits by regex and directly returns a set of rows. string_to_table(str, delimiter) (PostgreSQL 14+) is the most direct single-function approach.</td>
           </tr>
           <tr data-db="sqlserver">
             <td>SQL Server</td>
-            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
+            <td class="supported"><span aria-hidden="true">&#10003;</span> <span class="status-text">Native</span></td>
             <td>2016</td>
             <td class="notes">STRING_SPLIT(string, separator) returns a single-column table (value) of split elements. SQL Server 2022 added an optional third argument (enable_ordinal) that, when set to 1, adds an ordinal column preserving element order. Prior to 2016, the common workarounds were XML-based splitting or a numbers-table TVF.</td>
           </tr>
           <tr data-db="oracle">
             <td>Oracle</td>
-            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
+            <td class="supported"><span aria-hidden="true">&#10003;</span> <span class="status-text">Native</span></td>
             <td>10g</td>
             <td class="notes">REGEXP_SUBSTR with CONNECT BY LEVEL is the classic Oracle approach (10g+). Oracle 12c added the ability to use LATERAL with XMLTABLE for cleaner syntax. The built-in APEX_STRING.SPLIT function (if Oracle APEX is installed) provides a simple table function. There is no single built-in function equivalent to STRING_SPLIT.</td>
           </tr>
           <tr data-db="sqlite">
             <td>SQLite</td>
-            <td class="not-supported"><span aria-hidden="true">✗</span> <span class="status-text">Not Supported</span></td>
-            <td>—</td>
+            <td class="not-supported"><span aria-hidden="true">&mdash;</span> <span class="status-text">Not Supported</span></td>
+            <td>-</td>
             <td class="notes">SQLite has no string split function. The json_each() workaround (converting the CSV to a JSON array) is the most practical approach in SQLite 3.9+. A recursive CTE can also parse a delimited string.</td>
           </tr>
     </tbody>
@@ -131,18 +131,18 @@ SELECT unnest(string_to_array('a,b,c,d', ',')) AS value;</div>
 
   <h2>Version Support</h2>
   <div class="version-list">
-    <span class="version-badge version-not-supported"><span aria-hidden="true">✗</span> MySQL: Not supported</span>
-    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> PostgreSQL: Since 8.0</span>
-    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> SQL Server: Since 2016</span>
-    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> Oracle: Since 10g</span>
-    <span class="version-badge version-not-supported"><span aria-hidden="true">✗</span> SQLite: Not supported</span>
+    <span class="version-badge version-not-supported"><span aria-hidden="true">&mdash;</span> MySQL: Not supported</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">&#10003;</span> PostgreSQL: Native since 8.0</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">&#10003;</span> SQL Server: Native since 2016</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">&#10003;</span> Oracle: Native since 10g</span>
+    <span class="version-badge version-not-supported"><span aria-hidden="true">&mdash;</span> SQLite: Not supported</span>
     
   </div>
 
   <h2>Per-Database Syntax &amp; Notes</h2>
   <div class="per-db-section">
       <div class="per-db-entry" data-db="mysql">
-        <h4>MySQL</h4>
+        <h4>MySQL <span class="syntax-kind syntax-kind-workaround">Alternative syntax</span></h4>
         <p class="notes">MySQL has no built-in string split function that returns rows. Common workarounds: (1) a recursive CTE (MySQL 8.0+) to iterate through the string; (2) a numbers/tally table approach; (3) JSON_TABLE with JSON_ARRAY conversion. The cleanest approach in MySQL 8.0+ is a recursive CTE.</p>
         <div class="syntax">-- Recursive CTE workaround (MySQL 8.0+):
 WITH RECURSIVE splitter AS (
@@ -170,7 +170,7 @@ FROM JSON_TABLE(
 ) jt;</div>
       </div>
       <div class="per-db-entry" data-db="postgresql">
-        <h4>PostgreSQL</h4>
+        <h4>PostgreSQL <span class="syntax-kind syntax-kind-native">Native syntax</span></h4>
         <p class="notes">string_to_array(str, delimiter) converts a delimited string to a PostgreSQL array, then unnest() expands the array into rows. regexp_split_to_table(str, pattern) splits by regex and directly returns a set of rows. string_to_table(str, delimiter) (PostgreSQL 14+) is the most direct single-function approach.</p>
         <div class="syntax">-- unnest + string_to_array (most common):
 SELECT unnest(string_to_array('a,b,c,d', ',')) AS val;
@@ -188,7 +188,7 @@ unnest(string_to_array(p.tags, ',')) AS tag(val)
 WHERE tag.val = 'featured';</div>
       </div>
       <div class="per-db-entry" data-db="sqlserver">
-        <h4>SQL Server</h4>
+        <h4>SQL Server <span class="syntax-kind syntax-kind-native">Native syntax</span></h4>
         <p class="notes">STRING_SPLIT(string, separator) returns a single-column table (value) of split elements. SQL Server 2022 added an optional third argument (enable_ordinal) that, when set to 1, adds an ordinal column preserving element order. Prior to 2016, the common workarounds were XML-based splitting or a numbers-table TVF.</p>
         <div class="syntax">-- Basic split (2016+):
 SELECT value
@@ -213,7 +213,7 @@ FROM (
 CROSS APPLY doc.x.nodes('/x') t(c);</div>
       </div>
       <div class="per-db-entry" data-db="oracle">
-        <h4>Oracle</h4>
+        <h4>Oracle <span class="syntax-kind syntax-kind-native">Native syntax</span></h4>
         <p class="notes">REGEXP_SUBSTR with CONNECT BY LEVEL is the classic Oracle approach (10g+). Oracle 12c added the ability to use LATERAL with XMLTABLE for cleaner syntax. The built-in APEX_STRING.SPLIT function (if Oracle APEX is installed) provides a simple table function. There is no single built-in function equivalent to STRING_SPLIT.</p>
         <div class="syntax">-- REGEXP_SUBSTR + CONNECT BY (most common pattern):
 SELECT REGEXP_SUBSTR('a,b,c,d', '[^,]+', 1, LEVEL) AS val
@@ -229,7 +229,7 @@ CONNECT BY LEVEL &lt;= REGEXP_COUNT(p.tags, ',') + 1
        AND PRIOR SYS_GUID() IS NOT NULL;</div>
       </div>
       <div class="per-db-entry" data-db="sqlite">
-        <h4>SQLite</h4>
+        <h4>SQLite <span class="syntax-kind syntax-kind-workaround">Alternative syntax</span></h4>
         <p class="notes">SQLite has no string split function. The json_each() workaround (converting the CSV to a JSON array) is the most practical approach in SQLite 3.9+. A recursive CTE can also parse a delimited string.</p>
         <div class="syntax">-- json_each workaround (3.9+):
 SELECT j.value

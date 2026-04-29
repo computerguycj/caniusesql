@@ -85,31 +85,31 @@
     <tbody>
           <tr data-db="mysql">
             <td>MySQL</td>
-            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
+            <td class="supported"><span aria-hidden="true">&#10003;</span> <span class="status-text">Native</span></td>
             <td>all</td>
             <td class="notes">CAST(expr AS type). Also CONVERT(expr, type). Supports a limited set of target types (CHAR, SIGNED, UNSIGNED, DATE, DATETIME, DECIMAL, JSON, BINARY).</td>
           </tr>
           <tr data-db="postgresql">
             <td>PostgreSQL</td>
-            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
+            <td class="supported"><span aria-hidden="true">&#10003;</span> <span class="status-text">Native</span></td>
             <td>all</td>
             <td class="notes">CAST(expr AS type). Also :: shorthand cast operator (expr::type) which is very commonly used in practice and works anywhere an expression is valid.</td>
           </tr>
           <tr data-db="sqlserver">
             <td>SQL Server</td>
-            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
+            <td class="supported"><span aria-hidden="true">&#10003;</span> <span class="status-text">Native</span></td>
             <td>all</td>
             <td class="notes">CAST(expr AS type). Also CONVERT(type, expr [, style]) which adds optional style codes for date/number formatting.</td>
           </tr>
           <tr data-db="oracle">
             <td>Oracle</td>
-            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
+            <td class="supported"><span aria-hidden="true">&#10003;</span> <span class="status-text">Native</span></td>
             <td>all</td>
             <td class="notes">CAST standard. TO_DATE(), TO_NUMBER(), TO_CHAR() are the traditional Oracle conversion functions for common types.</td>
           </tr>
           <tr data-db="sqlite">
             <td>SQLite</td>
-            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
+            <td class="supported"><span aria-hidden="true">&#10003;</span> <span class="status-text">Native</span></td>
             <td>all</td>
             <td class="notes">CAST(expr AS type). SQLite uses flexible type affinity; CAST influences storage affinity rather than strictly enforcing types.</td>
           </tr>
@@ -126,24 +126,24 @@
 
   <h2>Version Support</h2>
   <div class="version-list">
-    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> MySQL: Since all</span>
-    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> PostgreSQL: Since all</span>
-    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> SQL Server: Since all</span>
-    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> Oracle: Since all</span>
-    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> SQLite: Since all</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">&#10003;</span> MySQL: Native in all listed versions</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">&#10003;</span> PostgreSQL: Native in all listed versions</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">&#10003;</span> SQL Server: Native in all listed versions</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">&#10003;</span> Oracle: Native in all listed versions</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">&#10003;</span> SQLite: Native in all listed versions</span>
     
   </div>
 
   <h2>Per-Database Syntax &amp; Notes</h2>
   <div class="per-db-section">
       <div class="per-db-entry" data-db="mysql">
-        <h4>MySQL</h4>
+        <h4>MySQL <span class="syntax-kind syntax-kind-native">Native syntax</span></h4>
         <p class="notes">CAST(expr AS type). Also CONVERT(expr, type). Supports a limited set of target types (CHAR, SIGNED, UNSIGNED, DATE, DATETIME, DECIMAL, JSON, BINARY).</p>
         <div class="syntax">SELECT CAST(price AS CHAR) FROM tbl;
 SELECT CONVERT(price, CHAR) FROM tbl;</div>
       </div>
       <div class="per-db-entry" data-db="postgresql">
-        <h4>PostgreSQL</h4>
+        <h4>PostgreSQL <span class="syntax-kind syntax-kind-native">Native syntax</span></h4>
         <p class="notes">CAST(expr AS type). Also :: shorthand cast operator (expr::type) which is very commonly used in practice and works anywhere an expression is valid.</p>
         <div class="syntax">SELECT CAST(price AS TEXT) FROM tbl;
 SELECT price::text FROM tbl;  -- :: shorthand
@@ -151,20 +151,20 @@ SELECT '2024-01-01'::date;
 SELECT '42'::int + 1;</div>
       </div>
       <div class="per-db-entry" data-db="sqlserver">
-        <h4>SQL Server</h4>
+        <h4>SQL Server <span class="syntax-kind syntax-kind-native">Native syntax</span></h4>
         <p class="notes">CAST(expr AS type). Also CONVERT(type, expr [, style]) which adds optional style codes for date/number formatting.</p>
         <div class="syntax">SELECT CAST(price AS NVARCHAR(20)) FROM tbl;
 SELECT CONVERT(VARCHAR, GETDATE(), 103);  -- style 103 = dd/mm/yyyy</div>
       </div>
       <div class="per-db-entry" data-db="oracle">
-        <h4>Oracle</h4>
+        <h4>Oracle <span class="syntax-kind syntax-kind-native">Native syntax</span></h4>
         <p class="notes">CAST standard. TO_DATE(), TO_NUMBER(), TO_CHAR() are the traditional Oracle conversion functions for common types.</p>
         <div class="syntax">SELECT CAST(price AS VARCHAR2(20)) FROM tbl;
 SELECT TO_CHAR(hire_date, 'YYYY-MM-DD') FROM tbl;
 SELECT TO_NUMBER('42.5') FROM DUAL;</div>
       </div>
       <div class="per-db-entry" data-db="sqlite">
-        <h4>SQLite</h4>
+        <h4>SQLite <span class="syntax-kind syntax-kind-native">Native syntax</span></h4>
         <p class="notes">CAST(expr AS type). SQLite uses flexible type affinity; CAST influences storage affinity rather than strictly enforcing types.</p>
         <div class="syntax">SELECT CAST(price AS TEXT) FROM tbl;
 SELECT CAST('3.14' AS REAL);</div>

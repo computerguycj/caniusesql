@@ -85,31 +85,31 @@
     <tbody>
           <tr data-db="mysql">
             <td>MySQL</td>
-            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
+            <td class="supported"><span aria-hidden="true">&#10003;</span> <span class="status-text">Native</span></td>
             <td>8.0.13</td>
             <td class="notes">If you run MySQL &lt; 8.0.13: use a generated column (VIRTUAL or STORED) and index that column.</td>
           </tr>
           <tr data-db="postgresql">
             <td>PostgreSQL</td>
-            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
+            <td class="supported"><span aria-hidden="true">&#10003;</span> <span class="status-text">Native</span></td>
             <td>9.3</td>
             <td class="notes"></td>
           </tr>
           <tr data-db="sqlserver">
             <td>SQL Server</td>
-            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
-            <td>2008</td>
-            <td class="notes">SQL Server supports indexes on computed columns (use PERSISTED for storage). Filtered indexes also available for conditional expressions.</td>
+            <td class="workaround-supported"><span aria-hidden="true">~</span> <span class="status-text">Supported via workaround</span></td>
+            <td>-</td>
+            <td class="notes">Workaround since 2005. No direct expression-index syntax. Use an indexed computed column instead.</td>
           </tr>
           <tr data-db="oracle">
             <td>Oracle</td>
-            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
+            <td class="supported"><span aria-hidden="true">&#10003;</span> <span class="status-text">Native</span></td>
             <td>12c</td>
             <td class="notes"></td>
           </tr>
           <tr data-db="sqlite">
             <td>SQLite</td>
-            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
+            <td class="supported"><span aria-hidden="true">&#10003;</span> <span class="status-text">Native</span></td>
             <td>3.9.0</td>
             <td class="notes">Expression indexes supported starting in SQLite 3.9.0.</td>
           </tr>
@@ -126,41 +126,39 @@
 
   <h2>Version Support</h2>
   <div class="version-list">
-    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> MySQL: Since 8.0.13</span>
-    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> PostgreSQL: Since 9.3</span>
-    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> SQL Server: Since 2008</span>
-    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> Oracle: Since 12c</span>
-    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> SQLite: Since 3.9.0</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">&#10003;</span> MySQL: Native since 8.0.13</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">&#10003;</span> PostgreSQL: Native since 9.3</span>
+    <span class="version-badge version-workaround"><span aria-hidden="true">~</span> SQL Server: Supported via workaround since 2005</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">&#10003;</span> Oracle: Native since 12c</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">&#10003;</span> SQLite: Native since 3.9.0</span>
     
   </div>
 
   <h2>Per-Database Syntax &amp; Notes</h2>
   <div class="per-db-section">
       <div class="per-db-entry" data-db="mysql">
-        <h4>MySQL</h4>
+        <h4>MySQL <span class="syntax-kind syntax-kind-native">Native syntax</span></h4>
         <p class="notes">If you run MySQL &lt; 8.0.13: use a generated column (VIRTUAL or STORED) and index that column.</p>
-        <div class="syntax">CREATE INDEX idx_expression ON table_name(LOWER(email));</div>
+        <div class="syntax">CREATE INDEX idx_expression ON table_name ((LOWER(email)));</div>
       </div>
       <div class="per-db-entry" data-db="postgresql">
-        <h4>PostgreSQL</h4>
+        <h4>PostgreSQL <span class="syntax-kind syntax-kind-native">Native syntax</span></h4>
         
         <div class="syntax">CREATE INDEX idx_expression ON table_name(LOWER(email));</div>
       </div>
       <div class="per-db-entry" data-db="sqlserver">
-        <h4>SQL Server</h4>
-        <p class="notes">SQL Server supports indexes on computed columns (use PERSISTED for storage). Filtered indexes also available for conditional expressions.</p>
-        <div class="syntax">CREATE INDEX idx ON table(LOWER(email));
--- Or on a computed column:
-ALTER TABLE table ADD ComputedCol AS LOWER(email) PERSISTED;
-CREATE INDEX idx ON table(ComputedCol);</div>
+        <h4>SQL Server <span class="syntax-kind syntax-kind-workaround">Workaround</span></h4>
+        <p class="notes">Add a computed column for the expression, then create an index on that computed column. Since: 2005. No direct expression-index syntax. Use an indexed computed column instead.</p>
+        <div class="syntax">ALTER TABLE table_name ADD email_lower AS LOWER(email) PERSISTED;
+CREATE INDEX idx_expression ON table_name(email_lower);</div>
       </div>
       <div class="per-db-entry" data-db="oracle">
-        <h4>Oracle</h4>
+        <h4>Oracle <span class="syntax-kind syntax-kind-native">Native syntax</span></h4>
         
         <div class="syntax">CREATE INDEX idx_expression ON table_name(LOWER(email));</div>
       </div>
       <div class="per-db-entry" data-db="sqlite">
-        <h4>SQLite</h4>
+        <h4>SQLite <span class="syntax-kind syntax-kind-native">Native syntax</span></h4>
         <p class="notes">Expression indexes supported starting in SQLite 3.9.0.</p>
         <div class="syntax">CREATE INDEX idx ON table(LOWER(email));</div>
       </div>

@@ -85,31 +85,31 @@
     <tbody>
           <tr data-db="mysql">
             <td>MySQL</td>
-            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
+            <td class="supported"><span aria-hidden="true">&#10003;</span> <span class="status-text">Native</span></td>
             <td>8.0.19</td>
             <td class="notes">Multi-row INSERT VALUES has been supported since early MySQL versions. The TABLE and VALUES statement as a standalone query (VALUES ROW(...), ROW(...)) was added in MySQL 8.0.19, providing an inline table construct. Prior to 8.0.19, use UNION ALL of SELECT literals to simulate an inline table.</td>
           </tr>
           <tr data-db="postgresql">
             <td>PostgreSQL</td>
-            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
+            <td class="supported"><span aria-hidden="true">&#10003;</span> <span class="status-text">Native</span></td>
             <td>8.2</td>
             <td class="notes">VALUES is a full first-class relation since PostgreSQL 8.2 — it can appear anywhere a table or subquery can: in FROM, CTE, UNION, INSERT, etc. Column names in the alias are required when the VALUES clause is used as a subquery or CTE. Row type is inferred from the first row; explicit casts may be needed for ambiguous literals.</td>
           </tr>
           <tr data-db="sqlserver">
             <td>SQL Server</td>
-            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
+            <td class="supported"><span aria-hidden="true">&#10003;</span> <span class="status-text">Native</span></td>
             <td>2008</td>
             <td class="notes">VALUES as an inline table constructor available since SQL Server 2008. Syntax requires an alias with column names. Often used for multi-row inserts and lookup tables in CTEs. Cannot exceed 1000 rows in a single VALUES constructor.</td>
           </tr>
           <tr data-db="oracle">
             <td>Oracle</td>
-            <td class="not-supported"><span aria-hidden="true">✗</span> <span class="status-text">Not Supported</span></td>
-            <td>—</td>
+            <td class="not-supported"><span aria-hidden="true">&mdash;</span> <span class="status-text">Not Supported</span></td>
+            <td>-</td>
             <td class="notes">Oracle does not support a VALUES clause as a standalone table constructor in SELECT queries. Multi-row INSERT is supported via INSERT ALL or INSERT with a SELECT from DUAL for a single row. For an inline lookup table, use a UNION ALL SELECT from DUAL, or a collection type with TABLE().</td>
           </tr>
           <tr data-db="sqlite">
             <td>SQLite</td>
-            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
+            <td class="supported"><span aria-hidden="true">&#10003;</span> <span class="status-text">Native</span></td>
             <td>3.8.3</td>
             <td class="notes">VALUES as a table-value constructor in SELECT/FROM supported since SQLite 3.8.3. Supports alias with column names. Fully usable in CTEs, FROM clauses, and UNION.</td>
           </tr>
@@ -132,18 +132,18 @@ VALUES (1, 'red'), (2, 'green'), (3, 'blue');</div>
 
   <h2>Version Support</h2>
   <div class="version-list">
-    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> MySQL: Since 8.0.19</span>
-    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> PostgreSQL: Since 8.2</span>
-    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> SQL Server: Since 2008</span>
-    <span class="version-badge version-not-supported"><span aria-hidden="true">✗</span> Oracle: Not supported</span>
-    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> SQLite: Since 3.8.3</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">&#10003;</span> MySQL: Native since 8.0.19</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">&#10003;</span> PostgreSQL: Native since 8.2</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">&#10003;</span> SQL Server: Native since 2008</span>
+    <span class="version-badge version-not-supported"><span aria-hidden="true">&mdash;</span> Oracle: Not supported</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">&#10003;</span> SQLite: Native since 3.8.3</span>
     
   </div>
 
   <h2>Per-Database Syntax &amp; Notes</h2>
   <div class="per-db-section">
       <div class="per-db-entry" data-db="mysql">
-        <h4>MySQL</h4>
+        <h4>MySQL <span class="syntax-kind syntax-kind-native">Native syntax</span></h4>
         <p class="notes">Multi-row INSERT VALUES has been supported since early MySQL versions. The TABLE and VALUES statement as a standalone query (VALUES ROW(...), ROW(...)) was added in MySQL 8.0.19, providing an inline table construct. Prior to 8.0.19, use UNION ALL of SELECT literals to simulate an inline table.</p>
         <div class="syntax">-- Multi-row INSERT (supported since early versions):
 INSERT INTO colors (id, name)
@@ -167,7 +167,7 @@ JOIN (VALUES ROW(1,'small'), ROW(2,'medium'), ROW(3,'large')) AS v(id,label)
     ON p.size_id = v.id;</div>
       </div>
       <div class="per-db-entry" data-db="postgresql">
-        <h4>PostgreSQL</h4>
+        <h4>PostgreSQL <span class="syntax-kind syntax-kind-native">Native syntax</span></h4>
         <p class="notes">VALUES is a full first-class relation since PostgreSQL 8.2 — it can appear anywhere a table or subquery can: in FROM, CTE, UNION, INSERT, etc. Column names in the alias are required when the VALUES clause is used as a subquery or CTE. Row type is inferred from the first row; explicit casts may be needed for ambiguous literals.</p>
         <div class="syntax">-- Inline table:
 SELECT *
@@ -191,7 +191,7 @@ INSERT INTO colors (id, name)
 VALUES (1, 'red'), (2, 'green'), (3, 'blue');</div>
       </div>
       <div class="per-db-entry" data-db="sqlserver">
-        <h4>SQL Server</h4>
+        <h4>SQL Server <span class="syntax-kind syntax-kind-native">Native syntax</span></h4>
         <p class="notes">VALUES as an inline table constructor available since SQL Server 2008. Syntax requires an alias with column names. Often used for multi-row inserts and lookup tables in CTEs. Cannot exceed 1000 rows in a single VALUES constructor.</p>
         <div class="syntax">-- Inline table:
 SELECT *
@@ -216,7 +216,7 @@ INSERT INTO colors (id, name)
 VALUES (1,'red'),(2,'green'),(3,'blue');</div>
       </div>
       <div class="per-db-entry" data-db="oracle">
-        <h4>Oracle</h4>
+        <h4>Oracle <span class="syntax-kind syntax-kind-workaround">Alternative syntax</span></h4>
         <p class="notes">Oracle does not support a VALUES clause as a standalone table constructor in SELECT queries. Multi-row INSERT is supported via INSERT ALL or INSERT with a SELECT from DUAL for a single row. For an inline lookup table, use a UNION ALL SELECT from DUAL, or a collection type with TABLE().</p>
         <div class="syntax">-- Single-row INSERT (Oracle standard):
 INSERT INTO colors (id, name) VALUES (1, 'red');
@@ -237,7 +237,7 @@ FROM (
 ) t;</div>
       </div>
       <div class="per-db-entry" data-db="sqlite">
-        <h4>SQLite</h4>
+        <h4>SQLite <span class="syntax-kind syntax-kind-native">Native syntax</span></h4>
         <p class="notes">VALUES as a table-value constructor in SELECT/FROM supported since SQLite 3.8.3. Supports alias with column names. Fully usable in CTEs, FROM clauses, and UNION.</p>
         <div class="syntax">-- Inline table:
 SELECT *

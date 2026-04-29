@@ -85,31 +85,31 @@
     <tbody>
           <tr data-db="mysql">
             <td>MySQL</td>
-            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
+            <td class="supported"><span aria-hidden="true">&#10003;</span> <span class="status-text">Native</span></td>
             <td>8.0.16</td>
             <td class="notes">CHECK constraints were parsed but silently ignored before 8.0.16. From 8.0.16 they are enforced. Subqueries are not allowed inside CHECK expressions. Functions must be deterministic.</td>
           </tr>
           <tr data-db="postgresql">
             <td>PostgreSQL</td>
-            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
+            <td class="supported"><span aria-hidden="true">&#10003;</span> <span class="status-text">Native</span></td>
             <td>all</td>
             <td class="notes">Full CHECK support. Expressions can call user-defined functions, but they must be immutable for use in constraints. NOT VALID option lets you add a constraint without scanning existing rows (validate later with VALIDATE CONSTRAINT).</td>
           </tr>
           <tr data-db="sqlserver">
             <td>SQL Server</td>
-            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
+            <td class="supported"><span aria-hidden="true">&#10003;</span> <span class="status-text">Native</span></td>
             <td>all</td>
             <td class="notes">Full CHECK support. WITH NOCHECK option adds the constraint without validating existing rows. Subqueries not allowed. User-defined functions can be called if they are deterministic.</td>
           </tr>
           <tr data-db="oracle">
             <td>Oracle</td>
-            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
+            <td class="supported"><span aria-hidden="true">&#10003;</span> <span class="status-text">Native</span></td>
             <td>all</td>
             <td class="notes">Full CHECK support. SYSDATE, SYSTIMESTAMP, USER, ROWNUM, and sequence references are not allowed in CHECK expressions. ENABLE NOVALIDATE lets you add a constraint without checking existing rows.</td>
           </tr>
           <tr data-db="sqlite">
             <td>SQLite</td>
-            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
+            <td class="supported"><span aria-hidden="true">&#10003;</span> <span class="status-text">Native</span></td>
             <td>all</td>
             <td class="notes">CHECK constraints are supported. Unlike other engines, SQLite evaluates them but does not enforce NOT NULL as a separate concept from CHECK. Subqueries are allowed in CHECK expressions (unlike most other engines). Constraints cannot be dropped after creation (the table must be recreated).</td>
           </tr>
@@ -132,18 +132,18 @@
 
   <h2>Version Support</h2>
   <div class="version-list">
-    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> MySQL: Since 8.0.16</span>
-    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> PostgreSQL: Since all</span>
-    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> SQL Server: Since all</span>
-    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> Oracle: Since all</span>
-    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> SQLite: Since all</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">&#10003;</span> MySQL: Native since 8.0.16</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">&#10003;</span> PostgreSQL: Native in all listed versions</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">&#10003;</span> SQL Server: Native in all listed versions</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">&#10003;</span> Oracle: Native in all listed versions</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">&#10003;</span> SQLite: Native in all listed versions</span>
     
   </div>
 
   <h2>Per-Database Syntax &amp; Notes</h2>
   <div class="per-db-section">
       <div class="per-db-entry" data-db="mysql">
-        <h4>MySQL</h4>
+        <h4>MySQL <span class="syntax-kind syntax-kind-native">Native syntax</span></h4>
         <p class="notes">CHECK constraints were parsed but silently ignored before 8.0.16. From 8.0.16 they are enforced. Subqueries are not allowed inside CHECK expressions. Functions must be deterministic.</p>
         <div class="syntax">CREATE TABLE employees (
   id     INT PRIMARY KEY,
@@ -157,7 +157,7 @@
 ALTER TABLE employees ADD CONSTRAINT chk_age CHECK (age &gt;= 18);</div>
       </div>
       <div class="per-db-entry" data-db="postgresql">
-        <h4>PostgreSQL</h4>
+        <h4>PostgreSQL <span class="syntax-kind syntax-kind-native">Native syntax</span></h4>
         <p class="notes">Full CHECK support. Expressions can call user-defined functions, but they must be immutable for use in constraints. NOT VALID option lets you add a constraint without scanning existing rows (validate later with VALIDATE CONSTRAINT).</p>
         <div class="syntax">CREATE TABLE employees (
   id     SERIAL PRIMARY KEY,
@@ -171,7 +171,7 @@ ALTER TABLE employees
 ALTER TABLE employees VALIDATE CONSTRAINT chk_salary;</div>
       </div>
       <div class="per-db-entry" data-db="sqlserver">
-        <h4>SQL Server</h4>
+        <h4>SQL Server <span class="syntax-kind syntax-kind-native">Native syntax</span></h4>
         <p class="notes">Full CHECK support. WITH NOCHECK option adds the constraint without validating existing rows. Subqueries not allowed. User-defined functions can be called if they are deterministic.</p>
         <div class="syntax">CREATE TABLE employees (
   id     INT IDENTITY PRIMARY KEY,
@@ -184,7 +184,7 @@ ALTER TABLE employees
   WITH NOCHECK ADD CONSTRAINT chk_salary CHECK (salary &gt; 0);</div>
       </div>
       <div class="per-db-entry" data-db="oracle">
-        <h4>Oracle</h4>
+        <h4>Oracle <span class="syntax-kind syntax-kind-native">Native syntax</span></h4>
         <p class="notes">Full CHECK support. SYSDATE, SYSTIMESTAMP, USER, ROWNUM, and sequence references are not allowed in CHECK expressions. ENABLE NOVALIDATE lets you add a constraint without checking existing rows.</p>
         <div class="syntax">CREATE TABLE employees (
   id     NUMBER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
@@ -195,7 +195,7 @@ ALTER TABLE employees
 ALTER TABLE employees ADD CONSTRAINT chk_age CHECK (age &gt;= 18) ENABLE NOVALIDATE;</div>
       </div>
       <div class="per-db-entry" data-db="sqlite">
-        <h4>SQLite</h4>
+        <h4>SQLite <span class="syntax-kind syntax-kind-native">Native syntax</span></h4>
         <p class="notes">CHECK constraints are supported. Unlike other engines, SQLite evaluates them but does not enforce NOT NULL as a separate concept from CHECK. Subqueries are allowed in CHECK expressions (unlike most other engines). Constraints cannot be dropped after creation (the table must be recreated).</p>
         <div class="syntax">CREATE TABLE employees (
   id     INTEGER PRIMARY KEY,

@@ -85,31 +85,31 @@
     <tbody>
           <tr data-db="mysql">
             <td>MySQL</td>
-            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
+            <td class="supported"><span aria-hidden="true">&#10003;</span> <span class="status-text">Native</span></td>
             <td>all</td>
             <td class="notes">DATEDIFF(end, start) returns integer days only — no unit argument. For other units use TIMESTAMPDIFF(unit, start, end). Units: MICROSECOND, SECOND, MINUTE, HOUR, DAY, WEEK, MONTH, QUARTER, YEAR. Note argument order is reversed between DATEDIFF and TIMESTAMPDIFF.</td>
           </tr>
           <tr data-db="postgresql">
             <td>PostgreSQL</td>
-            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
+            <td class="supported"><span aria-hidden="true">&#10003;</span> <span class="status-text">Native</span></td>
             <td>all</td>
             <td class="notes">No DATEDIFF function. Use subtraction: date2 - date1 returns integer days for DATE types, INTERVAL for TIMESTAMP types. EXTRACT(epoch FROM ts2 - ts1) converts interval to seconds. AGE(ts2, ts1) returns human-readable interval.</td>
           </tr>
           <tr data-db="sqlserver">
             <td>SQL Server</td>
-            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
+            <td class="supported"><span aria-hidden="true">&#10003;</span> <span class="status-text">Native</span></td>
             <td>all</td>
             <td class="notes">DATEDIFF(unit, start, end) with explicit unit. Units: year, quarter, month, week, day, hour, minute, second, millisecond, microsecond, nanosecond. Counts boundary crossings, not exact elapsed time — DATEDIFF(year, '2023-12-31', '2024-01-01') returns 1.</td>
           </tr>
           <tr data-db="oracle">
             <td>Oracle</td>
-            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
+            <td class="supported"><span aria-hidden="true">&#10003;</span> <span class="status-text">Native</span></td>
             <td>all</td>
             <td class="notes">No DATEDIFF function. DATE subtraction returns fractional days (a NUMBER). MONTHS_BETWEEN(d1, d2) returns fractional months. For hours/minutes, multiply day difference by 24 or 1440.</td>
           </tr>
           <tr data-db="sqlite">
             <td>SQLite</td>
-            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
+            <td class="supported"><span aria-hidden="true">&#10003;</span> <span class="status-text">Native</span></td>
             <td>all</td>
             <td class="notes">No DATEDIFF function. Use julianday() subtraction for day differences. julianday() converts any date/timestamp to a floating-point Julian day number, so subtraction gives fractional days.</td>
           </tr>
@@ -130,25 +130,25 @@ end_date - start_date  -- returns integer days for dates</div>
 
   <h2>Version Support</h2>
   <div class="version-list">
-    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> MySQL: Since all</span>
-    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> PostgreSQL: Since all</span>
-    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> SQL Server: Since all</span>
-    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> Oracle: Since all</span>
-    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> SQLite: Since all</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">&#10003;</span> MySQL: Native in all listed versions</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">&#10003;</span> PostgreSQL: Native in all listed versions</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">&#10003;</span> SQL Server: Native in all listed versions</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">&#10003;</span> Oracle: Native in all listed versions</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">&#10003;</span> SQLite: Native in all listed versions</span>
     
   </div>
 
   <h2>Per-Database Syntax &amp; Notes</h2>
   <div class="per-db-section">
       <div class="per-db-entry" data-db="mysql">
-        <h4>MySQL</h4>
+        <h4>MySQL <span class="syntax-kind syntax-kind-native">Native syntax</span></h4>
         <p class="notes">DATEDIFF(end, start) returns integer days only — no unit argument. For other units use TIMESTAMPDIFF(unit, start, end). Units: MICROSECOND, SECOND, MINUTE, HOUR, DAY, WEEK, MONTH, QUARTER, YEAR. Note argument order is reversed between DATEDIFF and TIMESTAMPDIFF.</p>
         <div class="syntax">SELECT DATEDIFF('2024-03-15', '2024-01-01');              -- 74 (days)
 SELECT TIMESTAMPDIFF(MONTH, '2024-01-01', '2024-03-15');  -- 2
 SELECT TIMESTAMPDIFF(HOUR,  '2024-01-01', NOW());         -- hours since Jan 1</div>
       </div>
       <div class="per-db-entry" data-db="postgresql">
-        <h4>PostgreSQL</h4>
+        <h4>PostgreSQL <span class="syntax-kind syntax-kind-native">Native syntax</span></h4>
         <p class="notes">No DATEDIFF function. Use subtraction: date2 - date1 returns integer days for DATE types, INTERVAL for TIMESTAMP types. EXTRACT(epoch FROM ts2 - ts1) converts interval to seconds. AGE(ts2, ts1) returns human-readable interval.</p>
         <div class="syntax">SELECT '2024-03-15'::date - '2024-01-01'::date;          -- 74 (integer days)
 SELECT AGE('2024-03-15'::date, '2024-01-01'::date);      -- 2 mons 14 days
@@ -156,7 +156,7 @@ SELECT EXTRACT(epoch FROM NOW() - '2024-01-01'::date);   -- seconds
 SELECT EXTRACT(day FROM '2024-03-15'::date - '2024-01-01'::date);</div>
       </div>
       <div class="per-db-entry" data-db="sqlserver">
-        <h4>SQL Server</h4>
+        <h4>SQL Server <span class="syntax-kind syntax-kind-native">Native syntax</span></h4>
         <p class="notes">DATEDIFF(unit, start, end) with explicit unit. Units: year, quarter, month, week, day, hour, minute, second, millisecond, microsecond, nanosecond. Counts boundary crossings, not exact elapsed time — DATEDIFF(year, '2023-12-31', '2024-01-01') returns 1.</p>
         <div class="syntax">SELECT DATEDIFF(day,   '2024-01-01', '2024-03-15');  -- 74
 SELECT DATEDIFF(month, '2024-01-01', '2024-03-15');  -- 2
@@ -164,7 +164,7 @@ SELECT DATEDIFF(year,  '2023-12-31', '2024-01-01');  -- 1 (boundary crossing!)
 SELECT DATEDIFF(hour,  '2024-01-01', GETDATE());</div>
       </div>
       <div class="per-db-entry" data-db="oracle">
-        <h4>Oracle</h4>
+        <h4>Oracle <span class="syntax-kind syntax-kind-native">Native syntax</span></h4>
         <p class="notes">No DATEDIFF function. DATE subtraction returns fractional days (a NUMBER). MONTHS_BETWEEN(d1, d2) returns fractional months. For hours/minutes, multiply day difference by 24 or 1440.</p>
         <div class="syntax">SELECT SYSDATE - DATE '2024-01-01'               FROM DUAL; -- fractional days
 SELECT MONTHS_BETWEEN(DATE '2024-03-15', DATE '2024-01-01') FROM DUAL; -- 2.45...
@@ -172,7 +172,7 @@ SELECT TRUNC(SYSDATE - DATE '2024-01-01')        FROM DUAL; -- whole days
 SELECT (SYSDATE - DATE '2024-01-01') * 24        FROM DUAL; -- hours</div>
       </div>
       <div class="per-db-entry" data-db="sqlite">
-        <h4>SQLite</h4>
+        <h4>SQLite <span class="syntax-kind syntax-kind-native">Native syntax</span></h4>
         <p class="notes">No DATEDIFF function. Use julianday() subtraction for day differences. julianday() converts any date/timestamp to a floating-point Julian day number, so subtraction gives fractional days.</p>
         <div class="syntax">SELECT julianday('2024-03-15') - julianday('2024-01-01');  -- 74.0
 SELECT CAST(julianday('now') - julianday('2024-01-01') AS INTEGER);  -- whole days

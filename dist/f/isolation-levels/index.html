@@ -85,31 +85,31 @@
     <tbody>
           <tr data-db="mysql">
             <td>MySQL</td>
-            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
+            <td class="supported"><span aria-hidden="true">&#10003;</span> <span class="status-text">Native</span></td>
             <td>5.0</td>
             <td class="notes">InnoDB supports all four standard levels: READ UNCOMMITTED, READ COMMITTED, REPEATABLE READ, SERIALIZABLE. Default is REPEATABLE READ, which is higher than most other engines. Uses MVCC; REPEATABLE READ prevents phantom reads for consistent reads but not for locking reads.</td>
           </tr>
           <tr data-db="postgresql">
             <td>PostgreSQL</td>
-            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
+            <td class="supported"><span aria-hidden="true">&#10003;</span> <span class="status-text">Native</span></td>
             <td>7.4</td>
             <td class="notes">Supports READ COMMITTED (default), REPEATABLE READ, and SERIALIZABLE. READ UNCOMMITTED is accepted as syntax but behaves as READ COMMITTED. PostgreSQL's SERIALIZABLE uses SSI (Serializable Snapshot Isolation), the strongest and most correct implementation.</td>
           </tr>
           <tr data-db="sqlserver">
             <td>SQL Server</td>
-            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
+            <td class="supported"><span aria-hidden="true">&#10003;</span> <span class="status-text">Native</span></td>
             <td>2000</td>
             <td class="notes">Supports all four standard levels plus two snapshot-based levels: SNAPSHOT (statement-level MVCC) and READ_COMMITTED_SNAPSHOT (row versioning for default READ COMMITTED). RCSI is enabled at the database level and changes the default READ COMMITTED behavior engine-wide.</td>
           </tr>
           <tr data-db="oracle">
             <td>Oracle</td>
-            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
+            <td class="supported"><span aria-hidden="true">&#10003;</span> <span class="status-text">Native</span></td>
             <td>7</td>
             <td class="notes">Supports READ COMMITTED (default) and SERIALIZABLE. READ UNCOMMITTED and REPEATABLE READ are not available — Oracle's MVCC architecture means dirty reads are structurally prevented. SERIALIZABLE uses snapshot isolation at transaction start.</td>
           </tr>
           <tr data-db="sqlite">
             <td>SQLite</td>
-            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
+            <td class="supported"><span aria-hidden="true">&#10003;</span> <span class="status-text">Native</span></td>
             <td>3.0.0</td>
             <td class="notes">SQLite supports DEFERRED, IMMEDIATE, and EXCLUSIVE transaction modes rather than the standard four ISO levels. WAL mode provides snapshot isolation for readers. Effectively READ COMMITTED or SERIALIZABLE depending on WAL mode and transaction type.</td>
           </tr>
@@ -129,31 +129,31 @@ COMMIT;</div>
 
   <h2>Version Support</h2>
   <div class="version-list">
-    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> MySQL: Since 5.0</span>
-    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> PostgreSQL: Since 7.4</span>
-    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> SQL Server: Since 2000</span>
-    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> Oracle: Since 7</span>
-    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> SQLite: Since 3.0.0</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">&#10003;</span> MySQL: Native since 5.0</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">&#10003;</span> PostgreSQL: Native since 7.4</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">&#10003;</span> SQL Server: Native since 2000</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">&#10003;</span> Oracle: Native since 7</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">&#10003;</span> SQLite: Native since 3.0.0</span>
     
   </div>
 
   <h2>Per-Database Syntax &amp; Notes</h2>
   <div class="per-db-section">
       <div class="per-db-entry" data-db="mysql">
-        <h4>MySQL</h4>
+        <h4>MySQL <span class="syntax-kind syntax-kind-native">Native syntax</span></h4>
         <p class="notes">InnoDB supports all four standard levels: READ UNCOMMITTED, READ COMMITTED, REPEATABLE READ, SERIALIZABLE. Default is REPEATABLE READ, which is higher than most other engines. Uses MVCC; REPEATABLE READ prevents phantom reads for consistent reads but not for locking reads.</p>
         <div class="syntax">SET SESSION TRANSACTION ISOLATION LEVEL READ COMMITTED;
 SELECT @@transaction_isolation;  -- check current level</div>
       </div>
       <div class="per-db-entry" data-db="postgresql">
-        <h4>PostgreSQL</h4>
+        <h4>PostgreSQL <span class="syntax-kind syntax-kind-native">Native syntax</span></h4>
         <p class="notes">Supports READ COMMITTED (default), REPEATABLE READ, and SERIALIZABLE. READ UNCOMMITTED is accepted as syntax but behaves as READ COMMITTED. PostgreSQL's SERIALIZABLE uses SSI (Serializable Snapshot Isolation), the strongest and most correct implementation.</p>
         <div class="syntax">BEGIN TRANSACTION ISOLATION LEVEL REPEATABLE READ;
 -- statements
 COMMIT;</div>
       </div>
       <div class="per-db-entry" data-db="sqlserver">
-        <h4>SQL Server</h4>
+        <h4>SQL Server <span class="syntax-kind syntax-kind-native">Native syntax</span></h4>
         <p class="notes">Supports all four standard levels plus two snapshot-based levels: SNAPSHOT (statement-level MVCC) and READ_COMMITTED_SNAPSHOT (row versioning for default READ COMMITTED). RCSI is enabled at the database level and changes the default READ COMMITTED behavior engine-wide.</p>
         <div class="syntax">SET TRANSACTION ISOLATION LEVEL SNAPSHOT;
 BEGIN TRAN;
@@ -163,14 +163,14 @@ COMMIT;
 ALTER DATABASE mydb SET READ_COMMITTED_SNAPSHOT ON;</div>
       </div>
       <div class="per-db-entry" data-db="oracle">
-        <h4>Oracle</h4>
+        <h4>Oracle <span class="syntax-kind syntax-kind-native">Native syntax</span></h4>
         <p class="notes">Supports READ COMMITTED (default) and SERIALIZABLE. READ UNCOMMITTED and REPEATABLE READ are not available — Oracle's MVCC architecture means dirty reads are structurally prevented. SERIALIZABLE uses snapshot isolation at transaction start.</p>
         <div class="syntax">SET TRANSACTION ISOLATION LEVEL SERIALIZABLE;
 -- Or at session level:
 ALTER SESSION SET ISOLATION_LEVEL = SERIALIZABLE;</div>
       </div>
       <div class="per-db-entry" data-db="sqlite">
-        <h4>SQLite</h4>
+        <h4>SQLite <span class="syntax-kind syntax-kind-native">Native syntax</span></h4>
         <p class="notes">SQLite supports DEFERRED, IMMEDIATE, and EXCLUSIVE transaction modes rather than the standard four ISO levels. WAL mode provides snapshot isolation for readers. Effectively READ COMMITTED or SERIALIZABLE depending on WAL mode and transaction type.</p>
         <div class="syntax">BEGIN DEFERRED;     -- default: read locks deferred
 BEGIN IMMEDIATE;   -- write lock acquired immediately

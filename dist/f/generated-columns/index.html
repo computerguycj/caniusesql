@@ -85,31 +85,31 @@
     <tbody>
           <tr data-db="mysql">
             <td>MySQL</td>
-            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
+            <td class="supported"><span aria-hidden="true">&#10003;</span> <span class="status-text">Native</span></td>
             <td>5.7</td>
             <td class="notes">Two modes: VIRTUAL (computed on read, no storage) and STORED (computed on write, stored on disk). VIRTUAL is the default. Generated columns cannot reference other generated columns, use subqueries, or call non-deterministic functions. Can be indexed only if STORED (or as a functional index in MySQL 8.0).</td>
           </tr>
           <tr data-db="postgresql">
             <td>PostgreSQL</td>
-            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
+            <td class="supported"><span aria-hidden="true">&#10003;</span> <span class="status-text">Native</span></td>
             <td>12</td>
             <td class="notes">PostgreSQL 12 added GENERATED ALWAYS AS (...) STORED. Only STORED generated columns are supported — there is no VIRTUAL mode. The expression may reference other base columns but not other generated columns. Can be indexed normally. Prior to PG 12, use a trigger or a view to achieve similar results.</td>
           </tr>
           <tr data-db="sqlserver">
             <td>SQL Server</td>
-            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
+            <td class="supported"><span aria-hidden="true">&#10003;</span> <span class="status-text">Native</span></td>
             <td>2000</td>
             <td class="notes">Called computed columns. Two modes: PERSISTED (stored) and non-persisted (virtual). Syntax uses AS expression rather than GENERATED ALWAYS AS. Persisted computed columns can be indexed and included in foreign keys. Non-deterministic expressions are allowed in non-persisted columns but not in persisted ones.</td>
           </tr>
           <tr data-db="oracle">
             <td>Oracle</td>
-            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
+            <td class="supported"><span aria-hidden="true">&#10003;</span> <span class="status-text">Native</span></td>
             <td>11g</td>
             <td class="notes">Called virtual columns. Syntax uses GENERATED ALWAYS AS (...) VIRTUAL. Only VIRTUAL mode (no STORED equivalent). Virtual columns cannot be stored physically but can be indexed (Oracle creates the index on the derived values). Cannot reference other virtual columns.</td>
           </tr>
           <tr data-db="sqlite">
             <td>SQLite</td>
-            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
+            <td class="supported"><span aria-hidden="true">&#10003;</span> <span class="status-text">Native</span></td>
             <td>3.31.0</td>
             <td class="notes">Both VIRTUAL and STORED modes supported since 3.31.0 (2020-01-22). VIRTUAL is the default. Expression must be deterministic. Generated columns cannot be used as part of the PRIMARY KEY. Cannot be indexed unless STORED.</td>
           </tr>
@@ -131,18 +131,18 @@ CREATE TABLE products (
 
   <h2>Version Support</h2>
   <div class="version-list">
-    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> MySQL: Since 5.7</span>
-    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> PostgreSQL: Since 12</span>
-    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> SQL Server: Since 2000</span>
-    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> Oracle: Since 11g</span>
-    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> SQLite: Since 3.31.0</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">&#10003;</span> MySQL: Native since 5.7</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">&#10003;</span> PostgreSQL: Native since 12</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">&#10003;</span> SQL Server: Native since 2000</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">&#10003;</span> Oracle: Native since 11g</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">&#10003;</span> SQLite: Native since 3.31.0</span>
     
   </div>
 
   <h2>Per-Database Syntax &amp; Notes</h2>
   <div class="per-db-section">
       <div class="per-db-entry" data-db="mysql">
-        <h4>MySQL</h4>
+        <h4>MySQL <span class="syntax-kind syntax-kind-native">Native syntax</span></h4>
         <p class="notes">Two modes: VIRTUAL (computed on read, no storage) and STORED (computed on write, stored on disk). VIRTUAL is the default. Generated columns cannot reference other generated columns, use subqueries, or call non-deterministic functions. Can be indexed only if STORED (or as a functional index in MySQL 8.0).</p>
         <div class="syntax">CREATE TABLE products (
     price      DECIMAL(10,2),
@@ -159,7 +159,7 @@ ALTER TABLE products
     ADD COLUMN tax DECIMAL(10,2) GENERATED ALWAYS AS (price * 0.1) STORED;</div>
       </div>
       <div class="per-db-entry" data-db="postgresql">
-        <h4>PostgreSQL</h4>
+        <h4>PostgreSQL <span class="syntax-kind syntax-kind-native">Native syntax</span></h4>
         <p class="notes">PostgreSQL 12 added GENERATED ALWAYS AS (...) STORED. Only STORED generated columns are supported — there is no VIRTUAL mode. The expression may reference other base columns but not other generated columns. Can be indexed normally. Prior to PG 12, use a trigger or a view to achieve similar results.</p>
         <div class="syntax">CREATE TABLE products (
     price    NUMERIC(10,2),
@@ -175,7 +175,7 @@ INSERT INTO products (price, quantity) VALUES (9.99, 5);
 -- subtotal is automatically 49.95</div>
       </div>
       <div class="per-db-entry" data-db="sqlserver">
-        <h4>SQL Server</h4>
+        <h4>SQL Server <span class="syntax-kind syntax-kind-native">Native syntax</span></h4>
         <p class="notes">Called computed columns. Two modes: PERSISTED (stored) and non-persisted (virtual). Syntax uses AS expression rather than GENERATED ALWAYS AS. Persisted computed columns can be indexed and included in foreign keys. Non-deterministic expressions are allowed in non-persisted columns but not in persisted ones.</p>
         <div class="syntax">CREATE TABLE products (
     price      DECIMAL(10,2),
@@ -192,7 +192,7 @@ ALTER TABLE products
     ADD tax AS (price * 0.1) PERSISTED;</div>
       </div>
       <div class="per-db-entry" data-db="oracle">
-        <h4>Oracle</h4>
+        <h4>Oracle <span class="syntax-kind syntax-kind-native">Native syntax</span></h4>
         <p class="notes">Called virtual columns. Syntax uses GENERATED ALWAYS AS (...) VIRTUAL. Only VIRTUAL mode (no STORED equivalent). Virtual columns cannot be stored physically but can be indexed (Oracle creates the index on the derived values). Cannot reference other virtual columns.</p>
         <div class="syntax">CREATE TABLE products (
     price    NUMBER(10,2),
@@ -211,7 +211,7 @@ CREATE TABLE products (
 );</div>
       </div>
       <div class="per-db-entry" data-db="sqlite">
-        <h4>SQLite</h4>
+        <h4>SQLite <span class="syntax-kind syntax-kind-native">Native syntax</span></h4>
         <p class="notes">Both VIRTUAL and STORED modes supported since 3.31.0 (2020-01-22). VIRTUAL is the default. Expression must be deterministic. Generated columns cannot be used as part of the PRIMARY KEY. Cannot be indexed unless STORED.</p>
         <div class="syntax">CREATE TABLE products (
     price    REAL,

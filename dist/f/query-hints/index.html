@@ -85,32 +85,32 @@
     <tbody>
           <tr data-db="mysql">
             <td>MySQL</td>
-            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
+            <td class="supported"><span aria-hidden="true">&#10003;</span> <span class="status-text">Native</span></td>
             <td>5.0</td>
             <td class="notes">Index hints: USE INDEX, FORCE INDEX, IGNORE INDEX in the FROM clause. Optimizer hints (/*+ ... */ comment syntax) added in 8.0, including JOIN_ORDER, NO_MERGE, MAX_EXECUTION_TIME, and more.</td>
           </tr>
           <tr data-db="postgresql">
             <td>PostgreSQL</td>
-            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
+            <td class="supported"><span aria-hidden="true">&#10003;</span> <span class="status-text">Native</span></td>
             <td>7.4</td>
             <td class="notes">No dedicated hint syntax. Hints are applied indirectly via session-level planner configuration: enable_indexscan, enable_seqscan, enable_hashjoin, etc. The pg_hint_plan extension provides Oracle/SQL Server-style inline hints and is widely used in production.</td>
           </tr>
           <tr data-db="sqlserver">
             <td>SQL Server</td>
-            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
+            <td class="supported"><span aria-hidden="true">&#10003;</span> <span class="status-text">Native</span></td>
             <td>2000</td>
             <td class="notes">Rich hint vocabulary: table hints (WITH (NOLOCK), WITH (INDEX(...))), join hints (LOOP, HASH, MERGE in FROM clause), and query hints (OPTION clause: OPTION (RECOMPILE), OPTION (MAXDOP 1), OPTION (HASH JOIN)). NOLOCK is commonly overused — it produces dirty reads.</td>
           </tr>
           <tr data-db="oracle">
             <td>Oracle</td>
-            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
+            <td class="supported"><span aria-hidden="true">&#10003;</span> <span class="status-text">Native</span></td>
             <td>7</td>
             <td class="notes">Hints use the /*+ ... */ comment syntax. Extensive vocabulary including INDEX, NO_INDEX, FULL, LEADING, USE_NL, USE_HASH, PARALLEL, APPEND, and many more. Oracle's hint system is the most mature and granular among these engines.</td>
           </tr>
           <tr data-db="sqlite">
             <td>SQLite</td>
-            <td class="not-supported"><span aria-hidden="true">✗</span> <span class="status-text">Not Supported</span></td>
-            <td>—</td>
+            <td class="not-supported"><span aria-hidden="true">&mdash;</span> <span class="status-text">Not Supported</span></td>
+            <td>-</td>
             <td class="notes">No query hint syntax. The INDEXED BY clause forces use of a named index but is not a general-purpose hint system. Use EXPLAIN QUERY PLAN to inspect the chosen strategy.</td>
           </tr>
     </tbody>
@@ -132,18 +132,18 @@ WHERE customer_id = 42;</div>
 
   <h2>Version Support</h2>
   <div class="version-list">
-    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> MySQL: Since 5.0</span>
-    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> PostgreSQL: Since 7.4</span>
-    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> SQL Server: Since 2000</span>
-    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> Oracle: Since 7</span>
-    <span class="version-badge version-not-supported"><span aria-hidden="true">✗</span> SQLite: Not supported</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">&#10003;</span> MySQL: Native since 5.0</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">&#10003;</span> PostgreSQL: Native since 7.4</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">&#10003;</span> SQL Server: Native since 2000</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">&#10003;</span> Oracle: Native since 7</span>
+    <span class="version-badge version-not-supported"><span aria-hidden="true">&mdash;</span> SQLite: Not supported</span>
     
   </div>
 
   <h2>Per-Database Syntax &amp; Notes</h2>
   <div class="per-db-section">
       <div class="per-db-entry" data-db="mysql">
-        <h4>MySQL</h4>
+        <h4>MySQL <span class="syntax-kind syntax-kind-native">Native syntax</span></h4>
         <p class="notes">Index hints: USE INDEX, FORCE INDEX, IGNORE INDEX in the FROM clause. Optimizer hints (/*+ ... */ comment syntax) added in 8.0, including JOIN_ORDER, NO_MERGE, MAX_EXECUTION_TIME, and more.</p>
         <div class="syntax">-- Index hint:
 SELECT * FROM orders USE INDEX (idx_customer) WHERE customer_id = 42;
@@ -152,7 +152,7 @@ SELECT * FROM orders FORCE INDEX (idx_customer) WHERE customer_id = 42;
 SELECT /*+ NO_INDEX_MERGE(orders) */ * FROM orders WHERE customer_id = 42;</div>
       </div>
       <div class="per-db-entry" data-db="postgresql">
-        <h4>PostgreSQL</h4>
+        <h4>PostgreSQL <span class="syntax-kind syntax-kind-native">Native syntax</span></h4>
         <p class="notes">No dedicated hint syntax. Hints are applied indirectly via session-level planner configuration: enable_indexscan, enable_seqscan, enable_hashjoin, etc. The pg_hint_plan extension provides Oracle/SQL Server-style inline hints and is widely used in production.</p>
         <div class="syntax">-- Session-level planner toggle:
 SET enable_seqscan = off;
@@ -162,7 +162,7 @@ SET enable_seqscan = on;
 SELECT /*+ IndexScan(orders idx_customer) */ * FROM orders WHERE customer_id = 42;</div>
       </div>
       <div class="per-db-entry" data-db="sqlserver">
-        <h4>SQL Server</h4>
+        <h4>SQL Server <span class="syntax-kind syntax-kind-native">Native syntax</span></h4>
         <p class="notes">Rich hint vocabulary: table hints (WITH (NOLOCK), WITH (INDEX(...))), join hints (LOOP, HASH, MERGE in FROM clause), and query hints (OPTION clause: OPTION (RECOMPILE), OPTION (MAXDOP 1), OPTION (HASH JOIN)). NOLOCK is commonly overused — it produces dirty reads.</p>
         <div class="syntax">-- Index hint:
 SELECT * FROM orders WITH (INDEX(idx_customer)) WHERE customer_id = 42;
@@ -173,7 +173,7 @@ SELECT * FROM orders o JOIN customers c ON o.customer_id = c.id
   OPTION (HASH JOIN, MAXDOP 4);</div>
       </div>
       <div class="per-db-entry" data-db="oracle">
-        <h4>Oracle</h4>
+        <h4>Oracle <span class="syntax-kind syntax-kind-native">Native syntax</span></h4>
         <p class="notes">Hints use the /*+ ... */ comment syntax. Extensive vocabulary including INDEX, NO_INDEX, FULL, LEADING, USE_NL, USE_HASH, PARALLEL, APPEND, and many more. Oracle's hint system is the most mature and granular among these engines.</p>
         <div class="syntax">SELECT /*+ INDEX(o idx_customer) */ *
 FROM orders o WHERE customer_id = 42;
@@ -183,7 +183,7 @@ FROM customers c JOIN orders o ON c.id = o.customer_id
 WHERE c.tier = 'gold';</div>
       </div>
       <div class="per-db-entry" data-db="sqlite">
-        <h4>SQLite</h4>
+        <h4>SQLite <span class="syntax-kind syntax-kind-workaround">Alternative syntax</span></h4>
         <p class="notes">No query hint syntax. The INDEXED BY clause forces use of a named index but is not a general-purpose hint system. Use EXPLAIN QUERY PLAN to inspect the chosen strategy.</p>
         <div class="syntax">-- INDEXED BY (forces specific index, not a general hint):
 SELECT * FROM orders INDEXED BY idx_customer WHERE customer_id = 42;

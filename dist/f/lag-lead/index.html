@@ -85,31 +85,31 @@
     <tbody>
           <tr data-db="mysql">
             <td>MySQL</td>
-            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
+            <td class="supported"><span aria-hidden="true">&#10003;</span> <span class="status-text">Native</span></td>
             <td>8.0</td>
             <td class="notes">LAG(expr [, offset [, default]]) and LEAD(expr [, offset [, default]]). Offset defaults to 1. Default value returned when offset goes out of bounds (instead of NULL).</td>
           </tr>
           <tr data-db="postgresql">
             <td>PostgreSQL</td>
-            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
+            <td class="supported"><span aria-hidden="true">&#10003;</span> <span class="status-text">Native</span></td>
             <td>8.4</td>
             <td class="notes">LAG(expr [, offset [, default]]) and LEAD(expr [, offset [, default]]). Supports any offset and a default value for when the offset goes beyond partition bounds.</td>
           </tr>
           <tr data-db="sqlserver">
             <td>SQL Server</td>
-            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
+            <td class="supported"><span aria-hidden="true">&#10003;</span> <span class="status-text">Native</span></td>
             <td>2012</td>
             <td class="notes">LAG(expr [, offset [, default]]) and LEAD(expr [, offset [, default]]). Added in SQL Server 2012. Offset must be a non-negative integer constant.</td>
           </tr>
           <tr data-db="oracle">
             <td>Oracle</td>
-            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
+            <td class="supported"><span aria-hidden="true">&#10003;</span> <span class="status-text">Native</span></td>
             <td>8i</td>
             <td class="notes">LAG(expr [, offset [, default]]) and LEAD(expr [, offset [, default]]). One of the earliest implementations — Oracle has had these since 8i.</td>
           </tr>
           <tr data-db="sqlite">
             <td>SQLite</td>
-            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
+            <td class="supported"><span aria-hidden="true">&#10003;</span> <span class="status-text">Native</span></td>
             <td>3.25.0</td>
             <td class="notes">LAG() and LEAD() fully supported since SQLite 3.25.0 (September 2018).</td>
           </tr>
@@ -131,18 +131,18 @@ FROM orders;</div>
 
   <h2>Version Support</h2>
   <div class="version-list">
-    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> MySQL: Since 8.0</span>
-    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> PostgreSQL: Since 8.4</span>
-    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> SQL Server: Since 2012</span>
-    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> Oracle: Since 8i</span>
-    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> SQLite: Since 3.25.0</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">&#10003;</span> MySQL: Native since 8.0</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">&#10003;</span> PostgreSQL: Native since 8.4</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">&#10003;</span> SQL Server: Native since 2012</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">&#10003;</span> Oracle: Native since 8i</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">&#10003;</span> SQLite: Native since 3.25.0</span>
     
   </div>
 
   <h2>Per-Database Syntax &amp; Notes</h2>
   <div class="per-db-section">
       <div class="per-db-entry" data-db="mysql">
-        <h4>MySQL</h4>
+        <h4>MySQL <span class="syntax-kind syntax-kind-native">Native syntax</span></h4>
         <p class="notes">LAG(expr [, offset [, default]]) and LEAD(expr [, offset [, default]]). Offset defaults to 1. Default value returned when offset goes out of bounds (instead of NULL).</p>
         <div class="syntax">SELECT
   order_date,
@@ -151,7 +151,7 @@ FROM orders;</div>
 FROM orders;</div>
       </div>
       <div class="per-db-entry" data-db="postgresql">
-        <h4>PostgreSQL</h4>
+        <h4>PostgreSQL <span class="syntax-kind syntax-kind-native">Native syntax</span></h4>
         <p class="notes">LAG(expr [, offset [, default]]) and LEAD(expr [, offset [, default]]). Supports any offset and a default value for when the offset goes beyond partition bounds.</p>
         <div class="syntax">SELECT
   order_date,
@@ -162,7 +162,7 @@ FROM orders;</div>
 FROM orders;</div>
       </div>
       <div class="per-db-entry" data-db="sqlserver">
-        <h4>SQL Server</h4>
+        <h4>SQL Server <span class="syntax-kind syntax-kind-native">Native syntax</span></h4>
         <p class="notes">LAG(expr [, offset [, default]]) and LEAD(expr [, offset [, default]]). Added in SQL Server 2012. Offset must be a non-negative integer constant.</p>
         <div class="syntax">SELECT
   order_date,
@@ -172,7 +172,7 @@ FROM orders;</div>
 FROM orders;</div>
       </div>
       <div class="per-db-entry" data-db="oracle">
-        <h4>Oracle</h4>
+        <h4>Oracle <span class="syntax-kind syntax-kind-native">Native syntax</span></h4>
         <p class="notes">LAG(expr [, offset [, default]]) and LEAD(expr [, offset [, default]]). One of the earliest implementations — Oracle has had these since 8i.</p>
         <div class="syntax">SELECT
   order_date,
@@ -182,7 +182,7 @@ FROM orders;</div>
 FROM orders;</div>
       </div>
       <div class="per-db-entry" data-db="sqlite">
-        <h4>SQLite</h4>
+        <h4>SQLite <span class="syntax-kind syntax-kind-native">Native syntax</span></h4>
         <p class="notes">LAG() and LEAD() fully supported since SQLite 3.25.0 (September 2018).</p>
         <div class="syntax">SELECT
   order_date,

@@ -133,6 +133,108 @@ function supportClass(count) {
   return 'support-none';
 }
 
+function compatibilityState(info) {
+  if (info.supported && info.native) {
+    return {
+      statusClass: 'supported',
+      badgeClass: 'version-supported',
+      symbolHtml: '&#10003;',
+      statusText: 'Native',
+    };
+  }
+
+  if (info.supported) {
+    return {
+      statusClass: 'workaround-supported',
+      badgeClass: 'version-workaround',
+      symbolHtml: '~',
+      statusText: 'Supported via workaround',
+    };
+  }
+
+  return {
+    statusClass: 'not-supported',
+    badgeClass: 'version-not-supported',
+    symbolHtml: '&mdash;',
+    statusText: 'Not Supported',
+  };
+}
+
+function compatibilityNotes(info) {
+  const notes = [];
+
+  if (!info.native && info.workaround && info.workaround.since) {
+    notes.push(allVersions(info.workaround.since)
+      ? 'Workaround available in all listed versions.'
+      : `Workaround since ${info.workaround.since}.`);
+  }
+
+  if (info.notes) {
+    notes.push(info.notes);
+  }
+
+  return notes.join(' ');
+}
+
+function versionBadgeText(label, info) {
+  if (info.supported && info.native) {
+    if (allVersions(info.since)) {
+      return `${label}: Native in all listed versions`;
+    }
+    return `${label}: Native since ${info.since ?? '?'}`;
+  }
+
+  if (info.supported) {
+    const since = info.workaround && info.workaround.since;
+    if (allVersions(since)) {
+      return `${label}: Supported via workaround in all listed versions`;
+    }
+    return since
+      ? `${label}: Supported via workaround since ${since}`
+      : `${label}: Supported via workaround`;
+  }
+
+  return `${label}: Not supported`;
+}
+
+function allVersions(since) {
+  return String(since || '').toLowerCase() === 'all';
+}
+
+function syntaxExample(info) {
+  if (info.native && info.syntax) {
+    return {
+      label: 'Native syntax',
+      className: 'syntax-kind-native',
+      text: info.syntax,
+      description: '',
+      since: '',
+    };
+  }
+
+  if (info.workaround && info.workaround.syntax) {
+    return {
+      label: 'Workaround',
+      className: 'syntax-kind-workaround',
+      text: info.workaround.syntax,
+      description: info.workaround.description || '',
+      since: info.workaround.since || '',
+    };
+  }
+
+  if (info.syntax) {
+    return {
+      label: info.supported ? 'Equivalent syntax' : 'Alternative syntax',
+      className: 'syntax-kind-workaround',
+      text: info.syntax,
+      description: '',
+      since: '',
+    };
+  }
+
+  return null;
+}
+
 // ---------------------------------------------------------------------------
 // Template assembly
 // ---------------------------------------------------------------------------
@@ -197,46 +299,51 @@ function buildPage(commandName, entry, headerTpl) {
   // ── Compatibility table ─────────────────────────────────────────────────
   let tableRows = '';
   for (const [db, info] of Object.entries(compatibility)) {
-    const label       = DB_LABELS[db] || db;
-    const supported   = info.supported;
-    const statusClass = supported ? 'supported' : 'not-supported';
-    const symbol      = supported ? '✓' : '✗';
-    const statusText  = supported ? 'Supported' : 'Not Supported';
-    const since       = info.since || '—';
+    const label = DB_LABELS[db] || db;
+    const state = compatibilityState(info);
+    const since = info.native ? (info.since || '-') : '-';
+    const notes = compatibilityNotes(info);
     tableRows += `
           <tr data-db="${esc(db)}">
             <td>${esc(label)}</td>
-            <td class="${statusClass}"><span aria-hidden="true">${symbol}</span> <span class="status-text">${statusText}</span></td>
+            <td class="${state.statusClass}"><span aria-hidden="true">${state.symbolHtml}</span> <span class="status-text">${esc(state.statusText)}</span></td>
             <td>${esc(since)}</td>
-            <td class="notes">${esc(info.notes || '')}</td>
+            <td class="notes">${esc(notes)}</td>
           </tr>`;
   }
 
   // ── Version badges ──────────────────────────────────────────────────────
   let badges = '';
   for (const [db, info] of Object.entries(compatibility)) {
-    const label      = DB_LABELS[db] || db;
-    const badgeClass = info.supported ? 'version-supported' : 'version-not-supported';
-    const symbol     = info.supported ? '✓' : '✗';
-    const text       = info.supported
-      ? `${label}: Since ${info.since ?? '?'}`
-      : `${label}: Not supported`;
-    badges += `<span class="version-badge ${badgeClass}"><span aria-hidden="true">${symbol}</span> ${esc(text)}</span>\n    `;
+    const label = DB_LABELS[db] || db;
+    const state = compatibilityState(info);
+    const text  = versionBadgeText(label, info);
+    badges += `<span class="version-badge ${state.badgeClass}"><span aria-hidden="true">${state.symbolHtml}</span> ${esc(text)}</span>\n    `;
   }
 
   // ── Per-DB syntax blocks ────────────────────────────────────────────────
   let syntaxBlocks = '';
   for (const [db, info] of Object.entries(compatibility)) {
-    if (!info.syntax) continue;
+    const example = syntaxExample(info);
+    if (!example) continue;
+
     const label = DB_LABELS[db] || db;
-    const note  = info.notes
-      ? `<p class="notes">${esc(info.notes)}</p>`
+    const noteParts = [];
+    if (example.description) noteParts.push(example.description);
+    if (example.since) {
+      noteParts.push(allVersions(example.since)
+        ? 'Available in all listed versions.'
+        : `Since: ${example.since}.`);
+    }
+    if (info.notes) noteParts.push(info.notes);
+    const note = noteParts.length
+      ? `<p class="notes">${esc(noteParts.join(' '))}</p>`
       : '';
     syntaxBlocks += `
       <div class="per-db-entry" data-db="${esc(db)}">
-        <h4>${esc(label)}</h4>
+        <h4>${esc(label)} <span class="syntax-kind ${example.className}">${esc(example.label)}</span></h4>
         ${note}
-        <div class="syntax">${esc(info.syntax)}</div>
+        <div class="syntax">${esc(example.text)}</div>
       </div>`;
   }
 

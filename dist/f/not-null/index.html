@@ -85,31 +85,31 @@
     <tbody>
           <tr data-db="mysql">
             <td>MySQL</td>
-            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
+            <td class="supported"><span aria-hidden="true">&#10003;</span> <span class="status-text">Native</span></td>
             <td>all</td>
             <td class="notes">Standard NOT NULL. Strict mode (STRICT_ALL_TABLES or STRICT_TRANS_TABLES) affects behavior: without strict mode, MySQL may insert empty string or 0 instead of rejecting the INSERT on a NOT NULL column — enabling strict mode is strongly recommended.</td>
           </tr>
           <tr data-db="postgresql">
             <td>PostgreSQL</td>
-            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
+            <td class="supported"><span aria-hidden="true">&#10003;</span> <span class="status-text">Native</span></td>
             <td>all</td>
             <td class="notes">Standard NOT NULL. PG 17 adds ALTER TABLE ... ALTER COLUMN ... SET NOT NULL as a fast path that avoids a full table scan when a CHECK constraint already guarantees no NULLs. NOT NULL can also be added as a named constraint (ALTER TABLE ... ADD CONSTRAINT ... NOT NULL) in PG 17+.</td>
           </tr>
           <tr data-db="sqlserver">
             <td>SQL Server</td>
-            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
+            <td class="supported"><span aria-hidden="true">&#10003;</span> <span class="status-text">Native</span></td>
             <td>all</td>
             <td class="notes">Standard NOT NULL. Columns are nullable by default. To change nullability on an existing column the column must be redefined with ALTER TABLE ... ALTER COLUMN. If data contains NULLs, the ALTER will fail.</td>
           </tr>
           <tr data-db="oracle">
             <td>Oracle</td>
-            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
+            <td class="supported"><span aria-hidden="true">&#10003;</span> <span class="status-text">Native</span></td>
             <td>all</td>
             <td class="notes">Standard NOT NULL. In Oracle, an empty string ('') is treated as NULL — unlike every other engine. This means NOT NULL also blocks empty string inserts. Modifying nullability: ALTER TABLE ... MODIFY col NOT NULL or ALTER TABLE ... MODIFY col NULL.</td>
           </tr>
           <tr data-db="sqlite">
             <td>SQLite</td>
-            <td class="supported"><span aria-hidden="true">✓</span> <span class="status-text">Supported</span></td>
+            <td class="supported"><span aria-hidden="true">&#10003;</span> <span class="status-text">Native</span></td>
             <td>all</td>
             <td class="notes">Standard NOT NULL. The exception: INTEGER PRIMARY KEY columns implicitly get NOT NULL (and auto-increment behavior). SQLite allows ALTER TABLE to rename columns and add columns, but NOT NULL cannot be added to an existing column without recreating the table.</td>
           </tr>
@@ -130,18 +130,18 @@
 
   <h2>Version Support</h2>
   <div class="version-list">
-    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> MySQL: Since all</span>
-    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> PostgreSQL: Since all</span>
-    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> SQL Server: Since all</span>
-    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> Oracle: Since all</span>
-    <span class="version-badge version-supported"><span aria-hidden="true">✓</span> SQLite: Since all</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">&#10003;</span> MySQL: Native in all listed versions</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">&#10003;</span> PostgreSQL: Native in all listed versions</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">&#10003;</span> SQL Server: Native in all listed versions</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">&#10003;</span> Oracle: Native in all listed versions</span>
+    <span class="version-badge version-supported"><span aria-hidden="true">&#10003;</span> SQLite: Native in all listed versions</span>
     
   </div>
 
   <h2>Per-Database Syntax &amp; Notes</h2>
   <div class="per-db-section">
       <div class="per-db-entry" data-db="mysql">
-        <h4>MySQL</h4>
+        <h4>MySQL <span class="syntax-kind syntax-kind-native">Native syntax</span></h4>
         <p class="notes">Standard NOT NULL. Strict mode (STRICT_ALL_TABLES or STRICT_TRANS_TABLES) affects behavior: without strict mode, MySQL may insert empty string or 0 instead of rejecting the INSERT on a NOT NULL column — enabling strict mode is strongly recommended.</p>
         <div class="syntax">CREATE TABLE users (
   id    INT          NOT NULL AUTO_INCREMENT PRIMARY KEY,
@@ -156,7 +156,7 @@ SET sql_mode = 'STRICT_ALL_TABLES';
 ALTER TABLE users MODIFY COLUMN bio TEXT NOT NULL DEFAULT '';</div>
       </div>
       <div class="per-db-entry" data-db="postgresql">
-        <h4>PostgreSQL</h4>
+        <h4>PostgreSQL <span class="syntax-kind syntax-kind-native">Native syntax</span></h4>
         <p class="notes">Standard NOT NULL. PG 17 adds ALTER TABLE ... ALTER COLUMN ... SET NOT NULL as a fast path that avoids a full table scan when a CHECK constraint already guarantees no NULLs. NOT NULL can also be added as a named constraint (ALTER TABLE ... ADD CONSTRAINT ... NOT NULL) in PG 17+.</p>
         <div class="syntax">CREATE TABLE users (
   id    SERIAL PRIMARY KEY,
@@ -171,7 +171,7 @@ ALTER TABLE users ALTER COLUMN email SET NOT NULL;
 ALTER TABLE users ALTER COLUMN email DROP NOT NULL;</div>
       </div>
       <div class="per-db-entry" data-db="sqlserver">
-        <h4>SQL Server</h4>
+        <h4>SQL Server <span class="syntax-kind syntax-kind-native">Native syntax</span></h4>
         <p class="notes">Standard NOT NULL. Columns are nullable by default. To change nullability on an existing column the column must be redefined with ALTER TABLE ... ALTER COLUMN. If data contains NULLs, the ALTER will fail.</p>
         <div class="syntax">CREATE TABLE users (
   id    INT           NOT NULL IDENTITY PRIMARY KEY,
@@ -187,7 +187,7 @@ UPDATE users SET email = '' WHERE email IS NULL;
 ALTER TABLE users ALTER COLUMN email NVARCHAR(255) NOT NULL;</div>
       </div>
       <div class="per-db-entry" data-db="oracle">
-        <h4>Oracle</h4>
+        <h4>Oracle <span class="syntax-kind syntax-kind-native">Native syntax</span></h4>
         <p class="notes">Standard NOT NULL. In Oracle, an empty string ('') is treated as NULL — unlike every other engine. This means NOT NULL also blocks empty string inserts. Modifying nullability: ALTER TABLE ... MODIFY col NOT NULL or ALTER TABLE ... MODIFY col NULL.</p>
         <div class="syntax">CREATE TABLE users (
   id    NUMBER        NOT NULL PRIMARY KEY,
@@ -200,7 +200,7 @@ ALTER TABLE users MODIFY email VARCHAR2(255) NOT NULL;
 ALTER TABLE users MODIFY bio   VARCHAR2(4000) NULL;</div>
       </div>
       <div class="per-db-entry" data-db="sqlite">
-        <h4>SQLite</h4>
+        <h4>SQLite <span class="syntax-kind syntax-kind-native">Native syntax</span></h4>
         <p class="notes">Standard NOT NULL. The exception: INTEGER PRIMARY KEY columns implicitly get NOT NULL (and auto-increment behavior). SQLite allows ALTER TABLE to rename columns and add columns, but NOT NULL cannot be added to an existing column without recreating the table.</p>
         <div class="syntax">CREATE TABLE users (
   id    INTEGER PRIMARY KEY,  -- implicitly NOT NULL
