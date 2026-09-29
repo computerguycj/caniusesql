@@ -10,6 +10,11 @@ Context: <optional — link to commit, file, or issue>
 
 ---
 
+## 2026-09-29 - Arrow keys in <command-search>: ARIA combobox with aria-activedescendant
+Chose: focus stays in the input; Up/Down move a highlight tracked by aria-activedescendant; Up from the first result returns to none, Down stops on the last (no wrap); each result link carries role="option" inside an `<li role="none">`.
+Rejected: moving real focus into the list (loses the typing position, worse screen reader support); wrap-around; role="option" on the `<li>` with a link inside (an option can't contain an interactive element).
+Context: src/elements/CommandSearch.ce.vue. aria-activedescendant only resolves IDs in the same tree, so the input and options must stay in one shadow root. The highlight reuses the hover colors, which fail WCAG AA contrast (2.92:1 blue on light blue) in main already; that is stage 2 theming work.
+
 ## 2026-09-29 - Show copy buttons on touch screens with (hover: none)
 Chose: `@media (hover: none) { .copy-btn { opacity: 1; } }`; hover-capable devices keep the reveal-on-hover button.
 Rejected: a width breakpoint (a narrow desktop window has hover, a large tablet doesn't); always visible everywhere (changes the desktop look, out of scope).
