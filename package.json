@@ -4,6 +4,15 @@
   "description": "SQL Command Compatibility Checker",
   "main": "index.html",
   "scripts": {
-    "generate-sitemap": "node generate-sitemap.js"
+    "generate-sitemap": "node generate-sitemap.js",
+    "build": "node generate.js && vite build",
+    "test": "node --test"
+  },
+  "dependencies": {
+    "vue": "^3.5.43"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^6.0.9",
+    "vite": "^8.3.1"
   }
 }

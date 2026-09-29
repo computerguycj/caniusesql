@@ -327,52 +327,25 @@ h4 { color: var(--color-text-heading); margin: 16px 0 4px; }
 .support-none .card-support-badge { color: #666666; }
 
 /* --------------------------------------------------------------------------
-   Compare filter bar (command pages)
+   DB filter bar: <db-filter> (src/elements/DbFilter.ce.vue)
+   Its styles live in the component's shadow root. This only reserves its
+   space until the element is defined, so the page doesn't jump when Vue
+   renders it. Heights measured in Chromium with the default fonts: labels
+   wrap to 2 rows at <=572px and 3 rows at <=356px.
    -------------------------------------------------------------------------- */
 
-.compare-bar {
-  display: flex;
-  align-items: flex-start;
-  gap: 12px;
-  flex-wrap: wrap;
+db-filter:not(:defined) {
+  display: block;
+  min-height: 84px;
   margin-bottom: 12px;
-  padding: 12px;
-  background: var(--color-surface);
-  border-radius: 6px;
-  border: 1px solid var(--color-border);
-  font-size: 13px;
 }
 
-.compare-bar legend {
-  font-weight: 600;
-  color: var(--color-text-heading);
-  white-space: nowrap;
-  margin-bottom: 8px;
-  width: 100%;
-  padding: 0;
+@media (max-width: 572px) {
+  db-filter:not(:defined) { min-height: 126px; }
 }
 
-.compare-bar label {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  cursor: pointer;
-  color: var(--color-text);
-  white-space: nowrap;
-}
-
-.compare-bar input[type="checkbox"] {
-  width: 24px;
-  height: 24px;
-  min-width: 24px;
-  min-height: 24px;
-  cursor: pointer;
-  accent-color: var(--color-primary);
-}
-
-.compare-bar input[type="checkbox"]:focus {
-  outline: 2px solid var(--color-primary);
-  outline-offset: 2px;
+@media (max-width: 356px) {
+  db-filter:not(:defined) { min-height: 168px; }
 }
 
 /* --------------------------------------------------------------------------

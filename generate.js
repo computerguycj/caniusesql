@@ -33,6 +33,10 @@ const DB_LABELS = {
 
 const DB_COUNT = Object.keys(DB_LABELS).length;
 
+// <db-filter> custom element (src/elements/DbFilter.ce.vue). Its `databases`
+// attribute is DB_LABELS as JSON: id -> label, in display order.
+const DB_FILTER_HTML = `<db-filter databases="${esc(JSON.stringify(DB_LABELS))}"></db-filter>`;
+
 // Slugs used when Redis has no data yet (first deploy, local dev without .env).
 const DEFAULT_POPULAR_SLUGS = [
   'select',
@@ -280,6 +284,7 @@ ${bodyContent}
   <script src="/splash.js" defer></script>
   <script src="/track.js" defer></script>
   <script src="/compare.js" defer></script>
+  <script type="module" src="/assets/elements.js"></script>
 </body>
 </html>`;
 }
@@ -377,14 +382,7 @@ function buildPage(commandName, entry, headerTpl) {
   ${overview ? `<p class="command-overview">${esc(overview)}</p>` : ''}
 
   <h2>Compatibility</h2>
-  <fieldset class="compare-bar">
-    <legend>Filter by Database</legend>
-    <label><input type="checkbox" value="mysql" checked> MySQL</label>
-    <label><input type="checkbox" value="postgresql" checked> PostgreSQL</label>
-    <label><input type="checkbox" value="sqlserver" checked> SQL Server</label>
-    <label><input type="checkbox" value="oracle" checked> Oracle</label>
-    <label><input type="checkbox" value="sqlite" checked> SQLite</label>
-  </fieldset>
+  ${DB_FILTER_HTML}
   <table>
     <caption>SQL ${esc(displayName)} Compatibility Across Databases</caption>
     <thead>
@@ -496,11 +494,12 @@ function buildHomepage(data, headerTpl, popularCommands) {
   const templateContent = fs.readFileSync(path.join(SRC_DIR, 'index.html'), 'utf8');
   const commandList     = buildCommandList(data);
 
-  // Both substituted values are built entirely from esc()-escaped data.
+  // All substituted values are built entirely from esc()-escaped data.
   // popular.js is homepage-only, appended to body content so it loads after the list.
   const content = templateContent
     .replace('{{COMMAND_LIST}}', commandList)
     .replace('{{POPULAR_COMMANDS}}', popularCommands)
+    .replace('{{DB_FILTER}}', DB_FILTER_HTML)
     + '\n<script src="/popular.js" defer></script>';
 
   const title     = 'Can I Use SQL? | SQL Compatibility Checker';

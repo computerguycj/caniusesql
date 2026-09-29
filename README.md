@@ -43,7 +43,7 @@ dist/ (one HTML file per command + homepage)
 Vercel (serves + runs API functions)
 ```
 
-The build step (`node generate.js`) reads your data and generates:
+The build step (`npm run build`: `node generate.js`, then `vite build` for the Vue custom elements) reads your data and generates:
 - Individual pages for each SQL command
 - Homepage with full index
 - Sitemap for search engines
@@ -60,7 +60,7 @@ git clone https://github.com/computerguycj/caniusesql.git
 cd caniusesql
 npm install
 npm run generate-sitemap
-node generate.js
+npm run build
 ```
 
 Then serve `dist/` with any static server:
@@ -71,7 +71,7 @@ npx http-server dist/
 ### Adding SQL Commands
 
 1. Edit `data.json` with new commands or update compatibility
-2. Re-run `node generate.js`
+2. Re-run `npm run build` and `npm test`
 3. Open a PR
 
 That's it.
