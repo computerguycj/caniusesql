@@ -10,6 +10,11 @@ Context: <optional — link to commit, file, or issue>
 
 ---
 
+## 2026-09-29 - <theme-picker>: native select, owns the theme side effect, container query on the header
+Chose: a native `<select>` (System/Light/Dark) wrapped in its `<label>` (no id needed). The element owns the site theme: it sets or removes `data-theme` on `<html>`, saves the choice in localStorage (`caniusesql_theme`; System removes the key), follows other tabs through the `storage` event, and emits `theme-change` (detail[0] is the choice). Mobile-first: the "Theme" text is screen-reader-only by default and a container query (`@container (min-width: 720px)`) shows it when the header, the container, has room.
+Rejected: three toggle buttons (wider on phones, and needs ARIA to act as one group); a `<dialog>` (not a modal control); emitting only and letting page code apply the theme (a second script owning the same state); `container-type` on the element's own host (inline-size containment makes a flex item's content width 0, so it would collapse; the header is the natural container).
+Context: container queries resolve through the flat tree, so the shadow-root styles can query the light-DOM header; verified label shown at 1280px, hidden at 375px. The header gets `container-type: inline-size` in the switch-over commit.
+
 ## 2026-09-29 - Tokens use light-dark(); themes switch through color-scheme; tokens in @layer theme
 Chose: every themed token is written once as `light-dark(<light>, <dark>)`; `:root` gets `color-scheme: light dark` (System), and `data-theme="light"` / `"dark"` on `<html>` sets `color-scheme` to one value. Shadows wrap light-dark() around the color inside the shadow, since box-shadow isn't a color. Browsers without light-dark() get the light values from an `@supports not` block (Light only); tests/build.test.js keeps that block equal to the light values. tokens.css declares `@layer base, components, theme;` and puts everything in `theme`; styles.css stays unlayered.
 Rejected: separate dark blocks (dark values written twice: once for the OS preference, once for the data-theme override); resolving System to light/dark in JS (no dark mode without JS).
