@@ -280,7 +280,6 @@ ${bodyContent}
 <footer class="site-footer">
   <p>&copy; 2024 Can I Use SQL. All rights reserved.</p>
 </footer>
-  <script src="/search.js" defer></script>
   <script src="/splash.js" defer></script>
   <script src="/track.js" defer></script>
   <script src="/compare.js" defer></script>
@@ -348,7 +347,7 @@ function buildPage(commandName, entry, headerTpl) {
       <div class="per-db-entry" data-db="${esc(db)}">
         <h4>${esc(label)} <span class="syntax-kind ${example.className}">${esc(example.label)}</span></h4>
         ${note}
-        <div class="syntax">${esc(example.text)}</div>
+        <copy-code><div class="syntax">${esc(example.text)}</div></copy-code>
       </div>`;
   }
 
@@ -403,7 +402,7 @@ function buildPage(commandName, entry, headerTpl) {
   </div>
 
   <h2>Standard Syntax</h2>
-  <div class="syntax">${esc(syntax)}</div>
+  <copy-code><div class="syntax">${esc(syntax)}</div></copy-code>
 
   <h2>Version Support</h2>
   <div class="version-list">
@@ -571,9 +570,6 @@ async function main() {
 
   fs.copyFileSync(path.join(TEMPLATES_DIR, 'styles.css'), path.join(OUT_DIR, 'styles.css'));
   console.log('✔  Copied styles.css');
-
-  fs.copyFileSync(path.join(TEMPLATES_DIR, 'search.js'), path.join(OUT_DIR, 'search.js'));
-  console.log('✔  Copied search.js');
 
   fs.copyFileSync(path.join(TEMPLATES_DIR, 'favicon.svg'), path.join(OUT_DIR, 'favicon.svg'));
   console.log('✔  Copied favicon.svg');

@@ -4,7 +4,8 @@
  * Runs the full build (generate.js, then vite build), then checks the SEO
  * basics on every generated page: canonical tag, <h1>, compatibility table,
  * homepage cards, and sitemap. Also checks the custom elements bundle exists
- * and every page loads it with one <db-filter> and one <command-search>.
+ * and every page loads it with one <db-filter> and one <command-search>,
+ * and every SQL block on a command page sits inside a <copy-code>.
  *
  * Uses regex over the generated HTML instead of a DOM parser so the test
  * needs no dependencies. The markup comes from generate.js, which we control.
@@ -73,6 +74,14 @@ test('every command page has its canonical, h1, and compatibility table', () => 
     for (const db of Object.keys(entry.compatibility)) {
       assert.equal(count(html, new RegExp(`<tr data-db="${db}">`, 'g')), 1, `${where}: row for ${db}`);
     }
+
+    // The SQL stays in the static HTML, inside the <copy-code> that adds its button.
+    assert.ok(html.includes(`<copy-code><div class="syntax">${esc(entry.syntax)}</div></copy-code>`), `${where}: standard syntax in <copy-code>`);
+    assert.equal(
+      count(html, /<copy-code><div class="syntax">/g),
+      count(html, /class="syntax"/g),
+      `${where}: every syntax block in <copy-code>`,
+    );
   }
 });
 
@@ -113,5 +122,6 @@ test('every page has one <db-filter>, one <command-search>, and loads the elemen
     assert.equal(count(html, /class="compare-bar"/g), 0, `${where}: old static filter bar removed`);
     assert.equal(count(html, /<command-search><\/command-search>/g), 1, `${where}: <command-search>`);
     assert.equal(count(html, /class="site-search"|class="search-results"/g), 0, `${where}: old static search box removed`);
+    assert.equal(count(html, /search\.js/g), 0, `${where}: search.js no longer loaded`);
   }
 });

@@ -10,6 +10,11 @@ Context: <optional — link to commit, file, or issue>
 
 ---
 
+## 2026-09-29 - Delete search.js (supersedes "search.js keeps its name")
+Chose: delete templates/search.js, its script tag, and its copy step now that <copy-code> owns the copy buttons; `copy-code:not(:defined) { display: block; }` so the wrapper is a block before and after Vue renders.
+Rejected: renaming it to copy.js (nothing left to put in it).
+Context: supersedes the 2026-09-29 "<command-search> switch-over" entry's plan to rename search.js later. generate.js never clears dist/, so local builds keep a stale dist/search.js; Vercel builds from a clean checkout, and no page references it.
+
 ## 2026-09-29 - <copy-code>: wrap the static block, copy the host's text
 Chose: `<copy-code>` wraps the generated `<div class="syntax">`, shows it through a `<slot>`, and copies `useHost().textContent` (the light DOM only, not the shadow root's button). One element per block.
 Rejected: passing the SQL as an attribute (every example twice in the HTML); one page-level element that finds all blocks (brings back DOM querying, not the custom element model); moving the block into the shadow root (page CSS couldn't style it, and it leaves the static HTML crawlers read).
