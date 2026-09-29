@@ -26,20 +26,16 @@ a:focus-visible {
 }
 
 /* Keep focused elements and anchor targets out from under the sticky
-   header (WCAG 2.2 focus not obscured). Header height + 16px at each point
-   where it wraps (measured in Chromium): four rows below 308px, three below
-   314px, two below 566px, one from 566px. */
-html { scroll-padding-top: 236px; }
+   header (WCAG 2.2 focus not obscured). Tallest header across all pages
+   + 16px, measured in Chromium: three rows below 308px, two rows below
+   792px (the header container's 720px breakpoint), one row from there. */
+html { scroll-padding-top: 186px; }
 
 @media (min-width: 308px) {
-  html { scroll-padding-top: 188px; }
-}
-
-@media (min-width: 314px) {
   html { scroll-padding-top: 138px; }
 }
 
-@media (min-width: 566px) {
+@media (min-width: 792px) {
   html { scroll-padding-top: 86px; }
 }
 
@@ -104,8 +100,16 @@ h4 { color: var(--color-text-heading); margin: 16px 0 4px; }
   display: flex;
   align-items: center;
   gap: 0;
-  flex: 1;
+  /* Narrow header (mobile-first): the title takes the rest of the first
+     row after the logo (30px), the search button (34px) and two 16px gaps,
+     so the theme picker and Buy Me a Coffee wrap to the second row instead
+     of squeezing it. */
+  flex: 1 1 calc(100% - 96px);
   min-width: 0;
+}
+
+@container (min-width: 720px) {
+  .command-heading { flex: 1 1 0%; }
 }
 
 .command-heading h1 {
@@ -137,15 +141,27 @@ h4 { color: var(--color-text-heading); margin: 16px 0 4px; }
    the element is defined, so the header doesn't jump when Vue renders it.
    -------------------------------------------------------------------------- */
 
+/* Mobile-first: on a narrow header the element is just a 34px search
+   button, so the title keeps the row. From a 720px header (container query;
+   .site-header is the container) it's the full input. */
 command-search {
-  flex: 1;
-  min-width: 180px;
-  max-width: 360px;
+  flex: 0 0 auto;
 }
 
 command-search:not(:defined) {
   display: block;
+  width: 34px;
   height: 34px;
+}
+
+@container (min-width: 720px) {
+  command-search {
+    flex: 1;
+    min-width: 180px;
+    max-width: 360px;
+  }
+
+  command-search:not(:defined) { width: auto; }
 }
 
 /* Theme picker: <theme-picker> (src/elements/ThemePicker.ce.vue). Reserve

@@ -10,6 +10,11 @@ Context: <optional — link to commit, file, or issue>
 
 ---
 
+## 2026-09-29 - Search collapses to a button on narrow headers
+Chose: below a 720px header (container query; the same breakpoint as the theme picker's label), <command-search> is a 34px button with `aria-expanded`. Tap, Enter/Space, or "/" shows the input absolutely positioned over the header's first row (offsets match the header padding) and focuses it; Escape clears, collapses, and returns focus to the button; clicking outside or tabbing away collapses and keeps the text. On narrow headers the title gets `flex-basis: calc(100% - 96px)` (row minus logo, button, and two gaps) so the theme picker and Buy Me a Coffee wrap to the second row. scroll-padding-top re-measured across all 149 pages: header wraps at 308px and 792px.
+Rejected: hiding the title on narrow screens (on command pages the header <h1> is the only place the command name appears); search on its own full-width row (about 45px more sticky header on phones); growing the header while search is open (moves the page).
+Context: before, command titles were cut from 316px up to 728px (MERGE) or 940px (JSON_TABLE) and the homepage title was overlapped. Now MERGE fits from 332px and JSON_TABLE from 420px; between 792px and 940px the wide layout still truncates JSON_TABLE with an ellipsis, as it did before. Wide headers are pixel-identical to before.
+
 ## 2026-09-29 - Non-Vue inventory (started; stage 3 finishes it)
 Every part of the front end that isn't Vue, and why. "Not done yet" means exactly that; it isn't intentional until it has a real reason.
 - No-flash theme script (inline, `THEME_SCRIPT` in generate.js): intentional. It must run before first paint; the Vue bundle is a deferred module and loads too late.
