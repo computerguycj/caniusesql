@@ -7,12 +7,15 @@
     "generate-sitemap": "node generate-sitemap.js",
     "build": "node generate.js && vite build",
     "test": "npm run lint && node --test",
-    "lint": "stylelint \"templates/**/*.css\" \"src/**/*.vue\""
+    "lint": "stylelint \"templates/**/*.css\" \"src/**/*.vue\"",
+    "test:e2e": "npm run build && playwright test"
   },
   "dependencies": {
     "vue": "^3.5.43"
   },
   "devDependencies": {
+    "@axe-core/playwright": "^4.13.0",
+    "@playwright/test": "1.56.1",
     "@vitejs/plugin-vue": "^6.0.9",
     "postcss-html": "^2.0.0",
     "stylelint": "^17.15.0",

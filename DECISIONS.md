@@ -10,6 +10,16 @@ Context: <optional — link to commit, file, or issue>
 
 ---
 
+## 2026-09-29 - Browser tests: Playwright + axe, Linux baselines, known contrast failures marked
+Chose: @playwright/test pinned to 1.56.1 (matches the Chromium build in the dev container, so no browser download); `vite preview --outDir dist` as the test server (no new server dependency); screenshots of / (one screen tall) and /f/merge/ (full length), light and dark, 1280 and 375px, with animations disabled and the intro splash suppressed by its cookie; axe scans (WCAG 2.1 A/AA) with the search list open. Today's contrast failures are a separate `test.fail()` test per page and scheme, so the palette fix must remove the marker. `npm run test:e2e`, not part of `npm test` (needs a browser).
+Rejected: latest Playwright 1.63 (would need a browser download here); full-length homepage (148 near-identical cards, about 1.5 MB per PNG, 5.6 MB per baseline set); excluding color-contrast from the scan (hides the failures instead of tracking them).
+Context: baselines are Linux + Chromium renders (`-linux.png`); fonts render differently on macOS, so compare in Linux. Disabling animations also removed the intermittent 375px screenshot difference seen in stage 1 (inference: a transition was mid-flight).
+
+## 2026-09-29 - Accept MPL-2.0 for axe-core and @axe-core/playwright (test-only)
+Chose: accept axe-core and @axe-core/playwright 4.x (MPL-2.0) as dev dependencies for the accessibility scans.
+Rejected: no automated scan (manual checklist only); Lighthouse (runs axe-core internally anyway); pa11y (LGPL-3.0).
+Context: same reasoning as lightningcss. They run only in the test run, none of their code ships in dist/, and we don't modify them. @playwright/test is Apache-2.0.
+
 ## 2026-09-29 - Color tokens in their own file, enforced by stylelint
 Chose: templates/tokens.css holds every color value (light in `:root`, dark in the `prefers-color-scheme` block) and is linked before styles.css; stylelint runs `color-no-hex`, `color-named: never`, and `function-disallowed-list` (rgb/hsl/etc.) on all other CSS and `.vue` style blocks, as part of `npm test`.
 Rejected: tokens at the top of styles.css with stylelint-disable comments (easy to widen by accident); `color-no-hex` alone (`white` and `rgba()` would slip through).
