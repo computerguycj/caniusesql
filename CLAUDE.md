@@ -29,3 +29,15 @@ nag.
 Append to the top of DECISIONS.md under a new `## YYYY-MM-DD — <short title>`
 heading. Keep entries short: what was chosen, what was rejected, why. Link
 commits or files when useful.
+
+## Colors come only from tokens
+- Every color value (hex, `rgb()`/`hsl()`-style functions, named colors like
+  `white`) lives in `templates/tokens.css`. Everywhere else, including the
+  `<style>` blocks in `src/elements/*.vue`, use `var(--…)`.
+- Need a new color? Add a token to `tokens.css` (light value in `:root`, dark
+  value in the dark block if it differs), then reference it.
+- `npm run lint` enforces this with stylelint (`color-no-hex`, `color-named`,
+  `function-disallowed-list`); `npm test` runs it first.
+- Not covered by the linter: colors in JS strings or HTML/SVG attributes. Use
+  `var(--…)` there too (see `splash.js`, `header.html`). `favicon.svg` is the
+  one exception: it's a standalone file and can't read page tokens.

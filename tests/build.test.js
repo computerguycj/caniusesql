@@ -5,7 +5,8 @@
  * basics on every generated page: canonical tag, <h1>, compatibility table,
  * homepage cards, and sitemap. Also checks the custom elements bundle exists
  * and every page loads it with one <db-filter> and one <command-search>,
- * and every SQL block on a command page sits inside a <copy-code>.
+ * every SQL block on a command page sits inside a <copy-code>, and every
+ * page links tokens.css before styles.css.
  *
  * Uses regex over the generated HTML instead of a DOM parser so the test
  * needs no dependencies. The markup comes from generate.js, which we control.
@@ -123,5 +124,6 @@ test('every page has one <db-filter>, one <command-search>, and loads the elemen
     assert.equal(count(html, /<command-search><\/command-search>/g), 1, `${where}: <command-search>`);
     assert.equal(count(html, /class="site-search"|class="search-results"/g), 0, `${where}: old static search box removed`);
     assert.equal(count(html, /search\.js/g), 0, `${where}: search.js no longer loaded`);
+    assert.match(html, /<link rel="stylesheet" href="\/tokens\.css">\s*<link rel="stylesheet" href="\/styles\.css">/, `${where}: tokens.css linked before styles.css`);
   }
 });

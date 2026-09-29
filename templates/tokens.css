@@ -1,0 +1,103 @@
+/* ==========================================================================
+   Can I Use SQL? — color tokens
+   The only file allowed to contain color values (hex, rgb(), named colors).
+   Everything else uses var(--…). Enforced by stylelint; see CLAUDE.md.
+   ========================================================================== */
+
+:root {
+  --color-bg:              #f5f7fa;
+  --color-surface:         #ffffff;
+  --color-surface-alt:     #f8f9fa;
+  --color-header-bg:       #f5f7fa;
+  --color-primary:         #1f74ae;
+  --color-primary-dark:    #226a9a;
+  --color-text:            #333333;
+  --color-text-heading:    #2c3e50;
+  --color-text-muted:      #657171;
+  --color-text-desc:       #555555;
+  --color-border:          #dddddd;
+  --color-border-light:    #f0f0f0;
+  --color-control-border:  #8191a2;
+  --color-row-hover:       #f5f5f5;
+  --color-search-hover:    #f0f7ff;
+  --color-badge-bg:        #eaf3fb;
+  --color-badge-bg-hover:  #d6eaf8;
+  --color-badge-text:      #2472a4;
+  --color-badge-border:    #aed6f1;
+  --color-focus-ring:      rgba(31, 116, 174, 0.2);
+  --shadow-sm:             0 1px 4px rgba(0, 0, 0, 0.08);
+  --shadow-md:             0 2px 5px rgba(0, 0, 0, 0.10);
+  --shadow-lg:             0 4px 12px rgba(0, 0, 0, 0.15);
+  --shadow-hover:          0 3px 10px rgba(0, 0, 0, 0.12);
+  --shadow-header:         0 2px 6px rgba(0, 0, 0, 0.08);
+
+  /* Support/status colors. Dark overrides are in the dark block. */
+  --color-success:         #1c7c44;
+  --color-success-strong:  #1f7a43;
+  --color-success-bg:      #e6f7ee;
+  --color-warning:         #a75c05;
+  --color-warning-text:    #8a6d1d;
+  --color-warning-border:  #d4a017;
+  --color-warning-bg:      #fff8e1;
+  --color-danger:          #c1272d;
+  --color-danger-bg:       #fde8e8;
+  --color-neutral:         #666666;
+  --color-text-on-accent:  #ffffff;
+
+  /* Intro splash: a fixed dark "terminal" look in every theme. */
+  --splash-backdrop:       rgba(30, 39, 46, 0.92);
+  --splash-card-bg:        #1e272e;
+  --splash-text:           #ecf0f1;
+  --splash-shadow:         0 8px 32px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(52, 152, 219, 0.3);
+  --splash-prompt:         #27ae60;
+  --splash-query:          #3498db;
+  --splash-tagline:        #95a5a6;
+  --splash-rule:           #2c3e50;
+  --splash-dismiss:        #849192;
+
+  /* Header logo: fixed brand colors in every theme. */
+  --logo-top:              #5dade2;
+  --logo-bottom:           #1a6391;
+  --logo-mark:             #ffffff;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-bg:              #0d1117;
+    --color-surface:         #161b22;
+    --color-surface-alt:     #1c2128;
+    --color-header-bg:       #161b22;
+    --color-primary:         #58a6ff;
+    --color-primary-dark:    #388bfd;
+    --color-text:            #e6edf3;
+    --color-text-heading:    #c9d1d9;
+    --color-text-muted:      #8b949e;
+    --color-text-desc:       #b1bac4;
+    --color-border:          #30363d;
+    --color-border-light:    #21262d;
+    --color-control-border:  #5c6775;
+    --color-row-hover:       #1c2128;
+    --color-search-hover:    #1c2128;
+    --color-badge-bg:        #0d2a4d;
+    --color-badge-bg-hover:  #132f4c;
+    --color-badge-text:      #58a6ff;
+    --color-badge-border:    #1f4e8c;
+    --color-focus-ring:      rgba(88, 166, 255, 0.25);
+    --shadow-sm:             0 1px 4px rgba(0, 0, 0, 0.4);
+    --shadow-md:             0 2px 5px rgba(0, 0, 0, 0.5);
+    --shadow-lg:             0 4px 12px rgba(0, 0, 0, 0.6);
+    --shadow-hover:          0 3px 10px rgba(0, 0, 0, 0.5);
+    --shadow-header:         0 2px 6px rgba(0, 0, 0, 0.4);
+
+    --color-text-on-accent:  #0d1117;
+    --color-success:         #27ae60;
+    --color-success-strong:  #289d56;
+    --color-success-bg:      #0f2318;
+    --color-warning:         #d97706;
+    --color-warning-text:    #a88423;
+    --color-warning-bg:      #221c0a;
+    --color-danger:          #df6065;
+    --color-danger-bg:       #2d1416;
+    --color-neutral:         #8a8a8a;
+  }
+}
