@@ -4,7 +4,7 @@
  * Runs the full build (generate.js, then vite build), then checks the SEO
  * basics on every generated page: canonical tag, <h1>, compatibility table,
  * homepage cards, and sitemap. Also checks the custom elements bundle exists
- * and every page loads it with one <db-filter>.
+ * and every page loads it with one <db-filter> and one <command-search>.
  *
  * Uses regex over the generated HTML instead of a DOM parser so the test
  * needs no dependencies. The markup comes from generate.js, which we control.
@@ -102,7 +102,7 @@ test('vite build writes the custom elements bundle', () => {
   assert.ok(fs.existsSync(path.join(DIST, 'assets', 'elements.js')));
 });
 
-test('every page has one <db-filter> and loads the elements bundle', () => {
+test('every page has one <db-filter>, one <command-search>, and loads the elements bundle', () => {
   const pages = [
     ['/', readDist('index.html')],
     ...commands.map(([, entry]) => [`/f/${entry.slug}`, readDist('f', entry.slug, 'index.html')]),
@@ -111,5 +111,7 @@ test('every page has one <db-filter> and loads the elements bundle', () => {
     assert.equal(count(html, /<db-filter databases="[^"]+"><\/db-filter>/g), 1, `${where}: <db-filter>`);
     assert.equal(count(html, /<script type="module" src="\/assets\/elements.js"><\/script>/g), 1, `${where}: bundle script`);
     assert.equal(count(html, /class="compare-bar"/g), 0, `${where}: old static filter bar removed`);
+    assert.equal(count(html, /<command-search><\/command-search>/g), 1, `${where}: <command-search>`);
+    assert.equal(count(html, /class="site-search"|class="search-results"/g), 0, `${where}: old static search box removed`);
   }
 });

@@ -10,6 +10,11 @@ Context: <optional — link to commit, file, or issue>
 
 ---
 
+## 2026-09-29 - <command-search> switch-over: page keeps sizing, search.js keeps its name
+Chose: page CSS sizes the element in the header (flex 1, 180-360px) and reserves 34px height via `command-search:not(:defined)`, the input height measured in Chromium; search.js keeps its filename with only the copy buttons left in it.
+Rejected: sizing via `:host` (header layout is the page's concern, as with db-filter); renaming search.js to copy.js in this commit (touches generate.js and the script tag, and makes the one-commit revert noisier; do it as its own change).
+Context: 34px holds at every width because the input never wraps. Re-measure if the input's padding, border, or font size changes.
+
 ## 2026-09-29 - <command-search>: data via `src`, no events out
 Chose: `src` attribute (default /data.json?v=2), fetched once on mount; results are real `<a href>` links, so the element emits nothing.
 Rejected: passing command data as an attribute (inlines all of data.json into every page); a `command-select` event (no page code would listen).
