@@ -10,6 +10,21 @@ Context: <optional — link to commit, file, or issue>
 
 ---
 
+## 2026-09-29 - Non-Vue inventory (started; stage 3 finishes it)
+Every part of the front end that isn't Vue, and why. "Not done yet" means exactly that; it isn't intentional until it has a real reason.
+- No-flash theme script (inline, `THEME_SCRIPT` in generate.js): intentional. It must run before first paint; the Vue bundle is a deferred module and loads too late.
+- Page content from generate.js (headings, compatibility table, cards, syntax text): intentional. Static HTML for SEO and first paint; Vue elements wrap or sit beside it.
+- compare.js (hides rows and cards on `filter-change`): not done yet.
+- splash.js (first-visit intro overlay): not done yet.
+- popular.js (fills "Popular commands" from /api/popular): not done yet.
+- track.js (page-view ping to /api/track): not done yet; may stay plain JS (no UI).
+- api/*.js edge functions: not front end; replaced by the ASP.NET Core API in stage 3.
+
+## 2026-09-29 - Theme picker switch-over: no-flash inline script, header as container
+Chose: `<theme-picker>` in the header after the search box; a one-line inline script (`THEME_SCRIPT` in generate.js) first in `<head>`, before any stylesheet, sets `data-theme` from localStorage; the CSP allows it by SHA-256 hash via `npm run csp:update`. `.site-header` gets `container-type: inline-size` so the picker's label can appear through a container query. `theme-picker:not(:defined)` reserves 85x32px, or 134.6x32px when the header is at least 720px wide (measured; no shift at 1280, 700, 375, 310px). scroll-padding-top re-measured: the header now wraps at 308, 314 and 566px.
+Rejected: applying the saved theme from the Vue element only (paints the OS theme first; the screencast test fails without the head script); a `defer` or external script (runs after first paint); `'unsafe-inline'` for the script.
+Context: the no-flash test records every frame Chromium paints while loading /f/merge/ with a saved theme opposite the OS, and checks the page background in each. It ignores frames from before the navigation, because the screencast can hand over a stale frame of the previous page first (seen once, then confirmed by separating before/after frames).
+
 ## 2026-09-29 - <theme-picker>: native select, owns the theme side effect, container query on the header
 Chose: a native `<select>` (System/Light/Dark) wrapped in its `<label>` (no id needed). The element owns the site theme: it sets or removes `data-theme` on `<html>`, saves the choice in localStorage (`caniusesql_theme`; System removes the key), follows other tabs through the `storage` event, and emits `theme-change` (detail[0] is the choice). Mobile-first: the "Theme" text is screen-reader-only by default and a container query (`@container (min-width: 720px)`) shows it when the header, the container, has room.
 Rejected: three toggle buttons (wider on phones, and needs ARIA to act as one group); a `<dialog>` (not a modal control); emitting only and letting page code apply the theme (a second script owning the same state); `container-type` on the element's own host (inline-size containment makes a flex item's content width 0, so it would collapse; the header is the natural container).

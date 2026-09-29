@@ -66,3 +66,6 @@ commits or files when useful.
   commit the new `vercel.json`. `tests/e2e/csp.spec.js` fails until you do.
 - No inline event handlers (`onclick="…"`), no `style="…"` attributes, no
   `<style>` built by JS. Use classes and stylesheets.
+- The one inline script is `THEME_SCRIPT` in `generate.js` (applies the saved
+  theme before first paint). Editing it changes its hash: run
+  `npm run csp:update`. Keep it tiny and keep it the first thing in `<head>`.
