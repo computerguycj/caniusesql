@@ -34,8 +34,12 @@ commits or files when useful.
 - Every color value (hex, `rgb()`/`hsl()`-style functions, named colors like
   `white`) lives in `templates/tokens.css`. Everywhere else, including the
   `<style>` blocks in `src/elements/*.vue`, use `var(--…)`.
-- Need a new color? Add a token to `tokens.css` (light value in `:root`, dark
-  value in the dark block if it differs), then reference it.
+- Need a new color? Add a token to `tokens.css`, inside `@layer theme`:
+  `--name: light-dark(<light>, <dark>);` (a plain value if both are the
+  same), and add its light value to the `@supports not (… light-dark …)`
+  fallback block. `npm test` checks the fallback matches. Then reference it.
+- Themes switch through `color-scheme` on `:root` (`data-theme="light"` or
+  `"dark"`, none for System). Don't add per-theme blocks of token values.
 - `npm run lint` enforces this with stylelint (`color-no-hex`, `color-named`,
   `function-disallowed-list`); `npm test` runs it first.
 - Not covered by the linter: colors in JS strings or HTML/SVG attributes.

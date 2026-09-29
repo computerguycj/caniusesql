@@ -127,3 +127,18 @@ test('every page has one <db-filter>, one <command-search>, and loads the elemen
     assert.match(html, /<link rel="stylesheet" href="\/tokens\.css">\s*<link rel="stylesheet" href="\/styles\.css">/, `${where}: tokens.css linked before styles.css`);
   }
 });
+
+test('tokens.css fallback for browsers without light-dark() matches the light values', () => {
+  const css = fs.readFileSync(path.join(ROOT, 'templates', 'tokens.css'), 'utf8');
+  const [main, fallback] = css.split('@supports not (color: light-dark(#000, #fff))');
+  const decls = text => Object.fromEntries([...text.matchAll(/^\s*(--[\w-]+):\s*(.+?);\s*$/gm)].map(m => [m[1], m[2]]));
+  const themed = Object.entries(decls(main)).filter(([name]) => !/^--(splash|logo)-/.test(name));
+  const fb = decls(fallback);
+  assert.ok(themed.length > 0);
+  for (const [name, value] of themed) {
+    // Light value = the first argument of each light-dark(); tokens without light-dark() are the same in both.
+    const light = value.replace(/light-dark\(((?:[^(),]|\([^()]*\))+),\s*(?:[^(),]|\([^()]*\))+\)/g, '$1');
+    assert.equal(fb[name], light, `fallback ${name}`);
+  }
+  assert.deepEqual(Object.keys(fb).sort(), themed.map(([n]) => n).sort(), 'fallback has exactly the themed tokens');
+});

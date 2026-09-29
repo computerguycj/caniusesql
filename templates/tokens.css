@@ -2,102 +2,128 @@
    Can I Use SQL? — color tokens
    The only file allowed to contain color values (hex, rgb(), named colors).
    Everything else uses var(--…). Enforced by stylelint; see CLAUDE.md.
+
+   Themes: each token holds both values, light-dark(<light>, <dark>). Which
+   one applies is decided by the used `color-scheme`, set once on :root:
+     no data-theme       -> "light dark": follow the OS (System)
+     data-theme="light"  -> "light"
+     data-theme="dark"   -> "dark"
+   color-scheme also switches native controls and scrollbars, and it is
+   inherited, so the custom elements' shadow roots follow along.
+
+   Layers: this file declares the layer order and puts everything in the
+   `theme` layer. styles.css is unlayered for now, and unlayered styles beat
+   every layer, so it keeps winning while the migration runs. That's safe
+   because styles.css never redefines a token.
    ========================================================================== */
 
-:root {
-  --color-bg:              #f5f7fa;
-  --color-surface:         #ffffff;
-  --color-surface-alt:     #f8f9fa;
-  --color-header-bg:       #f5f7fa;
-  --color-primary:         #1f74ae;
-  --color-primary-dark:    #226a9a;
-  --color-text:            #333333;
-  --color-text-heading:    #2c3e50;
-  --color-text-muted:      #657171;
-  --color-text-desc:       #555555;
-  --color-border:          #dddddd;
-  --color-border-light:    #f0f0f0;
-  --color-control-border:  #8191a2;
-  --color-row-hover:       #f5f5f5;
-  --color-search-hover:    #f0f7ff;
-  --color-badge-bg:        #eaf3fb;
-  --color-badge-bg-hover:  #d6eaf8;
-  --color-badge-text:      #2472a4;
-  --color-badge-border:    #aed6f1;
-  --color-focus-ring:      rgba(31, 116, 174, 0.2);
-  --shadow-sm:             0 1px 4px rgba(0, 0, 0, 0.08);
-  --shadow-md:             0 2px 5px rgba(0, 0, 0, 0.10);
-  --shadow-lg:             0 4px 12px rgba(0, 0, 0, 0.15);
-  --shadow-hover:          0 3px 10px rgba(0, 0, 0, 0.12);
-  --shadow-header:         0 2px 6px rgba(0, 0, 0, 0.08);
+@layer base, components, theme;
 
-  /* Support/status colors. Dark overrides are in the dark block. */
-  --color-success:         #1c7c44;
-  --color-success-strong:  #1f7a43;
-  --color-success-bg:      #e6f7ee;
-  --color-warning:         #a75c05;
-  --color-warning-text:    #8a6d1d;
-  --color-warning-border:  #d4a017;
-  --color-warning-bg:      #fff8e1;
-  --color-danger:          #c1272d;
-  --color-danger-bg:       #fde8e8;
-  --color-neutral:         #666666;
-  --color-text-on-accent:  #ffffff;
-
-  /* Intro splash: a fixed dark "terminal" look in every theme. */
-  --splash-backdrop:       rgba(30, 39, 46, 0.92);
-  --splash-card-bg:        #1e272e;
-  --splash-text:           #ecf0f1;
-  --splash-shadow:         0 8px 32px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(52, 152, 219, 0.3);
-  --splash-prompt:         #27ae60;
-  --splash-query:          #3498db;
-  --splash-tagline:        #95a5a6;
-  --splash-rule:           #2c3e50;
-  --splash-dismiss:        #849192;
-
-  /* Header logo: fixed brand colors in every theme. */
-  --logo-top:              #5dade2;
-  --logo-bottom:           #1a6391;
-  --logo-mark:             #ffffff;
-}
-
-@media (prefers-color-scheme: dark) {
+@layer theme {
   :root {
-    --color-bg:              #0d1117;
-    --color-surface:         #161b22;
-    --color-surface-alt:     #1c2128;
-    --color-header-bg:       #161b22;
-    --color-primary:         #58a6ff;
-    --color-primary-dark:    #388bfd;
-    --color-text:            #e6edf3;
-    --color-text-heading:    #c9d1d9;
-    --color-text-muted:      #8b949e;
-    --color-text-desc:       #b1bac4;
-    --color-border:          #30363d;
-    --color-border-light:    #21262d;
-    --color-control-border:  #5c6775;
-    --color-row-hover:       #1c2128;
-    --color-search-hover:    #1c2128;
-    --color-badge-bg:        #0d2a4d;
-    --color-badge-bg-hover:  #132f4c;
-    --color-badge-text:      #58a6ff;
-    --color-badge-border:    #1f4e8c;
-    --color-focus-ring:      rgba(88, 166, 255, 0.25);
-    --shadow-sm:             0 1px 4px rgba(0, 0, 0, 0.4);
-    --shadow-md:             0 2px 5px rgba(0, 0, 0, 0.5);
-    --shadow-lg:             0 4px 12px rgba(0, 0, 0, 0.6);
-    --shadow-hover:          0 3px 10px rgba(0, 0, 0, 0.5);
-    --shadow-header:         0 2px 6px rgba(0, 0, 0, 0.4);
+    color-scheme: light dark;
 
-    --color-text-on-accent:  #0d1117;
-    --color-success:         #27ae60;
-    --color-success-strong:  #289d56;
-    --color-success-bg:      #0f2318;
-    --color-warning:         #d97706;
-    --color-warning-text:    #a88423;
-    --color-warning-bg:      #221c0a;
-    --color-danger:          #df6065;
-    --color-danger-bg:       #2d1416;
-    --color-neutral:         #8a8a8a;
+    --color-bg:             light-dark(#f5f7fa, #0d1117);
+    --color-surface:        light-dark(#ffffff, #161b22);
+    --color-surface-alt:    light-dark(#f8f9fa, #1c2128);
+    --color-header-bg:      light-dark(#f5f7fa, #161b22);
+    --color-primary:        light-dark(#1f74ae, #58a6ff);
+    --color-primary-dark:   light-dark(#226a9a, #388bfd);
+    --color-text:           light-dark(#333333, #e6edf3);
+    --color-text-heading:   light-dark(#2c3e50, #c9d1d9);
+    --color-text-muted:     light-dark(#657171, #8b949e);
+    --color-text-desc:      light-dark(#555555, #b1bac4);
+    --color-border:         light-dark(#dddddd, #30363d);
+    --color-border-light:   light-dark(#f0f0f0, #21262d);
+    --color-control-border: light-dark(#8191a2, #5c6775);
+    --color-row-hover:      light-dark(#f5f5f5, #1c2128);
+    --color-search-hover:   light-dark(#f0f7ff, #1c2128);
+    --color-badge-bg:       light-dark(#eaf3fb, #0d2a4d);
+    --color-badge-bg-hover: light-dark(#d6eaf8, #132f4c);
+    --color-badge-text:     light-dark(#2472a4, #58a6ff);
+    --color-badge-border:   light-dark(#aed6f1, #1f4e8c);
+    --color-focus-ring:     light-dark(rgba(31, 116, 174, 0.2), rgba(88, 166, 255, 0.25));
+    --shadow-sm:            0 1px 4px light-dark(rgba(0, 0, 0, 0.08), rgba(0, 0, 0, 0.4));
+    --shadow-md:            0 2px 5px light-dark(rgba(0, 0, 0, 0.10), rgba(0, 0, 0, 0.5));
+    --shadow-lg:            0 4px 12px light-dark(rgba(0, 0, 0, 0.15), rgba(0, 0, 0, 0.6));
+    --shadow-hover:         0 3px 10px light-dark(rgba(0, 0, 0, 0.12), rgba(0, 0, 0, 0.5));
+    --shadow-header:        0 2px 6px light-dark(rgba(0, 0, 0, 0.08), rgba(0, 0, 0, 0.4));
+
+    /* Support/status colors. */
+    --color-success:        light-dark(#1c7c44, #27ae60);
+    --color-success-strong: light-dark(#1f7a43, #289d56);
+    --color-success-bg:     light-dark(#e6f7ee, #0f2318);
+    --color-warning:        light-dark(#a75c05, #d97706);
+    --color-warning-text:   light-dark(#8a6d1d, #a88423);
+    --color-warning-border: #d4a017;
+    --color-warning-bg:     light-dark(#fff8e1, #221c0a);
+    --color-danger:         light-dark(#c1272d, #df6065);
+    --color-danger-bg:      light-dark(#fde8e8, #2d1416);
+    --color-neutral:        light-dark(#666666, #8a8a8a);
+    --color-text-on-accent: light-dark(#ffffff, #0d1117);
+
+    /* Intro splash: a fixed dark "terminal" look in every theme. */
+    --splash-backdrop:      rgba(30, 39, 46, 0.92);
+    --splash-card-bg:       #1e272e;
+    --splash-text:          #ecf0f1;
+    --splash-shadow:        0 8px 32px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(52, 152, 219, 0.3);
+    --splash-prompt:        #27ae60;
+    --splash-query:         #3498db;
+    --splash-tagline:       #95a5a6;
+    --splash-rule:          #2c3e50;
+    --splash-dismiss:       #849192;
+
+    /* Header logo: fixed brand colors in every theme. */
+    --logo-top:             #5dade2;
+    --logo-bottom:          #1a6391;
+    --logo-mark:            #ffffff;
+  }
+
+  :root[data-theme="light"] { color-scheme: light; }
+  :root[data-theme="dark"]  { color-scheme: dark; }
+
+  /* Browsers without light-dark() (before Chrome 123, Firefox 120,
+     Safari 17.5) would drop every token above. Give them the light values:
+     Light only, no dark mode. tests/build.test.js checks these match the
+     first argument of each light-dark() above. */
+  @supports not (color: light-dark(#000, #fff)) {
+    :root {
+      --color-bg:             #f5f7fa;
+      --color-surface:        #ffffff;
+      --color-surface-alt:    #f8f9fa;
+      --color-header-bg:      #f5f7fa;
+      --color-primary:        #1f74ae;
+      --color-primary-dark:   #226a9a;
+      --color-text:           #333333;
+      --color-text-heading:   #2c3e50;
+      --color-text-muted:     #657171;
+      --color-text-desc:      #555555;
+      --color-border:         #dddddd;
+      --color-border-light:   #f0f0f0;
+      --color-control-border: #8191a2;
+      --color-row-hover:      #f5f5f5;
+      --color-search-hover:   #f0f7ff;
+      --color-badge-bg:       #eaf3fb;
+      --color-badge-bg-hover: #d6eaf8;
+      --color-badge-text:     #2472a4;
+      --color-badge-border:   #aed6f1;
+      --color-focus-ring:     rgba(31, 116, 174, 0.2);
+      --shadow-sm:            0 1px 4px rgba(0, 0, 0, 0.08);
+      --shadow-md:            0 2px 5px rgba(0, 0, 0, 0.10);
+      --shadow-lg:            0 4px 12px rgba(0, 0, 0, 0.15);
+      --shadow-hover:         0 3px 10px rgba(0, 0, 0, 0.12);
+      --shadow-header:        0 2px 6px rgba(0, 0, 0, 0.08);
+      --color-success:        #1c7c44;
+      --color-success-strong: #1f7a43;
+      --color-success-bg:     #e6f7ee;
+      --color-warning:        #a75c05;
+      --color-warning-text:   #8a6d1d;
+      --color-warning-border: #d4a017;
+      --color-warning-bg:     #fff8e1;
+      --color-danger:         #c1272d;
+      --color-danger-bg:      #fde8e8;
+      --color-neutral:        #666666;
+      --color-text-on-accent: #ffffff;
+    }
   }
 }
