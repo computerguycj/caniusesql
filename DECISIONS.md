@@ -10,6 +10,11 @@ Context: <optional — link to commit, file, or issue>
 
 ---
 
+## 2026-09-29 - Vue custom element events: listen on the element
+Chose: page code listens for `filter-change` on the <db-filter> element itself; payload stays a plain object of db id -> boolean in event.detail[0].
+Rejected: listening on document (Vue CE events don't bubble); wrapping the payload (not needed while db ids can't be CustomEvent option names).
+Context: Vue's CE emit does `new CustomEvent(name, { detail: args, ...args[0] })` when args[0] is a plain object, so its keys double as event options. A db id like `bubbles` or `detail` would break this.
+
 ## 2026-09-29 - Vite build: plain build with a JS entry, fixed filename
 Chose: `vite build` with `rolldownOptions.input` = src/elements/main.js, output dist/assets/elements.js (no hash), run after generate.js via `npm run build`.
 Rejected: library mode (leaves `process.env.NODE_ENV` unreplaced, so the Vue runtime needs a manual `define`; lib mode is for publishing packages, not page bundles); hashed filenames (needs generate.js to read a manifest; Vercel revalidates unhashed files, so fixed is safe for now).

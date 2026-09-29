@@ -3,6 +3,9 @@
  *
  * Registers every Vue custom element the site uses, so the Vue runtime
  * ships once no matter how many elements a page contains.
- *
- * No elements yet; DbFilter is registered here in the next chunk.
  */
+
+import { defineCustomElement } from 'vue';
+import DbFilter from './DbFilter.ce.vue';
+
+customElements.define('db-filter', defineCustomElement(DbFilter));
