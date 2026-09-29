@@ -1,56 +1,33 @@
 /**
- * compare.js — DB filter bar for command pages and the homepage.
+ * compare.js — applies the DB filter on command pages and the homepage.
+ *
+ * The filter bar itself is the <db-filter> Vue custom element
+ * (src/elements/DbFilter.ce.vue), which owns the checkboxes and their
+ * localStorage persistence. It emits `filter-change` on mount and on every
+ * toggle, with the selection in event.detail[0], e.g. { mysql: true, ... }.
  *
  * Command pages: toggles tr[data-db] rows and .per-db-entry[data-db] blocks.
  * Homepage: filters .command-card[data-dbs] cards (visible if any checked DB
  * supports the command); hides .category-group sections that become empty.
  *
- * Filter state is persisted to localStorage so the preference carries across
- * pages and visits.
+ * Listens on the element, not document: Vue custom element events don't bubble.
  *
- * Security: reads only checkbox values from trusted static HTML — no user
- * string is inserted into the DOM.
+ * Security: reads only boolean flags keyed by db id — no user string is
+ * inserted into the DOM.
  */
 
 (function () {
   'use strict';
 
-  var STORAGE_KEY = 'caniusesql_db_filter';
-
-  var bar = document.querySelector('.compare-bar');
-  if (!bar) return;
-
-  /* ------------------------------------------------------------------
-     localStorage persistence
-     ------------------------------------------------------------------ */
-
-  function loadState() {
-    try {
-      var saved = localStorage.getItem(STORAGE_KEY);
-      return saved ? JSON.parse(saved) : null;
-    } catch (_) {
-      return null;
-    }
-  }
-
-  function saveState(shown) {
-    try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(shown));
-    } catch (_) {}
-  }
+  var filter = document.querySelector('db-filter');
+  if (!filter) return;
 
   /* ------------------------------------------------------------------
      Filter logic
      ------------------------------------------------------------------ */
 
-  function applyFilter() {
-    var checkboxes = bar.querySelectorAll('input[type="checkbox"]');
-    var shown = {};
+  function applyFilter(shown) {
     var i, j;
-    for (i = 0; i < checkboxes.length; i++) {
-      shown[checkboxes[i].value] = checkboxes[i].checked;
-    }
-    saveState(shown);
 
     // Command pages: toggle compatibility table rows
     var rows = document.querySelectorAll('tr[data-db]');
@@ -87,28 +64,8 @@
     }
   }
 
-  /* ------------------------------------------------------------------
-     Restore saved state into checkboxes, then apply
-     ------------------------------------------------------------------ */
-
-  function initFromState() {
-    var saved = loadState();
-    if (!saved) return;
-    var checkboxes = bar.querySelectorAll('input[type="checkbox"]');
-    for (var i = 0; i < checkboxes.length; i++) {
-      var val = checkboxes[i].value;
-      if (Object.prototype.hasOwnProperty.call(saved, val)) {
-        checkboxes[i].checked = saved[val];
-      }
-    }
-  }
-
-  bar.addEventListener('change', function (event) {
-    if (event.target.type !== 'checkbox') return;
-    applyFilter();
+  filter.addEventListener('filter-change', function (event) {
+    applyFilter(event.detail[0]);
   });
-
-  initFromState();
-  applyFilter();
 
 }());

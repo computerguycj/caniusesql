@@ -10,6 +10,11 @@ Context: <optional — link to commit, file, or issue>
 
 ---
 
+## 2026-09-29 - Reserve <db-filter> space with measured min-heights
+Chose: `db-filter:not(:defined)` min-height 84px / 126px (<=572px) / 168px (<=356px), measured in Chromium at the label wrap points.
+Rejected: static fallback checkboxes inside the element (duplicate markup; old checkboxes did nothing without JS anyway).
+Context: heights depend on fonts. On an OS whose default font wraps the labels at a different width, expect up to one row (42px) of shift near the breakpoints. Re-measure if the filter's styles or labels change.
+
 ## 2026-09-29 - Vue custom element events: listen on the element
 Chose: page code listens for `filter-change` on the <db-filter> element itself; payload stays a plain object of db id -> boolean in event.detail[0].
 Rejected: listening on document (Vue CE events don't bubble); wrapping the payload (not needed while db ids can't be CustomEvent option names).

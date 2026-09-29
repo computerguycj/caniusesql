@@ -83,7 +83,7 @@ onMounted(notify);
 </template>
 
 <style>
-/* Copied from .compare-bar in templates/styles.css. Page CSS can't reach
+/* Moved from .compare-bar in templates/styles.css. Page CSS can't reach
    into the shadow root, but custom properties (var(--color-*)) and inherited
    properties (font, line-height) do. */
 :host {
