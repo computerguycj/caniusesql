@@ -43,6 +43,7 @@
     --color-badge-text:     light-dark(#2472a4, #58a6ff);
     --color-badge-border:   light-dark(#aed6f1, #1f4e8c);
     --color-focus-ring:     light-dark(rgba(31, 116, 174, 0.2), rgba(88, 166, 255, 0.25));
+    --color-backdrop:       light-dark(rgba(13, 17, 23, 0.45), rgba(0, 0, 0, 0.65));
     --shadow-sm:            0 1px 4px light-dark(rgba(0, 0, 0, 0.08), rgba(0, 0, 0, 0.4));
     --shadow-md:            0 2px 5px light-dark(rgba(0, 0, 0, 0.10), rgba(0, 0, 0, 0.5));
     --shadow-lg:            0 4px 12px light-dark(rgba(0, 0, 0, 0.15), rgba(0, 0, 0, 0.6));
@@ -77,6 +78,11 @@
     --logo-top:             #5dade2;
     --logo-bottom:          #1a6391;
     --logo-mark:            #ffffff;
+
+    /* Custom mode: the two text colors text-on-accent is chosen from
+       (src/elements/customTheme.js picks whichever contrasts more). */
+    --ink-light:            #ffffff;
+    --ink-dark:             #0d1117;
   }
 
   :root[data-theme="light"] { color-scheme: light; }
@@ -108,6 +114,7 @@
       --color-badge-text:     #2472a4;
       --color-badge-border:   #aed6f1;
       --color-focus-ring:     rgba(31, 116, 174, 0.2);
+      --color-backdrop:       rgba(13, 17, 23, 0.45);
       --shadow-sm:            0 1px 4px rgba(0, 0, 0, 0.08);
       --shadow-md:            0 2px 5px rgba(0, 0, 0, 0.10);
       --shadow-lg:            0 4px 12px rgba(0, 0, 0, 0.15);

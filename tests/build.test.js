@@ -128,7 +128,7 @@ test('every page has one <db-filter>, <command-search> and <theme-picker>, the t
     assert.equal(count(html, /<theme-picker><\/theme-picker>/g), 1, `${where}: <theme-picker>`);
     // The no-flash theme script must run before any stylesheet loads.
     const head = html.slice(html.indexOf('<head>'), html.indexOf('</head>'));
-    assert.ok(head.indexOf("<script>try{var t=localStorage.getItem('caniusesql_theme')") !== -1, `${where}: theme script in <head>`);
+    assert.ok(/<script>try\{[^<]*caniusesql_theme[^<]*<\/script>/.test(head), `${where}: theme script in <head>`);
     assert.ok(head.indexOf('<script>') < head.indexOf('<link rel="stylesheet"'), `${where}: theme script before stylesheets`);
   }
 });
@@ -137,7 +137,7 @@ test('tokens.css fallback for browsers without light-dark() matches the light va
   const css = fs.readFileSync(path.join(ROOT, 'templates', 'tokens.css'), 'utf8');
   const [main, fallback] = css.split('@supports not (color: light-dark(#000, #fff))');
   const decls = text => Object.fromEntries([...text.matchAll(/^\s*(--[\w-]+):\s*(.+?);\s*$/gm)].map(m => [m[1], m[2]]));
-  const themed = Object.entries(decls(main)).filter(([name]) => !/^--(splash|logo)-/.test(name));
+  const themed = Object.entries(decls(main)).filter(([name]) => !/^--(splash|logo|ink)-/.test(name));
   const fb = decls(fallback);
   assert.ok(themed.length > 0);
   for (const [name, value] of themed) {
