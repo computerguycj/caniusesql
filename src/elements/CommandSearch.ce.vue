@@ -6,9 +6,14 @@
   Out: nothing. Results are real links, so the browser does the navigating.
 
   Also owns the "/" shortcut that focuses the search box. One per page.
+
+  Keyboard: ARIA combobox pattern. Focus stays in the input; Up/Down move a
+  highlight through the results, tracked by aria-activedescendant. That
+  IDREF only resolves within one tree, which works because the input and
+  the options share this shadow root.
 -->
 <script setup>
-import { ref, computed, onMounted, onUnmounted } from 'vue';
+import { ref, computed, watch, nextTick, onMounted, onUnmounted } from 'vue';
 
 const MAX_RESULTS = 10;
 
@@ -19,6 +24,7 @@ const props = defineProps({
 const commandData = ref(null);  // null until the fetch resolves
 const query = ref('');
 const open = ref(false);        // false after Escape or an outside click
+const active = ref(-1);         // highlighted result index, -1 for none
 const root = ref(null);         // template refs, filled in on mount
 const input = ref(null);
 
@@ -38,6 +44,58 @@ const results = computed(() => {
   return matches;
 });
 
+const listShown = computed(() => open.value && results.value.length > 0);
+
+function optionId(index) {
+  return 'command-search-option-' + index;
+}
+
+function href(result) {
+  return '/f/' + result.entry.slug + '/';
+}
+
+function onInput() {
+  open.value = true;
+  active.value = -1;
+}
+
+// Down: open the list if needed, then highlight the next result.
+// Stops on the last one; no wrap-around.
+function onDown(event) {
+  if (results.value.length === 0) return;
+  event.preventDefault();  // keep the caret where it is
+  if (!open.value) {
+    open.value = true;
+  }
+  active.value = Math.min(active.value + 1, results.value.length - 1);
+}
+
+// Up: highlight the previous result; from the first, back to none.
+function onUp(event) {
+  if (!listShown.value) return;
+  event.preventDefault();
+  active.value = Math.max(active.value - 1, -1);
+}
+
+// Enter: the highlighted result if there is one, else the old matching.
+function onEnter() {
+  if (listShown.value && active.value >= 0) {
+    window.location.href = href(results.value[active.value]);
+    return;
+  }
+  go();
+}
+
+// The list scrolls (max-height), so keep the highlight in view. Waits a tick
+// because a Down that opens the list renders it in the same update.
+watch(active, index => {
+  if (index < 0) return;
+  nextTick(() => {
+    const option = root.value && root.value.querySelector('#' + optionId(index));
+    if (option) option.scrollIntoView({ block: 'nearest' });
+  });
+});
+
 // Enter: exact match first, then the first substring match.
 function go() {
   const q = query.value.trim().toLowerCase();
@@ -52,8 +110,13 @@ function go() {
   }
 }
 
-function clear() {
+function close() {
   open.value = false;
+  active.value = -1;
+}
+
+function clear() {
+  close();
   query.value = '';
 }
 
@@ -61,7 +124,7 @@ function clear() {
 // so check the composed path, not event.target.
 function onDocumentClick(event) {
   if (!event.composedPath().includes(root.value)) {
-    open.value = false;
+    close();
   }
 }
 
@@ -116,18 +179,31 @@ onUnmounted(() => {
       placeholder="Search SQL commands…"
       autocomplete="off"
       aria-label="Search SQL commands"
-      @input="open = true"
-      @keydown.enter="go"
+      role="combobox"
+      aria-autocomplete="list"
+      aria-controls="command-search-results"
+      :aria-expanded="listShown ? 'true' : 'false'"
+      :aria-activedescendant="active >= 0 ? optionId(active) : undefined"
+      @input="onInput"
+      @keydown.down="onDown"
+      @keydown.up="onUp"
+      @keydown.enter="onEnter"
       @keydown.esc="clear"
     >
     <ul
+      id="command-search-results"
       class="search-results"
-      :hidden="!open || results.length === 0"
+      :hidden="!listShown"
       role="listbox"
       aria-label="Search suggestions"
     >
-      <li v-for="r in results" :key="r.name" role="option">
-        <a :href="'/f/' + r.entry.slug + '/'">
+      <li v-for="(r, i) in results" :key="r.name" role="none">
+        <a
+          :id="optionId(i)"
+          :href="href(r)"
+          role="option"
+          :aria-selected="i === active ? 'true' : 'false'"
+        >
           {{ r.name.toUpperCase() }}<template v-if="r.entry.description"> — <small>{{ r.entry.description }}</small></template>
         </a>
       </li>
@@ -202,7 +278,8 @@ onUnmounted(() => {
   font-size: 14px;
 }
 
-.search-results a:hover {
+.search-results a:hover,
+.search-results a[aria-selected="true"] {
   background-color: var(--color-search-hover);
   color: var(--color-primary);
 }

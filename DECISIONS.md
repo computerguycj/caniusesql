@@ -10,6 +10,16 @@ Context: <optional — link to commit, file, or issue>
 
 ---
 
+## 2026-09-29 - Arrow keys in <command-search>: ARIA combobox with aria-activedescendant
+Chose: focus stays in the input; Up/Down move a highlight tracked by aria-activedescendant; Up from the first result returns to none, Down stops on the last (no wrap); each result link carries role="option" inside an `<li role="none">`.
+Rejected: moving real focus into the list (loses the typing position, worse screen reader support); wrap-around; role="option" on the `<li>` with a link inside (an option can't contain an interactive element).
+Context: src/elements/CommandSearch.ce.vue. aria-activedescendant only resolves IDs in the same tree, so the input and options must stay in one shadow root. The highlight reuses the hover colors, which fail WCAG AA contrast (2.92:1 blue on light blue) in main already; that is stage 2 theming work.
+
+## 2026-09-29 - Show copy buttons on touch screens with (hover: none)
+Chose: `@media (hover: none) { .copy-btn { opacity: 1; } }`; hover-capable devices keep the reveal-on-hover button.
+Rejected: a width breakpoint (a narrow desktop window has hover, a large tablet doesn't); always visible everywhere (changes the desktop look, out of scope).
+Context: templates/styles.css. Chromium phone emulation matches (hover: none); a laptop with a touch screen and a mouse reports hover, so it keeps hover-to-reveal.
+
 ## 2026-09-29 - <command-search> switch-over: page keeps sizing, search.js keeps its name
 Chose: page CSS sizes the element in the header (flex 1, 180-360px) and reserves 34px height via `command-search:not(:defined)`, the input height measured in Chromium; search.js keeps its filename with only the copy buttons left in it.
 Rejected: sizing via `:host` (header layout is the page's concern, as with db-filter); renaming search.js to copy.js in this commit (touches generate.js and the script tag, and makes the one-commit revert noisier; do it as its own change).
