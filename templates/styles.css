@@ -1,67 +1,7 @@
 /* ==========================================================================
    Can I Use SQL? — shared stylesheet
-   Linked from all pages; page-specific overrides live in per-page <style> blocks.
+   Linked from all pages, after tokens.css. Colors come only from tokens.css.
    ========================================================================== */
-
-/* --------------------------------------------------------------------------
-   CSS custom properties (light mode defaults)
-   -------------------------------------------------------------------------- */
-
-:root {
-  --color-bg:              #f5f7fa;
-  --color-surface:         #ffffff;
-  --color-surface-alt:     #f8f9fa;
-  --color-header-bg:       #f5f7fa;
-  --color-primary:         #3498db;
-  --color-primary-dark:    #2980b9;
-  --color-text:            #333333;
-  --color-text-heading:    #2c3e50;
-  --color-text-muted:      #7f8c8d;
-  --color-text-desc:       #555555;
-  --color-border:          #dddddd;
-  --color-border-light:    #f0f0f0;
-  --color-row-hover:       #f5f5f5;
-  --color-search-hover:    #f0f7ff;
-  --color-badge-bg:        #eaf3fb;
-  --color-badge-bg-hover:  #d6eaf8;
-  --color-badge-text:      #2980b9;
-  --color-badge-border:    #aed6f1;
-  --color-focus-ring:      rgba(52, 152, 219, 0.2);
-  --shadow-sm:             0 1px 4px rgba(0, 0, 0, 0.08);
-  --shadow-md:             0 2px 5px rgba(0, 0, 0, 0.10);
-  --shadow-lg:             0 4px 12px rgba(0, 0, 0, 0.15);
-  --shadow-hover:          0 3px 10px rgba(0, 0, 0, 0.12);
-  --shadow-header:         0 2px 6px rgba(0, 0, 0, 0.08);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --color-bg:              #0d1117;
-    --color-surface:         #161b22;
-    --color-surface-alt:     #1c2128;
-    --color-header-bg:       #161b22;
-    --color-primary:         #58a6ff;
-    --color-primary-dark:    #388bfd;
-    --color-text:            #e6edf3;
-    --color-text-heading:    #c9d1d9;
-    --color-text-muted:      #8b949e;
-    --color-text-desc:       #b1bac4;
-    --color-border:          #30363d;
-    --color-border-light:    #21262d;
-    --color-row-hover:       #1c2128;
-    --color-search-hover:    #1c2128;
-    --color-badge-bg:        #0d2a4d;
-    --color-badge-bg-hover:  #132f4c;
-    --color-badge-text:      #58a6ff;
-    --color-badge-border:    #1f4e8c;
-    --color-focus-ring:      rgba(88, 166, 255, 0.25);
-    --shadow-sm:             0 1px 4px rgba(0, 0, 0, 0.4);
-    --shadow-md:             0 2px 5px rgba(0, 0, 0, 0.5);
-    --shadow-lg:             0 4px 12px rgba(0, 0, 0, 0.6);
-    --shadow-hover:          0 3px 10px rgba(0, 0, 0, 0.5);
-    --shadow-header:         0 2px 6px rgba(0, 0, 0, 0.4);
-  }
-}
 
 /* --------------------------------------------------------------------------
    Base
@@ -91,7 +31,7 @@ a:focus-visible {
   top: -40px;
   left: 0;
   background: var(--color-primary);
-  color: white;
+  color: var(--color-text-on-accent);
   padding: 8px;
   text-decoration: none;
   z-index: 100;
@@ -256,15 +196,15 @@ command-search:not(:defined) {
   align-self: flex-start;
 }
 
-/* Support/status colors — intentionally same in both light and dark */
-.support-5   { border-left-color: #27ae60; }
-.support-5   .card-support-badge { color: #27ae60; }
-.support-mid { border-left-color: #d97706; }
-.support-mid .card-support-badge { color: #d97706; }
-.support-low { border-left-color: #c1272d; }
-.support-low .card-support-badge { color: #c1272d; }
-.support-none { border-left-color: #666666; }
-.support-none .card-support-badge { color: #666666; }
+/* Support/status colors (values in tokens.css) */
+.support-5   { border-left-color: var(--color-success); }
+.support-5   .card-support-badge { color: var(--color-success); }
+.support-mid { border-left-color: var(--color-warning); }
+.support-mid .card-support-badge { color: var(--color-warning); }
+.support-low { border-left-color: var(--color-danger); }
+.support-low .card-support-badge { color: var(--color-danger); }
+.support-none { border-left-color: var(--color-neutral); }
+.support-none .card-support-badge { color: var(--color-neutral); }
 
 /* --------------------------------------------------------------------------
    DB filter bar: <db-filter> (src/elements/DbFilter.ce.vue)
@@ -307,13 +247,13 @@ th, td {
   border-bottom: 1px solid var(--color-border);
 }
 
-th { background-color: var(--color-primary); color: #ffffff; }
+th { background-color: var(--color-primary); color: var(--color-text-on-accent); }
 tr:last-child td { border-bottom: none; }
 tr:hover { background-color: var(--color-row-hover); }
 
-.supported            { color: #27ae60; font-weight: bold; }
-.workaround-supported { color: #8a6d1d; font-weight: bold; }
-.not-supported        { color: #c1272d; font-weight: bold; }
+.supported            { color: var(--color-success); font-weight: bold; }
+.workaround-supported { color: var(--color-warning-text); font-weight: bold; }
+.not-supported        { color: var(--color-danger); font-weight: bold; }
 .status-text          { display: inline; }
 .notes                { font-size: 14px; color: var(--color-text-muted); }
 
@@ -366,21 +306,21 @@ copy-code:not(:defined) {
 }
 
 .version-supported {
-  background-color: #e6f7ee;
-  color: #27ae60;
-  border: 1px solid #27ae60;
+  background-color: var(--color-success-bg);
+  color: var(--color-success);
+  border: 1px solid var(--color-success);
 }
 
 .version-workaround {
-  background-color: #fff8e1;
-  color: #8a6d1d;
-  border: 1px solid #d4a017;
+  background-color: var(--color-warning-bg);
+  color: var(--color-warning-text);
+  border: 1px solid var(--color-warning-border);
 }
 
 .version-not-supported {
-  background-color: #fde8e8;
-  color: #c1272d;
-  border: 1px solid #c1272d;
+  background-color: var(--color-danger-bg);
+  color: var(--color-danger);
+  border: 1px solid var(--color-danger);
 }
 
 /* --------------------------------------------------------------------------
@@ -463,13 +403,13 @@ copy-code:not(:defined) {
 }
 
 .syntax-kind-native {
-  background-color: #e6f7ee;
-  color: #1f7a43;
+  background-color: var(--color-success-bg);
+  color: var(--color-success-strong);
 }
 
 .syntax-kind-workaround {
-  background-color: #fff8e1;
-  color: #8a6d1d;
+  background-color: var(--color-warning-bg);
+  color: var(--color-warning-text);
 }
 
 .detail-block {

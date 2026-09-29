@@ -10,6 +10,11 @@ Context: <optional — link to commit, file, or issue>
 
 ---
 
+## 2026-09-29 - Color tokens in their own file, enforced by stylelint
+Chose: templates/tokens.css holds every color value (light in `:root`, dark in the `prefers-color-scheme` block) and is linked before styles.css; stylelint runs `color-no-hex`, `color-named: never`, and `function-disallowed-list` (rgb/hsl/etc.) on all other CSS and `.vue` style blocks, as part of `npm test`.
+Rejected: tokens at the top of styles.css with stylelint-disable comments (easy to widen by accident); `color-no-hex` alone (`white` and `rgba()` would slip through).
+Context: new dev dependencies stylelint 17.x (MIT) and postcss-html 2.x (MIT, parses `.vue` style blocks); new transitive licenses are MIT/ISC/BSD plus argparse (Python-2.0, permissive). The linter can't see colors in JS strings or SVG attributes, so splash.js and the header logo use `var()` by hand; favicon.svg keeps its hex (standalone file, can't read page tokens). Splash and logo colors are tokens but fixed across themes on purpose.
+
 ## 2026-09-29 - Delete search.js (supersedes "search.js keeps its name")
 Chose: delete templates/search.js, its script tag, and its copy step now that <copy-code> owns the copy buttons; `copy-code:not(:defined) { display: block; }` so the wrapper is a block before and after Vue renders.
 Rejected: renaming it to copy.js (nothing left to put in it).

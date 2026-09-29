@@ -87,7 +87,7 @@ onUnmounted(() => clearTimeout(timer));
 }
 
 .copy-btn.copied {
-  color: #27ae60;
-  border-color: #27ae60;
+  color: var(--color-success);
+  border-color: var(--color-success);
 }
 </style>

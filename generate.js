@@ -267,6 +267,7 @@ function applyTemplate(headerTpl, headHtml, bodyContent, vars) {
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <link rel="stylesheet" href="/tokens.css">
   <link rel="stylesheet" href="/styles.css">
 ${headHtml}
 </head>
@@ -567,6 +568,9 @@ async function main() {
   // Copy shared static assets
   fs.copyFileSync(DATA_FILE, path.join(OUT_DIR, 'data.json'));
   console.log('✔  Copied data.json');
+
+  fs.copyFileSync(path.join(TEMPLATES_DIR, 'tokens.css'), path.join(OUT_DIR, 'tokens.css'));
+  console.log('✔  Copied tokens.css');
 
   fs.copyFileSync(path.join(TEMPLATES_DIR, 'styles.css'), path.join(OUT_DIR, 'styles.css'));
   console.log('✔  Copied styles.css');
