@@ -256,6 +256,13 @@ function syntaxExample(info) {
  * @param {Object} vars        - placeholder values, all pre-escaped
  * @returns {string} complete HTML document
  */
+// Applies the saved theme before first paint, so a saved Light or Dark never
+// flashes the other theme while the page loads. It has to be inline and run
+// before the stylesheets: the Vue bundle loads too late. The CSP allows it by
+// hash (scripts/csp.mjs), so any edit here needs `npm run csp:update`.
+// <theme-picker> writes the same localStorage key.
+const THEME_SCRIPT = "try{var t=localStorage.getItem('caniusesql_theme');if(t==='light'||t==='dark')document.documentElement.dataset.theme=t}catch(e){}";
+
 function applyTemplate(headerTpl, headHtml, bodyContent, vars) {
   const header = headerTpl.replace(/\{\{(\w+)\}\}/g, function (match, key) {
     return Object.prototype.hasOwnProperty.call(vars, key) ? vars[key] : '';
@@ -265,6 +272,7 @@ function applyTemplate(headerTpl, headHtml, bodyContent, vars) {
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <script>${THEME_SCRIPT}</script>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="icon" type="image/svg+xml" href="/favicon.svg">
   <link rel="stylesheet" href="/tokens.css">

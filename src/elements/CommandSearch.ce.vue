@@ -7,6 +7,13 @@
 
   Also owns the "/" shortcut that focuses the search box. One per page.
 
+  Narrow headers: mobile-first, the element is just a search button
+  (aria-expanded). Activating it (or "/") shows the input over the header's
+  first row and focuses it; Escape collapses it and returns focus to the
+  button; clicking outside or tabbing away collapses it and keeps the text.
+  A container query on the header shows the full input, and hides the
+  button, once the header is 720px wide.
+
   Keyboard: ARIA combobox pattern. Focus stays in the input; Up/Down move a
   highlight through the results, tracked by aria-activedescendant. That
   IDREF only resolves within one tree, which works because the input and
@@ -25,8 +32,10 @@ const commandData = ref(null);  // null until the fetch resolves
 const query = ref('');
 const open = ref(false);        // false after Escape or an outside click
 const active = ref(-1);         // highlighted result index, -1 for none
+const expanded = ref(false);    // narrow headers only: input shown over the header row
 const root = ref(null);         // template refs, filled in on mount
 const input = ref(null);
+const toggle = ref(null);
 
 // Case-insensitive substring match on command names, in data.json order.
 const results = computed(() => {
@@ -120,11 +129,43 @@ function clear() {
   query.value = '';
 }
 
+// The button only shows on narrow headers (container query). On wide ones
+// the input is always there and expanded/collapsed makes no difference.
+function narrow() {
+  return toggle.value && getComputedStyle(toggle.value).display !== 'none';
+}
+
+function expand() {
+  expanded.value = true;
+  // The input is display:none until the class change renders.
+  nextTick(() => {
+    input.value.focus();
+    input.value.select();
+  });
+}
+
+function onEscape() {
+  clear();
+  if (narrow()) {
+    expanded.value = false;
+    toggle.value.focus();  // don't strand keyboard focus on a hidden input
+  }
+}
+
+// Focus left the component (Tab away): collapse, and let focus go where it
+// was going. relatedTarget is the element receiving focus.
+function onFocusOut(event) {
+  if (!root.value.contains(event.relatedTarget)) {
+    expanded.value = false;
+  }
+}
+
 // A click inside the shadow root reaches document retargeted to the host,
 // so check the composed path, not event.target.
 function onDocumentClick(event) {
   if (!event.composedPath().includes(root.value)) {
     close();
+    expanded.value = false;
   }
 }
 
@@ -138,8 +179,7 @@ function onDocumentKeydown(event) {
     return;
   }
   event.preventDefault();
-  input.value.focus();
-  input.value.select();
+  expand();
 }
 
 onMounted(() => {
@@ -170,7 +210,22 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <div ref="root" class="search-widget">
+  <div ref="root" class="search" :class="{ 'is-expanded': expanded }" @focusout="onFocusOut">
+    <button
+      ref="toggle"
+      type="button"
+      class="search-toggle"
+      aria-label="Search SQL commands"
+      :aria-expanded="expanded ? 'true' : 'false'"
+      aria-controls="command-search-box"
+      @click="expand"
+    >
+      <svg class="search-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+        <circle cx="10.5" cy="10.5" r="6.5" />
+        <line x1="15.5" y1="15.5" x2="21" y2="21" />
+      </svg>
+    </button>
+    <div id="command-search-box" class="search-widget">
     <input
       ref="input"
       v-model="query"
@@ -188,7 +243,7 @@ onUnmounted(() => {
       @keydown.down="onDown"
       @keydown.up="onUp"
       @keydown.enter="onEnter"
-      @keydown.esc="clear"
+      @keydown.esc="onEscape"
     >
     <ul
       id="command-search-results"
@@ -208,18 +263,62 @@ onUnmounted(() => {
         </a>
       </li>
     </ul>
+    </div>
   </div>
 </template>
 
 <style>
 /* Moved from the search widget rules in templates/styles.css. Sizing of the
-   element itself in the header stays with the page. */
+   element itself in the header stays with the page.
+
+   Mobile-first: the base styles are the narrow header (button only); the
+   container query at the end is the wide header (input always shown). */
 :host {
   display: block;
 }
 
+.search-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  padding: 0;
+  color: var(--color-text);
+  background: var(--color-surface);
+  border: 1px solid var(--color-control-border);
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.search-toggle:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+.search-icon {
+  width: 18px;
+  height: 18px;
+  fill: none;
+  stroke: currentcolor;
+  stroke-width: 2;
+  stroke-linecap: round;
+}
+
+/* Hidden until expanded, then laid over the header's first row. It's
+   positioned against .site-header (position: sticky); the offsets match
+   the header's padding (12px 16px in styles.css). */
 .search-widget {
-  position: relative;
+  display: none;
+  position: absolute;
+  top: 12px;
+  left: 16px;
+  right: 16px;
+  z-index: 60;
+}
+
+.is-expanded .search-widget {
+  display: block;
 }
 
 .site-search {
@@ -288,5 +387,21 @@ onUnmounted(() => {
   color: var(--color-text-muted);
   font-weight: normal;
   font-size: 12px;
+}
+
+/* Wide header: no button, the input is always in the row. */
+@container (min-width: 720px) {
+  .search-toggle {
+    display: none;
+  }
+
+  .search-widget {
+    display: block;
+    position: relative;
+    top: auto;
+    left: auto;
+    right: auto;
+    z-index: auto;
+  }
 }
 </style>

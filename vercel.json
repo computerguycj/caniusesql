@@ -25,7 +25,7 @@
       "headers": [
         {
           "key": "Content-Security-Policy-Report-Only",
-          "value": "default-src 'self'; script-src 'self'; style-src 'self' 'sha256-HLULRbRWcalAYsDm2CPQUV91Bv5oHx9j0nfpwV7nvDo=' 'sha256-ZpyJW8lk2Gnjgn1O7IZqtpSm8raIu+m9KDmLj9lYeBQ=' 'sha256-ip+bksEDb5SWpCX1kixdja6Jnu55aJQgEPEMCMsabBo='; img-src 'self' https://cdn.buymeacoffee.com; connect-src 'self'; font-src 'self'; object-src 'none'; base-uri 'self'; form-action 'none'; frame-ancestors 'none'; report-uri /api/csp-report; report-to csp"
+          "value": "default-src 'self'; script-src 'self' 'sha256-WmPEnM6nqMGz8+Fo6APJ6CcdXFSIIxJTQWLB3eXyK+Q='; style-src 'self' 'sha256-33AlBra2Ov0sPQnloO4osGYfBJvdwa3kkQJzp/1XWlY=' 'sha256-HLULRbRWcalAYsDm2CPQUV91Bv5oHx9j0nfpwV7nvDo=' 'sha256-ZpyJW8lk2Gnjgn1O7IZqtpSm8raIu+m9KDmLj9lYeBQ=' 'sha256-h4iRrhPoKfUcIealEwQpQYLUuB5SXN9LkAL9QRKs1TQ='; img-src 'self' https://cdn.buymeacoffee.com; connect-src 'self'; font-src 'self'; object-src 'none'; base-uri 'self'; form-action 'none'; frame-ancestors 'none'; report-uri /api/csp-report; report-to csp"
         },
         {
           "key": "Reporting-Endpoints",

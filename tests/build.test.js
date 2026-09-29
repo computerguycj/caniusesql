@@ -112,7 +112,7 @@ test('vite build writes the custom elements bundle', () => {
   assert.ok(fs.existsSync(path.join(DIST, 'assets', 'elements.js')));
 });
 
-test('every page has one <db-filter>, one <command-search>, and loads the elements bundle', () => {
+test('every page has one <db-filter>, <command-search> and <theme-picker>, the theme script, and the elements bundle', () => {
   const pages = [
     ['/', readDist('index.html')],
     ...commands.map(([, entry]) => [`/f/${entry.slug}`, readDist('f', entry.slug, 'index.html')]),
@@ -125,5 +125,25 @@ test('every page has one <db-filter>, one <command-search>, and loads the elemen
     assert.equal(count(html, /class="site-search"|class="search-results"/g), 0, `${where}: old static search box removed`);
     assert.equal(count(html, /search\.js/g), 0, `${where}: search.js no longer loaded`);
     assert.match(html, /<link rel="stylesheet" href="\/tokens\.css">\s*<link rel="stylesheet" href="\/styles\.css">/, `${where}: tokens.css linked before styles.css`);
+    assert.equal(count(html, /<theme-picker><\/theme-picker>/g), 1, `${where}: <theme-picker>`);
+    // The no-flash theme script must run before any stylesheet loads.
+    const head = html.slice(html.indexOf('<head>'), html.indexOf('</head>'));
+    assert.ok(head.indexOf("<script>try{var t=localStorage.getItem('caniusesql_theme')") !== -1, `${where}: theme script in <head>`);
+    assert.ok(head.indexOf('<script>') < head.indexOf('<link rel="stylesheet"'), `${where}: theme script before stylesheets`);
   }
+});
+
+test('tokens.css fallback for browsers without light-dark() matches the light values', () => {
+  const css = fs.readFileSync(path.join(ROOT, 'templates', 'tokens.css'), 'utf8');
+  const [main, fallback] = css.split('@supports not (color: light-dark(#000, #fff))');
+  const decls = text => Object.fromEntries([...text.matchAll(/^\s*(--[\w-]+):\s*(.+?);\s*$/gm)].map(m => [m[1], m[2]]));
+  const themed = Object.entries(decls(main)).filter(([name]) => !/^--(splash|logo)-/.test(name));
+  const fb = decls(fallback);
+  assert.ok(themed.length > 0);
+  for (const [name, value] of themed) {
+    // Light value = the first argument of each light-dark(); tokens without light-dark() are the same in both.
+    const light = value.replace(/light-dark\(((?:[^(),]|\([^()]*\))+),\s*(?:[^(),]|\([^()]*\))+\)/g, '$1');
+    assert.equal(fb[name], light, `fallback ${name}`);
+  }
+  assert.deepEqual(Object.keys(fb).sort(), themed.map(([n]) => n).sort(), 'fallback has exactly the themed tokens');
 });
