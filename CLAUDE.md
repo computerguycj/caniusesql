@@ -38,8 +38,9 @@ commits or files when useful.
   value in the dark block if it differs), then reference it.
 - `npm run lint` enforces this with stylelint (`color-no-hex`, `color-named`,
   `function-disallowed-list`); `npm test` runs it first.
-- Not covered by the linter: colors in JS strings or HTML/SVG attributes. Use
-  `var(--…)` there too (see `splash.js`, `header.html`). `favicon.svg` is the
+- Not covered by the linter: colors in JS strings or HTML/SVG attributes.
+  Don't put colors there; give the element a class and style it in a
+  stylesheet (see the logo classes for `header.html`). `favicon.svg` is the
   one exception: it's a standalone file and can't read page tokens.
 
 ## Vue rules

@@ -17,7 +17,7 @@
 
   var COOKIE_NAME = 'caniusesql_splash';
   var DISMISS_DELAY_MS = 3000;  // auto-dismiss after 3 s
-  var FADE_DURATION_MS = 400;   // CSS fade-out duration (must match CSS)
+  var FADE_DURATION_MS = 400;   // must match the #caniusesql-splash transition in styles.css
 
   /* ------------------------------------------------------------------
      Cookie helpers
@@ -57,44 +57,8 @@
      ------------------------------------------------------------------ */
 
   function buildSplash() {
-    var style = document.createElement('style');
-    style.textContent = [
-      '#caniusesql-splash{',
-      '  position:fixed;inset:0;z-index:9999;',
-      '  background:var(--splash-backdrop);',
-      '  display:flex;align-items:center;justify-content:center;',
-      '  transition:opacity ' + (FADE_DURATION_MS / 1000) + 's ease;',
-      '  cursor:pointer;',
-      '}',
-      '#caniusesql-splash.fade-out{opacity:0;pointer-events:none;}',
-      '#caniusesql-splash-card{',
-      '  background:var(--splash-card-bg);',
-      '  border:1px solid var(--color-primary);',
-      '  border-radius:10px;',
-      '  padding:32px 40px;',
-      '  max-width:480px;',
-      '  width:90%;',
-      '  font-family:"SFMono-Regular",Consolas,"Liberation Mono",Menlo,monospace;',
-      '  color:var(--splash-text);',
-      '  box-shadow:var(--splash-shadow);',
-      '}',
-      '.splash-prompt{color:var(--splash-prompt);font-size:13px;margin-bottom:4px;}',
-      '.splash-query{color:var(--splash-query);font-size:15px;font-weight:bold;margin:8px 0;}',
-      '.splash-result{color:var(--splash-text);font-size:13px;margin-top:12px;}',
-      '.splash-result em{color:var(--splash-prompt);font-style:normal;}',
-      '.splash-tagline{',
-      '  color:var(--splash-tagline);font-size:12px;margin-top:20px;',
-      '  border-top:1px solid var(--splash-rule);padding-top:14px;',
-      '}',
-      '.splash-dismiss{color:var(--splash-dismiss);font-size:11px;margin-top:10px;}',
-      '@keyframes splash-cursor{0%,100%{opacity:1}50%{opacity:0}}',
-      '.splash-cursor{',
-      '  display:inline-block;width:8px;height:14px;',
-      '  background:var(--color-primary);vertical-align:text-bottom;',
-      '  animation:splash-cursor 1s step-start infinite;',
-      '}',
-    ].join('\n');
-    document.head.appendChild(style);
+    // Styles live in styles.css (.splash rules): an injected <style> would
+    // need its own CSP allowance.
 
     var overlay = document.createElement('div');
     overlay.id = 'caniusesql-splash';

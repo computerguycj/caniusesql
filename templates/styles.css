@@ -87,6 +87,13 @@ h4 { color: var(--color-text-heading); margin: 16px 0 4px; }
 .home-link:hover { color: var(--color-primary-dark); }
 .home-link svg   { display: block; }
 
+/* Logo colors (classes, not style attributes, so the CSP needs no
+   allowance for inline styles). */
+.logo-top    { stop-color: var(--logo-top); }
+.logo-bottom { stop-color: var(--logo-bottom); }
+.logo-mark   { fill: var(--logo-mark); }
+.logo-detail { fill: var(--logo-bottom); }
+
 .command-heading {
   display: flex;
   align-items: center;
@@ -459,4 +466,64 @@ copy-code:not(:defined) {
 
 .site-footer p {
   margin: 0;
+}
+
+/* --------------------------------------------------------------------------
+   Intro splash (templates/splash.js builds the markup)
+   Moved out of splash.js, which used to inject these as a <style> element.
+   -------------------------------------------------------------------------- */
+
+#caniusesql-splash {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: var(--splash-backdrop);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: opacity 0.4s ease;  /* FADE_DURATION_MS in splash.js */
+  cursor: pointer;
+}
+
+#caniusesql-splash.fade-out { opacity: 0; pointer-events: none; }
+
+#caniusesql-splash-card {
+  background: var(--splash-card-bg);
+  border: 1px solid var(--color-primary);
+  border-radius: 10px;
+  padding: 32px 40px;
+  max-width: 480px;
+  width: 90%;
+  font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+  color: var(--splash-text);
+  box-shadow: var(--splash-shadow);
+}
+
+.splash-prompt  { color: var(--splash-prompt); font-size: 13px; margin-bottom: 4px; }
+.splash-query   { color: var(--splash-query); font-size: 15px; font-weight: bold; margin: 8px 0; }
+.splash-result  { color: var(--splash-text); font-size: 13px; margin-top: 12px; }
+.splash-result em { color: var(--splash-prompt); font-style: normal; }
+
+.splash-tagline {
+  color: var(--splash-tagline);
+  font-size: 12px;
+  margin-top: 20px;
+  border-top: 1px solid var(--splash-rule);
+  padding-top: 14px;
+}
+
+.splash-dismiss { color: var(--splash-dismiss); font-size: 11px; margin-top: 10px; }
+
+@keyframes splash-cursor {
+  0%, 100% { opacity: 1; }
+  50%      { opacity: 0; }
+}
+
+.splash-cursor {
+  display: inline-block;
+  width: 8px;
+  height: 14px;
+  background: var(--color-primary);
+  vertical-align: text-bottom;
+  animation: splash-cursor 1s step-start infinite;
 }
