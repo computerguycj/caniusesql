@@ -371,6 +371,13 @@ td:focus-visible {
   opacity: 1;
 }
 
+/* Touch screens have no hover to reveal the button, so always show it. */
+@media (hover: none) {
+  .copy-btn {
+    opacity: 1;
+  }
+}
+
 .copy-btn.copied {
   color: #27ae60;
   border-color: #27ae60;
