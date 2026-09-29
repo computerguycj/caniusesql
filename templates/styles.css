@@ -165,81 +165,21 @@ h4 { color: var(--color-text-heading); margin: 16px 0 4px; }
 }
 
 /* --------------------------------------------------------------------------
-   Search widget
+   Search box: <command-search> (src/elements/CommandSearch.ce.vue)
+   Its styles live in the component's shadow root. The page only sizes the
+   element in the header, and reserves its height (the input's 34px) until
+   the element is defined, so the header doesn't jump when Vue renders it.
    -------------------------------------------------------------------------- */
 
-.search-widget {
-  position: relative;
+command-search {
   flex: 1;
   min-width: 180px;
   max-width: 360px;
 }
 
-.site-search {
-  width: 100%;
-  padding: 8px 12px;
-  border: 1px solid var(--color-border);
-  border-radius: 4px;
-  font-size: 14px;
-  box-sizing: border-box;
-  background: var(--color-surface);
-  color: var(--color-text);
-}
-
-.site-search:focus {
-  outline: none;
-  border-color: var(--color-primary);
-  box-shadow: 0 0 0 2px var(--color-focus-ring);
-}
-
-.site-search:focus-visible {
-  outline: 2px solid var(--color-primary);
-  outline-offset: 2px;
-  box-shadow: none;
-}
-
-.search-results {
-  position: absolute;
-  top: calc(100% + 4px);
-  left: 0;
-  right: 0;
-  background: var(--color-surface);
-  border: 1px solid var(--color-border);
-  border-radius: 4px;
-  box-shadow: var(--shadow-lg);
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  z-index: 100;
-  max-height: 300px;
-  overflow-y: auto;
-}
-
-.search-results li {
-  border-bottom: 1px solid var(--color-border-light);
-}
-
-.search-results li:last-child {
-  border-bottom: none;
-}
-
-.search-results a {
+command-search:not(:defined) {
   display: block;
-  padding: 8px 12px;
-  text-decoration: none;
-  color: var(--color-text-heading);
-  font-size: 14px;
-}
-
-.search-results a:hover {
-  background-color: var(--color-search-hover);
-  color: var(--color-primary);
-}
-
-.search-results small {
-  color: var(--color-text-muted);
-  font-weight: normal;
-  font-size: 12px;
+  height: 34px;
 }
 
 /* --------------------------------------------------------------------------
