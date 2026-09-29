@@ -10,6 +10,11 @@ Context: <optional — link to commit, file, or issue>
 
 ---
 
+## 2026-09-29 - WCAG 2.2 AA: scroll-padding for the sticky header, focus and target-size tests
+Chose: target WCAG 2.2 AA (axe tags add `wcag22aa`). `html { scroll-padding-top }` of header height + 16px, mobile-first: 188px base (header wraps to 3 rows below 314px), 138px from 314px, 86px from 466px; breakpoints measured where the header actually wraps across all 149 pages. New focus.spec.js tabs forward then backward through each page and checks every stop has a visible indicator (2px+ outline or the browser's own ring), author outlines at 3:1 against background and surface, and nothing drawn on top of it; plus every control at least 24x24px except links inside text.
+Rejected: a single scroll-padding value (188px would leave a big gap on desktop); measuring the header with JS at runtime (one more script for a static number); checking "is it below the header's bottom edge" (flags the skip link, which sits over the header on purpose; `elementFromPoint` checks what is actually on top).
+Context: without scroll-padding, all 8 focus runs fail (homepage cards land under the header when tabbing backwards). Header heights depend on fonts, like the <db-filter> reservation; re-measure if the header's content changes. The screen reader pass (NVDA or VoiceOver) can't run here and still needs a person.
+
 ## 2026-09-29 - Page listens for element events on document, capture phase (supersedes "listen on the element")
 Chose: compare.js listens for `filter-change` with `document.addEventListener(..., true)`. Vue CE events don't bubble, but capture runs from document down to the target for every event, so the listener sees it without the component changing.
 Rejected: a listener on the element (lost if the element is ever replaced; verified: after swapping in a fresh <db-filter>, the old listener no longer hid rows); making the component dispatch bubbling, composed events itself (changes the component for a page concern).

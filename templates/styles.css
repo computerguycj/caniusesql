@@ -25,6 +25,19 @@ a:focus-visible {
   outline-offset: 2px;
 }
 
+/* Keep focused elements and anchor targets out from under the sticky
+   header (WCAG 2.2 focus not obscured). Header height + 16px; it wraps to
+   three rows below 314px and two rows below 466px (measured in Chromium). */
+html { scroll-padding-top: 188px; }
+
+@media (min-width: 314px) {
+  html { scroll-padding-top: 138px; }
+}
+
+@media (min-width: 466px) {
+  html { scroll-padding-top: 86px; }
+}
+
 /* Skip link for keyboard navigation */
 .skip-link {
   position: absolute;
