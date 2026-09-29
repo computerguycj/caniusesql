@@ -4,6 +4,7 @@
   "description": "SQL Command Compatibility Checker",
   "main": "index.html",
   "scripts": {
-    "generate-sitemap": "node generate-sitemap.js"
+    "generate-sitemap": "node generate-sitemap.js",
+    "test": "node --test"
   }
 }
