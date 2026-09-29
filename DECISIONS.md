@@ -10,6 +10,11 @@ Context: <optional — link to commit, file, or issue>
 
 ---
 
+## 2026-09-29 - Tag pre-Vue baseline as v1.0.0
+Chose: annotated git tag v1.0.0 on main (ab346b2) plus a GitHub Release, before Vue migration starts.
+Rejected: release branches / changelog tooling (overhead for a solo static site); relying on Vercel Instant Rollback alone (hosting-only, no git or diff anchor).
+Context: baseline for rollback, screenshot/SEO parity checks, and before/after comparison.
+
 ## 2026-04-29 - Require explicit workaround field
 Chose: every `data.json` compatibility record includes a `workaround` field, using `null` when no workaround applies.
 Rejected: omitting `workaround` unless needed, because that makes validation and UI rendering less consistent.
