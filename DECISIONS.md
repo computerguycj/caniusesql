@@ -10,6 +10,20 @@ Context: <optional — link to commit, file, or issue>
 
 ---
 
+## 2026-09-29 - Vite build: plain build with a JS entry, fixed filename
+Chose: `vite build` with `rolldownOptions.input` = src/elements/main.js, output dist/assets/elements.js (no hash), run after generate.js via `npm run build`.
+Rejected: library mode (leaves `process.env.NODE_ENV` unreplaced, so the Vue runtime needs a manual `define`; lib mode is for publishing packages, not page bundles); hashed filenames (needs generate.js to read a manifest; Vercel revalidates unhashed files, so fixed is safe for now).
+Context: vite.config.mjs. emptyOutDir only clears dist/assets, never generate.js output.
+
+## 2026-09-29 - Accept MPL-2.0 for lightningcss (build-time only)
+Chose: accept lightningcss (MPL-2.0), a required dependency of Vite 8.
+Rejected: Vite 7.3.x (all-permissive deps, but previous major with limited support); other bundlers (official Vue plugin targets Vite).
+Context: MPL-2.0 is file-level weak copyleft; obligations apply only when distributing (modified) MPL files. lightningcss runs on the build machine only, none of its code ships in dist/, and we don't modify it.
+
+## 2026-09-29 - Front-end dependencies and licenses
+Chose: vue 3.5.x (MIT, runtime dependency); vite 8.x (MIT) and @vitejs/plugin-vue 6.x (MIT) as dev dependencies.
+Context: transitive deps are MIT, Apache-2.0, BSD-2/3, ISC, plus lightningcss MPL-2.0 (see entry above). Re-check licenses when adding dependencies.
+
 ## 2026-09-29 - Build smoke test: node:test with regex over generated HTML
 Chose: Node's built-in test runner; regex assertions over dist/ output; assert current canonicals as-is (including homepage no-www vs command pages www).
 Rejected: jsdom or other DOM parser (adds a dependency; generator output is controlled, so regex is reliable enough); fixing the canonical mismatch here (out of scope; a later fix updates the test in the same commit).

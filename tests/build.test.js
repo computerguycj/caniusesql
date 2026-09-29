@@ -1,8 +1,9 @@
 /**
  * build.test.js — smoke test for the static build.
  *
- * Runs generate.js, then checks the SEO basics on every generated page:
- * canonical tag, <h1>, compatibility table, homepage cards, and sitemap.
+ * Runs the full build (generate.js, then vite build), then checks the SEO
+ * basics on every generated page: canonical tag, <h1>, compatibility table,
+ * homepage cards, and sitemap. Also checks the custom elements bundle exists.
  *
  * Uses regex over the generated HTML instead of a DOM parser so the test
  * needs no dependencies. The markup comes from generate.js, which we control.
@@ -45,8 +46,9 @@ function readDist(...parts) {
 }
 
 before(() => {
-  // Throws (and fails every test) if the build exits non-zero.
+  // Same steps as `npm run build`. Throws (and fails every test) if either exits non-zero.
   execFileSync(process.execPath, [path.join(ROOT, 'generate.js')], { cwd: ROOT, stdio: 'pipe' });
+  execFileSync(process.execPath, [path.join(ROOT, 'node_modules', 'vite', 'bin', 'vite.js'), 'build'], { cwd: ROOT, stdio: 'pipe' });
 });
 
 test('one page per command with a slug, plus the homepage', () => {
@@ -93,4 +95,8 @@ test('sitemap lists the homepage and every command page', () => {
   for (const [, entry] of commands) {
     assert.ok(locs.includes(`${BASE_URL}/f/${entry.slug}`), `sitemap: /f/${entry.slug}`);
   }
+});
+
+test('vite build writes the custom elements bundle', () => {
+  assert.ok(fs.existsSync(path.join(DIST, 'assets', 'elements.js')));
 });
