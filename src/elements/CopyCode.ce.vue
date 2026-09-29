@@ -61,6 +61,7 @@ onUnmounted(() => clearTimeout(timer));
   position: absolute;
   top: 14px;
   right: 8px;
+  min-height: 24px;  /* WCAG 2.2 target size */
   padding: 3px 8px;
   font-size: 11px;
   background: var(--color-surface);
@@ -68,23 +69,13 @@ onUnmounted(() => clearTimeout(timer));
   border-radius: 3px;
   cursor: pointer;
   color: var(--color-text-muted);
-  opacity: 0;
-  transition: opacity 0.15s, color 0.15s, border-color 0.15s;
+  transition: color 0.15s, border-color 0.15s;
   font-family: inherit;
   line-height: 1.4;
 }
 
-:host(:hover) .copy-btn,
-.copy-btn:focus {
-  opacity: 1;
-}
-
-/* Touch screens have no hover to reveal the button, so always show it. */
-@media (hover: none) {
-  .copy-btn {
-    opacity: 1;
-  }
-}
+/* Always visible: a control that only appears on hover is invisible to
+   anyone who doesn't happen to hover there. */
 
 .copy-btn.copied {
   color: var(--color-success);
