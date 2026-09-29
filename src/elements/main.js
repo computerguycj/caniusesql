@@ -7,5 +7,7 @@
 
 import { defineCustomElement } from 'vue';
 import DbFilter from './DbFilter.ce.vue';
+import CommandSearch from './CommandSearch.ce.vue';
 
 customElements.define('db-filter', defineCustomElement(DbFilter));
+customElements.define('command-search', defineCustomElement(CommandSearch));

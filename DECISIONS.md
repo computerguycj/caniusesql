@@ -10,6 +10,16 @@ Context: <optional — link to commit, file, or issue>
 
 ---
 
+## 2026-09-29 - <command-search>: data via `src`, no events out
+Chose: `src` attribute (default /data.json?v=2), fetched once on mount; results are real `<a href>` links, so the element emits nothing.
+Rejected: passing command data as an attribute (inlines all of data.json into every page); a `command-select` event (no page code would listen).
+Context: `src` is the seam for stage 3, when the element switches to the API.
+
+## 2026-09-29 - Document listeners from inside a shadow root: use composedPath()
+Chose: outside-click and "/" shortcut read `event.composedPath()` (includes(root), and [0] for the real focused element).
+Rejected: `event.target` / `contains()` and `document.activeElement` (both see only the host element, so clicks inside look outside and "/" typed in the box gets swallowed).
+Context: src/elements/CommandSearch.ce.vue. The old shortcut in search.js has this exact bug once the input is in a shadow root, so it must be removed in the same commit that puts <command-search> on the page.
+
 ## 2026-09-29 - Reserve <db-filter> space with measured min-heights
 Chose: `db-filter:not(:defined)` min-height 84px / 126px (<=572px) / 168px (<=356px), measured in Chromium at the label wrap points.
 Rejected: static fallback checkboxes inside the element (duplicate markup; old checkboxes did nothing without JS anyway).
