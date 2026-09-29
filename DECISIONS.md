@@ -10,6 +10,11 @@ Context: <optional — link to commit, file, or issue>
 
 ---
 
+## 2026-09-29 - <copy-code>: wrap the static block, copy the host's text
+Chose: `<copy-code>` wraps the generated `<div class="syntax">`, shows it through a `<slot>`, and copies `useHost().textContent` (the light DOM only, not the shadow root's button). One element per block.
+Rejected: passing the SQL as an attribute (every example twice in the HTML); one page-level element that finds all blocks (brings back DOM querying, not the custom element model); moving the block into the shadow root (page CSS couldn't style it, and it leaves the static HTML crawlers read).
+Context: src/elements/CopyCode.ce.vue. Each element is its own Vue app instance, up to 6 per command page; the runtime is already loaded, so there's no extra download.
+
 ## 2026-09-29 - Arrow keys in <command-search>: ARIA combobox with aria-activedescendant
 Chose: focus stays in the input; Up/Down move a highlight tracked by aria-activedescendant; Up from the first result returns to none, Down stops on the last (no wrap); each result link carries role="option" inside an `<li role="none">`.
 Rejected: moving real focus into the list (loses the typing position, worse screen reader support); wrap-around; role="option" on the `<li>` with a link inside (an option can't contain an interactive element).

@@ -8,6 +8,8 @@
 import { defineCustomElement } from 'vue';
 import DbFilter from './DbFilter.ce.vue';
 import CommandSearch from './CommandSearch.ce.vue';
+import CopyCode from './CopyCode.ce.vue';
 
 customElements.define('db-filter', defineCustomElement(DbFilter));
 customElements.define('command-search', defineCustomElement(CommandSearch));
+customElements.define('copy-code', defineCustomElement(CopyCode));
