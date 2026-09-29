@@ -31,28 +31,11 @@ async function openSearch(page) {
 
 for (const { name, path } of PAGES) {
   for (const colorScheme of SCHEMES) {
-    test(`${name} ${colorScheme}: no violations except color contrast`, async ({ page }) => {
+    test(`${name} ${colorScheme}: no WCAG AA violations`, async ({ page }) => {
       await page.emulateMedia({ colorScheme });
       await openPage(page, path);
       await openSearch(page);
-      const other = (await scan(page)).filter(v => v.id !== 'color-contrast');
-      expect(summary(other)).toEqual([]);
-    });
-
-    // Known failure: the Light and Dark palettes fail AA contrast today.
-    // Light: accent #3498db (white on it 3.15, as text 2.92-3.83), muted
-    // #7f8c8d (3.22-3.47), status green #27ae60 (2.58-2.87) and amber
-    // #d97706 (3.18). Dark: white on accent #58a6ff (2.52), status red
-    // #c1272d (2.96) and gray #666666 (3.01), green on its badge (2.58).
-    // test.fail() passes while the violations exist and fails once they're
-    // gone, so the palette fix has to remove this marker.
-    test(`${name} ${colorScheme}: no color contrast violations`, async ({ page }) => {
-      test.fail(true, 'Palettes fail WCAG AA contrast until the palette fix');
-      await page.emulateMedia({ colorScheme });
-      await openPage(page, path);
-      await openSearch(page);
-      const contrast = (await scan(page)).filter(v => v.id === 'color-contrast');
-      expect(summary(contrast)).toEqual([]);
+      expect(summary(await scan(page))).toEqual([]);
     });
   }
 }

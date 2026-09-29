@@ -10,6 +10,11 @@ Context: <optional — link to commit, file, or issue>
 
 ---
 
+## 2026-09-29 - Light and Dark palettes fixed to pass WCAG AA
+Chose: nearest passing shade of the same hue and saturation (HSL lightness only), with a 4.6:1 target for a small margin over 4.5. Light: accent #3498db -> #1f74ae (hover #226a9a, badge text #2472a4), muted #7f8c8d -> #657171, success #27ae60 -> #1c7c44, warning #d97706 -> #a75c05. Dark: text on the accent is now dark (#0d1117) instead of white; status colors get dark values (danger #df6065, neutral #8a8a8a, warning text #a88423, success-strong #289d56) and the version badges get dark tinted backgrounds instead of light pastels. New --color-control-border (light #8191a2, dark #5c6775) for the search input so it has a 3:1 boundary; other borders stay decorative. Splash dismiss text #7f8c8d -> #849192.
+Rejected: darkening Dark's accent for white header text (the accent is also Dark's link color and would lose contrast there); a sitewide darker --color-border (table and card lines are decorative and would all get heavier).
+Context: axe finds no contrast violations on all 149 pages or the splash, in light and dark. The a11y tests no longer carry test.fail() markers. Screenshot baselines were re-recorded.
+
 ## 2026-09-29 - Browser tests: Playwright + axe, Linux baselines, known contrast failures marked
 Chose: @playwright/test pinned to 1.56.1 (matches the Chromium build in the dev container, so no browser download); `vite preview --outDir dist` as the test server (no new server dependency); screenshots of / (one screen tall) and /f/merge/ (full length), light and dark, 1280 and 375px, with animations disabled and the intro splash suppressed by its cookie; axe scans (WCAG 2.1 A/AA) with the search list open. Today's contrast failures are a separate `test.fail()` test per page and scheme, so the palette fix must remove the marker. `npm run test:e2e`, not part of `npm test` (needs a browser).
 Rejected: latest Playwright 1.63 (would need a browser download here); full-length homepage (148 near-identical cards, about 1.5 MB per PNG, 5.6 MB per baseline set); excluding color-contrast from the scan (hides the failures instead of tracking them).

@@ -225,7 +225,7 @@ onUnmounted(() => {
 .site-search {
   width: 100%;
   padding: 8px 12px;
-  border: 1px solid var(--color-border);
+  border: 1px solid var(--color-control-border);
   border-radius: 4px;
   font-size: 14px;
   box-sizing: border-box;
