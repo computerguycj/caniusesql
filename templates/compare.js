@@ -10,7 +10,12 @@
  * Homepage: filters .command-card[data-dbs] cards (visible if any checked DB
  * supports the command); hides .category-group sections that become empty.
  *
- * Listens on the element, not document: Vue custom element events don't bubble.
+ * Listens on document in the capture phase. Vue custom element events don't
+ * bubble, but every event still travels down from document to its target
+ * during capture, so a capturing listener on document sees it. Unlike a
+ * listener on the element, it keeps working if the element is ever removed
+ * and re-added (same problem as jQuery handlers lost after an UpdatePanel
+ * partial postback; the fix there was delegation too).
  *
  * Security: reads only boolean flags keyed by db id — no user string is
  * inserted into the DOM.
@@ -19,8 +24,7 @@
 (function () {
   'use strict';
 
-  var filter = document.querySelector('db-filter');
-  if (!filter) return;
+  if (!document.querySelector('db-filter')) return;
 
   /* ------------------------------------------------------------------
      Filter logic
@@ -64,8 +68,8 @@
     }
   }
 
-  filter.addEventListener('filter-change', function (event) {
+  document.addEventListener('filter-change', function (event) {
     applyFilter(event.detail[0]);
-  });
+  }, true);
 
 }());

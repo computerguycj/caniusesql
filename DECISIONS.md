@@ -10,6 +10,21 @@ Context: <optional — link to commit, file, or issue>
 
 ---
 
+## 2026-09-29 - Page listens for element events on document, capture phase (supersedes "listen on the element")
+Chose: compare.js listens for `filter-change` with `document.addEventListener(..., true)`. Vue CE events don't bubble, but capture runs from document down to the target for every event, so the listener sees it without the component changing.
+Rejected: a listener on the element (lost if the element is ever replaced; verified: after swapping in a fresh <db-filter>, the old listener no longer hid rows); making the component dispatch bubbling, composed events itself (changes the component for a page concern).
+Context: supersedes the 2026-09-29 "Vue custom element events: listen on the element" entry. Nothing on the site re-renders today (no pushState routing, no DOM replacement; checked), so this is insurance for stage 3. Same idea as jQuery `.on()` delegation surviving an UpdatePanel partial postback.
+
+## 2026-09-29 - What state lives outside the components
+Chose: the DB filter selection stays in localStorage (already the case), so a remounted <db-filter> restores it. The search box's typed text stays inside <command-search> and is lost on remount.
+Rejected: persisting the search text (it's transient; restoring a half-typed query after a re-render would surprise more than help).
+Context: verified by replacing both elements in the live page: the filter came back with the saved selection, the search box came back empty. No inputs sit in a <form> (none exist), so shadow DOM inputs not submitting with a form doesn't apply.
+
+## 2026-09-29 - Copy button always visible, 24px tall (supersedes hover-to-reveal)
+Chose: the copy button is always visible, `min-height: 24px`.
+Rejected: reveal on hover or focus (a hover-only control is invisible to anyone who doesn't hover there; the addendum rules it out); 23px (below the WCAG 2.2 AA target size).
+Context: supersedes the hover reveal kept in the <copy-code> entries and makes the "(hover: none)" entry moot. CLAUDE.md now also states the v-html and precompiled-templates rules.
+
 ## 2026-09-29 - Light and Dark palettes fixed to pass WCAG AA
 Chose: nearest passing shade of the same hue and saturation (HSL lightness only), with a 4.6:1 target for a small margin over 4.5. Light: accent #3498db -> #1f74ae (hover #226a9a, badge text #2472a4), muted #7f8c8d -> #657171, success #27ae60 -> #1c7c44, warning #d97706 -> #a75c05. Dark: text on the accent is now dark (#0d1117) instead of white; status colors get dark values (danger #df6065, neutral #8a8a8a, warning text #a88423, success-strong #289d56) and the version badges get dark tinted backgrounds instead of light pastels. New --color-control-border (light #8191a2, dark #5c6775) for the search input so it has a 3:1 boundary; other borders stay decorative. Splash dismiss text #7f8c8d -> #849192.
 Rejected: darkening Dark's accent for white header text (the accent is also Dark's link color and would lose contrast there); a sitewide darker --color-border (table and card lines are decorative and would all get heavier).

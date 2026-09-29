@@ -41,3 +41,12 @@ commits or files when useful.
 - Not covered by the linter: colors in JS strings or HTML/SVG attributes. Use
   `var(--…)` there too (see `splash.js`, `header.html`). `favicon.svg` is the
   one exception: it's a standalone file and can't read page tokens.
+
+## Vue rules
+- Never use `v-html` with anything user-provided (query strings, form input,
+  localStorage, API responses). Render text with `{{ }}` or `textContent`.
+  Today nothing uses `v-html` at all; keep it that way unless there's a
+  reviewed reason.
+- Templates are precompiled by Vite (`.vue` files only). Don't import the
+  full `vue` build or pass template strings at runtime: the runtime compiler
+  needs `unsafe-eval` under a Content Security Policy.
