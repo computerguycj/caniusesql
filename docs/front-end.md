@@ -13,12 +13,12 @@ Vue. Decisions behind it are in DECISIONS.md.
 | `<command-search>` | `CommandSearch.ce.vue` | Header search: combobox, "/" shortcut, collapses on narrow headers; data from `useCommandIndex` (API index, falling back to `data.json`) |
 | `<copy-code>` | `CopyCode.ce.vue` | Copy button on a slotted code block |
 | `<theme-picker>` | `ThemePicker.ce.vue` | System / Light / Dark / Custom, with the Custom dialog |
+| `<popular-commands>` | `PopularCommands.ce.vue` | Homepage's most-visited commands: live from `/api/popular` plus the command index (shared with the search box), the build-time list slotted as the fallback. Replaced `templates/popular.js`. |
 
 ## Moving to Vue (planned)
 
 | Part | Why |
 |---|---|
-| `templates/popular.js` → `<popular-commands>` | It downloads all of `data.json` (121 KB gzipped) only to turn slugs into names. As an element it can reuse `useCommandIndex` (27 KB). The build-time list stays in the HTML as the slotted fallback. |
 | `templates/splash.js` → a Vue `<dialog>` | About 60 lines of `createElement` become a template. It claims `role="dialog"` and `aria-modal` but doesn't move focus or make the page inert; native `<dialog>` with `showModal()` does both. (A native `<dialog>` without Vue would fix that too; the template is the Vue gain.) |
 
 ## Staying non-Vue

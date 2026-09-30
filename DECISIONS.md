@@ -10,6 +10,11 @@ Context: <optional — link to commit, file, or issue>
 
 ---
 
+## 2026-09-30 - <popular-commands> owns the badge styles; one !important for slotted links
+Chose: the live links render in the element's shadow root, so the `.example` badge rules moved from styles.css into PopularCommands.ce.vue, applied to `.example` (live) and `::slotted(a)` (the build-time links). The slotted links' `color` is `!important`.
+Rejected: `shadowRoot: false` so page CSS applies (Vue mounts into the element and replaces its children, so the build-time list would vanish until the fetch finishes); keeping a second copy of the badge rules in styles.css for the slotted links (two copies to drift).
+Context: for slotted elements the page's own rules beat `::slotted()` whatever the specificity, because the cascade compares the page and the shadow root before specificity. The page's `a { color: var(--color-primary) }` therefore won over the badge color, failing contrast on the light theme. For `!important` declarations that order reverses, which is the mechanism CSS provides for this. axe caught it; the homepage screenshots passed, because the color change was within Playwright's per-pixel tolerance, so screenshots aren't proof that a style is unchanged.
+
 ## 2026-09-30 - Which parts move to Vue, and which stay
 Chose: move `popular.js` (to reuse the 27 KB command index instead of the full data.json) and `splash.js` (a template instead of createElement code, and native `<dialog>` for its modal behaviour). Keep non-Vue: the page content generate.js builds, THEME_SCRIPT, compare.js, track.js, header.html, and the Vercel edge functions. Reasons per part are in docs/front-end.md.
 Rejected: moving the static page content (custom elements render only in the browser, so crawlers, no-JS readers and first paint would lose it; doing it properly means a Vue SSG, a different architecture); moving compare.js's loop into DbFilter (ties a reusable element to one page's selectors); moving track.js (no UI or state, and it should run even if the Vue bundle fails).

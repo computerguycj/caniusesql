@@ -92,7 +92,7 @@ test('homepage has its canonical, a card per command, and popular commands', () 
   assert.deepEqual(canonicals(html), ['https://caniusesql.com/']);
   assert.equal(count(html, /class="command-card /g), commands.length);
 
-  const popular = html.match(/<div id="popular-commands-list">([\s\S]*?)<\/div>/);
+  const popular = html.match(/<popular-commands>([\s\S]*?)<\/popular-commands>/);
   assert.ok(popular, 'popular commands list exists');
   assert.ok(count(popular[1], /<a class="example"/g) > 0, 'popular commands list is not empty');
 });

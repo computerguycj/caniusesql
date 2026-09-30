@@ -511,12 +511,11 @@ function buildHomepage(data, headerTpl, popularCommands) {
   const commandList     = buildCommandList(data);
 
   // All substituted values are built entirely from esc()-escaped data.
-  // popular.js is homepage-only, appended to body content so it loads after the list.
+  // The popular list is the build-time fallback inside <popular-commands>.
   const content = templateContent
     .replace('{{COMMAND_LIST}}', commandList)
     .replace('{{POPULAR_COMMANDS}}', popularCommands)
-    .replace('{{DB_FILTER}}', DB_FILTER_HTML)
-    + '\n<script src="/popular.js" defer></script>';
+    .replace('{{DB_FILTER}}', DB_FILTER_HTML);
 
   const title     = 'Can I Use SQL? | SQL Compatibility Checker';
   const desc      = 'Check SQL command compatibility across MySQL, PostgreSQL, SQL Server, Oracle, and SQLite. Find out which databases support SELECT, MERGE, PIVOT, CTEs, window functions, and more.';
@@ -603,8 +602,6 @@ async function main() {
   fs.copyFileSync(path.join(TEMPLATES_DIR, 'compare.js'), path.join(OUT_DIR, 'compare.js'));
   console.log('✔  Copied compare.js');
 
-  fs.copyFileSync(path.join(TEMPLATES_DIR, 'popular.js'), path.join(OUT_DIR, 'popular.js'));
-  console.log('✔  Copied popular.js');
 
   const staticAssets = ['og-image.png', 'robots.txt', 'favicon.ico', 'favicon.png'];
   for (const asset of staticAssets) {
