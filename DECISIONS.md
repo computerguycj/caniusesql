@@ -10,6 +10,10 @@ Context: <optional — link to commit, file, or issue>
 
 ---
 
+## 2026-09-30 - Search gets a slim index endpoint
+Chose: `GET /api/v2/command-index`, name -> `{ slug, description }` for every command in data.json order (27 KB, about 9 KB gzipped, against 546 KB / 121 KB for the full data). Built once when the catalog loads; same caching, ETag and rate limit as the other command endpoints. The search fetches it once and filters in the browser, as before.
+Rejected: `GET /api/v2/commands` (no size win; moving to the API would only prove the connection); server-side search per keystroke (a network wait on every keystroke, a cold start on the first after idle, and visitors share a rate-limit bucket per Vercel edge server, so typing across many people could hit it); `/api/v2/commands/index` ("index" is a valid slug, so it would collide with `{slug}`).
+
 ## 2026-09-30 - API image on GHCR is public
 Chose: make the ghcr.io/computerguycj/caniusesql-api package public, so Container Apps pulls it without credentials. No secrets go in the image; runtime settings (trusted proxy range, limits) come from Container Apps environment variables.
 Rejected: a private package with a classic PAT (`read:packages`) as a Container Apps registry secret (GHCR doesn't accept fine-grained tokens; a classic one covers every package on the account, and when it expires the next scale-from-zero fails to pull, taking the API down); Azure Container Registry with a managed identity (no stored secret, but about $5/month for Basic, against the $0 target).

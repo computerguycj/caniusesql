@@ -34,6 +34,26 @@ public class CommandsTests(WebApplicationFactory<Program> factory) : IClassFixtu
     }
 
     [Fact]
+    public async Task Command_index_is_slug_and_description_per_command()
+    {
+        var (response, body) = await Get("/api/v2/command-index");
+
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
+        var api = body!.AsObject();
+        Assert.Equal(DataJson.Select(p => p.Key), api.Select(p => p.Key));
+        foreach (var (name, entry) in DataJson)
+        {
+            var expected = new JsonObject
+            {
+                ["slug"] = entry!["slug"]!.DeepClone(),
+                ["description"] = entry["description"]!.DeepClone(),
+            };
+            AssertSameJson(expected, api[name], name);
+        }
+    }
+
+    [Fact]
     public async Task Html_sensitive_characters_are_escaped()
     {
         // JOIN's description contains an <a> tag.

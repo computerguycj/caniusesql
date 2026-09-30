@@ -32,6 +32,9 @@ public sealed partial class CommandCatalog
     /// <summary>Every command, keyed by name, in data.json order.</summary>
     public IReadOnlyDictionary<string, Command> All { get; }
 
+    /// <summary>Name -> slug and description, in data.json order. Built once.</summary>
+    public IReadOnlyDictionary<string, CommandSummary> Index { get; }
+
     /// <summary>
     /// SHA-256 of data.json, hex. Every response is derived from this data
     /// alone, so it identifies the version of all of them (the ETag).
@@ -42,6 +45,10 @@ public sealed partial class CommandCatalog
     {
         All = commands;
         Version = version;
+        var index = new OrderedDictionary<string, CommandSummary>(StringComparer.Ordinal);
+        foreach (var (name, command) in commands)
+            index.Add(name, new CommandSummary(command.Slug, command.Description));
+        Index = index;
         _nameBySlug = new Dictionary<string, string>(StringComparer.Ordinal);
         foreach (var (name, command) in commands)
         {

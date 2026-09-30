@@ -38,3 +38,6 @@ public sealed record NamedCommand(
     public static NamedCommand From(string name, Command c) =>
         new(name, c.Description, c.Syntax, c.Category, c.Slug, c.Compatibility, c.Details, c.Overview);
 }
+
+// GET /api/v2/command-index: just what the search box needs, per command.
+public sealed record CommandSummary(string Slug, string Description);
