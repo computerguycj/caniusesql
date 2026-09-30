@@ -10,6 +10,11 @@ Context: <optional — link to commit, file, or issue>
 
 ---
 
+## 2026-09-30 - Which parts move to Vue, and which stay
+Chose: move `popular.js` (to reuse the 27 KB command index instead of the full data.json) and `splash.js` (a template instead of createElement code, and native `<dialog>` for its modal behaviour). Keep non-Vue: the page content generate.js builds, THEME_SCRIPT, compare.js, track.js, header.html, and the Vercel edge functions. Reasons per part are in docs/front-end.md.
+Rejected: moving the static page content (custom elements render only in the browser, so crawlers, no-JS readers and first paint would lose it; doing it properly means a Vue SSG, a different architecture); moving compare.js's loop into DbFilter (ties a reusable element to one page's selectors); moving track.js (no UI or state, and it should run even if the Vue bundle fails).
+Context: the splash's accessibility bug (claims modal, doesn't move focus or make the page inert) would also be fixed by a native `<dialog>` without Vue; the move is for the template and practice, not the fix.
+
 ## 2026-09-30 - Search e2e tests stand in for the API with page.route
 Chose: tests/e2e/search-data.spec.js answers `/api/v2/command-index` with `page.route` (an index built from data.json, one description changed to show which source rendered) and checks: the API is used with no data.json request; a 500 and a request that never answers (the element's 5 s timeout) both fall back to data.json; a description holding an `<img onerror>` payload renders as text. It uses a command page, since the homepage also fetches data.json for its popular list.
 Rejected: running the real API during e2e (a .NET process in the Playwright web server for four tests; the API has its own tests, and the element's contract is the JSON shape).
