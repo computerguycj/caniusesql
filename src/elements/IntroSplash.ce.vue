@@ -12,8 +12,9 @@
   and treats Escape as a request to close. It closes on the button, on
   Escape, on a click anywhere (as the old splash did), or on its own after
   3 s. Closing fades over 0.4 s unless the reader prefers reduced motion.
-  Focus goes back where it was (the document, on page load): the browser
-  does that when a modal dialog closes.
+  Focus goes back to what had it before (on page load, nothing: the
+  document). Done here, not left to the browser: Chromium restored it after
+  Escape but left it on the hidden Close button after a click on it.
 -->
 <script setup>
 import { ref, onMounted, onUnmounted } from 'vue';
@@ -31,21 +32,33 @@ const dialog = ref(null);
 const fading = ref(false);
 let autoClose = null;
 let fadeTimer = null;
+let previousFocus = null;  // what had focus before the dialog opened
 
 function reducedMotion() {
   return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+}
+
+// Closes the dialog and puts focus back: off anything inside the dialog
+// (now hidden), onto what had it before, if that was a real element.
+function closeNow() {
+  dialog.value.close();
+  const inside = dialog.value.getRootNode().activeElement;
+  if (inside && dialog.value.contains(inside)) inside.blur();
+  if (previousFocus && previousFocus !== document.body && previousFocus.isConnected) {
+    previousFocus.focus();
+  }
 }
 
 function close() {
   if (!dialog.value.open || fading.value) return;
   clearTimeout(autoClose);
   if (reducedMotion()) {
-    dialog.value.close();
+    closeNow();
     return;
   }
   fading.value = true;
   fadeTimer = setTimeout(() => {
-    dialog.value.close();
+    closeNow();
     fading.value = false;
   }, FADE_MS);
 }
@@ -60,6 +73,7 @@ function onCancel(event) {
 onMounted(() => {
   if (!shouldShowSplash(document)) return;
   markSplashSeen(document);
+  previousFocus = document.activeElement;
   dialog.value.showModal();
   autoClose = setTimeout(close, AUTO_CLOSE_MS);
 });
