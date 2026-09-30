@@ -10,6 +10,10 @@ Context: <optional — link to commit, file, or issue>
 
 ---
 
+## 2026-09-30 - Popular list e2e tests read the shadow root directly
+Chose: tests/e2e/popular.spec.js stands in for `/api/popular` and the index with `page.route`, and reads the live links with `element.shadowRoot.querySelectorAll('a')` in `page.evaluate`. It checks: the live list replaces the build-time one in order; unknown slugs are dropped; a failing, empty or non-list `/api/popular` keeps the build-time list; search and the popular list make one index request (and one data.json request when the API fails); axe finds nothing in the live list in either theme.
+Rejected: Playwright CSS locators for the live links. The build-time links share `class="example"`, Playwright's CSS reaches into shadow roots, so `popular-commands .example` matches both lists, and `:not(popular-commands > a)` matched nothing under Playwright's shadow-piercing engine.
+
 ## 2026-09-30 - <popular-commands> owns the badge styles; one !important for slotted links
 Chose: the live links render in the element's shadow root, so the `.example` badge rules moved from styles.css into PopularCommands.ce.vue, applied to `.example` (live) and `::slotted(a)` (the build-time links). The slotted links' `color` is `!important`.
 Rejected: `shadowRoot: false` so page CSS applies (Vue mounts into the element and replaces its children, so the build-time list would vanish until the fetch finishes); keeping a second copy of the badge rules in styles.css for the slotted links (two copies to drift).
