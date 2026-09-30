@@ -407,20 +407,8 @@ copy-code:not(:defined) {
   letter-spacing: 0.06em;
 }
 
-.example {
-  display: inline-block;
-  margin: 4px 6px 4px 0;
-  padding: 4px 10px;
-  background: var(--color-badge-bg);
-  color: var(--color-badge-text);
-  border: 1px solid var(--color-badge-border);
-  border-radius: 4px;
-  text-decoration: none;
-  font-size: 13px;
-  font-weight: 600;
-}
-
-.example:hover { background: var(--color-badge-bg-hover); }
+/* The badges themselves (.example) are styled in
+   src/elements/PopularCommands.ce.vue. */
 
 /* --------------------------------------------------------------------------
    Command page sections

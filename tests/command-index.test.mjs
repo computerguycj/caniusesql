@@ -5,7 +5,9 @@
  */
 import { test, beforeEach, afterEach } from 'node:test';
 import assert from 'node:assert/strict';
-import { loadCommandIndex, isCommandIndex } from '../src/elements/commandIndex.js';
+import {
+  loadCommandIndex, loadCommandIndexShared, clearSharedCommandIndex, isCommandIndex,
+} from '../src/elements/commandIndex.js';
 
 const API = '/api/v2/command-index';
 const FALLBACK = '/data.json?v=2';
@@ -29,7 +31,7 @@ function fakeFetch(routes) {
 
 // The fallback path logs a warning by design; keep test output clean.
 let warn;
-beforeEach(() => { warn = console.warn; console.warn = () => {}; });
+beforeEach(() => { warn = console.warn; console.warn = () => {}; clearSharedCommandIndex(); });
 afterEach(() => { console.warn = warn; });
 
 const load = (fetchImpl, timeoutMs) =>
@@ -87,4 +89,27 @@ test('isCommandIndex accepts the index and data.json, nothing else', () => {
   for (const bad of [null, [], 'x', {}, { a: 1 }, { a: { slug: 1 } }, { a: {}, b: { slug: 'b' } }]) {
     assert.equal(isCommandIndex(bad), false, JSON.stringify(bad));
   }
+});
+
+test('shared: callers with the same URLs share one request', async () => {
+  const { fetchImpl, calls } = fakeFetch({ [API]: json(INDEX) });
+  const options = { src: API, fallbackSrc: FALLBACK, fetchImpl };
+  const [a, b] = await Promise.all([loadCommandIndexShared(options), loadCommandIndexShared(options)]);
+  assert.equal(a, b);
+  assert.deepEqual(calls, [API]);
+});
+
+test('shared: different URLs load separately', async () => {
+  const { fetchImpl, calls } = fakeFetch({ [API]: json(INDEX), '/other': json(INDEX) });
+  await loadCommandIndexShared({ src: API, fallbackSrc: FALLBACK, fetchImpl });
+  await loadCommandIndexShared({ src: '/other', fallbackSrc: FALLBACK, fetchImpl });
+  assert.deepEqual(calls, [API, '/other']);
+});
+
+test('shared: a failed load is retried by the next caller', async () => {
+  const failing = fakeFetch({ [API]: status(503), [FALLBACK]: status(503) });
+  await assert.rejects(loadCommandIndexShared({ src: API, fallbackSrc: FALLBACK, fetchImpl: failing.fetchImpl }));
+  const working = fakeFetch({ [API]: json(INDEX) });
+  const result = await loadCommandIndexShared({ src: API, fallbackSrc: FALLBACK, fetchImpl: working.fetchImpl });
+  assert.equal(result.source, 'api');
 });

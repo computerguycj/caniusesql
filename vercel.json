@@ -25,7 +25,7 @@
       "headers": [
         {
           "key": "Content-Security-Policy",
-          "value": "default-src 'self'; script-src 'self' 'sha256-eUBFfesyFcjBWportzKs2x1mN0d+s38j9zspwSPf3x4='; style-src 'self' 'sha256-2VfgrPsyH6Mcsn9/JCA+ek/smnN8gdtaGpyBy43QW4w=' 'sha256-HLULRbRWcalAYsDm2CPQUV91Bv5oHx9j0nfpwV7nvDo=' 'sha256-ZpyJW8lk2Gnjgn1O7IZqtpSm8raIu+m9KDmLj9lYeBQ=' 'sha256-h4iRrhPoKfUcIealEwQpQYLUuB5SXN9LkAL9QRKs1TQ='; img-src 'self' https://cdn.buymeacoffee.com; connect-src 'self'; font-src 'self'; object-src 'none'; base-uri 'self'; form-action 'none'; frame-ancestors 'none'; report-uri /api/csp-report; report-to csp"
+          "value": "default-src 'self'; script-src 'self' 'sha256-eUBFfesyFcjBWportzKs2x1mN0d+s38j9zspwSPf3x4='; style-src 'self' 'sha256-2VfgrPsyH6Mcsn9/JCA+ek/smnN8gdtaGpyBy43QW4w=' 'sha256-HLULRbRWcalAYsDm2CPQUV91Bv5oHx9j0nfpwV7nvDo=' 'sha256-SJGmz2M9GlkWTYO6pRbeQn8/T9jgYmPfKYQ8lscElwA=' 'sha256-ZpyJW8lk2Gnjgn1O7IZqtpSm8raIu+m9KDmLj9lYeBQ=' 'sha256-h4iRrhPoKfUcIealEwQpQYLUuB5SXN9LkAL9QRKs1TQ='; img-src 'self' https://cdn.buymeacoffee.com; connect-src 'self'; font-src 'self'; object-src 'none'; base-uri 'self'; form-action 'none'; frame-ancestors 'none'; report-uri /api/csp-report; report-to csp"
         },
         {
           "key": "Reporting-Endpoints",

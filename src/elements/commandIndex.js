@@ -60,16 +60,42 @@ export async function loadCommandIndex({
   return { commands, source: 'fallback' };
 }
 
+// One load per (src, fallbackSrc) per page: the homepage has two elements
+// that need the index. Whether a browser merges two identical requests
+// started together depends on its cache; sharing the promise makes it one
+// request everywhere, fallback included.
+const shared = new Map();
+
+/**
+ * loadCommandIndex, shared: callers with the same URLs get the same promise.
+ * A failed load is forgotten, so a later caller tries again.
+ */
+export function loadCommandIndexShared(options) {
+  const key = options.src + '\n' + options.fallbackSrc;
+  if (!shared.has(key)) {
+    const promise = loadCommandIndex(options);
+    promise.catch(() => shared.delete(key));
+    shared.set(key, promise);
+  }
+  return shared.get(key);
+}
+
+/** For tests: forget every shared load. */
+export function clearSharedCommandIndex() {
+  shared.clear();
+}
+
 /**
  * Composable: call from a component's setup. `commands` stays null until a
- * source loads; `source` says which one did.
+ * source loads; `source` says which one did. Components on the same page
+ * share one load.
  */
 export function useCommandIndex(src, fallbackSrc) {
   const commands = ref(null);
   const source = ref(null);
 
   onMounted(() => {
-    loadCommandIndex({ src, fallbackSrc })
+    loadCommandIndexShared({ src, fallbackSrc })
       .then(result => {
         commands.value = result.commands;
         source.value = result.source;
