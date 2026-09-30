@@ -1,8 +1,10 @@
 <!--
   CommandSearch.ce.vue — <command-search> custom element: the header search box.
 
-  In:  `src` attribute, the URL of the command data (default /data.json?v=2).
-       Fetched once on mount. Same shape as data.json: name -> { slug, description, … }.
+  In:  `src` attribute, the API's command index (default /api/v2/command-index),
+       and `fallback-src`, the static data used if the API fails (default
+       /data.json?v=2). Loaded once on mount by useCommandIndex
+       (commandIndex.js). Both are name -> { slug, description, … }.
   Out: nothing. Results are real links, so the browser does the navigating.
 
   Also owns the "/" shortcut that focuses the search box. One per page.
@@ -21,14 +23,17 @@
 -->
 <script setup>
 import { ref, computed, watch, nextTick, onMounted, onUnmounted } from 'vue';
+import { useCommandIndex } from './commandIndex.js';
 
 const MAX_RESULTS = 10;
 
 const props = defineProps({
-  src: { type: String, default: '/data.json?v=2' },
+  src: { type: String, default: '/api/v2/command-index' },
+  fallbackSrc: { type: String, default: '/data.json?v=2' },
 });
 
-const commandData = ref(null);  // null until the fetch resolves
+// null until a source loads (see commandIndex.js).
+const { commands: commandData } = useCommandIndex(props.src, props.fallbackSrc);
 const query = ref('');
 const open = ref(false);        // false after Escape or an outside click
 const active = ref(-1);         // highlighted result index, -1 for none
@@ -185,21 +190,6 @@ function onDocumentKeydown(event) {
 onMounted(() => {
   document.addEventListener('click', onDocumentClick);
   document.addEventListener('keydown', onDocumentKeydown);
-
-  fetch(props.src)
-    .then(response => {
-      if (!response.ok) {
-        throw new Error('Failed to load ' + props.src + ': ' + response.status);
-      }
-      return response.json();
-    })
-    .then(data => {
-      commandData.value = data;
-    })
-    .catch(error => {
-      // Search stays inert, as it did before the fetch finished.
-      console.error(error);
-    });
 });
 
 // Document listeners outlive the element unless removed here.

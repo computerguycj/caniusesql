@@ -10,6 +10,11 @@ Context: <optional — link to commit, file, or issue>
 
 ---
 
+## 2026-09-30 - Search loads the API index first, falls back to data.json
+Chose: `<command-search>` gets its data from a composable, `useCommandIndex(src, fallbackSrc)` in src/elements/commandIndex.js, which wraps a plain `loadCommandIndex()` (fetch passed in, unit tested with node --test). It tries `/api/v2/command-index` with a 5 s timeout (`AbortSignal.timeout`), and on any failure (network error, non-2xx, not JSON, JSON that isn't an index of `{ slug }` objects, or the timeout) loads `/data.json?v=2`, which has the same fields and more. A fallback logs a console warning, not an error.
+Rejected: API only (search would break while the API is undeployed, during an Azure outage, and under `vite preview`, which has no API); no timeout (a cold start after scale-to-zero would leave search inert for however long it takes); trusting any 200 (a misrouted request can return an HTML page with status 200).
+Context: the 5 s is an estimate of the cold-start time, not a measurement; revisit once the API is live. Gotcha: in Node, `AbortSignal.timeout()`'s timer doesn't keep the event loop alive, so the timeout test's fake hanging request holds a timer of its own or Node cancels the test; browsers don't have this issue. Node's test summary counts those as "cancelled", not "fail".
+
 ## 2026-09-30 - Search gets a slim index endpoint
 Chose: `GET /api/v2/command-index`, name -> `{ slug, description }` for every command in data.json order (27 KB, about 9 KB gzipped, against 546 KB / 121 KB for the full data). Built once when the catalog loads; same caching, ETag and rate limit as the other command endpoints. The search fetches it once and filters in the browser, as before.
 Rejected: `GET /api/v2/commands` (no size win; moving to the API would only prove the connection); server-side search per keystroke (a network wait on every keystroke, a cold start on the first after idle, and visitors share a rate-limit bucket per Vercel edge server, so typing across many people could hit it); `/api/v2/commands/index` ("index" is a valid slug, so it would collide with `{slug}`).
