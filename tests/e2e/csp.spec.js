@@ -61,8 +61,8 @@ test('splash: no CSP violations', async ({ page }) => {
   await trackViolations(page);
   await page.route('**/cdn.buymeacoffee.com/**', route => route.abort());
   await page.goto('/');  // no splash cookie, so the splash shows
-  await page.waitForSelector('#caniusesql-splash');
-  await page.click('#caniusesql-splash');
+  await page.waitForSelector('intro-splash dialog[open]');
+  await page.click('intro-splash dialog');
   await page.waitForTimeout(600);
   expect(await violations(page)).toEqual([]);
 });
