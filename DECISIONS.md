@@ -10,6 +10,20 @@ Context: <optional — link to commit, file, or issue>
 
 ---
 
+## 2026-09-30 - API JSON: explicit options, HTML-sensitive characters escaped
+Chose: `AddJsonOptions` sets camelCase property names, no dictionary key policy (command names stay as written), and `JavaScriptEncoder.Default`, so `<`, `>` and `&` go out as `\u003C` etc. A test checks that JOIN's description has no raw `<`.
+Rejected: MVC's default. With no encoder set, ASP.NET Core's JSON output formatter uses `UnsafeRelaxedJsonEscaping`, which writes `<a href=…>` from data.json raw. That's valid JSON and harmless as `application/json` with nosniff, but escaping makes it inert if anything ever treats it as HTML, and costs nothing: parsed values are identical.
+Context: found by curling the running API, not from the docs. server/src/CanIUseSql.Api/Program.cs.
+
+## 2026-09-30 - Malformed slug is a 400 from model validation, not a route constraint
+Chose: `{slug}` with `[RegularExpression(SlugPattern)]` and `[StringLength(64)]` on the parameter; `[ApiController]` turns a failure into a 400 ValidationProblemDetails before the action runs. Well-formed but unknown slugs are a 404 ProblemDetails. `AddProblemDetails` plus `UseStatusCodePages` make unmatched routes `application/problem+json` too.
+Rejected: a regex route constraint (`{slug:regex(...)}`). A failing constraint means "this route doesn't match", so the request falls through to a 404, not a 400. Constraints are for choosing between routes, not validating input. Also rejected: `[Produces("application/json")]`, which forced that content type onto error responses and replaced `application/problem+json`.
+
+## 2026-09-30 - Catalog loads strictly; API always writes optional keys
+Chose: `CommandCatalog` deserializes data.json into records with `UnmappedMemberHandling.Disallow`, `RespectNullableAnnotations` and `RespectRequiredConstructorParameters`, keeps data.json order (`OrderedDictionary`), and checks slugs are unique and match the site's pattern. It's resolved right after `Build()`, so bad data stops startup. A dialect's `since`/`syntax` is either missing or null in data.json (107 and 32 missing); both load as null and the API always writes the key. The parity test treats a missing key and null as equal and checks the name order.
+Rejected: lenient loading (an unknown field would silently vanish from the API); omitting nulls on output (data.json also has explicit nulls, so neither choice reproduces the file byte for byte); `Dictionary` for the command map (its order isn't guaranteed, and the search lists results in data.json order).
+Context: server/src/CanIUseSql.Api/Catalog/. data.json is linked into the API project and copied next to the binaries; `Catalog:Path` overrides the location.
+
 ## 2026-09-30 - .NET tests run on Microsoft.Testing.Platform, xUnit v3
 Chose: xUnit v3 (`xunit.v3` 4.0.1, Apache-2.0) with `Microsoft.AspNetCore.Mvc.Testing` 10.0.12 (MIT) for in-memory HTTP tests through `WebApplicationFactory<Program>`. `server/global.json` opts `dotnet test` into Microsoft.Testing.Platform; xUnit v3 test projects are executables that host the platform themselves, so there is no `Microsoft.NET.Test.Sdk` or `xunit.runner.visualstudio`.
 Rejected: VSTest (the .NET 10 SDK refuses to run an MTP-based project through the VSTest `dotnet test` path: "Testing with VSTest target is no longer supported"); NUnit/MSTest (xUnit is the ASP.NET Core docs' default); coverlet (no coverage target yet, one less dependency).

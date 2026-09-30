@@ -20,14 +20,4 @@ public class HealthTests(WebApplicationFactory<Program> factory) : IClassFixture
         var body = await response.Content.ReadFromJsonAsync<Dictionary<string, string>>(TestContext.Current.CancellationToken);
         Assert.Equal("ok", body?["status"]);
     }
-
-    [Fact]
-    public async Task Unknown_route_is_404()
-    {
-        var client = factory.CreateClient();
-
-        var response = await client.GetAsync("/api/v2/nope", TestContext.Current.CancellationToken);
-
-        Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
-    }
 }
