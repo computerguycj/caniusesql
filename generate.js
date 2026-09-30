@@ -271,6 +271,10 @@ const THEME_SCRIPT = "try{var d=document.documentElement,t=localStorage.getItem(
   + "if(ok&&(c.base==='light'||c.base==='dark')){d.dataset.theme=c.base;d.dataset.custom='';for(k in o)d.style.setProperty(k,o[k])}}"
   + "}catch(e){}";
 
+// The intro splash on every page (src/elements/IntroSplash.ce.vue), with
+// counts from data.json. Set in main() once the data is read.
+let SPLASH_HTML = '';
+
 function applyTemplate(headerTpl, headHtml, bodyContent, vars) {
   const header = headerTpl.replace(/\{\{(\w+)\}\}/g, function (match, key) {
     return Object.prototype.hasOwnProperty.call(vars, key) ? vars[key] : '';
@@ -297,7 +301,7 @@ ${bodyContent}
 <footer class="site-footer">
   <p>&copy; 2024 Can I Use SQL. All rights reserved.</p>
 </footer>
-  <script src="/splash.js" defer></script>
+${SPLASH_HTML}
   <script src="/track.js" defer></script>
   <script src="/compare.js" defer></script>
   <script type="module" src="/assets/elements.js"></script>
@@ -564,6 +568,7 @@ async function main() {
   // Load data
   const data     = JSON.parse(fs.readFileSync(DATA_FILE, 'utf8'));
   const commands = Object.entries(data);
+  SPLASH_HTML = `<intro-splash command-count="${commands.length}" database-count="${DB_COUNT}"></intro-splash>`;
 
   // Load shared templates
   const headerTpl = readTemplate('header.html');
@@ -593,8 +598,6 @@ async function main() {
   fs.copyFileSync(path.join(TEMPLATES_DIR, 'favicon.svg'), path.join(OUT_DIR, 'favicon.svg'));
   console.log('✔  Copied favicon.svg');
 
-  fs.copyFileSync(path.join(TEMPLATES_DIR, 'splash.js'), path.join(OUT_DIR, 'splash.js'));
-  console.log('✔  Copied splash.js');
 
   fs.copyFileSync(path.join(TEMPLATES_DIR, 'track.js'), path.join(OUT_DIR, 'track.js'));
   console.log('✔  Copied track.js');

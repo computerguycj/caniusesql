@@ -14,12 +14,7 @@ Vue. Decisions behind it are in DECISIONS.md.
 | `<copy-code>` | `CopyCode.ce.vue` | Copy button on a slotted code block |
 | `<theme-picker>` | `ThemePicker.ce.vue` | System / Light / Dark / Custom, with the Custom dialog |
 | `<popular-commands>` | `PopularCommands.ce.vue` | Homepage's most-visited commands: live from `/api/popular` plus the command index (shared with the search box), the build-time list slotted as the fallback. Replaced `templates/popular.js`. |
-
-## Moving to Vue (planned)
-
-| Part | Why |
-|---|---|
-| `templates/splash.js` → a Vue `<dialog>` | About 60 lines of `createElement` become a template. It claims `role="dialog"` and `aria-modal` but doesn't move focus or make the page inert; native `<dialog>` with `showModal()` does both. (A native `<dialog>` without Vue would fix that too; the template is the Vue gain.) |
+| `<intro-splash>` | `IntroSplash.ce.vue` | One-time intro splash: a native `<dialog>` (`showModal()`: focus moves in, the page is inert, Escape closes), a Close button, closes itself after 3 s, respects reduced motion. Cookie logic in `splash.js`. Replaced `templates/splash.js`. |
 
 ## Staying non-Vue
 
