@@ -49,7 +49,7 @@ export function mix(a, b, t) {
 
 /**
  * The tokens Custom mode sets on <html>, derived from one accent.
- * palette: { bg, surface, surfaceAlt, text, lightInk, darkInk } for the base.
+ * palette: { bg, surface, surfaceAlt, text, muted, lightInk, darkInk } for the base.
  */
 export function deriveTokens(accent, palette) {
   const onAccent = contrast(palette.lightInk, accent) >= contrast(palette.darkInk, accent) ? palette.lightInk : palette.darkInk;
@@ -65,7 +65,8 @@ export function deriveTokens(accent, palette) {
     '--color-badge-bg': mix(palette.surface, accent, 0.08),
     '--color-badge-bg-hover': mix(palette.surface, accent, 0.14),
     '--color-badge-border': mix(palette.surface, accent, 0.35),
-    '--color-search-hover': mix(palette.surface, accent, 0.06),
+    // Light enough that muted text (search result descriptions) still passes.
+    '--color-search-hover': mix(palette.surface, accent, 0.04),
   };
 }
 
@@ -77,7 +78,9 @@ export function checkTokens(tokens, palette) {
     ['accent text on surface', accent, palette.surface, TEXT_MIN],
     ['accent text on alternate surface', accent, palette.surfaceAlt, TEXT_MIN],
     ['accent text on badge', tokens['--color-badge-text'], tokens['--color-badge-bg'], TEXT_MIN],
+    ['accent text on hovered badge', tokens['--color-badge-text'], tokens['--color-badge-bg-hover'], TEXT_MIN],
     ['accent text on search highlight', accent, tokens['--color-search-hover'], TEXT_MIN],
+    ['muted text on search highlight', palette.muted, tokens['--color-search-hover'], TEXT_MIN],
     ['hover color on background', tokens['--color-primary-dark'], palette.bg, TEXT_MIN],
     ['text on accent', tokens['--color-text-on-accent'], accent, TEXT_MIN],
     ['focus ring on background', accent, palette.bg, NON_TEXT_MIN],

@@ -86,6 +86,7 @@ function palette(base) {
     surface: resolve('--color-surface', base),
     surfaceAlt: resolve('--color-surface-alt', base),
     text: resolve('--color-text', base),
+    muted: resolve('--color-text-muted', base),
     lightInk: resolve('--ink-light', base),
     darkInk: resolve('--ink-dark', base),
   };
@@ -402,8 +403,8 @@ onUnmounted(() => {
 }
 
 .choice input {
-  width: 20px;
-  height: 20px;
+  width: 24px;  /* WCAG 2.2 target size */
+  height: 24px;
   margin: 0;
   accent-color: var(--color-primary);
 }

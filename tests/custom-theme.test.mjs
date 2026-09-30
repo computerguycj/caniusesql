@@ -11,8 +11,8 @@ import {
 } from '../src/elements/customTheme.js';
 
 const INKS = { lightInk: '#ffffff', darkInk: '#0d1117' };
-const LIGHT = { bg: '#f5f7fa', surface: '#ffffff', surfaceAlt: '#f8f9fa', text: '#333333', ...INKS };
-const DARK = { bg: '#0d1117', surface: '#161b22', surfaceAlt: '#1c2128', text: '#e6edf3', ...INKS };
+const LIGHT = { bg: '#f5f7fa', surface: '#ffffff', surfaceAlt: '#f8f9fa', text: '#333333', muted: '#657171', ...INKS };
+const DARK = { bg: '#0d1117', surface: '#161b22', surfaceAlt: '#1c2128', text: '#e6edf3', muted: '#8b949e', ...INKS };
 
 test('contrast matches known WCAG values', () => {
   assert.equal(contrast('#ffffff', '#000000').toFixed(2), '21.00');
@@ -65,6 +65,13 @@ test('nearestPassing returns a passing color close to the pick, keeping the hue'
     if (Math.max(...a) - Math.min(...a) > 30) assert.equal(a.indexOf(Math.max(...a)), b.indexOf(Math.max(...b)), `${pick} -> ${fixed} keeps its hue`);
   }
   assert.equal(nearestPassing('#1f74ae', LIGHT), '#1f74ae', 'a passing pick is returned as is');
+});
+
+test('the extreme accents pass, including muted text on the search highlight', () => {
+  for (const [accent, base] of [['#000000', LIGHT], ['#ffffff', DARK], ['#ff00ff', DARK]]) {
+    const failing = checkTokens(deriveTokens(accent, base), base).filter(c => !c.ok);
+    assert.deepEqual(failing.map(c => c.name), [], accent);
+  }
 });
 
 test('isSafeTokenMap accepts only --color-* names with #hex values', () => {
