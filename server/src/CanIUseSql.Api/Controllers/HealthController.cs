@@ -10,5 +10,6 @@ namespace CanIUseSql.Api.Controllers;
 public class HealthController : ControllerBase
 {
     [HttpGet]
+    [ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
     public IActionResult Get() => Ok(new { status = "ok" });
 }

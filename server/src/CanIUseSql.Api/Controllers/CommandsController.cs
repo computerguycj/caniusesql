@@ -1,12 +1,17 @@
 using System.ComponentModel.DataAnnotations;
 using CanIUseSql.Api.Catalog;
+using CanIUseSql.Api.Filters;
+using CanIUseSql.Api.RateLimiting;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 
 namespace CanIUseSql.Api.Controllers;
 
 /// <summary>The SQL command data: all of it, or one command by slug.</summary>
 [ApiController]
 [Route("api/v2/commands")]
+[ServiceFilter<CatalogCacheFilter>]
+[EnableRateLimiting(RateLimitSettings.PolicyName)]
 public class CommandsController(CommandCatalog catalog) : ControllerBase
 {
     /// <summary>Same shape and content as data.json: name -> command.</summary>

@@ -27,6 +27,17 @@ public class CatalogTests
         Assert.Equal("a", a!.Name);
     }
 
+    [Fact]
+    public void Version_changes_with_the_data()
+    {
+        var a = CommandCatalog.Parse($$"""{ "a": {{Entry("a")}} }""");
+        var same = CommandCatalog.Parse($$"""{ "a": {{Entry("a")}} }""");
+        var b = CommandCatalog.Parse($$"""{ "b": {{Entry("b")}} }""");
+
+        Assert.Equal(a.Version, same.Version);
+        Assert.NotEqual(a.Version, b.Version);
+    }
+
     [Theory]
     [InlineData("unknown key", """{ "a": ENTRY_EXTRA }""")]
     [InlineData("missing required key", """{ "a": { "description": "d" } }""")]

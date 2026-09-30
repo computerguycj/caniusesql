@@ -1,3 +1,5 @@
+using System.Security.Cryptography;
+using System.Text;
 using System.Text.Json;
 using System.Text.RegularExpressions;
 
@@ -30,9 +32,16 @@ public sealed partial class CommandCatalog
     /// <summary>Every command, keyed by name, in data.json order.</summary>
     public IReadOnlyDictionary<string, Command> All { get; }
 
-    private CommandCatalog(OrderedDictionary<string, Command> commands)
+    /// <summary>
+    /// SHA-256 of data.json, hex. Every response is derived from this data
+    /// alone, so it identifies the version of all of them (the ETag).
+    /// </summary>
+    public string Version { get; }
+
+    private CommandCatalog(OrderedDictionary<string, Command> commands, string version)
     {
         All = commands;
+        Version = version;
         _nameBySlug = new Dictionary<string, string>(StringComparer.Ordinal);
         foreach (var (name, command) in commands)
         {
@@ -49,7 +58,8 @@ public sealed partial class CommandCatalog
     {
         var commands = JsonSerializer.Deserialize<OrderedDictionary<string, Command>>(json, ReadOptions)
             ?? throw new InvalidDataException("data.json is null.");
-        return new CommandCatalog(commands);
+        var version = Convert.ToHexStringLower(SHA256.HashData(Encoding.UTF8.GetBytes(json)));
+        return new CommandCatalog(commands, version);
     }
 
     public bool TryGet(string slug, out NamedCommand? command)

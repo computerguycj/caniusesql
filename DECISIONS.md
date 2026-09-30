@@ -10,6 +10,15 @@ Context: <optional — link to commit, file, or issue>
 
 ---
 
+## 2026-09-30 - Rate limit per rightmost X-Forwarded-For entry, from trusted proxies only
+Chose: a fixed window per client IP (300 per 60 s, from config) on the command endpoints (`[EnableRateLimiting]`; health is exempt), 429 problem+json with Retry-After. The client IP comes from `UseForwardedHeaders` with `ForwardLimit = 1`, and only on connections from `ForwardedHeaders:TrustedNetworks` (the Container Apps ingress range, set in chunk 5; empty means trust nobody). So the key is the entry the ingress itself wrote, which can't be spoofed.
+Rejected: the leftmost entry (what most examples use; the caller writes it, so a fresh fake IP per request skips the limit); Vercel's client IP plus a shared-secret header proving the request came through Vercel (true per-visitor limits, but a `vercel.json` rewrite can't add request headers, so it needs Routing Middleware on every API call; can be added later without undoing this); trusting any peer (anyone reaching the app directly could pick their own IP).
+Context: through Vercel the rightmost entry is a Vercel edge server shared by many visitors, so this is a per-edge ceiling, hence the high limit; the one-hour caching means real visitors send few requests, and Vercel's own DDoS protection sits in front. The exact header format behind Vercel and Container Apps is an inference until checked on the preview in chunk 5. `KnownNetworks` is obsolete in .NET 10; it's `KnownIPNetworks`.
+
+## 2026-09-30 - HTTP caching: one weak ETag for the data version, successes only
+Chose: an action filter (`CatalogCacheFilter`, applied with `[ServiceFilter]` so DI supplies the catalog) adds `Cache-Control: public, max-age=3600` and `ETag: W/"<SHA-256 of data.json>"` to 200s, and turns a matching `If-None-Match` (weak comparison, `*` included) into a 304 with no body. 400s and 404s get neither header; health is `no-store`.
+Rejected: a hash per response body (every response is derived from data.json alone, so the file's hash already changes exactly when any response does, and nothing is serialized twice); a strong ETag (the proxies in front may compress the body, and a strong ETag promises identical bytes); `[ResponseCache]` for the commands (it sets its headers before the action runs, so 404s would be cached too); ASP.NET Core's output caching middleware (caches on the server; the goal here is fewer requests from browsers).
+
 ## 2026-09-30 - API JSON: explicit options, HTML-sensitive characters escaped
 Chose: `AddJsonOptions` sets camelCase property names, no dictionary key policy (command names stay as written), and `JavaScriptEncoder.Default`, so `<`, `>` and `&` go out as `\u003C` etc. A test checks that JOIN's description has no raw `<`.
 Rejected: MVC's default. With no encoder set, ASP.NET Core's JSON output formatter uses `UnsafeRelaxedJsonEscaping`, which writes `<a href=…>` from data.json raw. That's valid JSON and harmless as `application/json` with nosniff, but escaping makes it inert if anything ever treats it as HTML, and costs nothing: parsed values are identical.
