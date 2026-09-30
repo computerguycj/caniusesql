@@ -10,6 +10,25 @@ Context: <optional — link to commit, file, or issue>
 
 ---
 
+## 2026-09-30 - .NET tests run on Microsoft.Testing.Platform, xUnit v3
+Chose: xUnit v3 (`xunit.v3` 4.0.1, Apache-2.0) with `Microsoft.AspNetCore.Mvc.Testing` 10.0.12 (MIT) for in-memory HTTP tests through `WebApplicationFactory<Program>`. `server/global.json` opts `dotnet test` into Microsoft.Testing.Platform; xUnit v3 test projects are executables that host the platform themselves, so there is no `Microsoft.NET.Test.Sdk` or `xunit.runner.visualstudio`.
+Rejected: VSTest (the .NET 10 SDK refuses to run an MTP-based project through the VSTest `dotnet test` path: "Testing with VSTest target is no longer supported"); NUnit/MSTest (xUnit is the ASP.NET Core docs' default); coverlet (no coverage target yet, one less dependency).
+Context: server/global.json only sets the test runner, it does not pin an SDK version.
+
+## 2026-09-30 - data.json stays the source of truth; the API serves a copy
+Chose: the API loads the same data.json the static pages are built from, once at startup, and a parity test fails if `GET /api/v2/commands` differs from the file.
+Rejected: a database as the source (a second copy to keep in sync, and hosting cost); making the static build read from the API (the site would depend on a scale-to-zero container at build time).
+
+## 2026-09-30 - ASP.NET Core controllers, not minimal APIs
+Chose: `[ApiController]` classes with attribute routing under `/api/v2`, registered with `AddControllers()` / `MapControllers()`.
+Rejected: minimal APIs (less code for a read-only API this size, but the point of stage 3 is practice configuring controllers: filters, model binding, route constraints, ProblemDetails).
+Context: server/src/CanIUseSql.Api.
+
+## 2026-09-30 - Host the .NET API on Azure Container Apps
+Chose: .NET 10 LTS (supported to Nov 2028) in a container on Azure Container Apps, consumption plan, scale to zero, image on GHCR. Vercel rewrites `/api/v2/*` to it, so browsers see the site's own origin (no CORS, no new `connect-src` origin). A $5 budget alert on the subscription.
+Rejected: App Service F1 (60 CPU-minutes a day, no always-on) and B1 (about $13/month); Google Cloud Run (similar, but the interview is .NET and Azure); Render (free tier sleeps with a slow cold start and less control); moving the whole site off Vercel (no reason to, and it breaks the existing edge functions). Vercel itself has no .NET runtime.
+Context: expected cost $0/month inside the free grant (180k vCPU-seconds, 360k GiB-seconds, 2M requests). Cold starts after idle are the tradeoff for scale to zero. `server/` is in .vercelignore so the .NET code isn't uploaded to Vercel.
+
 ## 2026-09-30 - Tag end of stage 2 as v2.0.0
 Chose: annotated tag v2.0.0 on main (ee5dad1) plus a GitHub Release, marking stages 1 and 2 (Vue custom elements, themes, enforced CSP).
 Rejected: v1.x (a build step, a new header, and a CSP that now blocks what it used to allow are breaking changes for a website); tagging stage 1 separately (not requested; c6a27f5 can still be tagged later).
