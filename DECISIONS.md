@@ -10,6 +10,58 @@ Context: <optional — link to commit, file, or issue>
 
 ---
 
+## 2026-09-30 - API CI/CD: GitHub Actions, GHCR, OIDC sign-in, deploy by digest
+Chose: .github/workflows/api.yml runs on changes to server/, data.json or itself. `test` runs `dotnet test`; `image` builds server/Dockerfile (pull requests build only; main pushes to `ghcr.io/computerguycj/caniusesql-api` with the workflow's own token, tags `sha-<short>` and `latest`); `deploy` runs `az containerapp update --image <image>@<digest>` in a `production` environment, signed in to Azure with OpenID Connect. Deploy is skipped until the repository variable `AZURE_CONTAINER_APP` exists (chunk 5).
+Rejected: deploying a tag (`latest` doesn't change string between builds, so Container Apps may not roll a new revision, and a tag can be moved; a digest can't); an Azure service principal secret in GitHub secrets (OIDC stores nothing that can leak; Azure trusts tokens for this repo's `production` environment only); Azure Container Registry (about $5/month for Basic; GHCR is free).
+Context: actions are pinned to major version tags, not commit SHAs, because this session can't read other repositories to look up SHAs; pinning to SHAs is the stricter option and can be done later. Licenses (CI tooling, not shipped): actions/checkout and actions/setup-dotnet MIT, docker/setup-buildx-action, login-action, metadata-action and build-push-action Apache-2.0, azure/login MIT. The workflow has not run yet; its first run is on the PR.
+
+## 2026-09-30 - API container: chiseled .NET 10 image, non-root, allowlisted build context
+Chose: a two-stage server/Dockerfile: `mcr.microsoft.com/dotnet/sdk:10.0` publishes, `mcr.microsoft.com/dotnet/aspnet:10.0-noble-chiseled` runs it as the built-in non-root `app` user (UID 1654) on port 8080. Built from the repo root so the image gets data.json; .dockerignore excludes everything except data.json and the API project. `InvariantGlobalization` on, since the chiseled image has no ICU.
+Rejected: the regular `aspnet:10.0` image (has a shell and apt, both unneeded and more to patch); Alpine (musl, and no advantage here over chiseled); a self-contained or Native AOT build (controllers and reflection-based System.Text.Json don't fully support trimming or AOT); `-extra` chiseled with ICU (nothing is culture-specific).
+Context: this session can't pull from mcr.microsoft.com, so the image was never built here; the same restore/publish was run from a copy of just the allowlisted files and served /api/v2/health and /api/v2/commands. The first real image build is in GitHub Actions. Microsoft's .NET images: .NET itself is MIT; the Ubuntu packages in them carry their own licenses.
+
+## 2026-09-30 - Rate limit per rightmost X-Forwarded-For entry, from trusted proxies only
+Chose: a fixed window per client IP (300 per 60 s, from config) on the command endpoints (`[EnableRateLimiting]`; health is exempt), 429 problem+json with Retry-After. The client IP comes from `UseForwardedHeaders` with `ForwardLimit = 1`, and only on connections from `ForwardedHeaders:TrustedNetworks` (the Container Apps ingress range, set in chunk 5; empty means trust nobody). So the key is the entry the ingress itself wrote, which can't be spoofed.
+Rejected: the leftmost entry (what most examples use; the caller writes it, so a fresh fake IP per request skips the limit); Vercel's client IP plus a shared-secret header proving the request came through Vercel (true per-visitor limits, but a `vercel.json` rewrite can't add request headers, so it needs Routing Middleware on every API call; can be added later without undoing this); trusting any peer (anyone reaching the app directly could pick their own IP).
+Context: through Vercel the rightmost entry is a Vercel edge server shared by many visitors, so this is a per-edge ceiling, hence the high limit; the one-hour caching means real visitors send few requests, and Vercel's own DDoS protection sits in front. The exact header format behind Vercel and Container Apps is an inference until checked on the preview in chunk 5. `KnownNetworks` is obsolete in .NET 10; it's `KnownIPNetworks`.
+
+## 2026-09-30 - HTTP caching: one weak ETag for the data version, successes only
+Chose: an action filter (`CatalogCacheFilter`, applied with `[ServiceFilter]` so DI supplies the catalog) adds `Cache-Control: public, max-age=3600` and `ETag: W/"<SHA-256 of data.json>"` to 200s, and turns a matching `If-None-Match` (weak comparison, `*` included) into a 304 with no body. 400s and 404s get neither header; health is `no-store`.
+Rejected: a hash per response body (every response is derived from data.json alone, so the file's hash already changes exactly when any response does, and nothing is serialized twice); a strong ETag (the proxies in front may compress the body, and a strong ETag promises identical bytes); `[ResponseCache]` for the commands (it sets its headers before the action runs, so 404s would be cached too); ASP.NET Core's output caching middleware (caches on the server; the goal here is fewer requests from browsers).
+
+## 2026-09-30 - API JSON: explicit options, HTML-sensitive characters escaped
+Chose: `AddJsonOptions` sets camelCase property names, no dictionary key policy (command names stay as written), and `JavaScriptEncoder.Default`, so `<`, `>` and `&` go out as `\u003C` etc. A test checks that JOIN's description has no raw `<`.
+Rejected: MVC's default. With no encoder set, ASP.NET Core's JSON output formatter uses `UnsafeRelaxedJsonEscaping`, which writes `<a href=…>` from data.json raw. That's valid JSON and harmless as `application/json` with nosniff, but escaping makes it inert if anything ever treats it as HTML, and costs nothing: parsed values are identical.
+Context: found by curling the running API, not from the docs. server/src/CanIUseSql.Api/Program.cs.
+
+## 2026-09-30 - Malformed slug is a 400 from model validation, not a route constraint
+Chose: `{slug}` with `[RegularExpression(SlugPattern)]` and `[StringLength(64)]` on the parameter; `[ApiController]` turns a failure into a 400 ValidationProblemDetails before the action runs. Well-formed but unknown slugs are a 404 ProblemDetails. `AddProblemDetails` plus `UseStatusCodePages` make unmatched routes `application/problem+json` too.
+Rejected: a regex route constraint (`{slug:regex(...)}`). A failing constraint means "this route doesn't match", so the request falls through to a 404, not a 400. Constraints are for choosing between routes, not validating input. Also rejected: `[Produces("application/json")]`, which forced that content type onto error responses and replaced `application/problem+json`.
+
+## 2026-09-30 - Catalog loads strictly; API always writes optional keys
+Chose: `CommandCatalog` deserializes data.json into records with `UnmappedMemberHandling.Disallow`, `RespectNullableAnnotations` and `RespectRequiredConstructorParameters`, keeps data.json order (`OrderedDictionary`), and checks slugs are unique and match the site's pattern. It's resolved right after `Build()`, so bad data stops startup. A dialect's `since`/`syntax` is either missing or null in data.json (107 and 32 missing); both load as null and the API always writes the key. The parity test treats a missing key and null as equal and checks the name order.
+Rejected: lenient loading (an unknown field would silently vanish from the API); omitting nulls on output (data.json also has explicit nulls, so neither choice reproduces the file byte for byte); `Dictionary` for the command map (its order isn't guaranteed, and the search lists results in data.json order).
+Context: server/src/CanIUseSql.Api/Catalog/. data.json is linked into the API project and copied next to the binaries; `Catalog:Path` overrides the location.
+
+## 2026-09-30 - .NET tests run on Microsoft.Testing.Platform, xUnit v3
+Chose: xUnit v3 (`xunit.v3` 4.0.1, Apache-2.0) with `Microsoft.AspNetCore.Mvc.Testing` 10.0.12 (MIT) for in-memory HTTP tests through `WebApplicationFactory<Program>`. `server/global.json` opts `dotnet test` into Microsoft.Testing.Platform; xUnit v3 test projects are executables that host the platform themselves, so there is no `Microsoft.NET.Test.Sdk` or `xunit.runner.visualstudio`.
+Rejected: VSTest (the .NET 10 SDK refuses to run an MTP-based project through the VSTest `dotnet test` path: "Testing with VSTest target is no longer supported"); NUnit/MSTest (xUnit is the ASP.NET Core docs' default); coverlet (no coverage target yet, one less dependency).
+Context: server/global.json only sets the test runner, it does not pin an SDK version.
+
+## 2026-09-30 - data.json stays the source of truth; the API serves a copy
+Chose: the API loads the same data.json the static pages are built from, once at startup, and a parity test fails if `GET /api/v2/commands` differs from the file.
+Rejected: a database as the source (a second copy to keep in sync, and hosting cost); making the static build read from the API (the site would depend on a scale-to-zero container at build time).
+
+## 2026-09-30 - ASP.NET Core controllers, not minimal APIs
+Chose: `[ApiController]` classes with attribute routing under `/api/v2`, registered with `AddControllers()` / `MapControllers()`.
+Rejected: minimal APIs (less code for a read-only API this size, but the point of stage 3 is practice configuring controllers: filters, model binding, route constraints, ProblemDetails).
+Context: server/src/CanIUseSql.Api.
+
+## 2026-09-30 - Host the .NET API on Azure Container Apps
+Chose: .NET 10 LTS (supported to Nov 2028) in a container on Azure Container Apps, consumption plan, scale to zero, image on GHCR. Vercel rewrites `/api/v2/*` to it, so browsers see the site's own origin (no CORS, no new `connect-src` origin). A $5 budget alert on the subscription.
+Rejected: App Service F1 (60 CPU-minutes a day, no always-on) and B1 (about $13/month); Google Cloud Run (similar, but the interview is .NET and Azure); Render (free tier sleeps with a slow cold start and less control); moving the whole site off Vercel (no reason to, and it breaks the existing edge functions). Vercel itself has no .NET runtime.
+Context: expected cost $0/month inside the free grant (180k vCPU-seconds, 360k GiB-seconds, 2M requests). Cold starts after idle are the tradeoff for scale to zero. `server/` is in .vercelignore so the .NET code isn't uploaded to Vercel.
+
 ## 2026-09-30 - Tag end of stage 2 as v2.0.0
 Chose: annotated tag v2.0.0 on main (ee5dad1) plus a GitHub Release, marking stages 1 and 2 (Vue custom elements, themes, enforced CSP).
 Rejected: v1.x (a build step, a new header, and a CSP that now blocks what it used to allow are breaking changes for a website); tagging stage 1 separately (not requested; c6a27f5 can still be tagged later).

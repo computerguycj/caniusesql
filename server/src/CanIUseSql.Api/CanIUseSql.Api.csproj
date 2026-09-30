@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <!-- The chiseled runtime image has no ICU. Nothing here is culture-specific. -->
+    <InvariantGlobalization>true</InvariantGlobalization>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- The site's data.json is the source of truth; the API ships a copy. -->
+    <Content Include="..\..\..\data.json" Link="data.json" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
+</Project>
