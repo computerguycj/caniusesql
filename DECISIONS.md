@@ -10,6 +10,25 @@ Context: <optional — link to commit, file, or issue>
 
 ---
 
+## 2026-09-30 - Search e2e tests stand in for the API with page.route
+Chose: tests/e2e/search-data.spec.js answers `/api/v2/command-index` with `page.route` (an index built from data.json, one description changed to show which source rendered) and checks: the API is used with no data.json request; a 500 and a request that never answers (the element's 5 s timeout) both fall back to data.json; a description holding an `<img onerror>` payload renders as text. It uses a command page, since the homepage also fetches data.json for its popular list.
+Rejected: running the real API during e2e (a .NET process in the Playwright web server for four tests; the API has its own tests, and the element's contract is the JSON shape).
+Context: `vite preview` answers `/api/v2/*` with its HTML page and status 200, so the rest of the e2e suite already runs the "200 that isn't the index" fallback. Gotcha: `import.meta.url` in a Playwright spec fails with "require is not defined in ES module scope" (Playwright's transform), so the spec reads data.json relative to the repo root, where Playwright runs.
+
+## 2026-09-30 - Search loads the API index first, falls back to data.json
+Chose: `<command-search>` gets its data from a composable, `useCommandIndex(src, fallbackSrc)` in src/elements/commandIndex.js, which wraps a plain `loadCommandIndex()` (fetch passed in, unit tested with node --test). It tries `/api/v2/command-index` with a 5 s timeout (`AbortSignal.timeout`), and on any failure (network error, non-2xx, not JSON, JSON that isn't an index of `{ slug }` objects, or the timeout) loads `/data.json?v=2`, which has the same fields and more. A fallback logs a console warning, not an error.
+Rejected: API only (search would break while the API is undeployed, during an Azure outage, and under `vite preview`, which has no API); no timeout (a cold start after scale-to-zero would leave search inert for however long it takes); trusting any 200 (a misrouted request can return an HTML page with status 200).
+Context: the 5 s is an estimate of the cold-start time, not a measurement; revisit once the API is live. Gotcha: in Node, `AbortSignal.timeout()`'s timer doesn't keep the event loop alive, so the timeout test's fake hanging request holds a timer of its own or Node cancels the test; browsers don't have this issue. Node's test summary counts those as "cancelled", not "fail".
+
+## 2026-09-30 - Search gets a slim index endpoint
+Chose: `GET /api/v2/command-index`, name -> `{ slug, description }` for every command in data.json order (27 KB, about 9 KB gzipped, against 546 KB / 121 KB for the full data). Built once when the catalog loads; same caching, ETag and rate limit as the other command endpoints. The search fetches it once and filters in the browser, as before.
+Rejected: `GET /api/v2/commands` (no size win; moving to the API would only prove the connection); server-side search per keystroke (a network wait on every keystroke, a cold start on the first after idle, and visitors share a rate-limit bucket per Vercel edge server, so typing across many people could hit it); `/api/v2/commands/index` ("index" is a valid slug, so it would collide with `{slug}`).
+
+## 2026-09-30 - API image on GHCR is public
+Chose: make the ghcr.io/computerguycj/caniusesql-api package public, so Container Apps pulls it without credentials. No secrets go in the image; runtime settings (trusted proxy range, limits) come from Container Apps environment variables.
+Rejected: a private package with a classic PAT (`read:packages`) as a Container Apps registry secret (GHCR doesn't accept fine-grained tokens; a classic one covers every package on the account, and when it expires the next scale-from-zero fails to pull, taking the API down); Azure Container Registry with a managed identity (no stored secret, but about $5/month for Basic, against the $0 target).
+Context: the repo is public (MIT) and the image holds only its code and the data.json the site already serves, so a public image reveals nothing new. The package first exists after the first push to main; its visibility is set on its GitHub settings page.
+
 ## 2026-09-30 - API CI/CD: GitHub Actions, GHCR, OIDC sign-in, deploy by digest
 Chose: .github/workflows/api.yml runs on changes to server/, data.json or itself. `test` runs `dotnet test`; `image` builds server/Dockerfile (pull requests build only; main pushes to `ghcr.io/computerguycj/caniusesql-api` with the workflow's own token, tags `sha-<short>` and `latest`); `deploy` runs `az containerapp update --image <image>@<digest>` in a `production` environment, signed in to Azure with OpenID Connect. Deploy is skipped until the repository variable `AZURE_CONTAINER_APP` exists (chunk 5).
 Rejected: deploying a tag (`latest` doesn't change string between builds, so Container Apps may not roll a new revision, and a tag can be moved; a digest can't); an Azure service principal secret in GitHub secrets (OIDC stores nothing that can leak; Azure trusts tokens for this repo's `production` environment only); Azure Container Registry (about $5/month for Basic; GHCR is free).

@@ -92,6 +92,18 @@ public class RateLimitTests
     }
 
     [Fact]
+    public async Task Command_index_shares_the_limit()
+    {
+        using var app = App();
+        var client = app.CreateClient();
+        await Spend(client, Outsider);
+
+        var response = await Get(client, Outsider, url: "/api/v2/command-index");
+
+        Assert.Equal(HttpStatusCode.TooManyRequests, response.StatusCode);
+    }
+
+    [Fact]
     public async Task Health_is_not_limited()
     {
         using var app = App();

@@ -19,6 +19,7 @@ public class CachingTests(WebApplicationFactory<Program> factory) : IClassFixtur
     [Theory]
     [InlineData("/api/v2/commands")]
     [InlineData("/api/v2/commands/join")]
+    [InlineData("/api/v2/command-index")]
     public async Task Success_is_cacheable_for_an_hour_with_a_weak_etag(string url)
     {
         var response = await Get(url);
@@ -34,8 +35,10 @@ public class CachingTests(WebApplicationFactory<Program> factory) : IClassFixtur
     {
         var all = await Get("/api/v2/commands");
         var one = await Get("/api/v2/commands/join");
+        var index = await Get("/api/v2/command-index");
 
         Assert.Equal(all.Headers.ETag, one.Headers.ETag);
+        Assert.Equal(all.Headers.ETag, index.Headers.ETag);
     }
 
     [Theory]
