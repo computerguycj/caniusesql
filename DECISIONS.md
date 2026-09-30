@@ -10,6 +10,11 @@ Context: <optional — link to commit, file, or issue>
 
 ---
 
+## 2026-09-30 - API image on GHCR is public
+Chose: make the ghcr.io/computerguycj/caniusesql-api package public, so Container Apps pulls it without credentials. No secrets go in the image; runtime settings (trusted proxy range, limits) come from Container Apps environment variables.
+Rejected: a private package with a classic PAT (`read:packages`) as a Container Apps registry secret (GHCR doesn't accept fine-grained tokens; a classic one covers every package on the account, and when it expires the next scale-from-zero fails to pull, taking the API down); Azure Container Registry with a managed identity (no stored secret, but about $5/month for Basic, against the $0 target).
+Context: the repo is public (MIT) and the image holds only its code and the data.json the site already serves, so a public image reveals nothing new. The package first exists after the first push to main; its visibility is set on its GitHub settings page.
+
 ## 2026-09-30 - API CI/CD: GitHub Actions, GHCR, OIDC sign-in, deploy by digest
 Chose: .github/workflows/api.yml runs on changes to server/, data.json or itself. `test` runs `dotnet test`; `image` builds server/Dockerfile (pull requests build only; main pushes to `ghcr.io/computerguycj/caniusesql-api` with the workflow's own token, tags `sha-<short>` and `latest`); `deploy` runs `az containerapp update --image <image>@<digest>` in a `production` environment, signed in to Azure with OpenID Connect. Deploy is skipped until the repository variable `AZURE_CONTAINER_APP` exists (chunk 5).
 Rejected: deploying a tag (`latest` doesn't change string between builds, so Container Apps may not roll a new revision, and a tag can be moved; a digest can't); an Azure service principal secret in GitHub secrets (OIDC stores nothing that can leak; Azure trusts tokens for this repo's `production` environment only); Azure Container Registry (about $5/month for Basic; GHCR is free).
