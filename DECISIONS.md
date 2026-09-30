@@ -10,6 +10,11 @@ Context: <optional — link to commit, file, or issue>
 
 ---
 
+## 2026-09-30 - Tag end of stage 2 as v2.0.0
+Chose: annotated tag v2.0.0 on main (ee5dad1) plus a GitHub Release, marking stages 1 and 2 (Vue custom elements, themes, enforced CSP).
+Rejected: v1.x (a build step, a new header, and a CSP that now blocks what it used to allow are breaking changes for a website); tagging stage 1 separately (not requested; c6a27f5 can still be tagged later).
+Context: the Claude Code session's git access can push its working branch but not tags (HTTP 403 on the tag push), so the tag is created from a local clone or the GitHub Releases page.
+
 ## 2026-09-30 - Enforce the Content Security Policy
 Chose: switch the header from `Content-Security-Policy-Report-Only` to `Content-Security-Policy` (one constant in scripts/csp.mjs); same directives and hashes, still reporting to /api/csp-report. csp.spec.js now also proves enforcement: an injected inline script doesn't run, an injected `<style>` doesn't apply, a script from another origin doesn't load, and each fires a violation.
 Rejected: waiting longer in report-only (the user chose to enforce now; production reports had not been reviewed from this session, which has no Vercel access).
