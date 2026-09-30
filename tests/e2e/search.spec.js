@@ -53,7 +53,7 @@ test.describe('narrow header (375px)', () => {
     await page.keyboard.press('/');
     expect(await focused(page)).toBe('site-search');
     await page.keyboard.type('join');
-    await page.locator('main p').first().click();
+    await page.locator('main h2').first().click();  // below the results list, so it's really outside
     await expect(page.locator('command-search input')).toBeHidden();
 
     await page.keyboard.press('/');

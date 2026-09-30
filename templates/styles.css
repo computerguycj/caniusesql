@@ -27,11 +27,11 @@ a:focus-visible {
 
 /* Keep focused elements and anchor targets out from under the sticky
    header (WCAG 2.2 focus not obscured). Tallest header across all pages
-   + 16px, measured in Chromium: three rows below 308px, two rows below
+   + 16px, measured in Chromium: three rows below 324px, two rows below
    792px (the header container's 720px breakpoint), one row from there. */
 html { scroll-padding-top: 186px; }
 
-@media (min-width: 308px) {
+@media (min-width: 324px) {
   html { scroll-padding-top: 138px; }
 }
 
@@ -165,16 +165,24 @@ command-search:not(:defined) {
 }
 
 /* Theme picker: <theme-picker> (src/elements/ThemePicker.ce.vue). Reserve
-   its measured size until it's defined: the select alone (85px), or with
-   the "Theme" label (134.6px) once the header container is 720px wide. */
+   its measured size until it's defined: the select alone (101px, sized by
+   its longest option, "Custom…"), with the "Theme" label once the header
+   container is 720px wide, and with the Edit button when a Custom theme is
+   active (the head script sets data-custom on <html> before first paint). */
 theme-picker:not(:defined) {
   display: block;
-  width: 85px;
+  width: 101px;
   height: 32px;
 }
 
+:root[data-custom] theme-picker:not(:defined) {
+  width: 149.1px;
+  height: 32.4px;
+}
+
 @container (min-width: 720px) {
-  theme-picker:not(:defined) { width: 134.6px; }
+  theme-picker:not(:defined) { width: 150.6px; }
+  :root[data-custom] theme-picker:not(:defined) { width: 198.7px; }
 }
 
 /* --------------------------------------------------------------------------

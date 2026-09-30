@@ -21,7 +21,10 @@ import { chromium } from '@playwright/test';
 // Pages that, between them, render every custom element.
 const PAGES = ['/', '/f/merge/'];
 
-const MODE = 'Content-Security-Policy-Report-Only';
+// Enforced: the browser blocks anything the policy doesn't allow, and still
+// reports it to /api/csp-report. Switch back to
+// 'Content-Security-Policy-Report-Only' to observe without blocking.
+const MODE = 'Content-Security-Policy';
 
 const POLICY = {
   'default-src': ["'self'"],

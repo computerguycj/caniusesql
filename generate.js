@@ -256,12 +256,20 @@ function syntaxExample(info) {
  * @param {Object} vars        - placeholder values, all pre-escaped
  * @returns {string} complete HTML document
  */
-// Applies the saved theme before first paint, so a saved Light or Dark never
-// flashes the other theme while the page loads. It has to be inline and run
-// before the stylesheets: the Vue bundle loads too late. The CSP allows it by
-// hash (scripts/csp.mjs), so any edit here needs `npm run csp:update`.
-// <theme-picker> writes the same localStorage key.
-const THEME_SCRIPT = "try{var t=localStorage.getItem('caniusesql_theme');if(t==='light'||t==='dark')document.documentElement.dataset.theme=t}catch(e){}";
+// Applies the saved theme before first paint, so a saved Light, Dark or
+// Custom theme never flashes the OS theme while the page loads. It has to be
+// inline and run before the stylesheets: the Vue bundle loads too late. The
+// CSP allows it by hash (scripts/csp.mjs), so any edit here needs
+// `npm run csp:update`. <theme-picker> writes the same localStorage keys.
+// Custom tokens are applied only if every name is --color-* and every value
+// is #rrggbb or #rrggbbaa (all or nothing), so a tampered value can't inject
+// CSS. Same rule as isSafeTokenMap in src/elements/customTheme.js.
+const THEME_SCRIPT = "try{var d=document.documentElement,t=localStorage.getItem('caniusesql_theme');"
+  + "if(t==='light'||t==='dark')d.dataset.theme=t;"
+  + "else if(t==='custom'){var c=JSON.parse(localStorage.getItem('caniusesql_custom')),o=c&&c.tokens,k,ok=!!o&&typeof o==='object';"
+  + "for(k in o)ok=ok&&/^--color-[a-z-]+$/.test(k)&&/^#[0-9a-f]{6}([0-9a-f]{2})?$/i.test(o[k]);"
+  + "if(ok&&(c.base==='light'||c.base==='dark')){d.dataset.theme=c.base;d.dataset.custom='';for(k in o)d.style.setProperty(k,o[k])}}"
+  + "}catch(e){}";
 
 function applyTemplate(headerTpl, headHtml, bodyContent, vars) {
   const header = headerTpl.replace(/\{\{(\w+)\}\}/g, function (match, key) {
