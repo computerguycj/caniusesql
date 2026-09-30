@@ -10,6 +10,11 @@ Context: <optional — link to commit, file, or issue>
 
 ---
 
+## 2026-09-30 - Search e2e tests stand in for the API with page.route
+Chose: tests/e2e/search-data.spec.js answers `/api/v2/command-index` with `page.route` (an index built from data.json, one description changed to show which source rendered) and checks: the API is used with no data.json request; a 500 and a request that never answers (the element's 5 s timeout) both fall back to data.json; a description holding an `<img onerror>` payload renders as text. It uses a command page, since the homepage also fetches data.json for its popular list.
+Rejected: running the real API during e2e (a .NET process in the Playwright web server for four tests; the API has its own tests, and the element's contract is the JSON shape).
+Context: `vite preview` answers `/api/v2/*` with its HTML page and status 200, so the rest of the e2e suite already runs the "200 that isn't the index" fallback. Gotcha: `import.meta.url` in a Playwright spec fails with "require is not defined in ES module scope" (Playwright's transform), so the spec reads data.json relative to the repo root, where Playwright runs.
+
 ## 2026-09-30 - Search loads the API index first, falls back to data.json
 Chose: `<command-search>` gets its data from a composable, `useCommandIndex(src, fallbackSrc)` in src/elements/commandIndex.js, which wraps a plain `loadCommandIndex()` (fetch passed in, unit tested with node --test). It tries `/api/v2/command-index` with a 5 s timeout (`AbortSignal.timeout`), and on any failure (network error, non-2xx, not JSON, JSON that isn't an index of `{ slug }` objects, or the timeout) loads `/data.json?v=2`, which has the same fields and more. A fallback logs a console warning, not an error.
 Rejected: API only (search would break while the API is undeployed, during an Azure outage, and under `vite preview`, which has no API); no timeout (a cold start after scale-to-zero would leave search inert for however long it takes); trusting any 200 (a misrouted request can return an HTML page with status 200).
