@@ -10,6 +10,11 @@ Context: <optional — link to commit, file, or issue>
 
 ---
 
+## 2026-09-30 - Enforce the Content Security Policy
+Chose: switch the header from `Content-Security-Policy-Report-Only` to `Content-Security-Policy` (one constant in scripts/csp.mjs); same directives and hashes, still reporting to /api/csp-report. csp.spec.js now also proves enforcement: an injected inline script doesn't run, an injected `<style>` doesn't apply, a script from another origin doesn't load, and each fires a violation.
+Rejected: waiting longer in report-only (the user chose to enforce now; production reports had not been reviewed from this session, which has no Vercel access).
+Context: the policy blocked the no-flash tests' own frame decoding (they loaded screencast PNGs as data: images inside the page, and img-src doesn't allow data:); frames are now decoded in a separate blank page (framePixels in tests/e2e/helpers.js). Vercel's preview toolbar script (vercel.live) is now blocked on preview deployments; production doesn't load it.
+
 ## 2026-09-29 - Custom mode tests: extreme themes, dialog, tampering; checker covers every text on a derived tint
 Chose: tests/e2e/custom.spec.js covers the three extreme accents that still pass (#000000 on Light, #ffffff on Dark, #ff00ff on Dark) with full-page screenshots plus axe WCAG 2.2 AA, the focus walk, and target size; the dialog (axe, 24px controls, Tab never reaching the page behind it, the failing-pick flow, Escape returning focus); a tampered localStorage (head script ignores CSS injection, a non --color-* name, a bad base; the picker recomputes tokens and falls back to System on a failing accent); and the no-flash screencast for a saved Custom theme. The focus walk and target-size check moved into tests/e2e/helpers.js so both specs share them. Dialog radios went from 20px to 24px.
 Rejected: checking only accent-colored text (the black-accent test found muted search-result descriptions on the search-highlight tint at 4.44:1).

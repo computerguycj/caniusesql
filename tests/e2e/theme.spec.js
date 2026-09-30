@@ -2,7 +2,7 @@
  * theme.spec.js — the theme picker and the no-flash head script.
  */
 import { test, expect } from '@playwright/test';
-import { openPage } from './helpers.js';
+import { openPage, framePixels } from './helpers.js';
 
 const bodyBg = page => page.evaluate(() => getComputedStyle(document.body).backgroundColor);
 const LIGHT_BG = 'rgb(245, 247, 250)';
@@ -67,19 +67,7 @@ for (const [os, saved, expected] of [['light', 'dark', [13, 17, 23]], ['dark', '
 
     // Read the pixel at (4, 4), which is page background (body padding), in
     // every frame.
-    const pixels = await page.evaluate(async list => {
-      const out = [];
-      for (const data of list) {
-        const img = new Image();
-        img.src = `data:image/png;base64,${data}`;
-        await img.decode();
-        const canvas = new OffscreenCanvas(img.width, img.height);
-        const ctx = canvas.getContext('2d');
-        ctx.drawImage(img, 0, 0);
-        out.push([...ctx.getImageData(4, 4, 1, 1).data.slice(0, 3)]);
-      }
-      return out;
-    }, frames);
+    const pixels = await framePixels(page.context(), frames);
     // Blank frames before anything paints are pure white (#fff); ignore those.
     const painted = pixels.filter(p => p.join() !== '255,255,255');
     expect(painted.length).toBeGreaterThan(0);

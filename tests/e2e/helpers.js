@@ -117,3 +117,28 @@ export function smallControls(page) {
       return out;
     });
 }
+
+/**
+ * Reads the pixel at (x, y) from each base64 PNG screencast frame. Decodes
+ * in a separate blank page: the site's CSP (img-src without data:) would
+ * block decoding the frames as data: images on the site itself.
+ */
+export async function framePixels(context, frames, x = 4, y = 4) {
+  const decoder = await context.newPage();
+  try {
+    return await decoder.evaluate(async ({ list, x, y }) => {
+      const out = [];
+      for (const data of list) {
+        const img = new Image();
+        img.src = `data:image/png;base64,${data}`;
+        await img.decode();
+        const ctx = new OffscreenCanvas(img.width, img.height).getContext('2d');
+        ctx.drawImage(img, 0, 0);
+        out.push([...ctx.getImageData(x, y, 1, 1).data.slice(0, 3)]);
+      }
+      return out;
+    }, { list: frames, x, y });
+  } finally {
+    await decoder.close();
+  }
+}

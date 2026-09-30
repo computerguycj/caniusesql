@@ -5,7 +5,7 @@
  */
 import { test, expect } from '@playwright/test';
 import AxeBuilder from '@axe-core/playwright';
-import { openPage, focusProblems, smallControls } from './helpers.js';
+import { openPage, focusProblems, smallControls, framePixels } from './helpers.js';
 
 const WCAG_AA = ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa'];
 
@@ -158,18 +158,7 @@ test('no flash: a saved Custom theme on Dark paints dark from the first frame', 
   await page.waitForLoadState('networkidle');
   await page.waitForTimeout(300);
   await cdp.send('Page.stopScreencast');
-  const pixels = await page.evaluate(async list => {
-    const out = [];
-    for (const data of list) {
-      const img = new Image();
-      img.src = `data:image/png;base64,${data}`;
-      await img.decode();
-      const ctx = new OffscreenCanvas(img.width, img.height).getContext('2d');
-      ctx.drawImage(img, 0, 0);
-      out.push([...ctx.getImageData(4, 4, 1, 1).data.slice(0, 3)]);
-    }
-    return out;
-  }, frames);
+  const pixels = await framePixels(page.context(), frames);
   const painted = pixels.filter(p => p.join() !== '255,255,255');
   expect(painted.length).toBeGreaterThan(0);
   for (const p of painted) expect(p).toEqual([13, 17, 23]);
