@@ -9,8 +9,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <!-- The site's data.json is the source of truth; the API ships a copy. -->
-    <Content Include="..\..\..\data.json" Link="data.json" CopyToOutputDirectory="PreserveNewest" />
+    <!-- Brings the catalog code and a copy of data.json (see its .csproj). -->
+    <ProjectReference Include="..\CanIUseSql.Catalog\CanIUseSql.Catalog.csproj" />
   </ItemGroup>
 
 </Project>

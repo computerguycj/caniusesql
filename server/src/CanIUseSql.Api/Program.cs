@@ -5,7 +5,7 @@ using System.Net;
 using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Threading.RateLimiting;
-using CanIUseSql.Api.Catalog;
+using CanIUseSql.Catalog;
 using CanIUseSql.Api.Filters;
 using CanIUseSql.Api.RateLimiting;
 using Microsoft.AspNetCore.HttpOverrides;

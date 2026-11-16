@@ -51,6 +51,29 @@ The build step (`npm run build`: `node generate.js`, then `vite build` for the V
 
 No build toolchain complexity. No client-side rendering delays.
 
+## MCP Server
+
+The same data is available to AI assistants through a [Model Context Protocol](https://modelcontextprotocol.io) server, so an assistant can look up compatibility instead of answering from memory. It's a C# console app (`server/src/CanIUseSql.Mcp`) built on the official MCP C# SDK. It runs locally over stdio and reads the same `data.json` as the site.
+
+It has two tools, meant to be used in order:
+
+- `search_commands(query, limit?)` finds commands by keyword and returns each one's slug.
+- `check_compatibility(slug, dialects?)` returns support for that command per database: since which version, dialect-specific syntax, notes, and a workaround where one exists.
+
+To use it with Claude Code (needs the .NET 10 SDK), build it from the repo root:
+
+```bash
+dotnet build server/src/CanIUseSql.Mcp
+```
+
+Then register it, replacing the path with your clone's full path:
+
+```bash
+claude mcp add caniusesql --scope user -- dotnet run --no-build --project /full/path/to/caniusesql/server/src/CanIUseSql.Mcp
+```
+
+Start a new session and ask something like "can I use MERGE in Oracle?".
+
 ## Getting Started
 
 ### Local Setup

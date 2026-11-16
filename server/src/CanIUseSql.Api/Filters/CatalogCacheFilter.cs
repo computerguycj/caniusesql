@@ -1,4 +1,4 @@
-using CanIUseSql.Api.Catalog;
+using CanIUseSql.Catalog;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Net.Http.Headers;
