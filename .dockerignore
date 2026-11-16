@@ -1,7 +1,8 @@
-# Only the API and the data it serves go into the build context
-# (see server/Dockerfile). Everything else is excluded.
+# Only the API, the Catalog library it references, and the data it serves go
+# into the build context (see server/Dockerfile). Everything else is excluded.
 *
 !data.json
 !server/src/CanIUseSql.Api/
+!server/src/CanIUseSql.Catalog/
 server/**/bin/
 server/**/obj/

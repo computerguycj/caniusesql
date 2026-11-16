@@ -1,4 +1,4 @@
-namespace CanIUseSql.Api.Catalog;
+namespace CanIUseSql.Catalog;
 
 // One entry in data.json, keyed there by the command's name. Property names
 // serialize camelCase, which matches data.json's keys exactly.
@@ -38,6 +38,9 @@ public sealed record NamedCommand(
     public static NamedCommand From(string name, Command c) =>
         new(name, c.Description, c.Syntax, c.Category, c.Slug, c.Compatibility, c.Details, c.Overview);
 }
+
+// One search result: enough to pick a command and look it up by slug.
+public sealed record CommandMatch(string Name, string Slug, string Category, string Description);
 
 // GET /api/v2/command-index: just what the search box needs, per command.
 public sealed record CommandSummary(string Slug, string Description);

@@ -1,4 +1,4 @@
-using CanIUseSql.Api.Catalog;
+using CanIUseSql.Catalog;
 using CanIUseSql.Api.Filters;
 using CanIUseSql.Api.RateLimiting;
 using Microsoft.AspNetCore.Mvc;

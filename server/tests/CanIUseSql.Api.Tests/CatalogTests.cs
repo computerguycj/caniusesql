@@ -1,4 +1,4 @@
-using CanIUseSql.Api.Catalog;
+using CanIUseSql.Catalog;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 
@@ -38,8 +38,24 @@ public class CatalogTests
         Assert.NotEqual(a.Version, b.Version);
     }
 
+    [Fact]
+    public void Search_ranks_name_and_slug_matches_first_and_needs_every_word()
+    {
+        // Entry() gives every command the category "c" and description "d".
+        var catalog = CommandCatalog.Parse(
+            $$"""{ "cast": {{Entry("cast")}}, "with (common table expressions)": {{Entry("with-cte")}}, "merge": {{Entry("merge")}} }""");
+
+        // Every category is "c", but only "cast" and "with-cte" have a word starting with c in the name or slug.
+        Assert.Equal(["cast", "with-cte", "merge"], catalog.Search("c", 10).Select(m => m.Slug));
+        Assert.Equal(["with-cte"], catalog.Search("CTE", 10).Select(m => m.Slug));
+        Assert.Equal(["with-cte"], catalog.Search("common table", 10).Select(m => m.Slug));
+        Assert.Empty(catalog.Search("common nonsense", 10));
+        Assert.Empty(catalog.Search("  ", 10));
+        Assert.Single(catalog.Search("c", 1));
+    }
+
     [Theory]
-    [InlineData("unknown key", """{ "a": ENTRY_EXTRA }""")]
+    [InlineData("unknown key","""{ "a": ENTRY_EXTRA }""")]
     [InlineData("missing required key", """{ "a": { "description": "d" } }""")]
     [InlineData("null where non-null", """{ "a": ENTRY_NULL }""")]
     [InlineData("duplicate slug", """{ "a": ENTRY_A, "b": ENTRY_A }""")]

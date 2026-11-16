@@ -6,14 +6,16 @@
 FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
 WORKDIR /src
 
-# Restore first, from the project file alone, so the package layer is cached
-# until the dependencies change.
+# Restore first, from the project files alone, so the package layer is cached
+# until the dependencies change. The API references the Catalog library.
 COPY server/src/CanIUseSql.Api/CanIUseSql.Api.csproj server/src/CanIUseSql.Api/
+COPY server/src/CanIUseSql.Catalog/CanIUseSql.Catalog.csproj server/src/CanIUseSql.Catalog/
 RUN dotnet restore server/src/CanIUseSql.Api/CanIUseSql.Api.csproj
 
-# Same relative layout as the repo: the .csproj links ../../../data.json.
+# Same relative layout as the repo: the Catalog .csproj links ../../../data.json.
 COPY data.json .
 COPY server/src/CanIUseSql.Api/ server/src/CanIUseSql.Api/
+COPY server/src/CanIUseSql.Catalog/ server/src/CanIUseSql.Catalog/
 RUN dotnet publish server/src/CanIUseSql.Api/CanIUseSql.Api.csproj \
     --configuration Release --no-restore --output /app
 

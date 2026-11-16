@@ -1,0 +1,16 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <!-- The command data and its loader, shared by the API and the MCP server. -->
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- The site's data.json is the source of truth. Every app that references
+         this project gets a copy next to its binaries. -->
+    <Content Include="..\..\..\data.json" Link="data.json" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
+</Project>
