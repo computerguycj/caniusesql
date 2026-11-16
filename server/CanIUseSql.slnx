@@ -6,5 +6,6 @@
   </Folder>
   <Folder Name="/tests/">
     <Project Path="tests/CanIUseSql.Api.Tests/CanIUseSql.Api.Tests.csproj" />
+    <Project Path="tests/CanIUseSql.Mcp.Tests/CanIUseSql.Mcp.Tests.csproj" />
   </Folder>
 </Solution>
